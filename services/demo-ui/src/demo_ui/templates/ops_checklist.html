@@ -1,0 +1,10 @@
+<p class="ops-headline">{{ c.headline }}</p>
+<ol class="checklist">{% for s in c.steps %}
+  <li class="ck s-{{ s.state }}" data-step="{{ s.id }}" data-state="{{ s.state }}">
+    <span class="dot" aria-hidden="true"></span>
+    <div class="ck-body">
+      <p class="ck-head"><b>{{ s.id }}. {{ s.title }}</b> <span class="ck-state">{{ s.state }}</span>{% if s.detail %} <span class="ck-detail">{{ s.detail }}</span>{% endif %}</p>
+      <p class="ck-cmd"><code id="ck-cmd-{{ s.id }}">{{ s.command }}</code><button type="button" class="btn copy" data-copy="ck-cmd-{{ s.id }}" aria-label="copy the command of step {{ s.id }}">copy</button></p>
+    </div>
+  </li>{% endfor %}
+</ol>

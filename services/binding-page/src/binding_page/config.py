@@ -7,7 +7,8 @@
 | `BIND_REDIRECT_URI` | `<BASE_URL>/bind/callback` | the OAuth redirect URI registered with the carrier |
 | `SESSION_SECRET` | — (required) | HMAC key for the OAuth `state`, the flow cookie, the session cookie and CSRF tokens |
 | `SESSION_TTL_S` | `1800` | page session lifetime |
-| `BIND_ADMIN` | off | `1` serves `/_admin/*` (only when `TOWER_ENV=local`) |
+| `BIND_ADMIN` | off | `1` serves `/_admin/*` when `TOWER_ENV=local` or `BIND_ADMIN_TOKEN` is set (04 §8) |
+| `BIND_ADMIN_TOKEN` | — | bearer mode (04 §8, U3): every `/_admin/*` needs `Authorization: Bearer <token>` and the surface narrows (Terraform sets it only while the demo admin path is open) |
 | `ALERTS_INTERNAL_URL` / `ALERTS_INTERNAL_BEARER` | — | Alerts' `POST /internal/watch`, called after a watch-settings save on an enabled Watch (04 §9.2); unset → log-only stub |
 | `CARRIER_*` | see `camara_client.config` | `CARRIER_CLIENT_ID` defaults to `binding-page`, `CARRIER_SCOPES` to `number-verification`, `CARRIER_PROFILE` to `proactive` |
 | `TOWER_DYNAMODB_ENDPOINT` (alias `DYNAMO_ENDPOINT`), `TOWER_TABLE_PREFIX`, `AWS_REGION` | see `tower_consent.Store.from_env` | the store |
@@ -18,7 +19,7 @@ from __future__ import annotations
 
 import os
 from collections.abc import Mapping
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 # A person is waiting on the page, not Alexa's 300 ms budget: the proactive profile (5 s, 1 retry; NV is never retried).
 CARRIER_DEFAULTS = {
@@ -41,6 +42,7 @@ class Settings:
     redirect_uri: str = ""
     session_ttl_s: int = 1800
     admin: bool = False
+    admin_token: str | None = field(default=None, repr=False)
     port: int = 8081
     alerts_internal_url: str | None = None
     alerts_internal_bearer: str | None = None
@@ -58,8 +60,13 @@ class Settings:
 
     @property
     def admin_enabled(self) -> bool:
-        """The admin view exists only locally *and* when asked for."""
-        return self.local and self.admin
+        """The admin view exists only when asked for, and only locally or with a bearer (04 §8)."""
+        return self.admin and (self.local or self.admin_token is not None)
+
+    @property
+    def admin_bearer_mode(self) -> bool:
+        """`BIND_ADMIN_TOKEN` set: bearer required and the surface narrowed (04 §8 "Bearer mode")."""
+        return self.admin_enabled and self.admin_token is not None
 
     @property
     def secure_cookies(self) -> bool:
@@ -75,6 +82,7 @@ class Settings:
             redirect_uri=e.get("BIND_REDIRECT_URI", ""),
             session_ttl_s=int(e.get("SESSION_TTL_S", "1800")),
             admin=_flag(e.get("BIND_ADMIN")),
+            admin_token=e.get("BIND_ADMIN_TOKEN") or None,
             port=int(e.get("PORT", "8081")),
             alerts_internal_url=e.get("ALERTS_INTERNAL_URL") or None,
             alerts_internal_bearer=e.get("ALERTS_INTERNAL_BEARER") or None,

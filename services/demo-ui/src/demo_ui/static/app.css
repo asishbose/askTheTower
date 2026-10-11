@@ -161,10 +161,10 @@ body.running #run-status .status.info::before { content: ""; width: .8rem; heigh
 /* 1.4 s in all, but each movement is 280 ms (doc 11: motion 150–300 ms): rise in, hold so it can be read, float off */
 @keyframes floatup { 0% { opacity: 0; transform: translateY(14px); } 20% { opacity: 1; transform: translateY(0); } 80% { opacity: 1; transform: translateY(0); } 100% { opacity: 0; transform: translateY(-40px); } }
 
-/* ---------- panes ---------- */
+/* ---------- panes (pane 5, Ops, wears the same card as `.ops-card`, outside the 2×2 grid) ---------- */
 .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; padding: 1rem 1.25rem; }
 @media (max-width: 900px) { .grid { grid-template-columns: 1fr; padding: .75rem; } header.top { padding: .5rem .75rem; } .health { margin-left: 0; flex-wrap: wrap; } }
-.pane {
+.pane, .ops-card {
   position: relative; min-width: 0; padding: .9rem 1rem 1rem;
   background: linear-gradient(180deg, var(--card-hi), var(--card));
   border: 1px solid var(--edge); border-radius: var(--radius);
@@ -328,6 +328,7 @@ form.say input::placeholder { color: var(--muted); }
 .rc-SERVICE_UNAVAILABLE > .chip { color: var(--alert); background: transparent; border-color: var(--alert); }
 .rc-SUPPRESSED_REVOKED > .chip { color: var(--muted); background: rgb(154 166 199 / 0.1); border-color: var(--muted); }
 .rc-SUPPRESSED_REVOKED > .chip::before { content: "⊘ "; }
+.rc-ALERT_LOG_FAILED > .chip { color: var(--muted); background: rgb(154 166 199 / 0.1); border-color: var(--muted); }
 .rc-ACK_IGNORED_SWAPPED_LINE > .chip { color: var(--sms); background: rgb(255 210 122 / 0.1); border-color: var(--sms); }
 .grant-none { color: var(--muted); }
 
@@ -427,6 +428,77 @@ figure.qr .caption { display: inline-block; margin-top: .25rem; }
 .resolve { font-size: .82rem; color: var(--ink-2); }
 
 footer { padding: .25rem 1.25rem 1.25rem; color: var(--ink-2); font-size: .78rem; }
+
+/* ---------- 3 · the SMS lane as a mocked phone (U4, 2026-10-11) ---------- */
+.sms-phone {
+  position: relative; max-width: 380px; margin: 0 auto; padding: 24px 10px 22px; border-radius: 30px;
+  background: #0b1230; border: 2px solid #8fa3d9;
+  box-shadow: 0 12px 30px rgb(0 0 0 / 0.45), 0 0 0 4px rgb(143 163 217 / 0.12);
+}
+.sms-phone::before { content: ""; position: absolute; top: 10px; left: 50%; width: 42px; height: 5px; border-radius: 3px; transform: translateX(-50%); background: #8fa3d9; }
+.sms-screen { border-radius: 16px; background: var(--navy-0); padding: .45rem .55rem .6rem; }
+.sms-top { display: flex; align-items: center; justify-content: center; gap: .35rem; margin: 0 0 .35rem; padding-bottom: .3rem; border-bottom: 1px solid var(--edge); font: 600 .78rem var(--ui); color: var(--sms); }
+.sms-top .muted { font-weight: 400; }
+.sms-phone .timeline { padding: 0; }
+.sms-phone .ev { display: block; padding: .3rem 0 .2rem; }
+.sms-phone .ev::before { display: none; }
+.sms-phone .ev-head { gap: .1rem .4rem; }
+.sms-phone .ev-head .ts { margin-left: auto; }
+.sms-phone .sms-text { margin: .2rem 1.6rem .1rem 0; border-radius: 4px 14px 14px 14px; }
+.sms-phone .tpl { display: block; font-size: .68rem; }
+
+/* ---------- 5 · Ops ---------- */
+details.ops { margin: 0 1.25rem 1rem; }
+details.ops > summary { display: flex; align-items: center; gap: .8rem; cursor: pointer; list-style: none; }
+details.ops > summary::-webkit-details-marker { display: none; }
+details.ops > summary h2 { margin: 0; }
+details.ops > summary h2::after { content: "▸"; color: var(--ink-2); margin-left: .3rem; }
+details.ops[open] > summary h2::after { content: "▾"; }
+details.ops[open] > summary { margin-bottom: .7rem; }
+.ops-cols { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
+.ops-col h3 { justify-content: flex-start; }
+.ops-col h3 small { text-transform: none; letter-spacing: 0; font-weight: 400; color: var(--ink-2); }
+#ops-recheck { margin-left: auto; font-size: .75rem; padding: .15rem .55rem; text-transform: none; letter-spacing: 0; }
+.ops-groups { display: grid; gap: .35rem; }
+.ops-group { display: flex; flex-wrap: wrap; align-items: center; gap: .35rem; }
+.ops-group-name { min-width: 3.6rem; font-size: .72rem; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-2); }
+.ops-group .btn { font-family: var(--mono); font-size: .8rem; padding: .2rem .55rem; }
+.ops-wait { display: flex; align-items: center; gap: .35rem; margin: 0 0 .45rem; font-size: .82rem; }
+.ops-bar { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem; margin: .55rem 0 .35rem; }
+.ops-bar .btn.stop { border-color: var(--alert); color: var(--alert); }
+#ops-msg:empty { display: none; }
+#ops-msg .status { font-size: .8rem; }
+.ops-badge { display: inline-flex; gap: .3rem; padding: .1rem .55rem; border-radius: 999px; font: 500 .78rem var(--mono); border: 1px solid var(--edge-hi); color: var(--ink-2); }
+.ops-badge.s-running { color: var(--req); border-color: var(--req); }
+.ops-badge.s-pass { color: var(--ok); border-color: var(--ok); }
+.ops-badge.s-fail { color: var(--on-solid); background: var(--alert); border-color: var(--alert); }
+.ops-badge.s-stopped { color: var(--sms); border-color: var(--sms); }
+.ops-log {
+  height: 18rem; overflow-y: auto; margin: 0; padding: .45rem .6rem; border-radius: 10px;
+  background: var(--navy-0); border: 1px solid var(--edge); font: .76rem/1.4 var(--mono); white-space: pre-wrap; overflow-wrap: anywhere;
+}
+.ops-log .ln { display: block; }
+.ops-log:empty::before { content: "no output yet"; color: var(--muted); }
+.ops-headline { margin: 0 0 .45rem; font-weight: 600; }
+.checklist { list-style: none; margin: 0; padding: 0; display: grid; gap: .4rem; }
+.ck { display: flex; gap: .55rem; align-items: flex-start; padding: .35rem .5rem; border-radius: 10px; border: 1px solid var(--edge); }
+.ck .dot { flex: none; width: .7rem; height: .7rem; margin-top: .3rem; border-radius: 50%; background: var(--muted); }
+.ck.s-done .dot { background: var(--ok); box-shadow: 0 0 6px var(--ok); }
+.ck.s-warn .dot { background: var(--sms); }
+.ck.s-fail .dot { background: var(--alert); }
+.ck.s-off .dot { background: transparent; border: 1.5px solid var(--muted); }
+.ck.s-todo .dot { opacity: .6; }
+.ck-body { min-width: 0; flex: 1; }
+.ck-head { display: flex; flex-wrap: wrap; gap: .1rem .45rem; align-items: baseline; font-size: .84rem; }
+.ck-state { font: .72rem var(--mono); color: var(--ink-2); }
+.ck.s-done .ck-state { color: var(--ok); }
+.ck.s-warn .ck-state { color: var(--sms); }
+.ck.s-fail .ck-state { color: var(--alert); }
+.ck-detail { font-size: .78rem; color: var(--ink-2); }
+.ck-cmd { display: flex; gap: .4rem; align-items: center; margin-top: .2rem; }
+.ck-cmd code { flex: 1; min-width: 0; padding: .15rem .4rem; border-radius: 6px; background: rgb(7 11 31 / 0.6); font-size: .74rem; overflow-wrap: anywhere; }
+.ck-cmd .copy { font-size: .72rem; padding: .1rem .5rem; }
+@media (max-width: 900px) { .ops-cols { grid-template-columns: 1fr; } }
 
 /* Reduced motion: no transitions or keyframes; the state classes (beacon, shield, health, phone) still apply. */
 @media (prefers-reduced-motion: reduce) {

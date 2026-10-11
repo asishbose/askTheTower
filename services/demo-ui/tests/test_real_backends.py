@@ -20,7 +20,7 @@ from typing import Any
 
 import httpx
 import pytest
-from alerts.sent_log import SentLog
+from alerts.sent_log import MemorySentLog, SentLog
 from binding_page.app import create_app as create_page
 from binding_page.config import Settings as PageSettings
 from binding_page.deps import Deps as PageDeps
@@ -117,7 +117,7 @@ async def rig_for(store: Store, mock_token: str | None) -> tuple[Rig, Any]:
     mock_app = create_mock(MockSettings(admin=True, admin_token=TOKEN, base_url=BASE, webhook_backoff_s=0.0))
     mock_wire = Wire(httpx.ASGITransport(app=mock_app))
     page_wire = Wire(httpx.ASGITransport(app=binding_page(store)))
-    sent = SentLog()
+    sent = MemorySentLog()  # `SentLog` is the Protocol since U1 (06 §3.1); local mode's ledger
     alerts_wire = Wire(alerts_transport(sent))
     settings = Settings(
         mock_url=BASE, mock_admin_token=mock_token, binding_url=PAGE, alerts_url=ALERTS, alerts_bearer="ab"

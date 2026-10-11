@@ -1,6 +1,6 @@
-"""Reason codes — exactly the twelve in `docs/architecture/components/03-policy-engine.md` §4.
+"""Reason codes — exactly the thirteen in `docs/architecture/components/03-policy-engine.md` §4.
 
-Nine are returned by the engine; three are audit-only and written by the Alerts service (06).
+Nine are returned by the engine; four are audit-only and written by the Alerts service (06).
 Do not add codes here. If one seems missing, the case goes back to the design doc first.
 """
 
@@ -22,6 +22,7 @@ class ReasonCode(StrEnum):
     # --- audit only, written by Alerts (06); never returned by evaluate_* --------
     SUPPRESSED_REVOKED = "SUPPRESSED_REVOKED"
     ALERT_FAILED = "ALERT_FAILED"
+    ALERT_LOG_FAILED = "ALERT_LOG_FAILED"  # the SMS went out; the sent-SMS ledger write failed (06 §3.1, §8)
     ACK_IGNORED_SWAPPED_LINE = "ACK_IGNORED_SWAPPED_LINE"
 
 
@@ -44,6 +45,7 @@ AUDIT_ONLY_CODES: frozenset[ReasonCode] = frozenset(
     {
         ReasonCode.SUPPRESSED_REVOKED,
         ReasonCode.ALERT_FAILED,
+        ReasonCode.ALERT_LOG_FAILED,
         ReasonCode.ACK_IGNORED_SWAPPED_LINE,
     }
 )

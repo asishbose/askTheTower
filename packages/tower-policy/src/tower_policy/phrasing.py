@@ -58,6 +58,7 @@ TEMPLATES: Final[dict[ReasonCode, dict[Form, str]]] = {
     },
     ReasonCode.SUPPRESSED_REVOKED: {"voice": "", "sms": ""},
     ReasonCode.ALERT_FAILED: {"voice": "", "sms": ""},
+    ReasonCode.ALERT_LOG_FAILED: {"voice": "", "sms": ""},
     ReasonCode.ACK_IGNORED_SWAPPED_LINE: {"voice": "", "sms": ""},
 }
 

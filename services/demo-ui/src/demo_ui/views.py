@@ -30,6 +30,20 @@ CAPTIONS: dict[str, str] = {
     ),
 }
 D1_CAPTION = "D1: nothing texts this link yet. The QR code stands in for the SMS."
+# doc 11 §5: on ENV=aws Moment 1–3 run through the admin path; Transplant stays local.
+AWS_TRANSPLANT = (
+    "Transplant runs locally: escalation is shown with LogSender (D-I), and the AWS seed has no partner or "
+    "neighbour"
+)
+
+
+def captions(*, local: bool) -> dict[str, str]:
+    return CAPTIONS if local else {**CAPTIONS, "transplant": AWS_TRANSPLANT}
+
+
+def off_macros(*, local: bool) -> dict[str, str]:
+    """Macros that are off even when the others run, with the reason (Transplant on ENV=aws)."""
+    return {} if local else {"transplant": AWS_TRANSPLANT}
 
 
 def render(template: str, **ctx: Any) -> str:

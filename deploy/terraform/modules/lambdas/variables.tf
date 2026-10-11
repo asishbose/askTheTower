@@ -108,3 +108,23 @@ variable "alerts_environment" {
 variable "reconcile_environment" {
   type = map(string)
 }
+
+variable "demo_admin_cidrs" {
+  description = <<-EOT
+    The demo admin path (10 §2.1): non-empty adds the admin_gate authorizer and the CUSTOM-auth routes
+    (mock /_admin via the VPC link, Alerts /internal/sent + /internal/reset, binding page /_admin). [] adds nothing.
+    Validated at the root.
+  EOT
+  type        = list(string)
+  default     = []
+}
+
+variable "demo_admin_bearer" {
+  description = <<-EOT
+    DEMO_ADMIN_BEARER (10 §2.1, decision 1): the admin_gate authorizer requires `Authorization: Bearer <it>` besides
+    the source address. null while the path is closed.
+  EOT
+  type        = string
+  default     = null
+  sensitive   = true
+}

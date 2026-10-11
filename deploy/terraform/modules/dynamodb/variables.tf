@@ -14,7 +14,14 @@ variable "tables" {
     }))
     ttl                    = object({ enabled = bool, attribute_name = string })
     point_in_time_recovery = bool
+    demo_admin_only        = optional(bool, false)
   }))
+}
+
+variable "demo_admin" {
+  description = "Whether the demo admin path is open (10 §2.1): tables marked demo_admin_only exist only then."
+  type        = bool
+  default     = false
 }
 
 variable "prefix" {

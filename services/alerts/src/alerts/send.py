@@ -15,6 +15,9 @@ Order, and why:
    (`escalation.py`), from step 0; on the line-holder's own chain each contact's grant is re-read and their
    SMS uses their own alias (06 §11.2). The line-holder's copy above uses the Watch's alias (none for them).
 5. **Send** with one retry; a second failure → `ALERT_FAILED` row and the next recipient in the chain.
+6. **Record** the delivered SMS in the sent-SMS ledger (06 §3.1). The ledger is demo evidence, not the alert:
+   a failed write is logged (role and template only), counted (`sent_log_failed`) and audited
+   `ALERT_LOG_FAILED`; the SMS is not re-sent and the invocation still succeeds (06 §8).
 """
 
 from __future__ import annotations
@@ -143,18 +146,19 @@ async def send_one(
     audience: str | None = None,
 ) -> bool:
     """One SMS with one retry (06 §8). False → `ALERT_FAILED` has been audited. A delivered SMS goes into the
-    local sent-SMS ledger when there is one, under `audience` (default: the recipient's role)."""
+    sent-SMS ledger (06 §3.1; whichever `SentLog` the service was built with) under `audience` (default: the
+    recipient's role)."""
     for attempt in (1, 2):
         try:
             await svc.sender.send(r.e164, body, label=r.label)
-            svc.count("sms_sent")
-            if svc.sent_log is not None:
-                svc.sent_log.record(
-                    at=now, template=ref, role=audience or r.audience, user_id=r.user_id, body=body
-                )
-            return True
         except SendError:
             log.warning("send failed to=%s attempt=%d", r.label, attempt)
+            continue
+        svc.count("sms_sent")
+        record_sent(
+            svc, r, body, line_id=line_id, now=now, trigger=trigger, ref=ref, role=audience or r.audience
+        )
+        return True
     svc.count("sms_failed")
     audit(
         svc,
@@ -166,6 +170,35 @@ async def send_one(
         message_ref=ref,
     )
     return False
+
+
+def record_sent(
+    svc: AlertsService,
+    r: Recipient,
+    body: str,
+    *,
+    line_id: str,
+    now: datetime,
+    trigger: Trigger,
+    ref: str,
+    role: str,
+) -> None:
+    """Put a delivered SMS in the sent-SMS ledger. A failure here must not fail the alert that already went out
+    (human decision 2026-10-11): log without number or body, count, audit `ALERT_LOG_FAILED`, carry on."""
+    try:
+        svc.sent_log.record(at=now, template=ref, role=role, user_id=r.user_id, body=body)
+    except Exception as exc:  # noqa: BLE001 - any store error; the SMS is out and must not be re-sent (06 §8)
+        svc.count("sent_log_failed")
+        log.warning("sent-SMS ledger write failed to=%s ref=%s error=%s", r.label, ref, type(exc).__name__)
+        audit(
+            svc,
+            line_id,
+            now,
+            trigger=trigger,
+            outcome="ok",
+            codes=[ReasonCode.ALERT_LOG_FAILED],
+            message_ref=ref,
+        )
 
 
 @dataclass
@@ -199,7 +232,13 @@ async def deliver(svc: AlertsService, d: Decision) -> DeliveryResult:
     limited: list[ReasonCode] = []
     for code in d.codes:
         if rate_limited(d.prev, code, now, svc.thresholds) or not S.claim_alert(
-            svc.store, d.line_id, d.watcher_user_id, code.value, now, svc.thresholds.RATE_LIMIT
+            svc.store,
+            d.line_id,
+            d.watcher_user_id,
+            code.value,
+            now,
+            svc.thresholds.RATE_LIMIT,
+            wall=svc.wall(),
         ):
             limited.append(code)
         else:

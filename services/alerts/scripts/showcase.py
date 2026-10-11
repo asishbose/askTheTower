@@ -44,7 +44,7 @@ async def run(fast: bool, scale: float) -> int:
     import boto3
     import httpx
     from alerts import escalation
-    from alerts.clock import MockCarrierClock
+    from alerts.clock import MockCarrierClock, wall_clock
     from alerts.local import create_app
     from alerts.runner import poll
     from alerts.send_backends import LogSender
@@ -97,7 +97,10 @@ async def run(fast: bool, scale: float) -> int:
         breakers=BreakerRegistry(),
     )
     sender = LogSender()
-    svc = make_service(store, carrier, MockCarrierClock(BASE, transport=mock_t), sender=sender)
+    # a real DynamoDB Local sweeps TTLs by the real time: the showcase is a composition root, so the real wall
+    svc = make_service(
+        store, carrier, MockCarrierClock(BASE, transport=mock_t), sender=sender, wall=wall_clock
+    )
     lazy.app = create_app(svc)
     w = World(
         svc=svc, store=store, hasher=LocalLineIdHasher(LINE_KEY), cipher=LocalMsisdnCipher(MSISDN_KEY), now=T0

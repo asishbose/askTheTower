@@ -13,7 +13,7 @@ from alerts import escalation
 from alerts.config import Settings
 from alerts.local import create_app
 from alerts.runner import process_line
-from alerts.sent_log import SentLog
+from alerts.sent_log import MemorySentLog
 from alerts.testing import ASISH, BEARER, MOM, T0, FakeLine, World
 
 from tests.helpers.patterns import phone_hits
@@ -25,7 +25,7 @@ AUTH = {"Authorization": f"Bearer {BEARER}"}
 
 
 async def test_grantee_watch_sms_is_recorded_as_watcher(world: World, mom: str, carrier, clock) -> None:
-    world.svc.sent_log = SentLog()
+    world.svc.sent_log = MemorySentLog()
     await process_line(world.svc, mom, "poll", T0)
     clock.set(T0 + M)
     carrier.swap(MOM)
@@ -38,7 +38,7 @@ async def test_grantee_watch_sms_is_recorded_as_watcher(world: World, mom: str, 
 
 
 async def test_owner_chain_steps_are_escalation_n(world: World, carrier, clock) -> None:
-    world.svc.sent_log = SentLog()
+    world.svc.sent_log = MemorySentLog()
     world.standard()
     world.grant_watch(ASISH, "user-asish", "user-partner", "asish")
     world.grant_watch(ASISH, "user-asish", "user-neighbour", "asish")
@@ -69,7 +69,7 @@ async def _get(svc: Any, **params: Any) -> httpx.Response:
 
 
 async def test_endpoint_returns_entries_after_n(world: World) -> None:
-    world.svc.sent_log = SentLog()
+    world.svc.sent_log = MemorySentLog()
     for i in range(3):
         world.svc.sent_log.record(
             at=T0, template="UNREACHABLE.sms", role="watcher", user_id="u", body=f"b{i}"
@@ -81,21 +81,21 @@ async def test_endpoint_returns_entries_after_n(world: World) -> None:
 
 
 async def test_endpoint_needs_the_bearer(world: World) -> None:
-    world.svc.sent_log = SentLog()
+    world.svc.sent_log = MemorySentLog()
     app = create_app(world.svc)
     async with httpx.AsyncClient(transport=httpx.ASGITransport(app=app), base_url="http://alerts.test") as c:
         assert (await c.get("/internal/sent")).status_code == 401
 
 
 async def test_endpoint_absent_outside_local_mode(world: World) -> None:
-    world.svc.sent_log = SentLog()
+    world.svc.sent_log = MemorySentLog()
     world.svc.settings = Settings(mode="lambda", internal_bearer=BEARER)
     assert (await _get(world.svc)).status_code == 404
 
 
 def test_build_service_has_a_ledger_only_in_local_mode() -> None:
     assert Settings.from_env({"ALERTS_MODE": "local"}).mode == "local"
-    log = SentLog(maxlen=2)
+    log = MemorySentLog(maxlen=2)
     for i in range(3):
         log.record(at=T0, template="t", role="watcher", user_id="u", body=str(i))
     assert [e.n for e in log.after(0)] == [2, 3]  # bounded, numbering keeps counting

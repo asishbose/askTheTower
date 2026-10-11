@@ -17,10 +17,10 @@ from tower_audit import SYSTEM_ALERTS, AuditOutcome, AuditRecord, Trigger, appen
 from tower_consent import LineIdHasher, MsisdnCipher, Store
 from tower_policy import ReasonCode, Thresholds, default_thresholds, policy_version
 
-from alerts.clock import Clock
+from alerts.clock import Clock, Wall
 from alerts.config import Settings
 from alerts.send_backends import SmsSender
-from alerts.sent_log import SentLog
+from alerts.sent_log import NullSentLog, SentLog
 
 log = logging.getLogger("alerts")
 
@@ -32,11 +32,12 @@ class AlertsService:
     cipher: MsisdnCipher
     carrier: CarrierClient
     sender: SmsSender
-    clock: Clock
+    clock: Clock  # every window (rate limit, escalation, ACK_DISTRUST) compares against it
+    wall: Wall  # real time, for DynamoDB TTL attributes only (06 §7 "Clocks")
     settings: Settings = field(default_factory=Settings)
     thresholds: Thresholds = field(default_factory=default_thresholds)
     metrics: Counter[str] = field(default_factory=Counter)
-    sent_log: SentLog | None = None  # ALERTS_MODE=local only: GET /internal/sent (06 §3.1)
+    sent_log: SentLog = field(default_factory=NullSentLog)  # chosen by runner.build_service (06 §3.1)
 
     def count(self, name: str, n: int = 1) -> None:
         """Process-local counters (no per-line labels, 10 §2)."""

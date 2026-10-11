@@ -25,13 +25,13 @@ from tower_policy import ReasonCode
 
 from alerts import escalation
 from alerts import state as S
-from alerts.clock import Clock, MockCarrierClock, SystemClock
+from alerts.clock import Clock, MockCarrierClock, SystemClock, Wall, wall_clock
 from alerts.config import Settings, carrier_env
 from alerts.context import AlertsService, audit
 from alerts.evaluate import Decision, evaluate
 from alerts.send import DeliveryResult, deliver
 from alerts.send_backends import LogSender, SmsSender, SnsSender, WebhookSmsSender
-from alerts.sent_log import SentLog
+from alerts.sent_log import DynamoSentLog, MemorySentLog, NullSentLog, SentLog
 from alerts.subscriptions import watchdog
 
 log = logging.getLogger("alerts.runner")
@@ -128,6 +128,15 @@ def build_clock(settings: Settings, env: Mapping[str, str]) -> Clock:
     return SystemClock()
 
 
+def build_sent_log(settings: Settings, store: Store, wall: Wall = wall_clock) -> SentLog:
+    """06 §3.1: in memory locally; `SentSms` on lambda/k8s only with `ALERTS_ADMIN=1`; otherwise nothing."""
+    if settings.mode == "local":
+        return MemorySentLog()
+    if settings.admin:
+        return DynamoSentLog(store, wall=wall)
+    return NullSentLog()
+
+
 def build_service(env: Mapping[str, str] | None = None) -> AlertsService:
     """Everything from the environment (README "Config"). Creates `AlertsState` locally (Terraform on AWS)."""
     from camara_client import CarrierConfig, make_client
@@ -148,6 +157,7 @@ def build_service(env: Mapping[str, str] | None = None) -> AlertsService:
         carrier=carrier,
         sender=build_sender(settings),
         clock=build_clock(settings, e),
+        wall=wall_clock,  # DynamoDB TTLs only; never a window (06 §7 "Clocks")
         settings=settings,
-        sent_log=SentLog() if settings.mode == "local" else None,
+        sent_log=build_sent_log(settings, store, wall_clock),
     )

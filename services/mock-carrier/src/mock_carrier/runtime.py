@@ -7,13 +7,14 @@ from __future__ import annotations
 import asyncio
 import logging
 import random
+from collections.abc import Callable
 from dataclasses import dataclass
 from datetime import datetime, timedelta
 from typing import Any
 
 import httpx
 
-from mock_carrier.clock import Clock, iso
+from mock_carrier.clock import Clock, MockClock, WallClock, iso
 from mock_carrier.oauth import ClientRegistry, SimulationConflict
 from mock_carrier.scenarios import load_scenario
 from mock_carrier.settings import Settings
@@ -52,8 +53,15 @@ class FiredEvent:
 
 
 class Runtime:
-    def __init__(self, settings: Settings, *, sink_transport: httpx.AsyncBaseTransport | None = None) -> None:
+    def __init__(
+        self,
+        settings: Settings,
+        *,
+        sink_transport: httpx.AsyncBaseTransport | None = None,
+        wall: Callable[[], datetime] = Clock.wall_now,
+    ) -> None:
         self.settings = settings
+        self._wall = wall
         self.specs = SpecSet(
             settings.specs_dir,
             base_url=settings.base_url,
@@ -61,7 +69,7 @@ class Runtime:
         )
         self.clients = ClientRegistry.from_file(settings.clients_file)
         self.state = State()
-        self.clock = Clock(datetime.fromisoformat("2026-01-01T00:00:00+00:00"))
+        self.clock: MockClock = Clock(datetime.fromisoformat("2026-01-01T00:00:00+00:00"))
         self.sender = WebhookSender(self, transport=sink_transport)
         self._lock = asyncio.Lock()
         self._jitter = random.Random() if settings.jitter_ms > 0 else None  # noqa: S311 — latency jitter, not crypto
@@ -92,9 +100,16 @@ class Runtime:
 
     # --- scenarios -------------------------------------------------------------------------------
     def load(self, name: str, variant: str | None = None) -> None:
-        sc = load_scenario(self.settings.scenarios_dir, name, variant)
+        """Reset all state to a scenario. With `MOCK_CLOCK=wall` (08 §3) the clock restarts at wall time, offset 0,
+        so every reset path (the startup load, `make seed-aws`, the demo UI's Reset) lands on wall time."""
+        if self.settings.clock == "wall":
+            wall_clock = WallClock(self._wall)
+            sc = load_scenario(self.settings.scenarios_dir, name, variant, start=wall_clock.now())
+            self.clock = wall_clock
+        else:
+            sc = load_scenario(self.settings.scenarios_dir, name, variant)
+            self.clock = Clock(sc.clock)
         self.state = State(scenario=sc.name, variant=sc.variant, lines=sc.lines, timeline=sc.timeline)
-        self.clock = Clock(sc.clock)
 
     def now(self) -> datetime:
         return self.clock.now()

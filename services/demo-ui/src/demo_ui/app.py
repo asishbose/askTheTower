@@ -1,4 +1,5 @@
-"""Routes (doc 11 §2): the page, `/healthz`, `/events` (SSE), `/say`, `/macro/{name}`, `/carrier/*`, `/binding/*`.
+"""Routes (doc 11 §2): the page, `/healthz`, `/events` (SSE), `/say`, `/macro/{name}`, `/carrier/*`, `/binding/*`;
+pane 5's `/ops/*` and its two fragments are in `routes/ops.py`.
 
 Guards on every route but `/healthz`:
 - `DEMO_UI_TOKEN` when set (decision 7): `?token=` once (sets an HttpOnly, SameSite=Strict cookie) or a bearer.
@@ -26,6 +27,7 @@ from demo_ui import views
 from demo_ui.clients import FAULT_KINDS, LINE_EVENTS, MockAdmin, Unavailable
 from demo_ui.deps import Deps
 from demo_ui.feed import Feed, Frame
+from demo_ui.routes.ops import ops_router
 from demo_ui.runner import MACROS, Busy
 
 log = logging.getLogger("demo_ui")
@@ -116,6 +118,8 @@ def create_app(deps: Deps) -> FastAPI:
                 "binding_admin": s.binding_admin_enabled,
             },
             "macro_running": deps.runner.busy,
+            "admin": "on" if s.admin_on else "off",
+            "ops": {"runner": deps.ops.off is None, "running": deps.ops.busy},
         }
 
     @app.get("/", response_class=HTMLResponse)
@@ -132,7 +136,7 @@ def create_app(deps: Deps) -> FastAPI:
 
     @app.get("/fragment/pill", response_class=HTMLResponse)
     async def pill() -> HTMLResponse:
-        return HTMLResponse(views.render("pill.html", mode=deps.mode, env=s.env))
+        return HTMLResponse(views.render("pill.html", mode=deps.mode, env=s.env, admin=s.admin_label))
 
     @app.get("/fragment/conversation-controls", response_class=HTMLResponse)
     async def conversation_controls() -> HTMLResponse:
@@ -140,9 +144,10 @@ def create_app(deps: Deps) -> FastAPI:
             views.render(
                 "conversation_controls.html",
                 macros=MACROS,
-                captions=views.CAPTIONS,
-                carrier=s.carrier_enabled,
-                off_reason=s.carrier_off_reason,
+                captions=views.captions(local=s.local),
+                carrier=s.macros_enabled,
+                off_reason=s.macros_off_reason or s.carrier_off_reason,
+                off_macros=views.off_macros(local=s.local),
                 personas=s.personas,
                 free_text=deps.mode == "bedrock",
             )
@@ -181,8 +186,16 @@ def create_app(deps: Deps) -> FastAPI:
 
     @app.post("/macro/{name}", response_class=HTMLResponse)
     async def macro(name: str) -> HTMLResponse:
-        if not s.carrier_enabled:
-            return status(s.carrier_off_reason, "fail")
+        if not s.macros_enabled:
+            return status(s.macros_off_reason or s.carrier_off_reason, "fail")
+        off = views.off_macros(local=s.local).get(name)
+        if off:
+            return status(off, "fail")
+        if deps.ops.busy:  # one lock with pane 5 (doc 11 §2): never a macro beside an Ops job
+            job = deps.ops.job.target.name if deps.ops.job else "a job"
+            return HTMLResponse(
+                views.render("status.html", text=f"running: {job}", level="fail"), status_code=409
+            )
         try:
             deps.runner.start(name)
         except KeyError:
@@ -212,7 +225,10 @@ def create_app(deps: Deps) -> FastAPI:
 
     @app.post("/carrier/reset", response_class=HTMLResponse)
     async def carrier_reset() -> HTMLResponse:
-        return await carrier_call("Reset done (make seed)", deps.runner.reset)
+        if s.carrier_enabled and not s.macros_enabled:
+            return status(s.macros_off_reason or s.carrier_off_reason, "fail")
+        what = "Reset done (make seed)" if s.local else "Reset done (mock, Alerts, re-grant)"
+        return await carrier_call(what, deps.runner.reset)
 
     @app.post("/carrier/advance", response_class=HTMLResponse)
     async def advance(minutes: Annotated[int, Form(ge=1, le=240)]) -> HTMLResponse:
@@ -256,5 +272,6 @@ def create_app(deps: Deps) -> FastAPI:
         feed.poke()
         return status(f"Mom: {action} Asish's watch")
 
+    app.include_router(ops_router(deps))
     app.state.deps = deps
     return app

@@ -84,3 +84,15 @@ variable "assume_client_id" {
   type        = string
   default     = "phone-asish"
 }
+
+variable "admin_token" {
+  description = "MOCK_ADMIN_TOKEN (08 §3, G1): the bearer for mutating /_admin routes; key admin_token of the registry secret. The demo admin bearer while the admin path is open (10 §2.1)."
+  type        = string
+  sensitive   = true
+}
+
+variable "admin_paths_enabled" {
+  description = "Forward the demo UI's /_admin paths (never /_admin/sink) from the internal ALB: the demo admin path (10 §2.1)."
+  type        = bool
+  default     = false
+}

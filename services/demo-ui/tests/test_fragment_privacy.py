@@ -1,4 +1,4 @@
-"""Doc 11 §8.3, §11 "Privacy" over the prompt-21 markup: every one of the twelve fragments, rendered through
+"""Doc 11 §8.3, §11 "Privacy" over the prompt-21 markup: every one of the sixteen fragments (twelve, plus pane 5's four from prompt 22), rendered through
 `views.render` with a demo number in every free string it shows, carries no number, in text or in the new
 `data-*` and `title` attributes `stage.js` reads.
 
@@ -15,6 +15,7 @@ from typing import Any
 
 import pytest
 from demo_ui import views
+from demo_ui.ops.aws_status import Checklist, Step
 from ref_client.demo import StepReport
 from ref_client.transcript import ToolCall, Turn
 
@@ -101,8 +102,29 @@ CASES: dict[str, dict[str, Any]] = {
 }
 
 
+JOB = {"name": f"up {N}", "label": SAY, "state": "fail", "code": 2, "duration": f"{G} s"}
+OPS_CASES: dict[str, dict[str, Any]] = {  # prompt 22: pane 5's four fragments
+    "ops_log.html": {"lines": [SAY, f"Bearer {N}", G]},
+    "ops_status.html": {"job": JOB},
+    "ops.html": {
+        "off": None,
+        "groups": [("stack", [{"name": f"up{N}", "label": SAY, "why": G, "cta": True}])],
+        "stack_down": [N, G],
+        "busy": True,
+        "job": JOB,
+        "lines": [SAY],
+    },
+    "ops_checklist.html": {
+        "c": Checklist(
+            tuple(Step(n, f"step {N}", "fail", f"make push ENV=aws {G}", SAY) for n in range(1, 8))
+        )
+    },
+}
+
+
 def _rendered() -> dict[str, str]:
-    out = {name: views.render(name, **ctx) for name, ctx in CASES.items()}
+    out = {name: views.render(name, **ctx) for name, ctx in (CASES | OPS_CASES).items()}
+    out["ops_off.html"] = views.render("ops.html", **{**OPS_CASES["ops.html"], "off": SAY})
     out["turn.html"] = views.step_fragment(_report(), agent="scripted")
     out["said.html"] = views.say_fragment("mom", _turn(), agent="bedrock")
     out["qr.html"] = views.bind_fragment(f"http://localhost:8081/bind/tok?n={N}", "mom")
@@ -121,4 +143,4 @@ def test_no_fragment_carries_a_number_in_text_or_attributes() -> None:
 
 
 def test_every_template_is_covered_here() -> None:
-    assert set(_rendered()) == {p.name for p in TEMPLATES.glob("*.html")}
+    assert set(_rendered()) - {"ops_off.html"} == {p.name for p in TEMPLATES.glob("*.html")}

@@ -1,0 +1,16 @@
+{% if off %}
+<div class="off-panel" data-off><svg class="i" aria-hidden="true"><use href="/static/img/icons.svg#pause"></use></svg><p class="off">{{ off }}</p></div>
+{% else %}
+{% if stack_down %}<p class="ops-wait" data-down="{{ stack_down | join(' ') }}"><svg class="i" aria-hidden="true"><use href="/static/img/icons.svg#pause"></use></svg>waiting for the stack: run <code>up</code> <span class="muted">(not answering: {{ stack_down | join(", ") }})</span></p>{% endif %}
+<div class="ops-groups">{% for group, buttons in groups %}
+  <div class="ops-group" role="group" aria-label="{{ group }} targets"><span class="ops-group-name">{{ group }}</span>
+    {% for b in buttons %}<button class="btn{% if b.cta %} primary{% endif %}" data-target="{{ b.name }}" hx-post="/ops/run/{{ b.name }}" hx-target="#ops-msg" hx-swap="innerHTML" {% if busy or b.why %}disabled title="{{ b.why or 'a job is running' }}"{% else %}title="{{ b.label }}"{% endif %}>{{ b.name }}</button>{% endfor %}
+  </div>{% endfor %}
+</div>
+{% endif %}
+<div class="ops-bar">
+  {% include "ops_status.html" %}
+  {% if busy %}<button class="btn stop" hx-post="/ops/stop" hx-target="#ops-msg" hx-swap="innerHTML"><svg class="i" aria-hidden="true"><use href="/static/img/icons.svg#cross"></use></svg>Stop</button>{% endif %}
+  <span id="ops-msg"></span>
+</div>
+<div id="ops-log" class="ops-log" sse-swap="ops" hx-swap="beforeend" role="log" aria-label="job log" tabindex="0">{% include "ops_log.html" %}</div>

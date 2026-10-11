@@ -10,6 +10,7 @@
   <script src="/static/htmx.min.js"></script>
   <script src="/static/htmx-sse.js"></script>
   <script type="module" src="/static/stage.js"></script>
+  <script type="module" src="/static/ops.js"></script>
 </head>
 <body hx-ext="sse" sse-connect="/events">
   <a class="skip" href="#panes">Skip to the panes</a>
@@ -91,6 +92,21 @@
       </div>
     </section>
   </main>
+
+  <details class="ops-card ops" id="pane-ops" aria-labelledby="h-ops">
+    <summary><h2 id="h-ops"><svg class="i" aria-hidden="true"><use href="/static/img/icons.svg#bolt"></use></svg>Ops <small>local make targets from an allowlist · the AWS pipeline, read-only</small></h2><span id="ops-status" sse-swap="ops-status"></span></summary>
+    <div class="ops-cols">
+      <section class="ops-col" aria-labelledby="h-ops-run">
+        <h3 id="h-ops-run">Run here <small>on this laptop, ENV=local, one job at a time</small></h3>
+        <div id="ops-run" hx-get="/fragment/ops" hx-trigger="load, sse:ops-status"></div>
+      </section>
+      <section class="ops-col" aria-labelledby="h-ops-aws">
+        <h3 id="h-ops-aws">AWS pipeline <small>read-only: copy a command into a terminal</small>
+          <button id="ops-recheck" class="btn" type="button"><svg class="i" aria-hidden="true"><use href="/static/img/icons.svg#reset"></use></svg>re-check</button></h3>
+        <div id="ops-checklist" hx-get="/fragment/ops-checklist" hx-trigger="load, every 15s, click from:#ops-recheck"></div>
+      </section>
+    </div>
+  </details>
   <footer>Demo tooling, laptop only. It decides nothing: outcome chips are Tower's reason codes. No phone number is shown.</footer>
 </body>
 </html>

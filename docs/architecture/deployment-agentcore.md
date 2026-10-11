@@ -7,6 +7,8 @@ differ, §2 says so.
 
 **Web chat (prompt 20, designed and built 2026-10-09; validated offline, never applied).** `make deploy` also creates the Cognito pool (`modules/cognito`), the web chat agent as a second Runtime (`agentcore_runtime`, protocol HTTP), and the page on S3 + CloudFront with a Lambda function URL in front of the agent (`modules/web_chat`). Contract: [`components/09-reference-client.md`](components/09-reference-client.md) §6. Users and the page upload are step 10, after the apply. The code exists (`terraform validate` passes; `tests/aws/test_terraform_static.py` checks the names below); nothing of it has been planned or applied.
 
+**Demo admin path (prompt 22, specified 2026-10-11; off by default, never applied).** With `demo_admin_cidrs` non-empty, `make deploy` adds CIDR-gated, bearer-protected routes on the existing public HTTP API so the laptop's demo UI can reach the mock's `/_admin`, Alerts' `/internal/sent` and `/internal/reset`, and the binding page's `/_admin` (bearer mode). Page 1 draws it dashed (A1). Names, status codes and teardown: [`components/10-scheduler-and-infra.md`](components/10-scheduler-and-infra.md) §2.1; the TODO(human) sequence: `docs/submission/build-log/22-ops.md`.
+
 **Status:** the AWS column has never been planned or applied. It is written, `terraform validate` passes and
 `tests/aws` passes offline, but every step after `make build` is unverified (see
 the prompt-13 build log, kept outside the repo). On page 2 those steps have dashed borders and
@@ -99,7 +101,7 @@ the tag the last `make push` completed (`artifacts/image-tag`), else the git sha
 - **Rollback:** re-run it (idempotent), or `make down`.
 
 ### Step 9 — `make outputs` (runs twice inside step 6)
-- **Artefact:** `mk/aws.mk` runs `terraform output -json > artifacts/tf-outputs.json`. `scripts/render_env.py --env aws` then writes `deploy/.env.aws`. That file holds `TOWER_URL`, `BINDING_URL`, `ALERTS_URL`, `CARRIER_GATEWAY_URL`, the table prefix and the KMS ARNs. It holds no secrets. `mk/vars.mk` includes it for every `ENV=aws` target.
+- **Artefact:** `mk/aws.mk` runs `terraform output -json > artifacts/tf-outputs.json`. `scripts/render_env.py --env aws` then writes `deploy/.env.aws`. That file holds `TOWER_URL`, `BINDING_URL`, `ALERTS_URL`, `CARRIER_GATEWAY_URL`, `WEB_CHAT_URL`, the table prefix and the KMS ARNs. With the demo admin path closed (the default) it holds no secrets. Open, it also holds `MOCK_URL`, `BINDING_ADMIN_URL` and `DEMO_ADMIN_BEARER` (the one admin bearer, decision 1 of 2026-10-11; never the Alerts internal bearer), read from SSM by the script and never printed (10 §2.1); the outputs JSON holds only the parameter names. `mk/vars.mk` includes it for every `ENV=aws` target.
 - **Rollback:** delete the two files.
 
 ### Step 10 — Web chat users and page · `TODO(human)` build-log/20
@@ -132,6 +134,11 @@ the tag the last `make push` completed (`artifacts/image-tag`), else the git sha
   6. `uv run pytest tests/aws -m nightly`, which runs the conformance fixtures through `GatewayClient`.
   7. Web chat: sign in at `make web-chat-url` as `asish`, ask "Is my line OK?" → `NOT_BOUND` + link; open it on the phone → Verify → ask again → an answer. `curl -X POST <agent_url>` with no bearer → 401.
 - **Preconditions:** `deploy/.env.aws` (the `require-env` guard) and a bearer for the reference client. How `make demo ENV=aws` gets its JWT is still open (build-log/14).
+
+### Step 12b — Demo admin path, open and close (optional) · `TODO(human)` build-log/22-ops
+- **Command:** in `deploy/terraform/envs/aws.tfvars` set `demo_admin_cidrs = ["<your public IP>/32"]`; `make plan && make deploy` (re-runs `make outputs`); `make showcase-ui ENV=aws`; Reset, Moment 1–3. Close: `demo_admin_cidrs = []`, `make deploy`.
+- **Result:** open — the four admin routes, the `admin_gate` authorizer (address **and** `DEMO_ADMIN_BEARER`), two ALB rules, `SentSms`, one SSM parameter, the admin env flags, and the mock task rolled onto the new admin token (press Reset once it is up: the new task loads at wall time, `MOCK_CLOCK=wall`); closed — none of them, and `deploy/.env.aws` without the bearer. Changing the address list replaces the bearer: re-run `make outputs`.
+- **Check:** `uv run pytest tests/aws/test_admin_gate.py -m nightly` (closed → 404; open → 401 without `Authorization`, 403 with a wrong bearer, 200 with `DEMO_ADMIN_BEARER`; via CloudFront → 403).
 
 ### Step 13 — `make down ENV=aws` · `TODO(human)` build-log/13 (confirm zero except ECR)
 - **Artefact:** `mk/aws.mk` asks for confirmation (`FORCE=1` skips it), runs `terraform init` and `terraform destroy -auto-approve` on the main root (with the tfvars file, without `image_tag`), then runs `compose down -v`. That last part removes the local stack too.
@@ -214,6 +221,7 @@ These are list prices for us-east-1, **estimated, not measured**. They are consi
 | **Fixed, idle** | | **≈ 0.06 (≈ $1.40/day)** |
 | Usage-priced | Runtime ×2 (active vCPU/GB-seconds; the agent runtime only while a chat request runs), Bedrock tokens for the agent (Nova Micro), Gateway and Identity calls, Lambda, HTTP API, CloudFront, DynamoDB on-demand, SNS SMS per message | demo volume: cents per day |
 | Unknown | the Gateway/Identity managed VPC resource (`private_endpoint`), which may bill as a VPC Lattice resource | measure |
+| Demo admin path only | `admin_gate` Lambda per admin request, `SentSms` on-demand writes, 1 SSM standard parameter, 2 ALB rules | ≈ 0 |
 | Cut line only | NAT gateway (`enable_nat_gateway`) | +0.045 + $0.045/GB |
 | Separate stack | EKS (`make deploy-eks`) | ≈ 0.21 |
 

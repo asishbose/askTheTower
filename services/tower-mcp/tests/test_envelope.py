@@ -183,6 +183,7 @@ def test_every_engine_code_is_covered() -> None:
     engine = {c.value for c in ReasonCode} - {
         "SUPPRESSED_REVOKED",
         "ALERT_FAILED",
+        "ALERT_LOG_FAILED",
         "ACK_IGNORED_SWAPPED_LINE",
     }
     assert covered == engine

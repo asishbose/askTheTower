@@ -2,7 +2,7 @@
 
 | Event | Route |
 |---|---|
-| API Gateway (HTTP API v2 or REST v1) | the same FastAPI app as local: `/hooks/...`, `/internal/watch` |
+| API Gateway (HTTP API v2 or REST v1) | the same FastAPI app as local: `/hooks/...`, `/internal/watch`; with `ALERTS_ADMIN=1` also `/internal/sent`, `/internal/reset` (06 §3.1) |
 | EventBridge Scheduler `{"profile": "transplant" \\| "care" \\| "self"}` | `runner.poll(profile)` |
 | SNS (two-way SMS inbound topic) `Records[].Sns.Message` = `{originationNumber, messageBody}` | `escalation.handle_reply` |
 | direct invoke `{"action": "watch", line_id, enable, ...}` | `internal_api.set_watch` (Tower may invoke instead of HTTP) |

@@ -36,7 +36,9 @@ showcase-audit: require-env ## Audit: Mom's view, chain verified, tamper detecti
 showcase-ref: require-env ## Reference client: three moments from the terminal, then the corpus
 	$(UV) run ref-client demo --env $(ENV) && $(MAKE) corpus
 # The compose demo-ui container (scripted, CI and `make demo`) publishes 127.0.0.1:8090, so the host run takes 8091
-# and both can be open side by side against the same stack (11 §12, 10 §5).
+# and both can be open side by side against the same stack (11 §12, 10 §5). On ENV=aws the UI reads
+# deploy/.env.aws itself (11 §6): its admin URLs and bearers win over the shell, and nothing is blanked but DynamoDB's
+# local endpoint.
 SHOWCASE_UI_PORT ?= 8091
 showcase-ui: require-env ## Demo control room on the host at 127.0.0.1:8091 (needs make up): Bedrock when credentials resolve, else scripted
 	@if (exec 3<>/dev/tcp/127.0.0.1/$(SHOWCASE_UI_PORT)) 2>/dev/null; then \
@@ -44,7 +46,7 @@ showcase-ui: require-env ## Demo control room on the host at 127.0.0.1:8091 (nee
 	@echo "showcase-ui: http://127.0.0.1:$(SHOWCASE_UI_PORT) — the pill shows the agent mode and ENV=$(ENV); Ctrl-C to stop"
 	@ALERTS_INTERNAL_BEARER="$$(sed -n 's/^INTERNAL_BEARER=//p' $(COMPOSE_ENV_FILE) 2>/dev/null)" \
 	  REF_AGENT="$${REF_AGENT:-auto}" DEMO_UI_HOST=127.0.0.1 DEMO_UI_PORT=$(SHOWCASE_UI_PORT) \
-	  $(if $(filter local,$(ENV)),,MOCK_URL= ALERTS_URL= DYNAMO_ENDPOINT=) $(UV) run demo-ui
+	  $(if $(filter local,$(ENV)),,DYNAMO_ENDPOINT= DEMO_UI_AWS_ENV_FILE=deploy/.env.$(ENV)) $(UV) run demo-ui
 showcase-alexa: ## Alexa+ simulator script and Tower log tail
 	$(PY) services/tower-mcp/scripts/showcase_alexa.py $(SHOWCASE_ARGS)
 showcase-infra: ## Clean-machine timing; terraform plan; teardown

@@ -6,7 +6,8 @@
 
 Sources: `tower_consent.tables.terraform_definitions()` (Users, Lines, Grants, Watches, Audit, BindTokens — the
 output of `python -m tower_consent.tables --terraform`) plus `alerts.state.terraform_definition()` (AlertsState):
-seven tables, 10 §2. The prefix is applied by Terraform (`<name_prefix>-<environment>-`), so names here are
+seven tables, 10 §2; plus `alerts.sent_log.terraform_definition()` (SentSms, `"demo_admin_only": true`), which the
+module creates only while `demo_admin_cidrs` is non-empty (06 §7, 10 §2.1). The prefix is applied by Terraform (`<name_prefix>-<environment>-`), so names here are
 logical. `tests/aws/test_terraform_static.py` runs `--check`.
 """
 
@@ -22,11 +23,13 @@ OUT = Path(__file__).resolve().parents[2] / "tables.auto.tfvars.json"
 
 
 def definitions() -> dict[str, Any]:
+    from alerts import sent_log
     from alerts.state import ALERTS_STATE, terraform_definition
     from tower_consent.tables import terraform_definitions
 
     tables: dict[str, Any] = dict(terraform_definitions(prefix="")["tables"])
     tables[ALERTS_STATE.name] = terraform_definition(prefix="")
+    tables[sent_log.SENT_SMS.name] = sent_log.terraform_definition(prefix="")
     return {"dynamodb_tables": dict(sorted(tables.items()))}
 
 

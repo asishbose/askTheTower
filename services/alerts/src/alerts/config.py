@@ -5,6 +5,8 @@
 | `ALERTS_MODE` | `local` | `lambda` (SNS sender, system clock), `local` (log sender, FastAPI + in-process scheduler) or `k8s` (SNS sender, FastAPI without a scheduler: CronJobs run `python -m alerts.job`) |
 | `HOOKS_BASE_URL` | `https://alerts.local` | public base of `/hooks/...`; CAMARA sinks must be `https://` |
 | `INTERNAL_BEARER` | — | bearer for `/internal/*` and `/inbound/sms`; unset → those routes refuse (fail closed) |
+| `DEMO_ADMIN_BEARER` | — | the only bearer `GET /internal/sent` and `POST /internal/reset` accept when set (Terraform sets it on AWS while the demo admin path is open; never `INTERNAL_BEARER`). Unset: local mode keeps `INTERNAL_BEARER` for them; any other mode refuses them (503) — 06 §3.1 |
+| `ALERTS_ADMIN` | off | `1`: serve `GET /internal/sent` and `POST /internal/reset` outside local mode and keep the sent SMS in `SentSms` (06 §3.1, §3.2; Terraform sets it only while the demo admin path is open, 10 §2.1) |
 | `SNS_TOPIC_ARN` | — | the two-way-SMS inbound topic (ack replies) — recorded for Terraform; outbound SMS publishes by number |
 | `ALERTS_SENDER` | `sns` (lambda, k8s) / `log` (local) | `sns`, `log` or `webhook` |
 | `SMS_GATEWAY_URL` | — | local only: also POST each SMS to this URL (`{"to", "body"}`) — e.g. an Android SMS gateway |
@@ -23,7 +25,7 @@ from __future__ import annotations
 
 import os
 from collections.abc import Mapping
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import timedelta
 from typing import Literal
 
@@ -49,6 +51,21 @@ class Settings:
     default_tz: str = "America/Toronto"
     subscription_ttl: timedelta = timedelta(days=30)
     port: int = 8082
+    admin: bool = False
+    admin_bearer: str | None = field(default=None, repr=False)
+
+    @property
+    def admin_routes(self) -> bool:
+        """`/internal/sent` and `/internal/reset` exist (06 §3.1): local mode, or `ALERTS_ADMIN=1`."""
+        return self.mode == "local" or self.admin
+
+    @property
+    def admin_routes_bearer(self) -> str | None:
+        """The one bearer the admin routes accept (06 §3.1): `DEMO_ADMIN_BEARER` when set; else, in local mode
+        only, `INTERNAL_BEARER` (compose and the in-process tests); else none, so they refuse."""
+        if self.admin_bearer:
+            return self.admin_bearer
+        return self.internal_bearer if self.mode == "local" else None
 
     @classmethod
     def from_env(cls, env: Mapping[str, str] | None = None) -> Settings:
@@ -81,6 +98,8 @@ class Settings:
             default_tz=e.get("ALERTS_DEFAULT_TZ", "America/Toronto"),
             subscription_ttl=timedelta(hours=float(e.get("ALERTS_SUBSCRIPTION_TTL_H", "720"))),
             port=int(e.get("ALERTS_PORT", "8082")),
+            admin=e.get("ALERTS_ADMIN", "").strip() == "1",
+            admin_bearer=e.get("DEMO_ADMIN_BEARER") or None,
         )
 
 

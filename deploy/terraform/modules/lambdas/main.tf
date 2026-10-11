@@ -12,6 +12,11 @@
 # CloudFront (10 §1 already lists it for the binding page). The WAF rate rule is scoped to /hooks/*; API Gateway
 # route throttling on /hooks/* applies either way. The carrier's /oauth2/authorize is passed through to the mock's
 # internal ALB over the VPC link: the phone must reach it over mobile data (rule 7), Gateway must not.
+#
+# Demo admin path (10 §2.1, off by default): with demo_admin_cidrs non-empty, four more specific routes behind the
+# admin_gate REQUEST authorizer (sourceIp in the list and `Authorization: Bearer <DEMO_ADMIN_BEARER>`; address headers
+# ignored). `ANY /internal/{proxy+}` and `$default` stay without an authorizer: Tower's watch API uses /internal/watch
+# with the internal bearer from AgentCore.
 
 locals {
   functions = {
@@ -20,6 +25,8 @@ locals {
     "reconcile"    = { handler = "tower_audit.aws.reconcile_handler", timeout = 300, memory = 512 }
   }
   index_arns      = [for a in var.table_arns : "${a}/index/*"]
+  demo_admin      = length(var.demo_admin_cidrs) > 0
+  mock_admin      = local.demo_admin && var.carrier_authorize_passthrough != null
   public_base_url = var.enable_cloudfront_waf ? "https://${aws_cloudfront_distribution.this[0].domain_name}" : trimsuffix(aws_apigatewayv2_api.this.api_endpoint, "/")
 
   environments = {
@@ -244,6 +251,127 @@ resource "aws_apigatewayv2_route" "carrier_authorize" {
   api_id    = aws_apigatewayv2_api.this.id
   route_key = "GET ${var.carrier_authorize_passthrough.route_path_prefix}"
   target    = "integrations/${aws_apigatewayv2_integration.carrier_authorize[0].id}"
+}
+
+# --- demo admin path (10 §2.1): count/for_each on local.demo_admin, so [] creates nothing --------------------------
+
+data "archive_file" "admin_gate" {
+  count       = local.demo_admin ? 1 : 0
+  type        = "zip"
+  source_file = "${path.module}/admin_gate/handler.py"
+  output_path = "${path.root}/../../artifacts/admin-gate.zip"
+}
+
+resource "aws_iam_role" "admin_gate" {
+  count              = local.demo_admin ? 1 : 0
+  name               = "${var.name}-admin-gate"
+  assume_role_policy = data.aws_iam_policy_document.assume.json
+}
+
+resource "aws_iam_role_policy_attachment" "admin_gate" {
+  count      = local.demo_admin ? 1 : 0
+  role       = aws_iam_role.admin_gate[0].name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+}
+
+resource "aws_cloudwatch_log_group" "admin_gate" {
+  count             = local.demo_admin ? 1 : 0
+  name              = "/aws/lambda/${var.name}-admin-gate"
+  retention_in_days = var.log_retention_days
+}
+
+resource "aws_lambda_function" "admin_gate" {
+  count            = local.demo_admin ? 1 : 0
+  function_name    = "${var.name}-admin-gate"
+  role             = aws_iam_role.admin_gate[0].arn
+  runtime          = "python3.12"
+  architectures    = ["arm64"]
+  handler          = "handler.handler"
+  filename         = data.archive_file.admin_gate[0].output_path
+  source_code_hash = data.archive_file.admin_gate[0].output_base64sha256
+  timeout          = 3
+  memory_size      = 128
+
+  environment {
+    variables = {
+      ALLOWED_CIDRS     = jsonencode(var.demo_admin_cidrs)
+      DEMO_ADMIN_BEARER = var.demo_admin_bearer
+    }
+  }
+
+  logging_config {
+    log_format = "Text"
+    log_group  = aws_cloudwatch_log_group.admin_gate[0].name
+  }
+
+  depends_on = [aws_iam_role_policy_attachment.admin_gate]
+}
+
+resource "aws_apigatewayv2_authorizer" "admin_gate" {
+  count                             = local.demo_admin ? 1 : 0
+  api_id                            = aws_apigatewayv2_api.this.id
+  name                              = "${var.name}-admin-gate"
+  authorizer_type                   = "REQUEST"
+  authorizer_uri                    = aws_lambda_function.admin_gate[0].invoke_arn
+  authorizer_payload_format_version = "2.0"
+  enable_simple_responses           = true
+  # A request without Authorization is a 401 from API Gateway itself; with one, the Lambda decides (403 on deny).
+  # TTL 0: the address is not part of the identity, so a cached allow must never serve another address.
+  identity_sources                 = ["$request.header.Authorization"]
+  authorizer_result_ttl_in_seconds = 0
+}
+
+resource "aws_lambda_permission" "admin_gate" {
+  count         = local.demo_admin ? 1 : 0
+  statement_id  = "AllowHttpApiAuthorizer"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.admin_gate[0].function_name
+  principal     = "apigateway.amazonaws.com"
+  source_arn    = "${aws_apigatewayv2_api.this.execution_arn}/authorizers/${aws_apigatewayv2_authorizer.admin_gate[0].id}"
+}
+
+# The mock's /_admin over the VPC link. `view` is forced to `refs`: the full state holds the scenario's numbers.
+resource "aws_apigatewayv2_integration" "mock_admin" {
+  count                  = local.mock_admin ? 1 : 0
+  api_id                 = aws_apigatewayv2_api.this.id
+  integration_type       = "HTTP_PROXY"
+  integration_method     = "ANY"
+  integration_uri        = var.carrier_authorize_passthrough.listener_arn
+  connection_type        = "VPC_LINK"
+  connection_id          = var.carrier_authorize_passthrough.vpc_link_id
+  payload_format_version = "1.0"
+
+  tls_config {
+    server_name_to_verify = var.carrier_authorize_passthrough.server_name
+  }
+
+  request_parameters = {
+    "overwrite:path"             = "/_admin/$request.path.proxy"
+    "overwrite:header.host"      = var.carrier_authorize_passthrough.server_name
+    "overwrite:querystring.view" = "refs"
+  }
+}
+
+locals {
+  admin_routes = local.demo_admin ? merge(
+    {
+      alerts_sent  = { route_key = "GET /internal/sent", target = aws_apigatewayv2_integration.fn["alerts"].id }
+      alerts_reset = { route_key = "POST /internal/reset", target = aws_apigatewayv2_integration.fn["alerts"].id }
+      binding      = { route_key = "ANY /_admin/{proxy+}", target = aws_apigatewayv2_integration.fn["binding-page"].id }
+    },
+    local.mock_admin ? {
+      mock = { route_key = "ANY /carrier-admin/_admin/{proxy+}", target = one(aws_apigatewayv2_integration.mock_admin[*].id) }
+    } : {},
+  ) : {}
+}
+
+resource "aws_apigatewayv2_route" "admin" {
+  for_each           = local.admin_routes
+  api_id             = aws_apigatewayv2_api.this.id
+  route_key          = each.value.route_key
+  target             = "integrations/${each.value.target}"
+  authorization_type = "CUSTOM"
+  authorizer_id      = aws_apigatewayv2_authorizer.admin_gate[0].id
 }
 
 resource "aws_cloudwatch_log_group" "api" {

@@ -103,6 +103,7 @@ Thresholds are data (`policy/thresholds.yaml`), not code, but the engine refuses
 | `SERVICE_UNAVAILABLE` | refuse | "Something on my side isn't available. Try again in a minute." |
 | `SUPPRESSED_REVOKED` | audit only (06) | — no message; the grant was pulled before the alert went out |
 | `ALERT_FAILED` | audit only (06) | — no message; delivery failed after retry |
+| `ALERT_LOG_FAILED` | audit only (06) | — no message; the SMS was delivered but the sent-SMS ledger write after it failed (06 §3.1, §8); outcome `ok`, `message_ref` = the SMS's template (human decision 2026-10-11) |
 | `ACK_IGNORED_SWAPPED_LINE` | audit only (06) | — an acknowledgement or cancel arrived from a line within 24 h of its own SIM swap; ignored, escalation continues, the watcher is told it was ignored |
 
 Templates never include a phone number or a health word (`unwell` included — the privacy regex in `tests/privacy/patterns.py` bans it, so the slide's "unreachable, not unwell" is the deck's line, not the template's). "{Name}" is the alias the user chose at consent time. `{time}` is `latest_sim_change` for `SIM_SWAPPED_RECENT`, `last_status_time` for `UNREACHABLE`, and `fetched_at` otherwise (the Call Forwarding API reports no start time, so "since {time}" is when the forwarding was observed).

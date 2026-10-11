@@ -1,7 +1,12 @@
 #!/usr/bin/env python3
 """Turn Terraform outputs into deploy/.env.<env>, the endpoints `make demo ENV=…` and `make test-e2e ENV=…` use
-(mk/vars.mk includes the file for non-local ENVs). Make-compatible `KEY=value` lines, no secrets: the bearer and
-session secrets stay in Terraform state.
+(mk/vars.mk includes the file for non-local ENVs). Make-compatible `KEY=value` lines, file mode 0600.
+
+With the demo admin path closed (`demo_admin_cidrs = []`, the default) the file holds no secret. Open (10 §2.1), it
+also holds `MOCK_URL`, `BINDING_ADMIN_URL`, `ALERTS_URL` = the execute-api endpoint, and the one bearer of the path,
+`DEMO_ADMIN_BEARER` (decision 1, 2026-10-11; never the Alerts internal bearer), read here with `ssm:GetParameter`
+(`WithDecryption`) by the name in the `demo_admin_ssm_parameters` output: the outputs JSON never carries a secret,
+and this script prints URL keys only, never the bearer.
 
     uv run python scripts/render_env.py --env aws      # from artifacts/tf-outputs.json (make outputs)
     uv run python scripts/render_env.py --env eks      # from artifacts/tf-outputs-eks.json (prompt 14)
@@ -12,6 +17,7 @@ For eks the mapping covers the keys both stacks share; prompt 14 adds its own.
 from __future__ import annotations
 
 import argparse
+import os
 import sys
 from pathlib import Path
 from typing import Any
@@ -19,14 +25,50 @@ from typing import Any
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from _tf_outputs import ROOT, load_outputs  # noqa: E402
 
+# SSM parameter key (output demo_admin_ssm_parameters) → the .env.aws key (10 §2.1).
+TOKEN_KEYS = {"demo-admin-bearer": "DEMO_ADMIN_BEARER"}
+PRINTED = (
+    "TOWER_URL",
+    "BINDING_URL",
+    "ALERTS_URL",
+    "CARRIER_GATEWAY_URL",
+    "MOCK_URL",
+    "BINDING_ADMIN_URL",
+    "WEB_CHAT_URL",
+)
 
-def aws_env(o: dict[str, Any]) -> dict[str, str]:
+
+def _str(o: dict[str, Any], key: str) -> str:
+    v = o.get(key)
+    return "" if v is None else str(v)
+
+
+def admin_parameters(o: dict[str, Any]) -> dict[str, str]:
+    """{ssm key: parameter name} when the demo admin path is open, else {}."""
+    raw = o.get("demo_admin_ssm_parameters")
+    return {str(k): str(v) for k, v in raw.items() if k in TOKEN_KEYS} if isinstance(raw, dict) else {}
+
+
+def read_tokens(parameters: dict[str, str], ssm: Any) -> dict[str, str]:
+    """The bearers from SSM SecureStrings (`GetParameter`, `WithDecryption`), keyed as in .env.aws."""
+    out: dict[str, str] = {}
+    for key, name in sorted(parameters.items()):
+        resp = ssm.get_parameter(Name=name, WithDecryption=True)
+        out[TOKEN_KEYS[key]] = str(resp["Parameter"]["Value"])
+    return out
+
+
+def aws_env(o: dict[str, Any], tokens: dict[str, str] | None = None) -> dict[str, str]:
     return {
         "TOWER_ENV": "aws",
         "TOWER_URL": str(o.get("tower_mcp_url", "")),
         "BINDING_URL": str(o.get("binding_url", "")),
-        "ALERTS_URL": str(o.get("hooks_base_url", "")),
-        "MOCK_URL": "",  # internal ALB: reached by Gateway only; the seed uses ECS Exec
+        # open: the execute-api endpoint (CloudFront would make every source CloudFront's); closed: the hooks base
+        "ALERTS_URL": _str(o, "alerts_internal_url") or _str(o, "hooks_base_url"),
+        # closed: the internal ALB is reached by Gateway only and the seed uses ECS Exec
+        "MOCK_URL": _str(o, "mock_admin_url"),
+        "BINDING_ADMIN_URL": _str(o, "binding_admin_url"),
+        "WEB_CHAT_URL": _str(o, "web_chat_url"),
         "DYNAMO_ENDPOINT": "",  # real DynamoDB
         "AWS_REGION": str(o.get("region", "")),
         "TOWER_TABLE_PREFIX": str(o.get("table_prefix", "")),
@@ -41,6 +83,7 @@ def aws_env(o: dict[str, Any]) -> dict[str, str]:
         "MOCK_CLUSTER": str(o.get("mock_cluster_name", "")),
         "MOCK_SERVICE": str(o.get("mock_service_name", "")),
         "MOCK_CONTAINER": str(o.get("mock_container_name", "")),
+        **(tokens or {}),
     }
 
 
@@ -51,6 +94,20 @@ def eks_env(o: dict[str, Any]) -> dict[str, str]:
         if o.get(out):
             env[key] = str(o[out])
     return env
+
+
+def write_private(path: Path, text: str) -> None:
+    """Create or replace the file with mode 0600 (it may hold bearers): never readable by another user."""
+    fd = os.open(path, os.O_WRONLY | os.O_CREAT | os.O_TRUNC, 0o600)
+    with os.fdopen(fd, "w", encoding="utf-8") as f:
+        f.write(text)
+    os.chmod(path, 0o600)  # an existing file keeps its old mode through O_CREAT
+
+
+def ssm_client(region: str) -> Any:
+    import boto3
+
+    return boto3.client("ssm", region_name=region)
 
 
 def render(values: dict[str, str]) -> str:
@@ -69,13 +126,21 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--out", type=Path, default=None, help="default deploy/.env.<env>")
     args = ap.parse_args(argv)
     outputs = load_outputs(args.outputs, env=args.env)
-    values = aws_env(outputs) if args.env == "aws" else eks_env(outputs)
+    if args.env == "aws":
+        params = admin_parameters(outputs)
+        tokens = read_tokens(params, ssm_client(str(outputs.get("region", "")))) if params else {}
+        values = aws_env(outputs, tokens)
+    else:
+        values = eks_env(outputs)
     out = args.out or ROOT / "deploy" / f".env.{args.env}"
-    out.write_text(render(values), "utf-8")
-    print(f"wrote {out.relative_to(ROOT) if out.is_relative_to(ROOT) else out}")
-    for k in ("TOWER_URL", "BINDING_URL", "ALERTS_URL", "CARRIER_GATEWAY_URL"):
+    write_private(out, render(values))
+    print(f"wrote {out.relative_to(ROOT) if out.is_relative_to(ROOT) else out} (mode 0600)")
+    for k in PRINTED:
         if values.get(k):
             print(f"  {k}={values[k]}")
+    if args.env == "aws":
+        written = any(values.get(k) for k in TOKEN_KEYS.values())
+        print(f"  demo admin path: {'open, DEMO_ADMIN_BEARER written (not shown)' if written else 'closed'}")
     return 0
 
 

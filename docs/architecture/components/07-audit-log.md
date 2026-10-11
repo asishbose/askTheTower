@@ -54,6 +54,8 @@ A stolen audit table reveals who asked about whom and when — a real but bounde
 
 90 days by TTL. Trimming re-anchors each line's chain: the new oldest row's `prev_hash` is replaced by a signed `trimmed_at` marker, so `verify` still passes and still reports that rows were trimmed. The marker (`trimmed|<trimmed_at>|<original prev_hash>|<HMAC>`) keeps the original `prev_hash`, so the anchor row's own hash — and the next row's link — is unchanged; trim runs a day ahead of TTL (`before = now − 89 days`).
 
+**Retention runs from the event time, on purpose** (human decision, 2026-10-11). `ttl` is `ts + 90 days`, and `ts` is the writer's service clock: the simulated mock clock locally, so the audit `ttl` is the one TTL attribute in the repo that does not follow the wall-clock rule of [06 §7 "Clocks"](06-alerts-service.md). It stays that way because `ttl` is part of the hashed canonical row and `verify` reads it to detect a lapsed chain, so it must be derived from the same clock as `ts`. The 90-day margin absorbs any simulated-clock offset (the demo scenario runs days, not months, behind), and on AWS event time equals wall time, so there retention is exactly 90 days of wall time. No code change.
+
 ## 6. Tests
 
 - Append-before-release: kill the process between decision and response; on restart the audit row exists and no response was sent.

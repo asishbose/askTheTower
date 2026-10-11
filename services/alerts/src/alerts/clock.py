@@ -4,10 +4,15 @@
 - `MockCarrierClock` — `GET <mock>/_admin/clock`, so the windows (20 min, 4 h, 15 min) follow the mock's
   scripted clock in the demo. `ALERTS_CLOCK_SCALE` does not touch time; it only shortens how often the local
   scheduler wakes up (see README).
+- `Wall` / `wall_clock` — the real time, always, whatever `ALERTS_CLOCK` says. Only DynamoDB TTL attributes
+  (`expires_at`) are computed from it (06 §7 "Clocks"): DynamoDB, and DynamoDB Local 2.x too, deletes an item
+  whose TTL is past by the *wall* clock, so a TTL from the mock clock (days behind) deletes rows at once.
+  No window decision reads it; windows compare against `Clock.now()`.
 """
 
 from __future__ import annotations
 
+from collections.abc import Callable
 from datetime import UTC, datetime
 from typing import Protocol
 
@@ -18,9 +23,17 @@ class Clock(Protocol):
     async def now(self) -> datetime: ...
 
 
+Wall = Callable[[], datetime]
+"""Reads the real time; injected as `AlertsService.wall` by the composition root (`runner.build_service`)."""
+
+
+def wall_clock() -> datetime:
+    return datetime.now(UTC)
+
+
 class SystemClock:
     async def now(self) -> datetime:
-        return datetime.now(UTC)
+        return wall_clock()
 
 
 class FixedClock:

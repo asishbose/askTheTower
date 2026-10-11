@@ -8,6 +8,8 @@
 2. Upload `index.html`, `app.js`, `styles.css` and the rendered `config.js` to `web_chat_bucket` (no-cache on
    `config.js` and `index.html`, so a re-deploy is picked up at once).
 3. Invalidate `/*` on `web_chat_distribution_id`.
+4. Record the run in `artifacts/web-chat-sync.json` `{at, url, distribution_id, files}` (doc 11 §2: the demo UI's
+   AWS checklist compares `url` with `WEB_CHAT_URL`). Only after a real upload and invalidation; never on --dry-run.
 
     uv run python scripts/web_chat_sync.py              # render, upload, invalidate
     uv run python scripts/web_chat_sync.py --dry-run    # print config.js and what would be uploaded; touches nothing
@@ -20,6 +22,7 @@ import argparse
 import json
 import sys
 import time
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -27,6 +30,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 from _tf_outputs import ROOT, load_outputs  # noqa: E402
 
 PAGE = ROOT / "services" / "web-chat"
+EVIDENCE_FILE = ROOT / "artifacts" / "web-chat-sync.json"
 FILES = {  # file → (content type, cache control)
     "index.html": ("text/html; charset=utf-8", "no-cache"),
     "app.js": ("text/javascript; charset=utf-8", "max-age=300"),
@@ -61,7 +65,8 @@ def objects(config_js: str) -> list[tuple[str, bytes, str, str]]:
     return out
 
 
-def sync(outputs: dict[str, Any], *, dry_run: bool, s3: Any = None, cloudfront: Any = None) -> None:
+def sync(outputs: dict[str, Any], *, dry_run: bool, s3: Any = None, cloudfront: Any = None) -> list[str]:
+    """Upload and invalidate (or say what would be done). Returns the object keys."""
     bucket, distribution = outputs.get("web_chat_bucket"), outputs.get("web_chat_distribution_id")
     if not bucket or not distribution:
         raise SystemExit(
@@ -70,7 +75,9 @@ def sync(outputs: dict[str, Any], *, dry_run: bool, s3: Any = None, cloudfront: 
     config_js = render_config(outputs)
     if dry_run:
         print(config_js, end="")
+    keys: list[str] = []
     for key, body, ctype, cache in objects(config_js):
+        keys.append(key)
         print(f"{'would upload' if dry_run else 'upload'} s3://{bucket}/{key} ({len(body)} bytes, {cache})")
         if not dry_run:
             s3.put_object(Bucket=bucket, Key=key, Body=body, ContentType=ctype, CacheControl=cache)
@@ -84,6 +91,19 @@ def sync(outputs: dict[str, Any], *, dry_run: bool, s3: Any = None, cloudfront: 
             },
         )
     print(f"web chat: {outputs['web_chat_url']}")
+    return keys
+
+
+def write_evidence(path: Path, outputs: dict[str, Any], files: list[str], now: datetime) -> None:
+    """The sync record the demo UI's checklist reads: URLs and object keys only, nothing secret."""
+    record = {
+        "at": now.isoformat(),
+        "url": str(outputs["web_chat_url"]),
+        "distribution_id": str(outputs["web_chat_distribution_id"]),
+        "files": sorted(files),
+    }
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(record, indent=2) + "\n", "utf-8")
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -91,6 +111,7 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--outputs", type=Path, default=None)
     ap.add_argument("--dry-run", action="store_true")
     ap.add_argument("--url", action="store_true", help="only print the page URL")
+    ap.add_argument("--evidence", type=Path, default=EVIDENCE_FILE, help="where a real sync records itself")
     args = ap.parse_args(argv)
     outputs = load_outputs(args.outputs)
     if args.url:
@@ -107,12 +128,13 @@ def main(argv: list[str] | None = None) -> int:
     import boto3
 
     region = str(outputs["region"])
-    sync(
+    files = sync(
         outputs,
         dry_run=False,
         s3=boto3.client("s3", region_name=region),
         cloudfront=boto3.client("cloudfront"),
     )
+    write_evidence(args.evidence, outputs, files, datetime.now(UTC))
     return 0
 
 

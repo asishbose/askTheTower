@@ -90,9 +90,9 @@ def store(request: pytest.FixtureRequest) -> Iterator[Store]:
     s.ensure_tables()
     ensure_alerts_table(s)
     if backend == "local":
-        # These tests run on a simulated clock (T0 = 2026-10-05T14:00Z), but DynamoDB Local's TTL sweeper runs on the
-        # wall clock: every `expires_at` here is already in the past, so a rate-limit claim could be swept between
-        # two calls of one test. TTL is housekeeping, never logic (claims compare `sent_at`), so switch it off.
+        # DynamoDB Local's TTL sweeper runs on the real clock. Alerts' TTLs come from `svc.wall` (06 §7 "Clocks";
+        # `TEST_WALL`, in the future, in these tests), but a test may pass its own past wall (e.g. `wall=T0`), and
+        # a sweep between two calls of one test would be nondeterministic. TTL is housekeeping, never logic, so off.
         for t in ALL_TABLES:
             if t.ttl_attribute:
                 client.update_time_to_live(

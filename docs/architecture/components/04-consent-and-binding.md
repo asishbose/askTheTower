@@ -96,7 +96,9 @@ One `GetItem` or one `Query`; this is the single DynamoDB read on the hot path.
 
 Open the binding page on a phone with Wi-Fi off against the mock carrier; bind; grant `watch` to a second test user; revoke. Each step shows in a small admin view of the tables. What it proves: the one tap is real, the grant model is real, and nothing is typed. See `testing-and-showcase.md` §2.4.
 
-**Admin routes (local only).** `binding_page/routes/admin.py`, served only when `TOWER_ENV=local` **and** `BIND_ADMIN=1`; otherwise every `/_admin/*` path answers 404, whatever its query or body.
+**Admin routes (local; on AWS only behind the demo admin path).** `binding_page/routes/admin.py`, served only when `BIND_ADMIN=1` **and** (`TOWER_ENV=local` **or** `BIND_ADMIN_TOKEN` is set); otherwise every `/_admin/*` path answers 404, whatever its query or body. Locally nothing changes (compose and kind set no token; no bearer is asked).
+
+**Bearer mode (U3, 2026-10-11).** When `BIND_ADMIN_TOKEN` is set (Terraform sets it, with `BIND_ADMIN=1`, on the binding Lambda only while `demo_admin_cidrs` is non-empty; 10 §2.1), every `/_admin/*` request needs `Authorization: Bearer <BIND_ADMIN_TOKEN>` (constant-time compare; 401 otherwise), and the surface narrows to what the demo UI's pane 4 and its AWS Reset use: `GET /_admin/tables` answers only `?table=Grants` (any other or no `table` → 422), `GET /_admin/resolve`, `POST /_admin/bind-tokens`, `POST /_admin/grants`; `POST /_admin/watch-settings` is 404 (the Transplant story stays local). On AWS the public API sends `ANY /_admin/{proxy+}` through the admin authorizer first, so the path is two layers: the gate (listed address **and** `DEMO_ADMIN_BEARER`; 401 without `Authorization`, 403 otherwise) and this check. Since decision 1 (2026-10-11) Terraform sets `BIND_ADMIN_TOKEN` to that same `DEMO_ADMIN_BEARER` (one `Authorization` header per request; 10 §2.1), so a route that lost its authorizer would still refuse; the page's code is unchanged. The bind flow, `/me`, `/grants` and their session and CSRF rules are unchanged; a grant made here is the same `tower_consent.grant` the resident's page calls.
 
 | Route | Does |
 |---|---|
@@ -104,7 +106,9 @@ Open the binding page on a phone with Wi-Fi off against the mock carrier; bind; 
 | `GET /_admin/resolve?user=..&line=..` | `tower_consent.resolve` as JSON |
 | `POST /_admin/bind-tokens {user_id}` | a fresh bind link |
 | `POST /_admin/grants {owner_user_id, grantee_user_id, grant, alias, action}` | grant or revoke on the owner's line, idempotent (`changed`) |
-| `POST /_admin/watch-settings {owner_user_id, profile, contacts, line_id?, reset?}` | the `/me` watch-settings save as the line-holder (§9.2) |
+| `POST /_admin/watch-settings {owner_user_id, profile, contacts, line_id?, reset?}` | the `/me` watch-settings save as the line-holder (§9.2); 404 in bearer mode |
+
+Tests for bearer mode: `services/binding-page/tests/test_admin_bearer_mode.py` — `TOWER_ENV=aws`, `BIND_ADMIN=1` and a token: 401 without or with a wrong bearer on every route; 200 with it on the four routes; `?table=Audit` and no `table` → 422; `watch-settings` → 404; `TOWER_ENV=aws` with `BIND_ADMIN=1` and no token → 404 everywhere (as today); local without a token unchanged.
 
 ## 9. Watch settings: profile and contacts (resolves D8, D9; built 2026-10-09)
 

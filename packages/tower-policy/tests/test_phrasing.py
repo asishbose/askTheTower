@@ -38,9 +38,9 @@ def _outcome_for(code: ReasonCode) -> Outcome:
     return Outcome(kind="refuse", reason_codes=[code])
 
 
-def test_templates_cover_exactly_the_twelve_codes() -> None:
+def test_templates_cover_exactly_the_thirteen_codes() -> None:
     assert set(TEMPLATES) == set(ReasonCode)
-    assert len(ReasonCode) == 12
+    assert len(ReasonCode) == 13  # 03 §4: + ALERT_LOG_FAILED (human decision 2026-10-11)
     for code, forms in TEMPLATES.items():
         assert set(forms) == {"voice", "sms"}
         if code in AUDIT_ONLY_CODES:

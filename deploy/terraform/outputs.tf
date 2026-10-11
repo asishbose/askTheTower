@@ -1,6 +1,7 @@
 # `make outputs` writes these to artifacts/tf-outputs.json and scripts/render_env.py turns them into
-# deploy/.env.aws (the endpoints `make demo ENV=aws` and `make test-e2e ENV=aws` use). Nothing here is a secret;
-# the generated bearer/session secrets stay in state and are read with `terraform output -raw` only when needed.
+# deploy/.env.aws (the endpoints `make demo ENV=aws` and `make test-e2e ENV=aws` use). Nothing here is a secret:
+# the generated bearer/session secrets stay in state; the demo admin path's bearers are named here only by their SSM
+# parameter (demo_admin_ssm_parameters), which render_env.py reads (10 §2.1).
 
 output "region" {
   value = var.region
@@ -84,6 +85,29 @@ output "hooks_base_url" {
 output "api_endpoint" {
   description = "The raw HTTP API endpoint behind CloudFront."
   value       = module.lambdas.api_endpoint
+}
+
+# --- demo admin path (10 §2.1): null when demo_admin_cidrs is [] ------------------------------------------------
+# Built from the execute-api endpoint, never from public_base_url: through CloudFront every source is CloudFront's.
+
+output "mock_admin_url" {
+  description = "The mock's /_admin through the CIDR-gated route (make outputs → MOCK_URL); null when closed."
+  value       = local.demo_admin && local.mock ? "${trimsuffix(module.lambdas.api_endpoint, "/")}/carrier-admin" : null
+}
+
+output "alerts_internal_url" {
+  description = "Base for Alerts' GET /internal/sent and POST /internal/reset (make outputs → ALERTS_URL); null when closed."
+  value       = local.demo_admin ? trimsuffix(module.lambdas.api_endpoint, "/") : null
+}
+
+output "binding_admin_url" {
+  description = "Base for the binding page's bearer-mode /_admin (make outputs → BINDING_ADMIN_URL); null when closed."
+  value       = local.demo_admin ? trimsuffix(module.lambdas.api_endpoint, "/") : null
+}
+
+output "demo_admin_ssm_parameters" {
+  description = "Key → SSM SecureString name of each demo admin bearer (names only; render_env.py decrypts); null when closed."
+  value       = local.demo_admin ? { for k, p in aws_ssm_parameter.demo_admin : k => p.name } : null
 }
 
 output "gateway_url" {

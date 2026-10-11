@@ -230,6 +230,7 @@ Replies ("OK") come back through the SNS topic `replies` → Alerts. Two-way SMS
 | Bind-link SMS and alert SMS | **Real on AWS** | SNS. First verify your number in the SNS SMS sandbox; new accounts can only text verified numbers |
 | Mom | Simulated | Cognito account + seeded line + grant (section 3.2, option A) |
 | Chat page, agent, Tower, consent, policy, audit | Real | Same code as production |
+| Carrier events and clock on AWS (demo UI macros) | Simulated, by admin call | **On AWS: the demo UI's macros through the CIDR-gated admin path** (`demo_admin_cidrs`, 10 §2.1; doc 11 §7, prompt 22), Moment 1–3 only (Transplant stays local, D-I); **or by hand** (`curl` to the same path with `MOCK_ADMIN_TOKEN`, or `aws ecs execute-command` as `aws_seed.py` does). Off by default; close it after the demo |
 
 **Demo order (about 2 minutes):** Asish signs in → "Is my line OK?" → bind link by SMS → tap on phone → "Line connected" → ask again → "Is Mom's line OK?" → "Watch Mom's line" → fire SIM swap → **phone buzzes** → Mom revokes → fire again → no SMS, audit shows `SUPPRESSED_REVOKED`.
 

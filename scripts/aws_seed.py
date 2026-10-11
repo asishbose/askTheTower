@@ -3,9 +3,10 @@
 Terraform's outputs.
 
 1. **Mock carrier on Fargate** — reset it to `scenarios/<scenario>.yaml` (default `demo`) through its admin API.
-   The admin API is never routed by the internal ALB, so the call runs *inside* the task with ECS Exec
-   (bastion-less): `aws ecs execute-command … --command "python -c '<POST 127.0.0.1:8443/_admin/scenarios/load>'"`.
-   Needs the AWS CLI and the Session Manager plugin.
+   The call runs *inside* the task with ECS Exec (bastion-less), whether or not the demo admin path is open:
+   `aws ecs execute-command … --command "python -c '<POST 127.0.0.1:8443/_admin/scenarios/load>'"`. The task always
+   has `MOCK_ADMIN_TOKEN` (08 §3, G1); the in-task code reads it from the task's own environment, so no token
+   travels on the command line. Needs the AWS CLI and the Session Manager plugin.
 2. **Consent store** — the demo's people under their **Cognito `sub`s** (D-F), never the local names
    `user-asish` / `user-mom`: `--user asish=<sub> --user mom=<sub>`, else `artifacts/cognito-users.json`
    (written by `make cognito-users`). Both users exist; Mom's line is bound to Mom and she has granted Asish
@@ -21,6 +22,9 @@ Terraform's outputs.
     uv run python scripts/aws_seed.py --user asish=<sub> --user mom=<sub>
     uv run python scripts/aws_seed.py --dry-run                         # print what would run; touches nothing
     uv run python scripts/aws_seed.py --skip-mock                       # consent store only
+
+A non-dry run that completes writes `artifacts/seed-aws.json` (doc 11 §2, pane 5's checklist): `{at, scenario,
+mock_loaded, people, bound, grants}` — names only, never a sub, an id or a number.
 """
 
 from __future__ import annotations
@@ -42,6 +46,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 from _tf_outputs import ROOT, load_outputs  # noqa: E402
 
 USERS_FILE = ROOT / "artifacts" / "cognito-users.json"  # written by scripts/cognito_user.py
+EVIDENCE_FILE = ROOT / "artifacts" / "seed-aws.json"  # read by the demo UI's AWS checklist (doc 11 §2)
 PEOPLE = ("asish", "mom")
 MOM_ALIAS = "mom"
 SUB = re.compile(r"[A-Za-z0-9-]{8,128}")
@@ -82,12 +87,14 @@ def aws_cli() -> str:
 def mock_load_command(outputs: dict[str, Any], scenario: str, task_arn: str) -> list[str]:
     if not scenario.replace("-", "").replace("_", "").isalnum():
         raise SystemExit(f"bad scenario name {scenario!r}")
-    # No single quotes inside: ECS Exec passes the string to the container as `python -c '<code>'`.
+    # No single quotes inside: ECS Exec passes the string to the container as `python -c '<code>'`. The bearer is
+    # read inside the task from its own MOCK_ADMIN_TOKEN (08 §3), never written into this command.
     code = (
-        "import json, urllib.request as u; "
+        "import json, os, urllib.request as u; "
         'r = u.Request("http://127.0.0.1:8443/_admin/scenarios/load", '
         f'data=json.dumps({{"name": "{scenario}"}}).encode(), '
-        'headers={"content-type": "application/json"}, method="POST"); '
+        'headers={"content-type": "application/json", '
+        '"authorization": "Bearer " + os.environ.get("MOCK_ADMIN_TOKEN", "")}, method="POST"); '
         "print(u.urlopen(r, timeout=10).read().decode())"
     )
     return [
@@ -128,15 +135,18 @@ def mock_task_arn(outputs: dict[str, Any]) -> str:
     return str(arns[0])
 
 
-def seed_mock(outputs: dict[str, Any], scenario: str, dry_run: bool) -> None:
+def seed_mock(outputs: dict[str, Any], scenario: str, dry_run: bool) -> bool:
+    """True when the scenario was loaded (a failed load raises)."""
     if not outputs.get("mock_cluster_name"):
         print("mock: carrier_backend is not mock — nothing to seed on the carrier side")
-        return
+        return False
     task = "<running task arn>" if dry_run else mock_task_arn(outputs)
     cmd = mock_load_command(outputs, scenario, task)
     print("+", " ".join(shlex.quote(c) for c in cmd))
-    if not dry_run:
-        subprocess.run([aws_cli(), *cmd[1:]], check=True)  # noqa: S603
+    if dry_run:
+        return False
+    subprocess.run([aws_cli(), *cmd[1:]], check=True)  # noqa: S603
+    return True
 
 
 def demo_numbers(scenario: str) -> tuple[str, str]:
@@ -201,25 +211,60 @@ def seed_people(
     return done
 
 
+def seed_evidence(
+    store: Any, users: dict[str, str], *, scenario: str, mock_loaded: bool, now: datetime
+) -> dict[str, Any]:
+    """What the seed left, read back from the store: names only (no sub, line id or number)."""
+    from tower_consent import list_grants, list_lines
+
+    people = [name for name in PEOPLE if name in users]
+    lines = {name: list_lines(store, users[name]) if store is not None else [] for name in people}
+    grants: list[str] = []
+    if lines.get("mom") and "asish" in users:
+        active = list_grants(store, lines["mom"][0].line_id, include_revoked=False)
+        if any(g.grantee_user_id == users["asish"] and g.grant == "watch" for g in active):
+            grants.append("mom>asish:watch")
+    return {
+        "at": now.isoformat(),
+        "scenario": scenario,
+        "mock_loaded": mock_loaded,
+        "people": people,
+        "bound": [name for name in people if lines[name]],
+        "grants": grants,
+    }
+
+
+def write_evidence(path: Path, evidence: dict[str, Any]) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(evidence, indent=2) + "\n", "utf-8")
+
+
+def open_store(outputs: dict[str, Any]) -> tuple[Any, Any, Any]:
+    import boto3
+    from tower_consent import Store, crypto_from_env
+
+    env = store_env(outputs)
+    store = Store.from_env(env)
+    hasher, cipher = crypto_from_env(env, kms_client=boto3.client("kms", region_name=env["AWS_REGION"]))
+    return store, hasher, cipher
+
+
 def seed_store(
     outputs: dict[str, Any], scenario: str, dry_run: bool, users: dict[str, str], bind_asish: bool
-) -> None:
+) -> Any:
+    """The consent rows; returns the store it wrote to (None when it wrote nothing)."""
     env = store_env(outputs)
     print(f"store: tables {env['TOWER_TABLE_PREFIX']}* in {env['AWS_REGION']}, KMS keys from outputs")
     if not users:
         print(NO_USERS_HINT)
-        return
+        return None
     if dry_run:
         print(
             f"store: would seed users {', '.join(sorted(users))} (Cognito subs), Mom's line, the Mom→Asish watch "
             f"grant{' and Asish line' if bind_asish else ''}"
         )
-        return
-    import boto3
-    from tower_consent import Store, crypto_from_env
-
-    store = Store.from_env(env)
-    hasher, cipher = crypto_from_env(env, kms_client=boto3.client("kms", region_name=env["AWS_REGION"]))
+        return None
+    store, hasher, cipher = open_store(outputs)
     asish, mom = demo_numbers(scenario)
     for line in seed_people(
         store,
@@ -232,6 +277,7 @@ def seed_store(
         bind_asish=bind_asish,
     ):
         print(f"store: {line}")
+    return store
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -246,13 +292,26 @@ def main(argv: list[str] | None = None) -> int:
     )
     ap.add_argument("--users-file", type=Path, default=USERS_FILE, help="fallback when no --user is given")
     ap.add_argument("--bind-asish", action="store_true", help="also bind Asish's line (make demo ENV=aws)")
+    ap.add_argument(
+        "--evidence", type=Path, default=EVIDENCE_FILE, help="where a completed run records itself"
+    )
     args = ap.parse_args(argv)
     outputs = load_outputs(args.outputs)
     users = parse_users(args.user, args.users_file)
-    if not args.skip_mock:
-        seed_mock(outputs, args.scenario, args.dry_run)
+    mock_loaded = False if args.skip_mock else seed_mock(outputs, args.scenario, args.dry_run)
+    store = None
     if not args.skip_store:
-        seed_store(outputs, args.scenario, args.dry_run, users, args.bind_asish)
+        store = seed_store(outputs, args.scenario, args.dry_run, users, args.bind_asish)
+    if not args.dry_run:
+        evidence = seed_evidence(
+            store,
+            users if store is not None else {},
+            scenario=args.scenario,
+            mock_loaded=mock_loaded,
+            now=datetime.now(UTC),
+        )
+        write_evidence(args.evidence, evidence)
+        print(f"evidence: {args.evidence.name} (people {', '.join(evidence['people']) or 'none'})")
     print(f"binding page: {outputs.get('binding_url')}  Tower MCP: {outputs.get('tower_mcp_url')}")
     return 0
 

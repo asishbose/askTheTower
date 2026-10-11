@@ -188,8 +188,9 @@ def park(
             sent_at=now,
             remaining=[EscalationStep(user_id=u, requires_ack=a) for u, a in rest],
         ),
+        wall=svc.wall(),
     )
-    S.remember_ack_route(svc.store, phone_line_id, alert.line_id, alert.watcher_user_id, now)
+    S.remember_ack_route(svc.store, phone_line_id, alert.line_id, alert.watcher_user_id, svc.wall())
 
 
 def steps_after(esc: S.Escalation, watch: Watch) -> tuple[list[tuple[str, bool]], int]:
@@ -318,7 +319,7 @@ async def handle_reply(svc: AlertsService, from_e164: str, text: str, now: datet
                 outcome="suppressed",
                 codes=[ReasonCode.ACK_IGNORED_SWAPPED_LINE],
             )
-            S.save_escalation(svc.store, esc.model_copy(update={"ack_ignored": True}))
+            S.save_escalation(svc.store, esc.model_copy(update={"ack_ignored": True}), wall=svc.wall())
             svc.count("ack_ignored_swapped_line")
             results.append("ignored")
         else:

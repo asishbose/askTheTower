@@ -4,6 +4,8 @@ load-time patches only; `/docs` is Swagger UI over the merged document."""
 
 from __future__ import annotations
 
+from collections.abc import Callable
+from datetime import datetime
 from typing import Any
 
 import httpx
@@ -15,6 +17,7 @@ from fastapi.responses import HTMLResponse, JSONResponse, Response
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
 from mock_carrier import errors, oauth
+from mock_carrier.clock import Clock
 from mock_carrier.routers import (
     admin,
     call_forwarding,
@@ -61,10 +64,14 @@ def _nullable_31_to_30(node: Any) -> Any:
 
 
 def create_app(
-    settings: Settings | None = None, *, sink_transport: httpx.AsyncBaseTransport | None = None
+    settings: Settings | None = None,
+    *,
+    sink_transport: httpx.AsyncBaseTransport | None = None,
+    wall: Callable[[], datetime] | None = None,
 ) -> FastAPI:
+    """The mock. `wall` replaces the wall clock (tests of `MOCK_CLOCK=wall`); nothing else reads it."""
     settings = settings or Settings.from_env()
-    rt = Runtime(settings, sink_transport=sink_transport)
+    rt = Runtime(settings, sink_transport=sink_transport, wall=wall or Clock.wall_now)
     app = FastAPI(
         title="Ask the Tower — mock carrier",
         version="fall25",

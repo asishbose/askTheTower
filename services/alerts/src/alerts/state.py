@@ -14,6 +14,11 @@ bookkeeping that must not bump `at` lives here instead, one item per purpose:
 | `ack#<phone line_id>` | which escalation a reply from that phone acknowledges | 2 days |
 
 No key or value is a phone number: line ids are HMACs, digests are re-lettered `a`–`p`, tokens are letters.
+
+**Clocks (06 §7).** "Expires" is garbage collection, never a decision: every `expires_at` is the *wall* time of
+the write (`wall`, from `AlertsService.wall`) plus the horizon, because DynamoDB deletes by the wall clock and the
+mock's scenario clock may be days behind. The windows themselves compare against the service clock: the rate
+limit's `sent_at <= :cut` and `Watches.last_state.last_alert_at`, an escalation's `sent_at` + `ESCALATE_NEXT`.
 """
 
 from __future__ import annotations
@@ -188,12 +193,13 @@ def reset_misses(store: Store, line_id: str) -> None:
 # --- webhook dedupe ------------------------------------------------------------------------------------------
 
 
-def claim_event(store: Store, token: str, source: str, event_id: str, now: datetime) -> bool:
-    """True the first time (token, source, id) is seen; False for a duplicate (06 §6, §8)."""
+def claim_event(store: Store, token: str, source: str, event_id: str, wall: datetime) -> bool:
+    """True the first time (token, source, id) is seen; False for a duplicate (06 §6, §8). Kept `EVENT_TTL`
+    past `wall` (the real time: the row holds no window)."""
     try:
         store.put(
             ALERTS_STATE,
-            {"pk": f"evt#{digest(token, source, event_id)}", "expires_at": _epoch(now + EVENT_TTL)},
+            {"pk": f"evt#{digest(token, source, event_id)}", "expires_at": _epoch(wall + EVENT_TTL)},
             condition="attribute_not_exists(pk)",
         )
         return True
@@ -205,9 +211,12 @@ def claim_event(store: Store, token: str, source: str, event_id: str, now: datet
 
 
 def claim_alert(
-    store: Store, line_id: str, watcher: str, code: str, now: datetime, window: timedelta
+    store: Store, line_id: str, watcher: str, code: str, now: datetime, window: timedelta, *, wall: datetime
 ) -> bool:
-    """Atomically take the (line, watcher, reason) slot for `window`. False → an alert went out within it."""
+    """Atomically take the (line, watcher, reason) slot for `window`. False → an alert went out within it.
+
+    The window is `now` (service clock) against the stored `sent_at`; the row's TTL is `wall + window` and
+    only tidies up. If TTL removes the row early, `last_state.last_alert_at` still holds the window."""
     try:
         store.update(
             ALERTS_STATE,
@@ -217,7 +226,7 @@ def claim_alert(
             values={
                 ":now": format_ts(now),
                 ":cut": format_ts(now - window),
-                ":exp": _epoch(now + window),
+                ":exp": _epoch(wall + window),
             },
         )
         return True
@@ -256,9 +265,11 @@ def _esc_pk(line_id: str, watcher: str) -> str:
     return f"esc#{line_id}#{watcher}"
 
 
-def save_escalation(store: Store, esc: Escalation) -> None:
+def save_escalation(store: Store, esc: Escalation, *, wall: datetime) -> None:
+    """Park (or re-save) an escalation. `ESCALATE_NEXT` runs from `esc.sent_at` (service clock); the row's TTL
+    is `wall + ESC_TTL`, real time."""
     item = esc.model_dump(mode="json")
-    item.update(pk=_esc_pk(esc.line_id, esc.watcher_user_id), expires_at=_epoch(esc.sent_at + ESC_TTL))
+    item.update(pk=_esc_pk(esc.line_id, esc.watcher_user_id), expires_at=_epoch(wall + ESC_TTL))
     store.put(ALERTS_STATE, item)
 
 
@@ -289,14 +300,15 @@ def list_escalations(store: Store) -> list[Escalation]:
         kwargs["ExclusiveStartKey"] = resp["LastEvaluatedKey"]
 
 
-def remember_ack_route(store: Store, phone_line_id: str, line_id: str, watcher: str, now: datetime) -> None:
+def remember_ack_route(store: Store, phone_line_id: str, line_id: str, watcher: str, wall: datetime) -> None:
+    """Route a reply from `phone_line_id` to this escalation; kept `ESC_TTL` past `wall` (real time)."""
     store.put(
         ALERTS_STATE,
         {
             "pk": f"ack#{phone_line_id}",
             "line_id": line_id,
             "watcher_user_id": watcher,
-            "expires_at": _epoch(now + ESC_TTL),
+            "expires_at": _epoch(wall + ESC_TTL),
         },
     )
 

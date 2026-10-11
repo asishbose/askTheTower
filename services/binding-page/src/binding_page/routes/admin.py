@@ -1,8 +1,12 @@
-"""The showcase's "show the tables" view (04 §8, testing-and-showcase §2.4). Local only, off by default.
+"""The showcase's "show the tables" view (04 §8, testing-and-showcase §2.4). Off by default.
 
-Served only when `TOWER_ENV=local` **and** `BIND_ADMIN=1`; otherwise every `/_admin/*` path is 404. Numbers are
-redacted by construction: the tables never hold one (`line_id` is an HMAC, `msisdn_enc` ciphertext, which this
-view shortens anyway).
+Served only when `BIND_ADMIN=1` **and** (`TOWER_ENV=local` **or** `BIND_ADMIN_TOKEN` is set); otherwise every
+`/_admin/*` path is 404, whatever its query or body. Numbers are redacted by construction: the tables never hold
+one (`line_id` is an HMAC, `msisdn_enc` ciphertext, which this view shortens anyway).
+
+**Bearer mode** (`BIND_ADMIN_TOKEN` set; on AWS only while the demo admin path is open, 10 §2.1): every request
+needs `Authorization: Bearer <token>` (401 otherwise), `GET /_admin/tables` answers only `?table=Grants` (else
+422) and `POST /_admin/watch-settings` is 404. That is what the demo UI's pane 4 and its AWS Reset use.
 
 - `GET  /_admin/tables`                    every row of the six tables (HTML; `?format=json` for scripts);
                                            `?table=Grants` (any one table name) narrows it to that table — the
@@ -21,10 +25,11 @@ view shortens anyway).
 
 from __future__ import annotations
 
+import hmac
 from datetime import UTC, datetime
 from typing import Annotated, Any, Literal
 
-from fastapi import APIRouter, Body, Depends, HTTPException, Request
+from fastapi import APIRouter, Body, Depends, Header, HTTPException, Request
 from fastapi.responses import JSONResponse, Response
 from pydantic import BaseModel, ConfigDict
 from tower_consent import create_bind_token, delete_watch, list_grants, list_lines, resolve, revoke, tables
@@ -35,15 +40,28 @@ from binding_page import watching
 from binding_page.deps import Deps, get_deps
 from binding_page.templating import render
 
-router = APIRouter(prefix="/_admin")
+
+def admin_gate(
+    deps: Annotated[Deps, Depends(get_deps)],
+    authorization: Annotated[str | None, Header()] = None,
+) -> None:
+    """404 when the admin view is off (before anything else is looked at); 401 in bearer mode without the bearer."""
+    settings = deps.settings
+    if not settings.admin_enabled:
+        raise HTTPException(status_code=404)
+    if settings.admin_bearer_mode:
+        expected = f"Bearer {settings.admin_token}"
+        if authorization is None or not hmac.compare_digest(authorization.encode(), expected.encode()):
+            raise HTTPException(status_code=401, detail="unauthorized")
+
+
+router = APIRouter(prefix="/_admin", dependencies=[Depends(admin_gate)])
+
+# Bearer mode serves only the Grants table (04 §8): pane 4 never needs another line's Audit rows.
+_BEARER_TABLES = frozenset({"Grants"})
 
 _ENC_ATTRS = {"msisdn_enc", "alert_phone_enc"}
 _EPOCH_ATTRS = {t.ttl_attribute for t in tables.TABLES if t.ttl_attribute}
-
-
-def _require_admin(deps: Deps) -> None:
-    if not deps.settings.admin_enabled:
-        raise HTTPException(status_code=404)
 
 
 def _redact(item: dict[str, Any]) -> dict[str, Any]:
@@ -71,10 +89,10 @@ def dump(deps: Deps, only: str | None = None) -> dict[str, list[dict[str, Any]]]
 
 @router.get("/tables", response_model=None)
 def admin_tables(request: Request, deps: Annotated[Deps, Depends(get_deps)]) -> Response:
-    _require_admin(deps)  # first, so off-local stays 404 whatever the query says
     only = request.query_params.get("table")
-    if only is not None and only not in _TABLE_NAMES:
-        raise HTTPException(status_code=422, detail=f"table must be one of {sorted(_TABLE_NAMES)}")
+    allowed = _BEARER_TABLES if deps.settings.admin_bearer_mode else _TABLE_NAMES
+    if (only is None and deps.settings.admin_bearer_mode) or (only is not None and only not in allowed):
+        raise HTTPException(status_code=422, detail=f"table must be one of {sorted(allowed)}")
     data = dump(deps, only)
     if request.query_params.get("format") == "json":
         return JSONResponse(data)
@@ -84,7 +102,6 @@ def admin_tables(request: Request, deps: Annotated[Deps, Depends(get_deps)]) -> 
 
 @router.get("/resolve")
 def admin_resolve(user: str, line: str, deps: Annotated[Deps, Depends(get_deps)]) -> dict[str, Any]:
-    _require_admin(deps)
     r = resolve(deps.store, user, line)
     return {"line_id": r.line_id, **r.view.model_dump(mode="json")}
 
@@ -93,7 +110,6 @@ def admin_resolve(user: str, line: str, deps: Annotated[Deps, Depends(get_deps)]
 def admin_bind_token(
     user_id: Annotated[str, Body(embed=True)], deps: Annotated[Deps, Depends(get_deps)]
 ) -> dict[str, str]:
-    _require_admin(deps)
     tok = create_bind_token(deps.store, user_id, now=deps.now())
     return {"url": f"{deps.settings.base_url}/bind/{tok.token}"}
 
@@ -127,7 +143,6 @@ def _owners_line(deps: Deps, owner_user_id: str, line_id: str | None) -> str:
 def admin_grant(body: AdminGrant, deps: Annotated[Deps, Depends(get_deps)]) -> dict[str, Any]:
     """Idempotent: granting an active grant or revoking a revoked/absent one changes nothing (`changed: false`).
     The same `tower_consent.grant` / `revoke` the resident's `/me` page calls, acting as the owner."""
-    _require_admin(deps)
     line_id = _owners_line(deps, body.owner_user_id, body.line_id)
     active = any(
         g.grantee_user_id == body.grantee_user_id and g.grant == body.grant
@@ -183,7 +198,8 @@ def admin_watch_settings(
 ) -> dict[str, Any]:
     """The `/me` form's save, acting as the line-holder (same validation, same audit row, same Alerts call).
     `reset: true` only deletes the owner's Watch (no audit row: a demo reset, not a resident's choice)."""
-    _require_admin(deps)
+    if deps.settings.admin_bearer_mode:  # the Transplant story stays local (04 §8)
+        raise HTTPException(status_code=404)
     line_id = _owners_line(deps, body.owner_user_id, body.line_id)
     if body.reset:
         return {"line_id": line_id, "reset": delete_watch(deps.store, line_id, body.owner_user_id)}

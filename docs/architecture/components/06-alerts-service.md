@@ -46,9 +46,38 @@ for recipient in watch.escalation:       # ordered: [watcher, then e.g. neighbou
 - **A reply or cancel from a line that was SIM-swapped in the last 24 h is ignored and audited as `ACK_IGNORED_SWAPPED_LINE`** — it may be the attacker holding the number. Escalation continues as if unacknowledged, and the watcher's next message says the reply was ignored (the one sentence not from 03 §4 — `ACK_IGNORED_SWAPPED_LINE` is audit-only there — lives in `services/alerts/src/alerts/templates.py`). The 24 h window is `ACK_DISTRUST` in `thresholds.yaml`.
 - Messages never contain a phone number, a location, or a health word. Templates are the same ones Tower uses (03 §4), in their SMS-length form.
 
-### 3.1 Sent SMS, locally (`GET /internal/sent`; doc 11 G3)
+### 3.1 Sent SMS (`GET /internal/sent`; doc 11 G3, G7; U1 2026-10-11)
 
-With `ALERTS_MODE=local` (compose, kind) the service keeps an in-memory ledger of the SMS it delivered (`alerts/sent_log.py`, last 200) and serves it at `GET /internal/sent?after=<n>`, behind the internal bearer (`INTERNAL_BEARER`). In `lambda` and `k8s` mode the route does not exist. Each entry is `{n, at, template, role, user_id, body}`: `n` counts from 1 so a reader asks only for what is new; `at` is the (mock) time of the send; `template` is the `message_ref`; `role` is `watcher` (a grantee's own Watch), `line-holder` or `line-holder backup` (the copy of §3), or `escalation[n]` (step *n* of the line-holder's chain, §11.2), with ` backup` added when a step's backup phone was used; `body` is the rendered text. The number is not a field and cannot be returned. The demo UI's live feed reads it.
+Every SMS that `send.send_one` delivers is recorded through one Protocol, chosen once in the composition root (`runner.build_service`); `send.py` calls `svc.sent_log.record(...)` unconditionally and never asks which mode it is in:
+
+```python
+class SentLog(Protocol):                       # alerts/sent_log.py
+    def record(self, *, at: datetime, template: str, role: str, user_id: str, body: str) -> SentEntry: ...
+    def after(self, n: int, limit: int = 200) -> list[SentEntry]: ...   # entries with entry.n > n, ascending
+```
+
+| Implementation | Chosen when | Store |
+|---|---|---|
+| `MemorySentLog` (today's class, renamed) | `ALERTS_MODE=local` (compose, kind) | in memory, last 200 |
+| `DynamoSentLog` | `ALERTS_MODE=lambda\|k8s` and `ALERTS_ADMIN=1` (Terraform sets it only while `demo_admin_cidrs` is non-empty, 10 §2.1) | table `SentSms` (§7) |
+| `NullSentLog` | `lambda\|k8s` without `ALERTS_ADMIN` (the default) | nothing; `after` → `[]` |
+
+The routes `GET /internal/sent?after=<n>` and `POST /internal/reset` (§3.2) are registered when `ALERTS_MODE=local` **or** `ALERTS_ADMIN=1` (`Settings.admin_routes`); otherwise they do not exist (404), on Lambda behind the existing `ANY /internal/{proxy+}` route too. **Bearer (decision 1, 2026-10-11):** both take only the admin bearer, `Settings.admin_routes_bearer`: `DEMO_ADMIN_BEARER` when it is set (Terraform sets it on the Alerts Lambda only while the demo admin path is open, 10 §2.1), and then the internal bearer is a 401 there; without it, local mode keeps `INTERNAL_BEARER` (compose, the in-process tests); any other mode without it answers 503 (fail closed). `/internal/watch` and `/inbound/sms` keep `INTERNAL_BEARER` and refuse `DEMO_ADMIN_BEARER`. Each entry is `{n, at, template, role, user_id, body}`: `n` counts from 1 so a reader asks only for what is new; `at` is the (mock) time of the send; `template` is the `message_ref`; `role` is `watcher` (a grantee's own Watch), `line-holder` or `line-holder backup` (the copy of §3), or `escalation[n]` (step *n* of the line-holder's chain, §11.2), with ` backup` added when a step's backup phone was used; `body` is the rendered text. The number is not a field and cannot be returned. The demo UI's live feed reads it.
+
+**A failed ledger write never fails the alert (human decision 2026-10-11).** `record` runs only after the SMS was delivered. If it raises (store down, throttled), Alerts logs one line with the recipient's role and the template id (never the number, the body or the error text), counts `sent_log_failed`, appends one audit row `ALERT_LOG_FAILED` (outcome `ok`, `message_ref` = the SMS's template, after the alert's own `changed` row), and carries on: the SMS is not re-sent, the alert still counts as sent (`last_alert_at`, the rate limit), the chain goes on as after any delivered SMS, and the Lambda invocation succeeds.
+
+**Cursor on DynamoDB.** DynamoDB has no auto-increment, and the local contract is an integer `n` from 1 with `after=<n>`. `DynamoSentLog.record` keeps it: one `UpdateItem` on the counter row `{pk:"sent", n:0}` with `ADD seq :1` (`ReturnValues=UPDATED_NEW`) gives the next `n`; then one `PutItem` of the entry `{pk:"sent", n, at, template, role, user_id, body, expires_at}` with `attribute_not_exists(pk)`. `after(n)` is one `Query` `pk = "sent" AND n > :n`, ascending, `Limit` 200; the counter row (`n = 0`) can never match because `after` is never negative. The wire shape and the reader are byte-for-byte the local ones. One consequence: two concurrent Lambdas can make `n = 8` visible before `n = 7`; the demo UI therefore asks from `max(0, last − 5)` and drops what it already has (11 §4). Cost: two writes per SMS, on the proactive path only, while the admin path is open; the hot path is untouched.
+
+**Why gated and short-lived (U1 as built; see the build log).** Bodies are templated text that name what changed (03 §4), so a stored list of them is a history of a line beyond the audit, which 07 §3 and design rule 3 deliberately keep out of the product. The local ledger lives in process memory for a demo session; `SentSms` is its cloud equivalent for the demo window only: it exists only while `demo_admin_cidrs` is non-empty (closing the path destroys the table), entries expire after 24 h (`expires_at`), and nothing but `/internal/sent` reads it. **The body is kept on AWS** (U4, human decision 2026-10-11): the demo UI shows it as a mocked phone; the build log's "drop `body` on AWS" alternative was not taken.
+
+### 3.2 Demo reset (`POST /internal/reset`; U3 2026-10-11)
+
+The AWS counterpart of the Watches/`AlertsState` part of `make seed` (`deploy/compose/seed/seed.py`), for the demo UI's Reset on ENV=aws. Registered as in §3.1 (local or `ALERTS_ADMIN=1`), with §3.1's admin bearer (`DEMO_ADMIN_BEARER` on AWS, never the internal bearer).
+
+- Body `{user_ids: [str]}`, 1–8 ids, each `[A-Za-z0-9_-]{1,128}` (Cognito subs on AWS, `user-…` locally); anything else 422.
+- For every Line owned by one of those users (`Lines` `by_owner`): delete every `Watches` row on that line, and every `AlertsState` row keyed on it: `line#<line_id>`, the `sink#…` tokens it names, `esc#<line_id>#…`, `rl#<line_id>#…`, `ack#<line_id>`. Webhook dedupe rows (`evt#…`) are left to their TTL.
+- Never touches `Users`, `Lines`, `Grants`, `Audit` or `SentSms`, and writes no audit row (a demo reset, not a resident's choice, like `watch-settings` `reset: true`, 04 §9.2). It does not unsubscribe at the carrier: the caller reloads the mock scenario first, which drops the mock's subscriptions.
+- Answers `200 {lines, watches_deleted, alerts_state_deleted}` (counts only).
 
 ## 4. Re-resolve before sending
 
@@ -75,12 +104,17 @@ Revocation also stops the *watching*, not just the sending. `tower_consent.revok
 
 Bookkeeping that must not move `last_state.at` lives in one small Alerts-owned table, `AlertsState` (PK `pk`, TTL `expires_at`): sink token → `line_id`, subscription ids and miss counter per line, webhook dedupe keys, rate-limit claims, escalations in flight and ack routes. No key or value is a phone number. (Built in prompt 10; see `services/alerts/README.md`.)
 
+`SentSms` (§3.1; only while the demo admin path is open): PK `pk` (S, always `"sent"`), SK `n` (N), TTL `expires_at` (epoch s, wall time of the write + 24 h; see "Clocks"), no index, no PITR. Defined beside `MemorySentLog` in `alerts/sent_log.py` (`SENT_SMS`) and added to `tables.auto.tfvars.json` by `modules/dynamodb/generate.py` with `"demo_admin_only": true`, which the module honours. No key or value is a phone number.
+
+**Clocks (human decision 2026-10-11; fixes build-log/22-ops.md R1).** Alerts has two clocks with two jobs. `svc.clock` (the system clock, or the mock's scenario clock with `ALERTS_CLOCK=mock`) is the only time any window compares against: the 6 h rate limit (`last_state.last_alert_at` and the claim's `sent_at`), the 15 min `ESCALATE_NEXT` (`esc.sent_at`), the 24 h `ACK_DISTRUST`, `SWAP_WINDOW` and `STALE`. `svc.wall` is the real time, injected by the composition root (`runner.build_service` passes `alerts.clock.wall_clock`; tests pass a fixed one), and it is used for one thing only: every DynamoDB TTL attribute Alerts writes (`expires_at` on `AlertsState` `evt#`/`rl#`/`esc#`/`ack#` and on `SentSms`) is `wall + horizon` (7 d, the rate window, 2 d, 2 d, 24 h). DynamoDB deletes by the wall clock, and so does DynamoDB Local 2.x (within about a second): a TTL computed from a scenario clock days behind deleted parked escalations before their tick. TTL is garbage collection, never a decision: a window still holds if its row's TTL has passed in wall time, and a row TTL removed early never changes an outcome (the rate limit is also held by `last_state`). The audit table's `ttl` is 07's (`ts` + 90 d, inside the hashed row), not one of these.
+
 ## 8. Failure behaviour
 
 | Failure | Behaviour |
 |---|---|
 | Carrier unreachable on a poll | keep `last_state`, count the miss; after 3 misses, audit `CARRIER_ERROR`; never alert on absence of data |
 | SNS send fails | retry once, then audit `ALERT_FAILED`; next recipient in chain is tried |
+| Sent-SMS ledger write fails after a delivered SMS | log (role, template; no number, no body), count `sent_log_failed`, audit `ALERT_LOG_FAILED`; no re-send; the invocation succeeds (§3.1) |
 | Subscription expired | poller notices (no events for > TTL/2), re-subscribes, audits — only for kinds an enabled, consented Watch still needs; none left (e.g. after a revoke) → unsubscribes instead, never re-subscribes (§4) |
 | Duplicate event | dropped on `event_id` |
 
@@ -95,7 +129,12 @@ The rule again: a failure to observe is never reported as a change.
 - SIM-swap alert does not text the swapped line.
 - Rate limit: second identical change within 6 h is audited, not sent.
 - Webhook with unknown token → 200, no state change.
-- Sent-SMS ledger (§3.1): a grantee's alert is `watcher`; the transplant chain is `line-holder`, `escalation[0]`, `escalation[1]`; `after=<n>` returns only newer entries; the route needs the bearer and is absent outside local mode; no entry contains a number (`tests/test_sent_endpoint.py`).
+- Sent-SMS ledger (§3.1): a grantee's alert is `watcher`; the transplant chain is `line-holder`, `escalation[0]`, `escalation[1]`; `after=<n>` returns only newer entries; the route needs the bearer and is absent outside local mode **unless `ALERTS_ADMIN=1`**; no entry contains a number (`tests/test_sent_endpoint.py`).
+- `SentLog` (§3.1): one suite run against `MemorySentLog` and `DynamoSentLog` (DynamoDB Local or moto): `n` counts from 1; `after(n)` is ascending and only newer; `limit`; no field holds a number; the counter row is never returned; `DynamoSentLog` sets `expires_at`; `NullSentLog.after` is empty; `build_service` picks each for its mode, and `send.py` has no branch on it (`tests/test_sent_log.py`).
+- Ledger write failure (§3.1, §8): a failing `SentLog` → exactly one SMS, never to the swapped line, the `changed` row before it and one `ALERT_LOG_FAILED` row after it, `sent_log_failed` = 1, no number or body in the log, and an API Gateway webhook invocation answers 200 (`tests/test_sent_log_failure.py`).
+- Clocks (§7): every TTL is `wall + horizon` whether the service clock is behind or ahead of the wall; the rate limit and `ESCALATE_NEXT` still hold after their row's TTL has passed in wall time (`tests/test_clocks.py`).
+- Demo reset (§3.2): only the given users' lines lose their Watches and `AlertsState` rows; another user's line keeps both; `Users`, `Lines`, `Grants`, `Audit` untouched; bearer required; absent without local mode or `ALERTS_ADMIN=1`; 422 on 0 or 9 ids (`tests/test_reset_endpoint.py`).
+- Admin bearer (§3.1, decision 1): with `DEMO_ADMIN_BEARER` set, `/internal/sent` and `/internal/reset` answer the internal bearer 401 and `DEMO_ADMIN_BEARER` 200, in every mode, and `/internal/watch` answers `DEMO_ADMIN_BEARER` 401; `lambda` without it → 503; local without it keeps the internal bearer (`tests/test_reset_endpoint.py`).
 
 ## 10. Showcase on its own
 

@@ -5,7 +5,13 @@
 # - The ALB is internal. AgentCore Gateway and Identity reach it through their managed VPC resource; the phone
 #   reaches only /oauth2/authorize, through the API Gateway VPC link (modules/lambdas).
 # - Listener rules forward only the CAMARA API prefixes, /oauth2/* and discovery. /_admin/* (the simulation aid,
-#   MOCK_ADMIN=1) is never forwarded: scripts/aws_seed.py reaches it from inside the task via ECS Exec.
+#   MOCK_ADMIN=1) is forwarded only with admin_paths_enabled (the demo admin path, 08 §3, 10 §2.1): the paths the
+#   demo UI uses, never /_admin/sink; the public route to them is CIDR-gated in modules/lambdas. Otherwise
+#   scripts/aws_seed.py reaches /_admin from inside the task via ECS Exec.
+# - MOCK_ADMIN_TOKEN (G1) is always set, from the registry secret: mutating /_admin routes need the bearer. While
+#   the admin path is open it is the demo admin bearer (10 §2.1, decision 1). The task's secrets name the registry
+#   version, so a changed token (or registry) is a new task definition and the service rolls onto it.
+# - MOCK_CLOCK=wall (08 §3, decision 4): every scenario load starts the clock at wall time, offset 0.
 # TLS: HTTPS on the ALB with an ACM certificate for `domain_name` — DNS-validated in a public Route 53 zone you own
 # (the record then resolves to the ALB's private addresses), or an existing certificate ARN. A private CA would
 # avoid the public name but costs more than the rest of the demo together; documented in deploy/terraform/README.md.
@@ -16,7 +22,9 @@ locals {
   create_cert    = var.certificate_arn == "" && var.route53_zone_id != "" && var.domain_name != ""
   cert_arn       = var.certificate_arn != "" ? var.certificate_arn : (local.create_cert ? aws_acm_certificate_validation.this[0].certificate_arn : "")
   https          = local.cert_arn != ""
-  base_url       = var.domain_name != "" ? "https://${var.domain_name}" : "http://${aws_lb.this.dns_name}"
+  # AWSCURRENT's version id: changes with every registry update (the admin token rotates with demo_admin_cidrs).
+  registry_version = aws_secretsmanager_secret_version.registry.version_id
+  base_url         = var.domain_name != "" ? "https://${var.domain_name}" : "http://${aws_lb.this.dns_name}"
 
   # The mock's OAuth client registry (it issues credentials; 10 §4). Secrets are generated at the root and also
   # handed to AgentCore Identity, which is the only consumer.
@@ -46,6 +54,12 @@ locals {
       }
     }
   })
+
+  # 08 §3: only what the demo UI uses; an ALB condition takes at most five values, hence two rules.
+  admin_paths = [
+    ["/_admin/state", "/_admin/scenarios", "/_admin/scenarios/*", "/_admin/clock", "/_admin/faults"],
+    ["/_admin/lines/*"],
+  ]
 
   forwarded_paths = [
     ["/sim-swap/*", "/sim-swap-subscriptions/*", "/call-forwarding-signal/*", "/number-verification/*", "/device-reachability-status/*"],
@@ -82,6 +96,7 @@ resource "aws_secretsmanager_secret_version" "registry" {
   secret_string = jsonencode({
     clients_yaml = local.clients_yaml
     jwt_secret   = random_password.jwt.result
+    admin_token  = var.admin_token
   })
 }
 
@@ -243,6 +258,23 @@ resource "aws_lb_listener_rule" "forward" {
   }
 }
 
+resource "aws_lb_listener_rule" "admin" {
+  count        = var.admin_paths_enabled ? length(local.admin_paths) : 0
+  listener_arn = aws_lb_listener.this.arn
+  priority     = 5 + count.index
+
+  action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.this.arn
+  }
+
+  condition {
+    path_pattern {
+      values = local.admin_paths[count.index]
+    }
+  }
+}
+
 # --- ECS ------------------------------------------------------------------------------------------------------------
 
 resource "aws_cloudwatch_log_group" "this" {
@@ -363,14 +395,19 @@ resource "aws_ecs_task_definition" "this" {
       { name = "MOCK_BASE_URL", value = local.base_url },
       { name = "MOCK_SCENARIO", value = var.scenario },
       { name = "MOCK_CLIENTS_FILE", value = "/tmp/clients.yaml" },
-      { name = "MOCK_ADMIN", value = "1" }, # reachable only from inside the task (ALB never forwards /_admin)
+      { name = "MOCK_ADMIN", value = "1" }, # ALB forwards /_admin only with admin_paths_enabled (08 §3)
       # 08 §3 (D-G): the task cannot see the phone's network, so it assumes this client id is on mobile data.
       { name = "MOCK_ASSUME_MOBILE_DATA", value = var.assume_mobile_data ? "1" : "0" },
       { name = "MOCK_ASSUME_CLIENT_ID", value = var.assume_client_id },
+      # 08 §3 (decision 4, 2026-10-11): Tower and Alerts use the system clock here, so the mock's clock starts at
+      # wall time (offset 0) on every scenario load (make seed-aws, the demo UI's Reset); POST /_admin/clock moves it.
+      { name = "MOCK_CLOCK", value = "wall" },
     ]
     secrets = [
-      { name = "MOCK_CLIENTS_YAML", valueFrom = "${aws_secretsmanager_secret.registry.arn}:clients_yaml::" },
-      { name = "MOCK_JWT_SECRET", valueFrom = "${aws_secretsmanager_secret.registry.arn}:jwt_secret::" },
+      # Pinned to the registry version (<arn>:<key>::<version id>): ECS reads secrets only at task start.
+      { name = "MOCK_CLIENTS_YAML", valueFrom = "${aws_secretsmanager_secret.registry.arn}:clients_yaml::${local.registry_version}" },
+      { name = "MOCK_JWT_SECRET", valueFrom = "${aws_secretsmanager_secret.registry.arn}:jwt_secret::${local.registry_version}" },
+      { name = "MOCK_ADMIN_TOKEN", valueFrom = "${aws_secretsmanager_secret.registry.arn}:admin_token::${local.registry_version}" },
     ]
     logConfiguration = {
       logDriver = "awslogs"

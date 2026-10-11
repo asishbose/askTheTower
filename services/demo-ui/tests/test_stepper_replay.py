@@ -33,7 +33,11 @@ def test_a_second_run_in_the_same_page_folds_its_replayed_steps(
     page.goto(served.url)
     _run_moment_1(page)
     page.get_by_role("button", name="Moment 2").click()
-    page.wait_for_function("() => document.body.classList.contains('running')", timeout=20_000)
+    # Wait for Moment 2's final status, not for `body.running` to flip twice: with the fake agent the whole run lasts
+    # a few ms in the browser, between two animation frames, so a rAF poll could miss the class (flaky, 2026-10-11).
+    expect(
+        page.locator('#run-status .status[data-level="pass"], #run-status .status[data-level="fail"]')
+    ).to_contain_text("moment-2:", timeout=20_000)
     page.wait_for_function("() => !document.body.classList.contains('running')", timeout=20_000)
     expect(page.locator("#log article.step.replay")).to_have_count(3)  # the frames are right
     nodes = page.locator("#stepper li").evaluate_all(

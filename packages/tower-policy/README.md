@@ -90,9 +90,9 @@ def load_thresholds(path: str | Path | None = None) -> Thresholds: ...  # raises
 def policy_version() -> str: ...
 ```
 
-`ReasonCode` has exactly twelve members: `OK`, `SIM_SWAPPED_RECENT`, `CALL_FORWARDING_SET`,
+`ReasonCode` has exactly thirteen members: `OK`, `SIM_SWAPPED_RECENT`, `CALL_FORWARDING_SET`,
 `UNREACHABLE`, `NOT_BOUND`, `NO_CONSENT`, `STALE_DATA`, `CARRIER_ERROR`, `SERVICE_UNAVAILABLE`, and the
-audit-only `SUPPRESSED_REVOKED`, `ALERT_FAILED`, `ACK_IGNORED_SWAPPED_LINE` (written by Alerts, never
+audit-only `SUPPRESSED_REVOKED`, `ALERT_FAILED`, `ALERT_LOG_FAILED`, `ACK_IGNORED_SWAPPED_LINE` (written by Alerts, never
 returned by the engine; `phrase()` renders them as `""`). `SERVICE_UNAVAILABLE` is a refusal the
 *callers* raise (store or carrier client down); the engine itself never returns it.
 

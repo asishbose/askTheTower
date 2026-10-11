@@ -120,7 +120,10 @@ def test_floats_never_reach_canonical() -> None:
 
 def test_template_ids_are_sms_templates_only() -> None:
     assert "UNREACHABLE.sms" in TEMPLATE_IDS
-    assert not any(t.startswith(("SUPPRESSED_REVOKED", "ALERT_FAILED", "ACK_IGNORED")) for t in TEMPLATE_IDS)
+    assert not any(
+        t.startswith(("SUPPRESSED_REVOKED", "ALERT_FAILED", "ALERT_LOG_FAILED", "ACK_IGNORED"))
+        for t in TEMPLATE_IDS
+    )
     assert all(t.endswith(".sms") for t in TEMPLATE_IDS)
 
 

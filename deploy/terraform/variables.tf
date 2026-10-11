@@ -71,7 +71,29 @@ variable "dynamodb_tables" {
     }))
     ttl                    = object({ enabled = bool, attribute_name = string })
     point_in_time_recovery = bool
+    demo_admin_only        = optional(bool, false) # SentSms (06 §7): created only while demo_admin_cidrs is non-empty
   }))
+}
+
+# --- demo admin path (10 §2.1; prompt 22, U2) ----------------------------------------------------------------------
+
+variable "demo_admin_cidrs" {
+  description = <<-EOT
+    Off by default. Non-empty: the public HTTP API gains CIDR-gated, bearer-protected routes to the mock's /_admin,
+    Alerts' /internal/sent and /internal/reset, and the binding page's /_admin (bearer mode), plus the SentSms table
+    and three SSM SecureStrings, so the laptop's demo UI can drive the AWS deployment. Your /32 only, for the demo
+    window; set back to [] (and `make deploy`) after.
+  EOT
+  type        = list(string)
+  default     = []
+
+  validation {
+    condition = alltrue([
+      for c in var.demo_admin_cidrs : can(cidrsubnet(c, 0, 0)) && !contains(["0.0.0.0/0", "::/0"], c) &&
+      try(tonumber(split("/", c)[1]), -1) >= (strcontains(c, ":") ? 48 : 24)
+    ])
+    error_message = "demo_admin_cidrs: valid CIDRs only, never 0.0.0.0/0 or ::/0; IPv4 prefix /24 or longer, IPv6 /48 or longer."
+  }
 }
 
 # --- network ----------------------------------------------------------------------------------------------------

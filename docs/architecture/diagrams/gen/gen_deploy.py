@@ -208,6 +208,14 @@ def page_target() -> Page:
         "+ OAuth account linking (Cognito)",
         "TODO(human): alexa/registration.md §2–§6",
     ], "teal", dashed=True)  # fmt: skip
+    p.box("laptop_ui", 50, 560, 230, 190, "Presenter's laptop — demo UI", [
+        "ENV=aws, never deployed (11 §7)",
+        "dashed A: only with",
+        "demo_admin_cidrs = [your /32]",
+        "execute-api URL + DEMO_ADMIN_BEARER",
+        "from deploy/.env.aws",
+        "TODO(human): build-log/22-ops",
+    ], "grey", dashed=True)  # fmt: skip
     p.box("phone", 50, 820, 230, 150, "Line-holder's phone", [
         "mobile data, Wi-Fi off (rule 7)",
         "opens the binding link and the carrier",
@@ -302,13 +310,15 @@ def page_target() -> Page:
         "modules/dynamodb → aws_dynamodb_table.this (for_each over tables.auto.tfvars.json)",
         "att-dev-Users · Lines · Grants · Watches · Audit (PITR) · BindTokens (TTL) · AlertsState (TTL)",
         "SSE with aws_kms_key.main · keys are HMAC line_id, never a number",
+        "+ SentSms (TTL 24 h) only with demo_admin_cidrs (dashed A, 06 §3.1)",
     ], "grey")  # fmt: skip
     p.box("tfsecrets", 1085, 595, 180, 125, "Generated secrets", [
         "random_password",
         ".carrier_client ×3,",
-        ".internal_bearer,",
-        ".session_secret — in",
-        "encrypted S3 state",
+        ".internal_bearer, .session_",
+        "secret, .mock_admin_token",
+        "(+ .bind_admin_token, A)",
+        "in encrypted S3 state",
     ], "white")  # fmt: skip
     p.box("secrets", 1840, 595, 320, 125, "Secrets Manager", [
         "aws_secretsmanager_secret.registry",
@@ -365,7 +375,8 @@ def page_target() -> Page:
         "aws_acm_certificate.this (DNS-validated)",
         "aws_route53_record.alb (mock_domain_name)",
         "forwards CAMARA paths, /oauth2/*,",
-        "/.well-known/*, /healthz — never /_admin/*",
+        "/.well-known/*, /healthz; /_admin/* only",
+        "via aws_lb_listener_rule.admin (A, never /sink)",
     ], "teal")  # fmt: skip
     p.box("mock", 1840, 850, 320, 170, "ECS Fargate — mock carrier", [
         "aws_ecs_cluster.this · aws_ecs_service.this",
@@ -383,6 +394,21 @@ def page_target() -> Page:
         "used by the Gateway / Identity managed",
         "VPC resources and the cut-line Runtime",
     ], "grey")  # fmt: skip
+    p.box("admin", 2215, 915, 320, 320, "Demo admin path A (off by default)", [
+        "only with demo_admin_cidrs ≠ [] (10 §2.1):",
+        "HTTP API routes, authorization CUSTOM:",
+        "ANY /carrier-admin/_admin/{proxy+}",
+        "  → VPC link → ALB (view=refs forced)",
+        "GET /internal/sent, POST /internal/reset",
+        "  → alerts (ALERTS_ADMIN=1)",
+        "ANY /_admin/{proxy+} → binding page",
+        "  (BIND_ADMIN=1 + BIND_ADMIN_TOKEN = the bearer)",
+        "aws_lambda_function.admin_gate +",
+        "aws_apigatewayv2_authorizer.admin_gate:",
+        "sourceIp in the CIDRs + DEMO_ADMIN_BEARER",
+        "aws_ssm_parameter.demo_admin ×1 (the bearer)",
+        "outputs mock_admin_url, alerts_internal_url",
+    ], "grey", dashed=True)  # fmt: skip
     p.box("net", 1840, 1080, 320, 140, "Network", [
         "aws_vpc.this · 2 public + 2 private subnets",
         "aws_internet_gateway.this",
@@ -479,7 +505,7 @@ def page_target() -> Page:
         ("d_buildx", 910, 400, "docker buildx (scripts/push_images.py)", ["docker buildx build --platform linux/arm64", "--provenance=false --sbom=false --push", "-t <repo>:<sha> -t <repo>:latest · QEMU binfmt", "(make build images are host-arch, not pushed)"]),
         ("d_tf", 1340, 420, "terraform ≥ 1.9 · aws ≥ 6.20, < 7 · random", ["-chdir=deploy/terraform and …/ecr (two states)", "S3 backend (backend.tf), lock table", "apply / destroy as the IAM user", "make tf-check: init -backend=false + validate"]),
         ("d_scripts", 1790, 420, "scripts/ (uv run python)", ["register_gateway.py · aws_seed.py", "render_env.py · latency.py · push_images.py", "read artifacts/tf-outputs.json (_tf_outputs.py);", "push falls back to tf-outputs-ecr.json"]),
-        ("d_files", 2240, 620, "Generated files (gitignored)", ["artifacts/tf-outputs.json · tf-outputs-ecr.json · image-tag", "artifacts/tfplan · terraform-plan.txt · gateway-tools.json", "deploy/.env.aws (endpoints for ENV=aws targets, no secrets)", "artifacts/latency-aws.md"]),
+        ("d_files", 2240, 620, "Generated files (gitignored)", ["artifacts/tf-outputs.json · tf-outputs-ecr.json · image-tag", "artifacts/tfplan · terraform-plan.txt · gateway-tools.json", "deploy/.env.aws (endpoints; + DEMO_ADMIN_BEARER only while A is open)", "artifacts/latency-aws.md · seed-aws.json · web-chat-sync.json"]),
     ]  # fmt: skip
     for cid, x, w, title, body in dev:
         p.box(cid, x, 1885 + DY, w, 160, title, body, "white")
@@ -502,6 +528,7 @@ def page_target() -> Page:
 
     # --- binding, data, management (grey) ---------------------------------------------------------------------
     p.edge("e_phone", "phone", "cf", [(280, 890), (400, 890)], "B1 HTTPS<br>mobile data", "grey", at=(340, 890))
+    p.edge("e_admin", "laptop_ui", "api", [(280, 745), (900, 745), (900, 830)], "A1 admin: CIDR + Bearer", "grey", dashed=True, at=(470, 745))  # fmt: skip
     p.edge("e_cf_api", "cf", "api", [(620, 890), (680, 890)], "HTTPS", "grey", at=(650, 890))
     p.edge("e_api_bind", "api", "l_bind", [(940, 890), (980, 890)], "", "grey")
     p.edge("e_api_link", "api", "vpclink", [(810, 1030), (810, 1252), (1500, 1252), (1500, 1220)], "B2 GET /carrier/oauth2/authorize", "grey", at=(1180, 1252))  # fmt: skip
@@ -528,6 +555,7 @@ def page_target() -> Page:
         "P2 Scheduler → alerts / reconcile: Lambda invoke with the scheduler role · P3 alerts → Gateway: MCP SigV4 (facts re-fetched, consent re-checked) · P4 alerts → SNS → SMS to the watcher.<br>"
         "<b>Binding (grey)</b> B1 phone → binding page over mobile data · B2 phone → carrier authorize through the VPC link (the only public route to the mock) · "
         "B3 binding page → Gateway number-verification, auth code via the Identity binding provider.<br>"
+        "<b>Demo admin path (dashed A, off by default)</b> A1 laptop demo UI → HTTP API execute-api URL: admin_gate authorizer (source IP in demo_admin_cidrs and Bearer DEMO_ADMIN_BEARER, rotated with the list; no header 401, else 403), then each service checks the same bearer; closed = no route (404). Fargate mock: MOCK_CLOCK=wall. Never on the request, proactive or binding path.<br>"
         "<b>Web chat (teal, W)</b> W1 browser → CloudFront/S3 page · W2 Cognito Hosted UI, code + PKCE → access token · W3 page → Lambda URL (CORS) · "
         "W4 proxy → agent runtime (JWT authorizer, web-chat client) · W5 agent → Tower with the same bearer; Tower verifies it again. Companion: docs/architecture/deployment-agentcore.md."
     ), size=11)  # fmt: skip

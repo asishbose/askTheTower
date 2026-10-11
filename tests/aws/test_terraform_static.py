@@ -55,7 +55,18 @@ def test_tables_tfvars_is_current() -> None:
     r = subprocess.run([sys.executable, str(gen), "--check"], capture_output=True, text=True, cwd=ROOT)  # noqa: S603
     assert r.returncode == 0, r.stderr
     doc = json.loads((TF / "tables.auto.tfvars.json").read_text())["dynamodb_tables"]
-    assert sorted(doc) == ["AlertsState", "Audit", "BindTokens", "Grants", "Lines", "Users", "Watches"]
+    # 06 §7 / 10 §2.1 (prompt 22): SentSms is generated too, marked demo_admin_only (created only while open)
+    assert sorted(doc) == [
+        "AlertsState",
+        "Audit",
+        "BindTokens",
+        "Grants",
+        "Lines",
+        "SentSms",
+        "Users",
+        "Watches",
+    ]
+    assert [name for name, t in doc.items() if t.get("demo_admin_only")] == ["SentSms"]
     assert doc["Audit"]["point_in_time_recovery"] is True
     assert doc["BindTokens"]["ttl"] == {"enabled": True, "attribute_name": "expires_at"}
     assert doc["AlertsState"]["ttl"]["enabled"] is True
@@ -380,3 +391,207 @@ def test_web_chat_module_shape() -> None:
     mock = (TF / "modules" / "mock_carrier" / "main.tf").read_text()
     assert "MOCK_ASSUME_MOBILE_DATA" in mock and "MOCK_ASSUME_CLIENT_ID" in mock
     assert "SESSION_TTL_S          = tostring(var.binding_session_ttl_s)" in (TF / "main.tf").read_text()
+
+
+# --- the demo admin path (10 §2.1, 08 §3; prompt 22, U2) -------------------------------------------------------------
+
+
+def _block(text: str, header: str) -> str:
+    """The body of the first `<header> {` block, braces balanced."""
+    start = text.index(header + " {") + len(header) + 2
+    depth = 1
+    for i in range(start, len(text)):
+        depth += {"{": 1, "}": -1}.get(text[i], 0)
+        if depth == 0:
+            return text[start:i]
+    raise AssertionError(f"unbalanced block {header}")
+
+
+ADMIN_PATHS = [
+    "/_admin/state",
+    "/_admin/scenarios",
+    "/_admin/scenarios/*",
+    "/_admin/clock",
+    "/_admin/faults",
+    "/_admin/lines/*",
+]
+
+
+@pytest.mark.unit
+def test_demo_admin_variable_defaults_closed_with_validation() -> None:
+    variables = (TF / "variables.tf").read_text()
+    block = _block(variables, 'variable "demo_admin_cidrs"')
+    assert re.search(r"default\s*=\s*\[\]", block) and "list(string)" in block
+    assert '"0.0.0.0/0", "::/0"' in block and "48 : 24" in block and "cidrsubnet" in block
+    assert "demo_admin = length(var.demo_admin_cidrs) > 0" in (TF / "main.tf").read_text()
+    example = (TF / "envs" / "aws.tfvars.example").read_text()
+    assert re.search(r"^demo_admin_cidrs\s*=\s*\[\]", example, re.M) and "/32 only" in example
+
+
+@pytest.mark.unit
+def test_admin_routes_exist_only_when_open_and_are_all_gated() -> None:
+    lam = (TF / "modules" / "lambdas" / "main.tf").read_text()
+    for header in (
+        'data "archive_file" "admin_gate"',
+        'resource "aws_iam_role" "admin_gate"',
+        'resource "aws_lambda_function" "admin_gate"',
+        'resource "aws_apigatewayv2_authorizer" "admin_gate"',
+        'resource "aws_lambda_permission" "admin_gate"',
+    ):
+        assert "count" in _block(lam, header).split("\n", 2)[1], header
+        assert "local.demo_admin ? 1 : 0" in _block(lam, header), header
+    assert "local.mock_admin ? 1 : 0" in _block(lam, 'resource "aws_apigatewayv2_integration" "mock_admin"')
+    assert "mock_admin      = local.demo_admin &&" in lam
+    routes_local = lam.split("admin_routes = local.demo_admin ? merge(", 1)
+    assert len(routes_local) == 2 and ") : {}" in routes_local[1].split("\n}\n", 1)[0]
+    keys = re.findall(r'(\w+)\s*=\s*\{ route_key = "([^"]+)"', routes_local[1].split("\n}\n", 1)[0])
+    assert dict(keys) == {
+        "alerts_sent": "GET /internal/sent",
+        "alerts_reset": "POST /internal/reset",
+        "binding": "ANY /_admin/{proxy+}",
+        "mock": "ANY /carrier-admin/_admin/{proxy+}",
+    }
+    route = _block(lam, 'resource "aws_apigatewayv2_route" "admin"')
+    assert "for_each           = local.admin_routes" in route
+    assert (
+        'authorization_type = "CUSTOM"' in route and "aws_apigatewayv2_authorizer.admin_gate[0].id" in route
+    )
+    authorizer = _block(lam, 'resource "aws_apigatewayv2_authorizer" "admin_gate"')
+    assert re.search(r'authorizer_type\s+= "REQUEST"', authorizer)
+    assert re.search(r"enable_simple_responses\s+= true", authorizer)
+    # decision 1: no Authorization header → 401 from API Gateway; never cached (the address is not in the identity)
+    assert re.search(r"authorizer_result_ttl_in_seconds\s+= 0\n", authorizer)
+    assert re.search(r'identity_sources\s+= \["\$request\.header\.Authorization"\]', authorizer)
+    fn = _block(lam, 'resource "aws_lambda_function" "admin_gate"')
+    assert re.search(r"ALLOWED_CIDRS\s+= jsonencode\(var\.demo_admin_cidrs\)", fn) and '"python3.12"' in fn
+    assert re.search(r"DEMO_ADMIN_BEARER\s+= var\.demo_admin_bearer\n", fn)
+
+
+@pytest.mark.unit
+def test_existing_routes_have_no_authorizer() -> None:
+    """Tower's watch API (`/internal/watch`, internal bearer from AgentCore) and the binding page stay ungated."""
+    lam = (TF / "modules" / "lambdas" / "main.tf").read_text()
+    for header in (
+        'resource "aws_apigatewayv2_route" "default"',
+        'resource "aws_apigatewayv2_route" "alerts"',
+        'resource "aws_apigatewayv2_route" "carrier_authorize"',
+    ):
+        body = _block(lam, header)
+        assert "authorizer_id" not in body and "authorization_type" not in body, header
+    assert '"ANY /internal/{proxy+}"' in _block(lam, 'resource "aws_apigatewayv2_route" "alerts"')
+    assert '"$default"' in _block(lam, 'resource "aws_apigatewayv2_route" "default"')
+
+
+@pytest.mark.unit
+def test_mock_admin_integration_forces_refs_and_the_alb_never_forwards_the_sink() -> None:
+    lam = (TF / "modules" / "lambdas" / "main.tf").read_text()
+    integ = _block(lam, 'resource "aws_apigatewayv2_integration" "mock_admin"')
+    assert '"overwrite:querystring.view" = "refs"' in integ
+    assert '"overwrite:path"             = "/_admin/$request.path.proxy"' in integ
+    assert 'connection_type        = "VPC_LINK"' in integ
+    mock = (TF / "modules" / "mock_carrier" / "main.tf").read_text()
+    paths = re.findall(r'"(/_admin[^"]*)"', mock.split("admin_paths = [", 1)[1].split("\n  ]\n", 1)[0])
+    assert paths == ADMIN_PATHS
+    assert not any(
+        "sink" in p or p in ("/_admin/*", "/_admin*") for p in re.findall(r'"(/_admin[^"]*)"', mock)
+    )
+    forwarded = mock.split("forwarded_paths = [", 1)[1].split("\n  ]\n", 1)[0]
+    assert "_admin" not in forwarded
+    rule = _block(mock, 'resource "aws_lb_listener_rule" "admin"')
+    assert "var.admin_paths_enabled ? length(local.admin_paths) : 0" in rule and "5 + count.index" in rule
+    assert "admin_paths_enabled = local.demo_admin" in (TF / "main.tf").read_text()
+
+
+@pytest.mark.unit
+def test_mock_admin_token_always_comes_from_the_registry_secret() -> None:
+    mock = (TF / "modules" / "mock_carrier" / "main.tf").read_text()
+    assert "admin_token  = var.admin_token" in _block(
+        mock, 'resource "aws_secretsmanager_secret_version" "registry"'
+    )
+    # pinned to the registry version, so a rotated token is a new task definition (ECS reads secrets at start)
+    for key, name in (
+        ("admin_token", "MOCK_ADMIN_TOKEN"),
+        ("jwt_secret", "MOCK_JWT_SECRET"),
+        ("clients_yaml", "MOCK_CLIENTS_YAML"),
+    ):
+        assert re.search(
+            rf'\{{ name = "{name}", valueFrom = "\$\{{aws_secretsmanager_secret\.registry\.arn\}}:{key}::\$\{{local\.registry_version\}}" \}}',
+            mock,
+        ), name
+    assert re.search(r"registry_version\s+= aws_secretsmanager_secret_version\.registry\.version_id", mock)
+    assert '"MOCK_ADMIN_TOKEN", value =' not in mock  # never a plain environment value
+    main = (TF / "main.tf").read_text()
+    assert "count" not in _block(main, 'resource "random_password" "mock_admin_token"')
+    # decision 1: while open the mock's G1 token is the demo admin bearer (one Authorization header behind the gate)
+    assert (
+        "admin_token         = local.demo_admin ? local.demo_admin_bearer : random_password.mock_admin_token.result"
+        in main
+    )
+
+
+@pytest.mark.unit
+def test_admin_env_ssm_and_table_are_gated() -> None:
+    main = (TF / "main.tf").read_text()
+    assert re.search(
+        r'local\.demo_admin \? \{ ALERTS_ADMIN = "1", DEMO_ADMIN_BEARER = local\.demo_admin_bearer \} : \{\}',
+        main,
+    )
+    bind = main.split("local.demo_admin ? {", 1)[1].split("} : {}", 1)[0]
+    assert 'BIND_ADMIN       = "1"' in bind and "BIND_ADMIN_TOKEN = local.demo_admin_bearer" in bind
+    assert main.count("ALERTS_ADMIN") == 1 and main.count("BIND_ADMIN ") == 1
+    assert 'resource "random_password" "bind_admin_token"' not in main
+    ssm = _block(main, 'resource "aws_ssm_parameter" "demo_admin"')
+    assert 'type        = "SecureString"' in ssm and "for_each = local.demo_admin ?" in ssm
+    assert 'toset(["demo-admin-bearer"])' in ssm
+    assert '"/${local.name}/demo-admin/${each.key}"' in ssm
+    dyn = (TF / "modules" / "dynamodb" / "main.tf").read_text()
+    assert "if !t.demo_admin_only || var.demo_admin" in dyn
+    assert "demo_admin  = local.demo_admin" in main
+
+
+@pytest.mark.unit
+def test_admin_outputs_are_null_when_closed_and_carry_no_secret() -> None:
+    outputs = (TF / "outputs.tf").read_text()
+    for name in ("mock_admin_url", "alerts_internal_url", "binding_admin_url", "demo_admin_ssm_parameters"):
+        body = _block(outputs, f'output "{name}"')
+        assert "local.demo_admin" in body and ": null" in body, name
+        assert "public_base_url" not in body, name  # through CloudFront every source would be CloudFront's
+    assert "module.lambdas.api_endpoint" in _block(outputs, 'output "mock_admin_url"')
+    assert "p.name" in _block(outputs, 'output "demo_admin_ssm_parameters"')
+    for m in re.finditer(r'output "(\w+)" \{', outputs):
+        body = _block(outputs, f'output "{m.group(1)}"')
+        assert not re.search(
+            r"random_password|demo_admin_secrets|demo_admin_bearer|\.result\b|\.value\b", body
+        ), m.group(1)
+
+
+@pytest.mark.unit
+def test_demo_admin_bearer_rotates_with_the_list_and_is_never_the_internal_bearer() -> None:
+    """Decision 1 (2026-10-11): `random_password.demo_admin_bearer` exists only while open, its keepers are the
+    address list (a change replaces it), it reaches the gate, Alerts, the binding page and the mock, and it is never
+    `random_password.internal_bearer`."""
+    main = (TF / "main.tf").read_text()
+    body = _block(main, 'resource "random_password" "demo_admin_bearer"')
+    assert "count   = local.demo_admin ? 1 : 0" in body and "special = false" in body
+    keepers = _block(body, "keepers =")
+    assert re.fullmatch(r"\s*demo_admin_cidrs = jsonencode\(var\.demo_admin_cidrs\)\s*", keepers), keepers
+    assert "demo_admin_bearer = one(random_password.demo_admin_bearer[*].result)" in main
+    assert re.search(r"demo_admin_bearer = local\.demo_admin_bearer\n", _block(main, 'module "lambdas"'))
+    assert not re.search(
+        r"(DEMO_ADMIN_BEARER|BIND_ADMIN_TOKEN|demo_admin_bearer)\s*=\s*random_password\.internal_bearer", main
+    )
+    secrets = _block(main, "demo_admin_secrets =")
+    assert "internal_bearer" not in secrets and "mock_admin_token" not in secrets
+    variable = _block(
+        (TF / "modules" / "lambdas" / "variables.tf").read_text(), 'variable "demo_admin_bearer"'
+    )
+    assert "sensitive   = true" in variable
+
+
+@pytest.mark.unit
+def test_mock_task_clock_is_wall() -> None:
+    """Decision 4 (2026-10-11, 08 §3): the Fargate task loads scenarios at wall time."""
+    mock = (TF / "modules" / "mock_carrier" / "main.tf").read_text()
+    assert '{ name = "MOCK_CLOCK", value = "wall" }' in _block(
+        mock, 'resource "aws_ecs_task_definition" "this"'
+    )

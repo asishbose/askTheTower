@@ -49,6 +49,12 @@ binding_session_ttl_s   = 86400 # 04 §6, D-H: the binding page session lasts th
 sms_sandbox_numbers     = [] # e.g. ["+1613555xxxx"] — the demo phones; keep real numbers out of git
 sms_monthly_spend_limit = 1
 
+# --- demo admin path (10 §2.1; prompt 22): off by default -----------------------------------------------------------
+# Your /32 only, for the demo window; set back to [] after (then `make deploy`). Non-empty opens CIDR-gated, bearer-
+# protected routes to the mock's /_admin, Alerts' /internal/sent + /internal/reset and the binding page's /_admin, so
+# `make showcase-ui ENV=aws` can run Moment 1-3. `make outputs` puts the URLs and bearers in deploy/.env.aws (0600).
+demo_admin_cidrs = [] # e.g. ["203.0.113.7/32"]
+
 # --- optional --------------------------------------------------------------------------------------------------------
 enable_cloudfront_waf = true
 enable_nat_gateway    = false

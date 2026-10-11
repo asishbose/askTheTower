@@ -50,7 +50,8 @@ def holder_of(line: dict[str, Any]) -> str | None:
 
 
 class MockAdmin:
-    """`/_admin/*` on the mock with `MOCK_ADMIN_TOKEN` (G1). Reads use `?view=refs`: no number crosses."""
+    """`/_admin/*` on the mock with `MOCK_ADMIN_TOKEN` (G1) locally, `DEMO_ADMIN_BEARER` on ENV=aws (decision 1).
+    Reads use `?view=refs`: no number crosses."""
 
     def __init__(self, http: httpx.AsyncClient) -> None:
         self.http = http
@@ -83,10 +84,16 @@ class MockAdmin:
 
 
 class BindingAdmin:
-    """The binding page's local admin (04 §8): bind links, grants, resolve. 404 everywhere off-local."""
+    """The binding page's admin (04 §8): bind links, grants, resolve. Locally open; on AWS in bearer mode behind the
+    demo admin path (U2, U3; bearer `DEMO_ADMIN_BEARER`, decision 1), where the users are Cognito subs. 404 everywhere
+    when it is off.
 
-    def __init__(self, http: httpx.AsyncClient) -> None:
+    It is also the AWS `GrantControl` for the macros (`set_mom_grant`), so `ref_client` stays unchanged (doc 11 §5).
+    """
+
+    def __init__(self, http: httpx.AsyncClient, user_ids: dict[str, str] | None = None) -> None:
         self.http = http
+        self.ids = user_ids or {"asish": "user-asish", "mom": "user-mom"}
 
     async def bind_url(self, user_id: str) -> str:
         body = await _call(
@@ -110,17 +117,22 @@ class BindingAdmin:
     async def mom_grant(self, action: Literal["grant", "revoke"]) -> None:
         """Mom grants or revokes Asish's `watch` (the demo's moment 3), through `tower_consent` on the page."""
         body = {
-            "owner_user_id": "user-mom",
-            "grantee_user_id": "user-asish",
+            "owner_user_id": self.ids["mom"],
+            "grantee_user_id": self.ids["asish"],
             "grant": "watch",
             "alias": "mom",
             "action": action,
         }
         await _call(self.http, "POST", "/_admin/grants", "binding page", json=body)
 
+    async def set_mom_grant(self, action: Literal["revoke", "grant"]) -> None:
+        """`ref_client.demo.GrantControl`: the macros' Grant step on ENV=aws."""
+        await self.mom_grant(action)
+
 
 class AlertsSent:
-    """`GET /internal/sent?after=<n>` (G3): template id, role, user id, body; never a number."""
+    """`GET /internal/sent?after=<n>` (G3; on AWS from `SentSms`, U1): template id, role, user id, body; never a
+    number."""
 
     def __init__(self, http: httpx.AsyncClient) -> None:
         self.http = http

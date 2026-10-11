@@ -58,16 +58,25 @@ class AuditSource:
 
     event = "audit"
 
-    def __init__(self, store: Store, *, monotonic: Callable[[], float] = time.monotonic) -> None:
+    def __init__(
+        self,
+        store: Store,
+        *,
+        monotonic: Callable[[], float] = time.monotonic,
+        owners: Sequence[tuple[str, str]] = OWNERS,
+    ) -> None:
         self.store = store
         self.monotonic = monotonic
+        self.owners = tuple(owners)
         self._lines: list[tuple[str, str, str]] = []  # (owner_id, label, line_id)
         self._lines_at = float("-inf")
 
     def _owned_lines(self) -> list[tuple[str, str, str]]:
         if self.monotonic() - self._lines_at > LINES_TTL_S:
             self._lines = [
-                (owner, label, ln.line_id) for owner, label in OWNERS for ln in list_lines(self.store, owner)
+                (owner, label, ln.line_id)
+                for owner, label in self.owners
+                for ln in list_lines(self.store, owner)
             ]
             self._lines_at = self.monotonic()
         return self._lines
@@ -105,26 +114,37 @@ class AuditSource:
 
 
 class SmsSource:
-    """The SMS Alerts sent (G3), newest first; asks only for entries after the last one seen."""
+    """The SMS Alerts sent (G3), newest first; asks only for entries after the last one seen.
+
+    `overlap` (ENV=aws, U1): DynamoDB's counter can make `n = 8` visible before `n = 7` (06 §3.1), so the source asks
+    from `max(0, last_n - overlap)` and drops the entries it already has, by `n`.
+    """
 
     event = "sms"
 
-    def __init__(self, alerts: AlertsSent | None, off_reason: str = "") -> None:
+    def __init__(self, alerts: AlertsSent | None, off_reason: str = "", *, overlap: int = 0) -> None:
         self.alerts = alerts
         self.off_reason = off_reason
+        self.overlap = overlap
         self.entries: list[dict[str, Any]] = []
+        self.seen: set[int] = set()
         self.last_n = 0
 
     async def render(self) -> str:
         if self.alerts is None:
             return views.render("unavailable.html", reason=self.off_reason)
         try:
-            new = await self.alerts.after(self.last_n)
+            new = await self.alerts.after(max(0, self.last_n - self.overlap))
         except Unavailable as e:
             return views.render("unavailable.html", reason=f"SMS list unavailable: {e}")
         for entry in new:
-            self.last_n = max(self.last_n, int(entry.get("n", 0)))
-            self.entries.insert(0, entry)
+            n = int(entry.get("n", 0))
+            if n in self.seen:
+                continue
+            self.seen.add(n)
+            self.last_n = max(self.last_n, n)
+            self.entries.append(entry)
+        self.entries.sort(key=lambda e: int(e.get("n", 0)), reverse=True)
         del self.entries[SMS_ROWS:]
         return views.render("sms.html", entries=self.entries)
 
@@ -183,13 +203,14 @@ class GrantsSource:
     def __init__(self, binding: BindingAdmin | None, off_reason: str = "") -> None:
         self.binding = binding
         self.off_reason = off_reason
+        self.asish = binding.ids["asish"] if binding is not None else "user-asish"
 
     async def render(self) -> str:
         if self.binding is None:
             return views.render("unavailable.html", reason=self.off_reason)
         try:
             rows = await self.binding.grants()
-            resolved = await self.binding.resolve("user-asish", "mom")
+            resolved = await self.binding.resolve(self.asish, "mom")
         except Unavailable as e:
             return views.render("unavailable.html", reason=f"{e}: the QR code from next_step still works")
         grants = [

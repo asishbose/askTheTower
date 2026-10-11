@@ -5,7 +5,7 @@
 #                                                                         mock_carrier, network)
 #   Binding page      -> Lambda + API Gateway (+ CloudFront/WAF)          (modules/lambdas)
 #   Alerts            -> Lambda + EventBridge Scheduler + SNS             (modules/lambdas, scheduler, sns)
-#   Store             -> DynamoDB on-demand, 7 tables                     (modules/dynamodb)
+#   Store             -> DynamoDB on-demand, 7 tables (+SentSms, admin)    (modules/dynamodb)
 #   Keys              -> KMS                                              (modules/kms)
 #   Dashboards        -> CloudWatch                                       (modules/observability)
 #   Web chat (09 §6)  -> Cognito pool + agent runtime (HTTP) + S3/CloudFront + Lambda URL
@@ -73,6 +73,15 @@ locals {
 
   table_arns = values(module.dynamodb.table_arns)
 
+  # The demo admin path (10 §2.1): every resource it adds has count/for_each on this, so [] creates nothing.
+  demo_admin = length(var.demo_admin_cidrs) > 0
+  # Decision 1 (2026-10-11): one bearer for the whole admin path, checked by the admin_gate authorizer and again by
+  # each service behind it (mock G1, Alerts' admin routes, the binding page's bearer mode). Never INTERNAL_BEARER.
+  demo_admin_bearer = one(random_password.demo_admin_bearer[*].result)
+  demo_admin_secrets = {
+    "demo-admin-bearer" = local.demo_admin_bearer
+  }
+
   # Inbound identity (01 §4, D-A): the Terraform Cognito pool unless a hand-made issuer is given (overrides).
   # Tower and the agent runtime accept the web-chat client plus tower_jwt_allowed_clients (the Alexa client).
   jwt_discovery_url = var.tower_jwt_discovery_url != "" ? var.tower_jwt_discovery_url : module.cognito.discovery_url
@@ -105,6 +114,36 @@ resource "random_password" "internal_bearer" {
   special = false
 }
 
+resource "random_password" "mock_admin_token" {
+  # The mock's G1 admin bearer (08 §3) while the demo admin path is closed: always set on the Fargate task, from its
+  # registry secret. While open the task's token is demo_admin_bearer instead (one Authorization header). make-safe.
+  length  = 40
+  special = false
+}
+
+resource "random_password" "demo_admin_bearer" {
+  # DEMO_ADMIN_BEARER (10 §2.1, decision 1): exists only while the demo admin path is open, and is replaced whenever
+  # the address list changes, so a copy of deploy/.env.aws never outlives the list it was issued for. make-safe.
+  count   = local.demo_admin ? 1 : 0
+  length  = 48
+  special = false
+  keepers = {
+    demo_admin_cidrs = jsonencode(var.demo_admin_cidrs)
+  }
+}
+
+# The demo admin bearer's copy, read only by `make outputs` (scripts/render_env.py), so that
+# `terraform output -json` (artifacts/tf-outputs.json) never carries a secret (10 §2.1).
+resource "aws_ssm_parameter" "demo_admin" {
+  for_each = local.demo_admin ? toset(["demo-admin-bearer"]) : toset([])
+
+  name        = "/${local.name}/demo-admin/${each.key}"
+  description = "Demo admin path bearer (10 §2.1); exists only while demo_admin_cidrs is non-empty"
+  type        = "SecureString"
+  tier        = "Standard"
+  value       = local.demo_admin_secrets[each.key]
+}
+
 resource "random_password" "session_secret" {
   # Binding page session cookie signing key; not a carrier credential.
   length  = 48
@@ -134,6 +173,7 @@ module "dynamodb" {
   tables      = var.dynamodb_tables
   prefix      = local.table_prefix
   kms_key_arn = module.kms.key_arn
+  demo_admin  = local.demo_admin
 }
 
 module "network" {
@@ -166,6 +206,10 @@ module "mock_carrier" {
   log_retention_days = var.log_retention_days
 
   client_secrets = { for k, v in random_password.carrier_client : k => v.result }
+  # 08 §3: MOCK_ADMIN_TOKEN is always set on the task; the ALB forwards the UI's /_admin paths only when open, and
+  # then the token is the demo admin bearer (decision 1: API Gateway cannot rewrite Authorization behind the gate).
+  admin_token         = local.demo_admin ? local.demo_admin_bearer : random_password.mock_admin_token.result
+  admin_paths_enabled = local.demo_admin
   # Where the mock may redirect a Number Verification code: the binding page's callback and Identity's callback.
   binding_redirect_prefixes = compact([
     local.public_base_url,
@@ -331,6 +375,10 @@ module "lambdas" {
   enable_cloudfront_waf = var.enable_cloudfront_waf
   hooks_rate_limit      = var.hooks_rate_limit
 
+  # The demo admin path (10 §2.1): [] = no authorizer, no admin route, no mock_admin integration.
+  demo_admin_cidrs  = var.demo_admin_cidrs
+  demo_admin_bearer = local.demo_admin_bearer
+
   # Public passthrough of the carrier's authorize endpoint (the phone opens it over mobile data, rule 7).
   carrier_authorize_passthrough = local.mock ? {
     vpc_link_id       = module.network.vpc_link_id
@@ -374,6 +422,11 @@ module "lambdas" {
       ALERTS_INTERNAL_BEARER = random_password.internal_bearer.result
       SESSION_TTL_S          = tostring(var.binding_session_ttl_s) # 04 §6, D-H: 24 h on the demo day
     },
+    # 04 §8 bearer mode, only while the demo admin path is open
+    local.demo_admin ? {
+      BIND_ADMIN       = "1"
+      BIND_ADMIN_TOKEN = local.demo_admin_bearer
+    } : {},
     var.binding_carrier_client == "direct" ? {
       CARRIER_CLIENT        = "direct"
       CARRIER_SECRET_REF    = "env:CARRIER_CLIENT_SECRET"
@@ -382,12 +435,17 @@ module "lambdas" {
   )
   binding_uses_gateway = var.binding_carrier_client == "gateway"
 
-  alerts_environment = {
-    ALERTS_MODE       = "lambda"
-    ALERTS_SENDER     = "sns"
-    INTERNAL_BEARER   = random_password.internal_bearer.result
-    ALERTS_DEFAULT_TZ = var.alerts_timezone
-  }
+  alerts_environment = merge(
+    {
+      ALERTS_MODE       = "lambda"
+      ALERTS_SENDER     = "sns"
+      INTERNAL_BEARER   = random_password.internal_bearer.result
+      ALERTS_DEFAULT_TZ = var.alerts_timezone
+    },
+    # 06 §3.1: /internal/sent + /internal/reset and the SentSms ledger, only while the demo admin path is open
+    # and their only bearer, DEMO_ADMIN_BEARER (decision 1): the internal bearer is a 401 there
+    local.demo_admin ? { ALERTS_ADMIN = "1", DEMO_ADMIN_BEARER = local.demo_admin_bearer } : {},
+  )
 
   reconcile_environment = {
     TOWER_TRACE_LOG_GROUP    = "aws/spans"

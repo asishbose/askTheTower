@@ -87,7 +87,8 @@ scenario whose `clock` is `now`). The same scenario and admin calls give the sam
 | Variable | Default | Meaning |
 |---|---|---|
 | `MOCK_ADMIN` | off | `1` mounts `/_admin/*` (simulation aid) |
-| `MOCK_ADMIN_TOKEN` | — | when set, `/_admin`'s POST/DELETE routes need `Authorization: Bearer <token>` (GETs stay open: Tower and Alerts read the clock). Compose generates it |
+| `MOCK_ADMIN_TOKEN` | — | when set, `/_admin`'s POST/DELETE routes need `Authorization: Bearer <token>` (GETs stay open: Tower and Alerts read the clock). Compose generates it; on Fargate it is always set (Terraform `random_password.mock_admin_token`, key `admin_token` of the registry secret; `DEMO_ADMIN_BEARER` while the demo admin path is open) |
+| `MOCK_CLOCK` | `scenario` | `scenario`: the scenario file's `clock`, moving only when told. `wall`: every scenario load starts the clock at wall time (offset 0), then it ticks; `POST /_admin/clock` moves the offset (08 §3, decision 4). Fargate sets `wall`; anything else fails at startup |
 | `MOCK_CIBA` | off | `1` enables `/oauth2/bc-authorize` and the CIBA grant (auto-approved) |
 | `MOCK_JITTER_MS` | `0` | uniform random delay 0..N ms per CAMARA call (the only randomness) |
 | `MOCK_PORT` | `8443` | listen port |
@@ -104,6 +105,31 @@ scenario whose `clock` is `now`). The same scenario and admin calls give the sam
 | `MOCK_ASSUME_CLIENT_ID` | `phone-asish` | the client id assumed by `MOCK_ASSUME_MOBILE_DATA`; one that no line has fails at startup |
 
 `.env.example` lists them with placeholders.
+
+## Admin on AWS (the demo admin path, 08 §3, 10 §2.1)
+
+Off by default. On Fargate the internal ALB forwards no `/_admin` path and the public API has no route to it;
+`make seed-aws` reloads the scenario from inside the task with ECS Exec, sending the task's own `MOCK_ADMIN_TOKEN`
+(read from the task environment, never on the command line). The mock's code is the same as locally.
+
+With `demo_admin_cidrs = ["<your IP>/32"]` in `deploy/terraform/envs/aws.tfvars` and `make deploy`:
+
+- the ALB gains two listener rules (priorities 5, 6) for exactly `/_admin/state`, `/_admin/scenarios`,
+  `/_admin/scenarios/*`, `/_admin/clock`, `/_admin/faults` and `/_admin/lines/*` — never `/_admin/sink`;
+- the public HTTP API gains `ANY /carrier-admin/_admin/{proxy+}` → the VPC link → the ALB, with the query
+  parameter `view` overwritten to `refs` (the full state holds the scenario's numbers), behind the `admin_gate`
+  authorizer (source address in the list **and** `Authorization: Bearer <DEMO_ADMIN_BEARER>`; `X-Forwarded-For`
+  ignored);
+- the task's `MOCK_ADMIN_TOKEN` becomes `DEMO_ADMIN_BEARER` (one `Authorization` header passes the gate and G1),
+  and the task rolls onto it (its secrets are pinned to the registry version);
+- `make outputs` writes `MOCK_URL` (`<execute-api endpoint>/carrier-admin`) and `DEMO_ADMIN_BEARER` into
+  `deploy/.env.aws` (mode 0600, gitignored), which the demo UI reads.
+
+Status codes from the laptop: closed → 404; no `Authorization` → 401 (API Gateway, reads included); another
+address (or through CloudFront) or a wrong bearer → 403; `DEMO_ADMIN_BEARER` → 200. On Fargate `MOCK_CLOCK=wall`:
+the startup load, `make seed-aws` and the demo UI's Reset all put the clock at wall time. Close it with `demo_admin_cidrs = []` and
+`make deploy`. Checked statically by `tests/aws/test_terraform_static.py` and live by `tests/aws/test_admin_gate.py`
+(nightly).
 
 ## Tests
 

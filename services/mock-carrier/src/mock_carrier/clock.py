@@ -1,12 +1,17 @@
 """The controllable clock. Every timestamp the mock emits derives from `Clock.now()`.
 
 This module is the only place in the service allowed to touch the wall clock, and it does so only
-in `wall_now()`, which nothing in the request path calls (it exists for `clock: now` in a scenario).
+in `wall_now()`. Two clocks share one shape (`MockClock`): `Clock`, which moves only when told to (the scenario
+clock, `MOCK_CLOCK=scenario`, the default), and `WallClock`, wall time plus an offset that starts at 0 on every
+scenario load (`MOCK_CLOCK=wall`, the Fargate task; 08 §3, decision 4 of 2026-10-11). `wall_now()` is read by the
+runtime only for `MOCK_CLOCK=wall` and for `clock: now` in a scenario; tests inject their own wall.
 """
 
 from __future__ import annotations
 
+from collections.abc import Callable
 from datetime import UTC, datetime, timedelta
+from typing import Protocol
 
 
 def parse_iso(value: str) -> datetime:
@@ -37,6 +42,14 @@ def parse_offset(value: str) -> timedelta:
     return timedelta(hours=nums[0], minutes=nums[1], seconds=nums[2])
 
 
+class MockClock(Protocol):
+    def now(self) -> datetime: ...
+
+    def set(self, now: datetime) -> None: ...
+
+    def advance(self, seconds: float) -> datetime: ...
+
+
 class Clock:
     """A clock that moves only when told to."""
 
@@ -61,3 +74,28 @@ class Clock:
     def wall_now() -> datetime:
         """The one wall-clock read in the service. Used only for `clock: now` in a scenario file."""
         return datetime.now(tz=UTC)
+
+
+class WallClock:
+    """Wall time plus an offset (`MOCK_CLOCK=wall`). Starts at offset 0; `set` and `advance` move the offset, so
+    `POST /_admin/clock` still jumps it while it keeps ticking with the wall in between."""
+
+    def __init__(self, wall: Callable[[], datetime]) -> None:
+        self._wall = wall
+        self._offset = timedelta(0)
+
+    @property
+    def offset(self) -> timedelta:
+        return self._offset
+
+    def now(self) -> datetime:
+        return (self._wall() + self._offset).astimezone(UTC)
+
+    def set(self, now: datetime) -> None:
+        if now.tzinfo is None:
+            raise ValueError("clock time must be timezone-aware")
+        self._offset = now.astimezone(UTC) - self._wall()
+
+    def advance(self, seconds: float) -> datetime:
+        self._offset += timedelta(seconds=seconds)
+        return self.now()

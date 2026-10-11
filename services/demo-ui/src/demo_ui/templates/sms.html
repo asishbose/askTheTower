@@ -1,11 +1,14 @@
 {% if entries %}
-<ol class="timeline sms">{% for e in entries %}
-  <li class="ev ev-sms" data-n="{{ e.n }}" data-role="{{ e.role }}" data-template="{{ e.template }}">
-    <span class="ev-icon" aria-hidden="true"><svg class="i"><use href="/static/img/icons.svg#envelope"></use></svg></span>
-    <div class="ev-body">
-      <p class="ev-head"><time class="ts">{{ e.at }}</time> <b class="role">{{ e.role }}</b> <span class="who">{{ e.user_id }}</span> <span class="tpl">{{ e.template }}</span></p>
-      <p class="sms-text">{{ e.body }}</p>
-    </div>
-  </li>{% endfor %}
-</ol>
+<div class="sms-phone" role="group" aria-label="a mocked phone showing the texts Alerts sent (each one went to that person's own phone)">
+  <div class="sms-screen">
+    <p class="sms-top"><svg class="i" aria-hidden="true"><use href="/static/img/icons.svg#envelope"></use></svg>Messages <span class="muted">· from Alerts · newest first</span></p>
+    <ol class="timeline sms">{% for e in entries %}
+      <li class="ev ev-sms" data-n="{{ e.n }}" data-role="{{ e.role }}" data-template="{{ e.template }}">
+        <p class="ev-head"><b class="role">{{ e.role }}</b> <span class="who">{{ e.user_id }}</span> <time class="ts">{{ e.at }}</time></p>
+        <p class="sms-text">{{ e.body }}</p>
+        <p class="tpl">{{ e.template }}</p>
+      </li>{% endfor %}
+    </ol>
+  </div>
+</div>
 {% else %}<p class="empty">no SMS sent yet</p>{% endif %}

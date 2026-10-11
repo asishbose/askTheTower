@@ -29,7 +29,7 @@ from tower_consent import tables as T
 from tower_consent.models import Profile
 from tower_policy import ReasonCode
 
-from alerts.clock import Clock, FixedClock
+from alerts.clock import Clock, FixedClock, Wall
 from alerts.config import Settings
 from alerts.context import AlertsService
 from alerts.send_backends import LogSender
@@ -42,6 +42,9 @@ PARTNER = "+16135550105"
 LINE_KEY = b"k" * 32
 MSISDN_KEY = b"m" * 32
 T0 = datetime(2026, 10, 5, 14, 0, tzinfo=UTC)  # 10:00 in Toronto: daytime
+# The tests' wall clock (`AlertsService.wall`, TTLs only): far from T0, so a TTL taken from the wrong clock shows,
+# and in the future, so DynamoDB Local's TTL sweeper never deletes a row under a test.
+TEST_WALL = datetime(2099, 1, 1, tzinfo=UTC)
 BEARER = "test-internal-bearer"
 
 
@@ -212,6 +215,7 @@ def make_service(
     *,
     sender: LogSender | None = None,
     settings: Settings | None = None,
+    wall: Wall | None = None,
 ) -> AlertsService:
     return AlertsService(
         store=store,
@@ -220,6 +224,7 @@ def make_service(
         carrier=carrier,
         sender=sender or LogSender(),
         clock=clock,
+        wall=wall or (lambda: TEST_WALL),
         settings=settings or Settings(internal_bearer=BEARER, hooks_base_url="https://alerts.test"),
     )
 

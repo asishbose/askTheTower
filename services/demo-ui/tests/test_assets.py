@@ -109,7 +109,12 @@ def test_static_weighs_at_most_600_kb() -> None:
 
 SOLID_CORAL = {"SIM_SWAPPED_RECENT", "CALL_FORWARDING_SET", "UNREACHABLE", "ALERT_FAILED"}
 OUTLINE_CORAL = {"NOT_BOUND", "NO_CONSENT", "STALE_DATA", "CARRIER_ERROR", "SERVICE_UNAVAILABLE"}
-HUE = {"OK": "--ok", "ACK_IGNORED_SWAPPED_LINE": "--sms", "SUPPRESSED_REVOKED": "--muted"}
+HUE = {
+    "OK": "--ok",
+    "ACK_IGNORED_SWAPPED_LINE": "--sms",
+    "SUPPRESSED_REVOKED": "--muted",
+    "ALERT_LOG_FAILED": "--muted",  # the SMS went out; only the sent-SMS ledger write failed (06 §8)
+}
 RULE = re.compile(r"(?P<sel>[^{}]+)\{(?P<body>[^{}]*)\}")
 
 

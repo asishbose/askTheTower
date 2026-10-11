@@ -118,7 +118,11 @@ def _parse_timeline(
     return events
 
 
-def load_scenario(scenarios_dir: Path, name: str, variant: str | None = None) -> Scenario:
+def load_scenario(
+    scenarios_dir: Path, name: str, variant: str | None = None, *, start: datetime | None = None
+) -> Scenario:
+    """Parse a scenario file. `start` (MOCK_CLOCK=wall, 08 §3) replaces the file's `clock`: relative timeline entries
+    and a line's default `last_status_at` then count from it; absolute times in the file stay as written."""
     if ":" in name and variant is None:
         name, variant = name.split(":", 1)
     if "/" in name or name.startswith("."):
@@ -131,7 +135,12 @@ def load_scenario(scenarios_dir: Path, name: str, variant: str | None = None) ->
     clock_raw = raw.get("clock")
     if clock_raw is None:
         raise ScenarioError("scenario needs a `clock`")
-    clock = Clock.wall_now() if str(clock_raw).strip().lower() == "now" else parse_iso(str(clock_raw))
+    if start is not None:
+        clock = start
+    elif str(clock_raw).strip().lower() == "now":
+        clock = Clock.wall_now()
+    else:
+        clock = parse_iso(str(clock_raw))
     lines = _parse_lines(raw.get("lines") or {}, clock)
     timeline_raw = raw.get("timeline")
     if variant:

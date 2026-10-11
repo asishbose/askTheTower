@@ -102,7 +102,7 @@ async def handle_event(
         log.info("hook dropped: unknown sink token (kind=%s)", kind)
         return "unknown_token"
     now = await svc.clock.now()
-    if not S.claim_event(svc.store, token, str(event["source"]), str(event["id"]), now):
+    if not S.claim_event(svc.store, token, str(event["source"]), str(event["id"]), svc.wall()):
         svc.count("hooks_duplicate")
         log.info("hook dropped: duplicate event line=%s", line_id[:12])
         return "duplicate"

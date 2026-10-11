@@ -5,6 +5,9 @@ from __future__ import annotations
 import os
 from dataclasses import dataclass, field
 from pathlib import Path
+from typing import Literal
+
+ClockMode = Literal["scenario", "wall"]
 
 PACKAGE_DIR = Path(__file__).resolve().parent
 SERVICE_DIR = PACKAGE_DIR.parent.parent  # services/mock-carrier
@@ -60,6 +63,8 @@ class Settings:
     # 08 §3 (D-G): on Fargate the mock cannot see the phone's network, so it can assume one client id.
     assume_mobile_data: bool = False
     assume_client_id: str = "phone-asish"
+    # 08 §3 (decision 4, 2026-10-11): `wall` on the Fargate task — every scenario load starts the clock at wall time.
+    clock: ClockMode = "scenario"
 
     @classmethod
     def from_env(cls) -> Settings:
@@ -87,4 +92,15 @@ class Settings:
             loopback_sink_host=env.get("MOCK_LOOPBACK_SINK_HOST", "sink.mock.local"),
             assume_mobile_data=_flag("MOCK_ASSUME_MOBILE_DATA"),
             assume_client_id=env.get("MOCK_ASSUME_CLIENT_ID") or "phone-asish",
+            clock=clock_mode(env.get("MOCK_CLOCK", "")),
         )
+
+
+def clock_mode(raw: str) -> ClockMode:
+    """`MOCK_CLOCK`: empty or `scenario` (default) → the scenario file's clock; `wall` → wall time on every load."""
+    value = raw.strip().lower() or "scenario"
+    if value == "scenario":
+        return "scenario"
+    if value == "wall":
+        return "wall"
+    raise ValueError(f"MOCK_CLOCK must be scenario or wall, got {raw!r}")
