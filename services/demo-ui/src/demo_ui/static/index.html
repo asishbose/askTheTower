@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <title>Ask the Tower — control room</title>
+  <link rel="preload" href="/static/fonts/SpaceGrotesk-wght.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="/static/app.css">
+  <script src="/static/htmx.min.js"></script>
+  <script src="/static/htmx-sse.js"></script>
+  <script type="module" src="/static/stage.js"></script>
+</head>
+<body hx-ext="sse" sse-connect="/events">
+  <a class="skip" href="#panes">Skip to the panes</a>
+  <header class="top">
+    <div class="brand">
+      <svg class="glyph" aria-hidden="true"><use href="/static/img/icons.svg#tower"></use></svg>
+      <h1>Ask the Tower <small>control room</small></h1>
+    </div>
+    <div id="pill" hx-get="/fragment/pill" hx-trigger="load"></div>
+    <ul class="health" aria-label="stack health, read from the panes' own frames">
+      <li data-svc="mock" title="mock carrier: waiting for the feed"><i aria-hidden="true"></i>mock</li>
+      <li data-svc="tower" title="Tower: not asked yet"><i aria-hidden="true"></i>Tower</li>
+      <li data-svc="binding" title="binding page: waiting for the feed"><i aria-hidden="true"></i>binding</li>
+      <li data-svc="alerts" title="Alerts: waiting for the feed"><i aria-hidden="true"></i>alerts</li>
+      <li data-svc="dynamodb" title="DynamoDB: waiting for the feed"><i aria-hidden="true"></i>DynamoDB</li>
+    </ul>
+    <div id="run-status" sse-swap="status" aria-live="polite"></div>
+  </header>
+
+  <section class="stage" aria-label="The Stage">
+    <div id="stage" role="img" aria-label="The town at night: your house, the tower with the audit ledger at its foot, Mom's house with the consent shield, and the phone that receives texts. It lights up as the panes below change."></div>
+    <div class="stage-codes" aria-hidden="true"></div>
+    <div class="stage-float" aria-hidden="true"></div>
+  </section>
+  <div id="announcer" class="sr-only" aria-live="polite"></div>
+
+  <main class="grid" id="panes">
+    <section class="pane" id="pane-conversation" aria-labelledby="h-conversation">
+      <h2 id="h-conversation"><svg class="i" aria-hidden="true"><use href="/static/img/icons.svg#chat"></use></svg>Conversation <small>the reference client plays Alexa+'s part</small></h2>
+      <div class="waiting"><img src="/static/img/empty-state.svg" alt="" width="240" height="120"><p>Waiting for the stack: run <code>make up</code></p></div>
+      <div hx-get="/fragment/conversation-controls" hx-trigger="load"></div>
+      <ol id="stepper" class="stepper" aria-live="polite" aria-label="macro steps"></ol>
+      <div id="log" class="log" sse-swap="turn" hx-swap="afterbegin"></div>
+    </section>
+
+    <section class="pane" id="pane-carrier" aria-labelledby="h-carrier">
+      <h2 id="h-carrier"><svg class="i" aria-hidden="true"><use href="/static/img/icons.svg#signal"></use></svg>Carrier controls <small>mock /_admin, simulation aid</small></h2>
+      <div class="waiting"><img src="/static/img/empty-state.svg" alt="" width="240" height="120"><p>Waiting for the stack: run <code>make up</code></p></div>
+      <div hx-get="/fragment/carrier-controls" hx-trigger="load"></div>
+      <div id="carrier" sse-swap="carrier"><div class="skeleton"><p class="muted">waiting for the feed…</p><span></span><span></span></div></div>
+    </section>
+
+    <section class="pane" id="pane-feed" aria-labelledby="h-feed">
+      <h2 id="h-feed"><svg class="i" aria-hidden="true"><use href="/static/img/icons.svg#pulse"></use></svg>Live feed <small>newest first</small></h2>
+      <div class="waiting"><img src="/static/img/empty-state.svg" alt="" width="240" height="120"><p>Waiting for the stack: run <code>make up</code></p></div>
+      <input class="sr-only" type="radio" name="lane" id="lane-all" checked>
+      <input class="sr-only" type="radio" name="lane" id="lane-sms">
+      <input class="sr-only" type="radio" name="lane" id="lane-audit">
+      <div class="filters" role="group" aria-label="show">
+        <label for="lane-all">all</label><label for="lane-sms">sms</label><label for="lane-audit">audit</label>
+      </div>
+      <div class="lanes">
+        <div class="lane lane-sms">
+          <h3><svg class="i" aria-hidden="true"><use href="/static/img/icons.svg#envelope"></use></svg>SMS sent by Alerts</h3>
+          <div id="sms" sse-swap="sms"><div class="skeleton"><p class="muted">waiting for the feed…</p><span></span></div></div>
+        </div>
+        <div class="lane lane-audit">
+          <h3><svg class="i" aria-hidden="true"><use href="/static/img/icons.svg#link"></use></svg>Audit (Asish's log and Mom's log, newest 50)</h3>
+          <div id="audit" sse-swap="audit"><div class="skeleton"><p class="muted">waiting for the feed…</p><span></span><span></span></div></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="pane" id="pane-binding" aria-labelledby="h-binding">
+      <h2 id="h-binding"><svg class="i" aria-hidden="true"><use href="/static/img/icons.svg#qr"></use></svg>Binding <small>bind links, grants, resolve</small></h2>
+      <div class="waiting"><img src="/static/img/empty-state.svg" alt="" width="240" height="120"><p>Waiting for the stack: run <code>make up</code></p></div>
+      <div class="toolbar">
+        <button class="btn" hx-post="/binding/bind-link" hx-vals='{"who": "asish"}' hx-target="#qr"><svg class="i" aria-hidden="true"><use href="/static/img/icons.svg#qr"></use></svg>QR: bind Asish's line</button>
+        <button class="btn" hx-post="/binding/bind-link" hx-vals='{"who": "mom"}' hx-target="#qr"><svg class="i" aria-hidden="true"><use href="/static/img/icons.svg#qr"></use></svg>QR: bind Mom's line</button>
+      </div>
+      <div class="toolbar">
+        <button class="btn" hx-post="/binding/grant" hx-vals='{"action": "revoke"}' hx-target="#binding-status"><svg class="i" aria-hidden="true"><use href="/static/img/icons.svg#cross"></use></svg>Mom revokes Asish's watch</button>
+        <button class="btn" hx-post="/binding/grant" hx-vals='{"action": "grant"}' hx-target="#binding-status"><svg class="i" aria-hidden="true"><use href="/static/img/icons.svg#shield"></use></svg>Mom grants it again</button>
+      </div>
+      <div id="binding-status"></div>
+      <div class="binding-body">
+        <div id="qr" sse-swap="qr"></div>
+        <div id="grants" sse-swap="grants"><div class="skeleton"><p class="muted">waiting for the feed…</p><span></span></div></div>
+      </div>
+    </section>
+  </main>
+  <footer>Demo tooling, laptop only. It decides nothing: outcome chips are Tower's reason codes. No phone number is shown.</footer>
+</body>
+</html>

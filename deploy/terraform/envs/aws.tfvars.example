@@ -1,0 +1,54 @@
+# Copy to envs/aws.tfvars (gitignored) and fill in. `make deploy` passes it with TF_VAR_FILE, or run:
+#   terraform -chdir=deploy/terraform plan -var-file=envs/aws.tfvars
+# Secrets never go in this file: sandbox client secrets come from the environment (TF_VAR_sandbox_client_secret),
+# e.g. from the repo-root .env, which make exports. Every setting below can live there too as TF_VAR_<name>;
+# a value in this file wins over TF_VAR_ if both are set.
+# The table definitions come from tables.auto.tfvars.json (generated; loaded automatically).
+
+region      = "us-east-1"
+name_prefix = "att"
+environment = "dev"
+image_tag   = "latest" # `make push` tags with the git sha; pass -var image_tag=$(git rev-parse --short HEAD)
+
+# --- carrier: the mock on Fargate (demo default) ------------------------------------------------------------------
+carrier_backend      = "mock"
+tower_carrier_client = "gateway" # "direct" = the cut-line configuration (also set enable_nat_gateway = true)
+
+# The mock's internal ALB needs a hostname with a certificate (Gateway and Identity call it over HTTPS).
+mock_domain_name     = "mock.carrier.example.org"
+mock_route53_zone_id = "ZEXAMPLEZONEID" # a public zone you own; or set mock_certificate_arn instead
+# mock_certificate_arn = "arn:aws:acm:us-east-1:<account-id>:certificate/<certificate-id>"
+
+# --- carrier: a sandbox instead (backend swap via variable; 05 §4) -----------------------------------------------
+# carrier_backend           = "sandbox"
+# sandbox_base_url          = "https://sandbox.example-operator.com/camara"
+# sandbox_issuer            = "https://sandbox.example-operator.com"
+# sandbox_token_url         = "https://sandbox.example-operator.com/oauth2/token"
+# sandbox_authorize_url     = "https://sandbox.example-operator.com/oauth2/authorize"
+# sandbox_client_id         = "your-client-id"
+# sandbox_binding_client_id = "your-number-verification-client-id"
+# export TF_VAR_sandbox_client_secret=... TF_VAR_sandbox_binding_client_secret=...
+
+# --- Tower inbound auth (01 §4, D-A: Cognito JWT, user_id = sub) ----------------------------------------------------
+# modules/cognito creates the pool and the `web-chat` client; Tower and both Runtime authorizers use it. Nothing to
+# set for the web chat. Add the Alexa account-linking client id here after registration.md §2:
+tower_jwt_allowed_clients = [] # e.g. ["<alexa-link-client-id>"]
+# Overrides for a hand-made identity provider only (empty = the Terraform pool):
+# tower_jwt_discovery_url    = "https://issuer.example.org/.well-known/openid-configuration"
+# tower_jwks_url             = "https://issuer.example.org/.well-known/jwks.json"
+# tower_jwt_issuer           = "https://issuer.example.org"
+# tower_jwt_allowed_audience = [] # Cognito access tokens carry no aud
+
+# --- web chat page (09 §6; prompt 20) --------------------------------------------------------------------------------
+enable_web_chat         = true
+cognito_domain_prefix   = ""    # empty = att-dev-<6 random hex>; Hosted UI prefixes are global
+mock_assume_mobile_data = true  # 08 §3: the Fargate mock assumes phone-asish is on mobile data (simulation)
+binding_session_ttl_s   = 86400 # 04 §6, D-H: the binding page session lasts the demo day
+
+# --- SMS (SNS sandbox) ----------------------------------------------------------------------------------------------
+sms_sandbox_numbers     = [] # e.g. ["+1613555xxxx"] — the demo phones; keep real numbers out of git
+sms_monthly_spend_limit = 1
+
+# --- optional --------------------------------------------------------------------------------------------------------
+enable_cloudfront_waf = true
+enable_nat_gateway    = false

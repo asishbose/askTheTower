@@ -1,0 +1,20 @@
+NOT RUN — no AWS credentials in the autonomous build (2026-10-06).
+
+This file is written by `make plan ENV=aws` (terraform show -no-color of artifacts/tfplan). What did run offline:
+
+  terraform -chdir=deploy/terraform fmt -check -recursive        -> clean
+  terraform -chdir=deploy/terraform init -backend=false          -> hashicorp/aws 6.67.0, hashicorp/random 3.x
+  terraform -chdir=deploy/terraform validate                     -> Success! The configuration is valid.
+
+TODO(human): with credentials and deploy/terraform/envs/aws.tfvars filled in (and the S3 state bucket from
+backend.tf created):
+
+  make plan ENV=aws          # writes this file; review it before `make deploy ENV=aws`
+
+Expected shape of the first plan (from the configuration, not from a plan): 5 ECR repositories, 2 KMS keys +
+2 aliases, 7 DynamoDB tables, a VPC with 2 public + 2 private subnets, 2 gateway endpoints and a VPC link, the
+mock carrier (ECS cluster/service/task, internal ALB + listener + 2 rules, target group, ACM certificate +
+validation, Route 53 record, Secrets Manager secret), 2 Identity credential providers + 1 workload identity,
+1 Gateway + 6 targets, 1 Runtime (+1 with enable_ref_client_runtime), 3 Lambdas + HTTP API + routes + stage,
+CloudFront + WAF web ACL, 6 schedules, 1-2 SNS topics, 1 dashboard + 7 metric filters + 3 alarms, IAM roles
+and policies for each.

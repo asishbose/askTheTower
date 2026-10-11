@@ -1,0 +1,9 @@
+# EKS: the web chat agent only (POST /invocations with a bearer Tower accepts), ClusterIP, no Ingress. No page and
+# no sign-in stub here: the signed-in page is the AWS column's (S3 + CloudFront + Cognito, 09 §6.3).
+web:
+  enabled: true
+  env:
+    TOWER_ENV: aws
+    WEB_CHAT_DIR: ""
+  ingress:
+    enabled: false

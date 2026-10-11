@@ -1,0 +1,20 @@
+# EKS run — NOT RUN (autonomous build, no AWS credentials)
+#
+# Prompt 14 acceptance: `make deploy-eks && make demo ENV=eks` transcripts match the golden files; one Alerts
+# CronJob fires; `make down-eks` leaves no cluster, node group, load balancer or ENI. None of it could run here.
+#
+# What did run (2026-10-06): the same charts on kind — see artifacts/helm-kind.txt:
+#   make helm-kind  → kind v1.31.0, release att, 6 pods Ready, seed hook Job completed,
+#                     ref-client demo (scripted agent) 4/4 stories, transcripts match golden 4/4,
+#                     0 phone-number-shaped strings in pod logs; ~211 s cold, ~72 s warm.
+#
+# To fill this file (TODO(human)), with AWS credentials and 13's stack deployed:
+#   cp deploy/terraform/eks/envs/eks.tfvars.example deploy/terraform/eks/envs/eks.tfvars   # state bucket, hosts, ACM ARN
+#   time make deploy-eks                      # timing line 1: terraform apply + push + helm install + seed
+#   make kube-context
+#   time make demo ENV=eks                    # timing line 2 + transcript match (needs JWT + revoke path, build-log 14)
+#   ENV=eks uv run pytest tests/e2e/test_eks.py -m e2e -q    # golden match, CronJob fires once, privacy grep
+#   FORCE=1 make down-eks                     # then confirm in the console: no EKS, node group, ALB, ENIs
+#
+# timing: deploy-eks = NOT RUN · demo = NOT RUN · down-eks = NOT RUN
+# transcripts vs golden (eks): NOT RUN

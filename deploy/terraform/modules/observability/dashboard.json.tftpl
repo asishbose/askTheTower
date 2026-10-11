@@ -1,0 +1,77 @@
+{
+  "widgets": [
+    {
+      "type": "text", "x": 0, "y": 0, "width": 24, "height": 2,
+      "properties": {
+        "markdown": "## Ask the Tower — ${name}\nLatency SLI: p95 per tool, budget ${latency_budget_ms} ms (testing-and-showcase §3). Metrics carry no per-line label (10 §2): no dimension here is a line id."
+      }
+    },
+    {
+      "type": "log", "x": 0, "y": 2, "width": 12, "height": 7,
+      "properties": {
+        "title": "Tool latency p50/p95 per tool (Runtime spans)",
+        "region": "${region}",
+        "view": "table",
+        "query": "SOURCE 'aws/spans' | fields attributes.gen_ai.tool.name as tool, durationNano / 1000000 as ms | filter ispresent(tool) | stats pct(ms, 50) as p50_ms, pct(ms, 95) as p95_ms, count(*) as calls by tool | sort tool"
+      }
+    },
+    {
+      "type": "metric", "x": 12, "y": 2, "width": 12, "height": 7,
+      "properties": {
+        "title": "Runtime invocation latency p95",
+        "region": "${region}",
+        "stat": "p95",
+        "period": 300,
+        "view": "timeSeries",
+        "metrics": [
+          ["AWS/Bedrock-AgentCore", "Latency", "Resource", "${runtime_arn}", { "label": "Tower p95" }]
+        ],
+        "annotations": { "horizontal": [{ "label": "budget", "value": ${latency_budget_ms} }] }
+      }
+    },
+    {
+      "type": "metric", "x": 0, "y": 9, "width": 12, "height": 6,
+      "properties": {
+        "title": "Alerts sent / failed / carrier misses",
+        "region": "${region}",
+        "stat": "Sum",
+        "period": 300,
+        "view": "timeSeries",
+        "metrics": [
+          ["${namespace}", "AlertsSent", { "label": "sent" }],
+          ["${namespace}", "AlertsSendFailed", { "label": "send failed" }],
+          ["${namespace}", "CarrierMisses", { "label": "carrier misses" }],
+          ["${namespace}", "HooksDropped", { "label": "webhooks dropped" }]
+        ]
+      }
+    },
+    {
+      "type": "metric", "x": 12, "y": 9, "width": 12, "height": 6,
+      "properties": {
+        "title": "Audit reconciliation misses (nightly) and line-id-on-metric guard",
+        "region": "${region}",
+        "stat": "Maximum",
+        "period": 86400,
+        "view": "singleValue",
+        "metrics": [
+          ["${namespace}", "AuditReconcileMisses", "component", "audit", { "label": "reconcile misses" }],
+          ["${namespace}", "LineIdOnMetric", { "label": "metrics with a line_id label (must be 0)" }]
+        ]
+      }
+    },
+    {
+      "type": "metric", "x": 0, "y": 15, "width": 24, "height": 6,
+      "properties": {
+        "title": "Lambda errors and duration",
+        "region": "${region}",
+        "period": 300,
+        "view": "timeSeries",
+        "metrics": [
+          ["AWS/Lambda", "Errors", "FunctionName", "${alerts_function}", { "stat": "Sum" }],
+          ["AWS/Lambda", "Errors", "FunctionName", "${reconcile_function}", { "stat": "Sum" }],
+          ["AWS/Lambda", "Duration", "FunctionName", "${alerts_function}", { "stat": "p95" }]
+        ]
+      }
+    }
+  ]
+}

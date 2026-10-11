@@ -1,0 +1,24 @@
+{% set codes = turn.codes if turn else [] %}
+<article class="step step-{{ r.kind }}{% if r.replay %} replay{% endif %}{% if r.ok is false %} bad{% endif %}" id="step-{{ r.step_id | replace('#', '-') }}">
+  <header data-step="{{ r.step_id }}" data-kind="{{ r.kind }}" data-ok="{{ 'pass' if r.ok else ('fail' if r.ok is false else '') }}" data-ms="{{ r.elapsed_ms }}" data-codes="{{ codes | join(' ') }}">
+    <span class="sid">{{ r.step_id }}</span>{% if r.replay %} <span class="tag">replay</span>{% endif %}
+    {% if r.kind == "say" %}<span class="badge {{ 'pass' if r.ok else 'fail' }}">{{ 'pass' if r.ok else 'FAIL' }}</span>{% endif %}
+    <span class="ms">{{ r.elapsed_ms }} ms</span>
+  </header>
+  {% if r.kind == "say" %}
+  <div class="bubble user"><span class="avatar" aria-hidden="true">A</span><p class="you">“{{ r.narration }}”</p></div>
+  {% if turn %}
+  <div class="bubble tower"><span class="avatar tower" aria-hidden="true"><svg class="i"><use href="/static/img/icons.svg#tower"></use></svg></span>
+    <div class="reply">
+      <p class="calls">→ {{ turn.calls | join(", ") or "no tool" }}</p>
+      <p class="chips">{% for c in turn.codes %}<span class="rc rc-{{ c }}"><span class="chip">{{ c }}</span></span>{% endfor %}
+        {% if not r.ok %}<span class="expected">expected {% for c in r.expected %}<span class="rc rc-{{ c }}"><span class="chip">{{ c }}</span></span>{% endfor %}</span>{% endif %}</p>
+      <p class="spoken">{{ agent }}: {{ turn.spoken }}</p>
+      {% if turn.next_step %}<p class="next">next_step: {{ turn.next_step }}</p>{% endif %}
+    </div>
+  </div>
+  {% endif %}
+  {% else %}
+  <p class="narration"><span class="kind">[{{ r.kind }}]</span> {{ r.narration }}</p>
+  {% endif %}
+</article>

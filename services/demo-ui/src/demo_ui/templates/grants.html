@@ -1,0 +1,10 @@
+<ul class="graph" aria-label="grants: owner line, kind, grantee">
+{% for g in grants %}  <li {% if g.revoked_at %}class="revoked"{% else %}class="live"{% endif %} data-grant="{{ g.grant }}" data-revoked="{{ 'yes' if g.revoked_at else 'no' }}">
+    <span class="node owner"><svg class="i" aria-hidden="true"><use href="/static/img/icons.svg#phone"></use></svg><code class="ref">{{ g.line }}</code>{% if g.alias %} <small>“{{ g.alias }}”</small>{% endif %}</span>
+    <span class="arrow"><span class="kind">{{ g.grant }}</span></span>
+    <span class="node grantee">{{ g.grantee }}</span>
+    {% if g.revoked_at %}<span class="revoked-at">revoked {{ g.revoked_at }}</span>{% endif %}
+  </li>
+{% else %}  <li class="empty">no grants</li>
+{% endfor %}</ul>
+<p class="resolve" data-bound="{{ resolve.bound }}" data-resolve-grant="{{ resolve.grant }}">resolve(user-asish, "mom") → <span class="chip">bound={{ resolve.bound }}</span> <span class="chip grant-{{ resolve.grant }}">grant=<b>{{ resolve.grant }}</b></span></p>

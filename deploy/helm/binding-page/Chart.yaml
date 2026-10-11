@@ -1,0 +1,7 @@
+apiVersion: v2
+name: binding-page
+description: "Binding page (04 web app): the one-tap Number Verification bind and consent."
+type: application
+version: 0.1.0
+appVersion: "0.1.0"
+keywords: [ask-the-tower, camara]

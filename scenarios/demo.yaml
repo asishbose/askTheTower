@@ -1,0 +1,35 @@
+# The demo scenario — docs/architecture/components/08-mock-carrier.md §2, verbatim.
+# Numbers are 555-01xx fiction (+1 613 555 0101 – 0104). Loaded by `make up`, reloaded by `make seed`.
+clock: "2026-10-05T14:00:00Z"
+lines:
+  "+16135550101":                # Asish
+    sim_change_at: "2026-09-01T10:00:00Z"
+    call_forwarding: none
+    reachable: true
+    connectivity: DATA
+    mobile_data_client_ids: [phone-asish]   # who may network-authenticate as this line
+  "+16135550102":                # Mom
+    sim_change_at: "2026-08-12T09:30:00Z"
+    call_forwarding: none
+    reachable: true
+    connectivity: DATA
+    mobile_data_client_ids: [phone-mom]
+  "+16135550103":                # Asish's partner — first contact in the transplant story (06 §11.4)
+    sim_change_at: "2026-07-20T16:00:00Z"
+    call_forwarding: none
+    reachable: true
+    connectivity: DATA
+    mobile_data_client_ids: [phone-partner]
+  "+16135550104":                # the neighbour — second contact in the transplant story
+    sim_change_at: "2026-06-03T11:15:00Z"
+    call_forwarding: none
+    reachable: true
+    connectivity: DATA
+    mobile_data_client_ids: [phone-neighbour]
+timeline:                        # optional scripted events, relative to clock
+  - at: "+00:12:00"
+    line: "+16135550101"
+    event: sim_swap
+  - at: "+00:20:00"
+    line: "+16135550101"
+    event: cf_set

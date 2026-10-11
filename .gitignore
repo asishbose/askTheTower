@@ -1,0 +1,76 @@
+# secrets and local config
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+# python
+__pycache__/
+*.pyc
+.venv/
+.mypy_cache/
+.ruff_cache/
+.pytest_cache/
+.coverage
+htmlcov/
+dist/
+build/
+# terraform
+*.tfstate
+*.tfstate.*
+.terraform/
+*.tfvars
+!*.tfvars.example
+*.auto.tfvars.json
+# helm
+deploy/helm/**/charts/
+deploy/helm/umbrella/values-eks.generated.yaml
+deploy/helm/umbrella/files/
+deploy/helm/umbrella/Chart.lock
+# generated
+artifacts/**
+!artifacts/.gitkeep
+!artifacts/**/*.md
+!artifacts/transcripts/
+!artifacts/transcripts/*.json
+!artifacts/video/
+!artifacts/eks-run.txt
+!artifacts/helm-kind.txt
+# prompt 16: the §6 submission artefacts are committed (the checklist links them)
+!artifacts/conformance-report.html
+!artifacts/clean-run.txt
+!artifacts/terraform-plan.txt
+!artifacts/transcripts/alerts-showcase.log
+!artifacts/sms-screenshot.png
+!artifacts/audit-screenshot.png
+!artifacts/billing-zero.png
+!artifacts/video/ask-the-tower-demo.mp4
+deploy/compose/logs/*
+!deploy/compose/logs/.gitkeep
+# misc
+.DS_Store
+.att.bundle
+.schemathesis/
+.hypothesis/
+!deploy/terraform/tables.auto.tfvars.json
+deploy/terraform/modules/*/.terraform.lock.hcl
+
+# local assistant tooling — kept out of the repo
+CLAUDE.md
+CLAUDE.local.md
+.claude/
+docs/submission/agent-brief.md
+docs/submission/build-log.md
+docs/submission/build-log/
+
+# build prompts and test results — kept out of the repo
+prompts/
+artifacts/junit-*.xml
+artifacts/coverage*.xml
+artifacts/test-report*.md
+artifacts/screenshots/demo-ui/
+tests/visual/baseline/
+services/demo-ui/tests/visual/baseline/
+test-results/
+playwright-report/
+*.junit.xml

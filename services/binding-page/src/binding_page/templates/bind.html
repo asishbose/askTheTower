@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}Connect your line — Ask the Tower{% endblock %}
+{% block body %}
+<h1>Connect your line</h1>
+<div class="card">
+  <ol>
+    <li><strong>Turn Wi-Fi off</strong> on this phone, so it uses mobile data.</li>
+    <li>Tap <strong>Verify</strong>.</li>
+  </ol>
+  <p class="muted">Your carrier recognises the phone on its own network and confirms the number. You don't type anything, and no one can connect a number they only know.</p>
+  <form method="post" action="/bind/{{ token }}/verify">
+    {% if sim %}<input type="hidden" name="as" value="{{ sim }}">{% endif %}
+    <button type="submit">Verify</button>
+  </form>
+</div>
+{% if sim %}
+<p class="sim">Local demo: mobile data is <em>simulated</em> as device “{{ sim }}” (the mock carrier's client-id header). On a real carrier the network does this.</p>
+{% elif local %}
+<p class="sim">Local demo: no simulated device on this link — this behaves like Wi-Fi on, and the carrier will refuse.</p>
+{% endif %}
+{% endblock %}

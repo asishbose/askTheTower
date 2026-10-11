@@ -1,0 +1,282 @@
+{
+ "operation": "number-verification/phoneNumberVerify",
+ "inputs": {
+  "line_id": "line-fixture-a",
+  "e164": "+16135550199",
+  "now": "2026-10-05T14:00:00Z",
+  "auth_code": "fixture-auth-code"
+ },
+ "cases": [
+  {
+   "case": "200 verified",
+   "source": "derived",
+   "call": {
+    "method": "number_verify",
+    "args": {
+     "auth_code": "fixture-auth-code",
+     "redirect_uri": "http://localhost:8081/callback",
+     "e164": "+16135550199"
+    }
+   },
+   "exchanges": [
+    {
+     "request": {
+      "method": "POST",
+      "path": "/number-verification/v2/verify",
+      "json": {
+       "phoneNumber": "+16135550199"
+      }
+     },
+     "response": {
+      "status": 200,
+      "json": {
+       "devicePhoneNumberVerified": true
+      }
+     }
+    }
+   ]
+  },
+  {
+   "case": "200 not verified",
+   "source": "derived",
+   "call": {
+    "method": "number_verify",
+    "args": {
+     "auth_code": "fixture-auth-code",
+     "redirect_uri": "http://localhost:8081/callback",
+     "e164": "+16135550199"
+    }
+   },
+   "exchanges": [
+    {
+     "request": {
+      "method": "POST",
+      "path": "/number-verification/v2/verify",
+      "json": {
+       "phoneNumber": "+16135550199"
+      }
+     },
+     "response": {
+      "status": 200,
+      "json": {
+       "devicePhoneNumberVerified": false
+      }
+     }
+    }
+   ]
+  },
+  {
+   "case": "400 INVALID_ARGUMENT",
+   "source": "spec",
+   "call": {
+    "method": "number_verify",
+    "args": {
+     "auth_code": "fixture-auth-code",
+     "redirect_uri": "http://localhost:8081/callback",
+     "e164": "+16135550199"
+    }
+   },
+   "exchanges": [
+    {
+     "request": {
+      "method": "POST",
+      "path": "/number-verification/v2/verify",
+      "json": {
+       "phoneNumber": "+16135550199"
+      }
+     },
+     "response": {
+      "status": 400,
+      "json": {
+       "status": 400,
+       "code": "INVALID_ARGUMENT",
+       "message": "Client specified an invalid argument, request body or query param"
+      }
+     }
+    }
+   ]
+  },
+  {
+   "case": "401 UNAUTHENTICATED",
+   "source": "spec",
+   "call": {
+    "method": "number_verify",
+    "args": {
+     "auth_code": "fixture-auth-code",
+     "redirect_uri": "http://localhost:8081/callback",
+     "e164": "+16135550199"
+    }
+   },
+   "exchanges": [
+    {
+     "request": {
+      "method": "POST",
+      "path": "/number-verification/v2/verify",
+      "json": {
+       "phoneNumber": "+16135550199"
+      }
+     },
+     "response": {
+      "status": 401,
+      "json": {
+       "status": 401,
+       "code": "UNAUTHENTICATED",
+       "message": "Request not authenticated due to missing, invalid, or expired credentials. A new authentication is required."
+      }
+     }
+    }
+   ]
+  },
+  {
+   "case": "403 PERMISSION_DENIED",
+   "source": "spec",
+   "call": {
+    "method": "number_verify",
+    "args": {
+     "auth_code": "fixture-auth-code",
+     "redirect_uri": "http://localhost:8081/callback",
+     "e164": "+16135550199"
+    }
+   },
+   "exchanges": [
+    {
+     "request": {
+      "method": "POST",
+      "path": "/number-verification/v2/verify",
+      "json": {
+       "phoneNumber": "+16135550199"
+      }
+     },
+     "response": {
+      "status": 403,
+      "json": {
+       "status": 403,
+       "code": "PERMISSION_DENIED",
+       "message": "Client does not have sufficient permissions to perform this action."
+      }
+     }
+    }
+   ]
+  },
+  {
+   "case": "403 NUMBER_VERIFICATION.USER_NOT_AUTHENTICATED_BY_MOBILE_NETWORK",
+   "source": "spec",
+   "call": {
+    "method": "number_verify",
+    "args": {
+     "auth_code": "fixture-auth-code",
+     "redirect_uri": "http://localhost:8081/callback",
+     "e164": "+16135550199"
+    }
+   },
+   "exchanges": [
+    {
+     "request": {
+      "method": "POST",
+      "path": "/number-verification/v2/verify",
+      "json": {
+       "phoneNumber": "+16135550199"
+      }
+     },
+     "response": {
+      "status": 403,
+      "json": {
+       "status": 403,
+       "code": "NUMBER_VERIFICATION.USER_NOT_AUTHENTICATED_BY_MOBILE_NETWORK",
+       "message": "Client must authenticate via the mobile network to use this service"
+      }
+     }
+    }
+   ]
+  },
+  {
+   "case": "500 INTERNAL",
+   "source": "synthetic",
+   "call": {
+    "method": "number_verify",
+    "args": {
+     "auth_code": "fixture-auth-code",
+     "redirect_uri": "http://localhost:8081/callback",
+     "e164": "+16135550199"
+    }
+   },
+   "exchanges": [
+    {
+     "request": {
+      "method": "POST",
+      "path": "/number-verification/v2/verify",
+      "json": {
+       "phoneNumber": "+16135550199"
+      }
+     },
+     "response": {
+      "status": 500,
+      "json": {
+       "status": 500,
+       "code": "INTERNAL",
+       "message": "Synthetic fixture: internal error."
+      }
+     }
+    }
+   ]
+  },
+  {
+   "case": "400 SOMETHING_NEW",
+   "source": "synthetic",
+   "call": {
+    "method": "number_verify",
+    "args": {
+     "auth_code": "fixture-auth-code",
+     "redirect_uri": "http://localhost:8081/callback",
+     "e164": "+16135550199"
+    }
+   },
+   "exchanges": [
+    {
+     "request": {
+      "method": "POST",
+      "path": "/number-verification/v2/verify",
+      "json": {
+       "phoneNumber": "+16135550199"
+      }
+     },
+     "response": {
+      "status": 400,
+      "json": {
+       "status": 400,
+       "code": "SOMETHING_NEW",
+       "message": "Synthetic fixture: a code no spec declares."
+      }
+     }
+    }
+   ]
+  },
+  {
+   "case": "502 non-JSON body",
+   "source": "synthetic",
+   "call": {
+    "method": "number_verify",
+    "args": {
+     "auth_code": "fixture-auth-code",
+     "redirect_uri": "http://localhost:8081/callback",
+     "e164": "+16135550199"
+    }
+   },
+   "exchanges": [
+    {
+     "request": {
+      "method": "POST",
+      "path": "/number-verification/v2/verify",
+      "json": {
+       "phoneNumber": "+16135550199"
+      }
+     },
+     "response": {
+      "status": 502,
+      "text": "<html>Bad Gateway</html>"
+     }
+    }
+   ]
+  }
+ ]
+}

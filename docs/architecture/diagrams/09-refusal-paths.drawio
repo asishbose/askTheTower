@@ -1,0 +1,290 @@
+<mxfile host="app.diagrams.net" agent="Ask the Tower design generator" type="device">
+  <diagram id="09_refusal_paths" name="09 Refusal Paths">
+    <mxGraphModel dx="1422" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="2104" pageHeight="1104" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="t_main" value="Refusal paths — the five ways a tool call ends without an answer about the line" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;fontSize=19;fontColor=#1B2B45;fontStyle=1;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="30" y="14" width="2044" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="t_sub" value="line_is_ok shown; is_reachable and watch_line share steps 1–3 and 6–7. Each column is one exit: where it leaves, the code that decides it, and the sentence Alexa+ is handed. Alexa+ phrases; it never decides." style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;fontSize=11;fontColor=#6B7A90;fontStyle=0;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="30" y="46" width="2044" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="t_sub2" value="Pink = the exit. Dashed = not reached. Teal arrows = the path taken; red = straight to the result after a consent exit. D-numbers point to docs/architecture/code-vs-docs.md." style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;fontSize=11;fontColor=#6B7A90;fontStyle=0;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="30" y="66" width="2044" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="lane_h" value="Step (02 §2, as built)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0E1726;strokeColor=#0E1726;fontSize=11;fontColor=#FFFFFF;align=center;verticalAlign=middle;dashed=0;fontStyle=1;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="30" y="112" width="240" height="46" as="geometry" />
+        </mxCell>
+        <mxCell id="lane0" value="&lt;b&gt;1 · identity → user_id&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;auth.py Authenticator.authenticate; no identity → HTTP 401, not an envelope&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E4E9F2;strokeColor=#0E1726;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="30" y="172" width="240" height="76" as="geometry" />
+        </mxCell>
+        <mxCell id="lane1" value="&lt;b&gt;2 · consent.resolve(user_id, line)&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;one Query (resolve.py:47); store down → SERVICE_UNAVAILABLE (common.py:88)&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E4E9F2;strokeColor=#0E1726;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="30" y="262" width="240" height="76" as="geometry" />
+        </mxCell>
+        <mxCell id="lane2" value="&lt;b&gt;3 · consent gate&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;policy's own first rules (engine.py:27) via common.consent_gate (common.py:109)&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E4E9F2;strokeColor=#0E1726;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="30" y="352" width="240" height="76" as="geometry" />
+        </mxCell>
+        <mxCell id="lane3" value="&lt;b&gt;4 · facts&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;Watch.last_state if ≤ FRESH 10 min, else SIM swap ‖ call forwarding, 300 ms each, no retry&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E4E9F2;strokeColor=#0E1726;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="30" y="442" width="240" height="76" as="geometry" />
+        </mxCell>
+        <mxCell id="lane4" value="&lt;b&gt;5 · evaluate_line(facts, consent, now)&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;pure; carrier error is checked before staleness (engine.py:35)&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E4E9F2;strokeColor=#0E1726;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="30" y="532" width="240" height="76" as="geometry" />
+        </mxCell>
+        <mxCell id="lane5" value="&lt;b&gt;6 · audit.append — blocks the answer&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;chain-head GetItem + TransactWriteItems (writer.py:77)&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E4E9F2;strokeColor=#0E1726;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="30" y="622" width="240" height="76" as="geometry" />
+        </mxCell>
+        <mxCell id="lane6" value="&lt;b&gt;7 · ToolResult → Alexa+&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;summary · facts · reason_codes · next_step · checked_at&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E4E9F2;strokeColor=#0E1726;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="30" y="712" width="240" height="76" as="geometry" />
+        </mxCell>
+        <mxCell id="lane_says" value="&lt;b&gt;What Alexa+ is handed&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;summary, from tower_policy/phrasing.py TEMPLATES (03 §4)&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DDF3EF;strokeColor=#2BB3A0;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="30" y="812" width="240" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="lane_note" value="&lt;b&gt;As built&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;what differs from the docs&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E4E9F2;strokeColor=#0E1726;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="30" y="904" width="240" height="56" as="geometry" />
+        </mxCell>
+        <mxCell id="b0_h" value="1 · NOT_BOUND" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0E1726;strokeColor=#0E1726;fontSize=11;fontColor=#FFFFFF;align=center;verticalAlign=middle;dashed=0;fontStyle=1;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="290" y="112" width="344" height="46" as="geometry" />
+        </mxCell>
+        <mxCell id="b0_r0" value="&lt;b&gt;user_id&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;the caller is known&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#6B7583;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="290" y="172" width="344" height="76" as="geometry" />
+        </mxCell>
+        <mxCell id="b0_r1" value="&lt;b&gt;no line&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;no Line for &quot;self&quot; → bound=False (resolve.py:62); an alias is never NOT_BOUND (D18)&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#6B7583;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="290" y="262" width="344" height="76" as="geometry" />
+        </mxCell>
+        <mxCell id="b0_r2" value="&lt;b&gt;EXIT · NOT_BOUND&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;engine.py:28 — before any fact, so nothing about the line leaks&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FBEAEA;strokeColor=#C57B7B;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="290" y="352" width="344" height="76" as="geometry" />
+        </mxCell>
+        <mxCell id="b0_r3" value="&lt;b&gt;not reached&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;no carrier call&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F7F8FA;strokeColor=#C9D3DF;fontSize=10;fontColor=#8A96A8;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=1;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="290" y="442" width="344" height="76" as="geometry" />
+        </mxCell>
+        <mxCell id="b0_r4" value="&lt;b&gt;not reached&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;the gate is the policy&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F7F8FA;strokeColor=#C9D3DF;fontSize=10;fontColor=#8A96A8;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=1;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="290" y="532" width="344" height="76" as="geometry" />
+        </mxCell>
+        <mxCell id="b0_r5" value="&lt;b&gt;no audit row&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;no line_id to key it on (line_is_ok.py:133) — the one unaudited answer (D3)&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F7F8FA;strokeColor=#C9D3DF;fontSize=10;fontColor=#8A96A8;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=1;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="290" y="622" width="344" height="76" as="geometry" />
+        </mxCell>
+        <mxCell id="b0_r6" value="&lt;b&gt;next_step bind_line + URL&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;build_next_step (next_step.py:30) mints a 10-min bind token, writes Users + BindTokens&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#6B7583;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="290" y="712" width="344" height="76" as="geometry" />
+        </mxCell>
+        <mxCell id="b0_e0" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2BB3A0;strokeWidth=2;fontSize=9;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=0.5000;exitY=1.0000;exitDx=0;exitDy=0;entryX=0.5000;entryY=0.0000;entryDx=0;entryDy=0;" edge="1" parent="1" source="b0_r0" target="b0_r1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="b0_e1" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2BB3A0;strokeWidth=2;fontSize=9;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=0.5000;exitY=1.0000;exitDx=0;exitDy=0;entryX=0.5000;entryY=0.0000;entryDx=0;entryDy=0;" edge="1" parent="1" source="b0_r1" target="b0_r2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="b0_j" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#C57B7B;strokeWidth=2;fontSize=9;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=1.0000;exitY=0.5000;exitDx=0;exitDy=0;entryX=1.0000;entryY=0.5000;entryDx=0;entryDy=0;" edge="1" parent="1" source="b0_r2" target="b0_r6">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="642" y="390" />
+              <mxPoint x="642" y="750" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="b0_says" value="&lt;font style=&quot;font-size:11px&quot;&gt;“I need to connect your line first — I'll send you a link.”&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DDF3EF;strokeColor=#2BB3A0;fontSize=11;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="290" y="812" width="344" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="b0_note" value="&lt;font style=&quot;font-size:9px&quot;&gt;Nothing texts the link today: the URL only reaches Alexa+ in next_step (D1).&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#6B7583;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="290" y="904" width="344" height="56" as="geometry" />
+        </mxCell>
+        <mxCell id="b1_h" value="2 · NO_CONSENT" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0E1726;strokeColor=#0E1726;fontSize=11;fontColor=#FFFFFF;align=center;verticalAlign=middle;dashed=0;fontStyle=1;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="650" y="112" width="344" height="46" as="geometry" />
+        </mxCell>
+        <mxCell id="b1_r0" value="&lt;b&gt;user_id&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;the caller is known&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#6B7583;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="650" y="172" width="344" height="76" as="geometry" />
+        </mxCell>
+        <mxCell id="b1_r1" value="&lt;b&gt;no grant / revoked / out of scope&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;alias with no grant (resolve.py:90, D18) or only revoked ones (resolve.py:89), or the grant does not cover this tool (common.py:102)&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#6B7583;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="650" y="262" width="344" height="76" as="geometry" />
+        </mxCell>
+        <mxCell id="b1_r2" value="&lt;b&gt;EXIT · NO_CONSENT&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;engine.py:30 — grant none or revoked_at set&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FBEAEA;strokeColor=#C57B7B;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="650" y="352" width="344" height="76" as="geometry" />
+        </mxCell>
+        <mxCell id="b1_r3" value="&lt;b&gt;not reached&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;no carrier call&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F7F8FA;strokeColor=#C9D3DF;fontSize=10;fontColor=#8A96A8;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=1;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="650" y="442" width="344" height="76" as="geometry" />
+        </mxCell>
+        <mxCell id="b1_r4" value="&lt;b&gt;not reached&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;the gate is the policy&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F7F8FA;strokeColor=#C9D3DF;fontSize=10;fontColor=#8A96A8;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=1;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="650" y="532" width="344" height="76" as="geometry" />
+        </mxCell>
+        <mxCell id="b1_r5" value="&lt;b&gt;audit row&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;refused · NO_CONSENT on that line (common.py:150 audited); an alias with no grant has no line, so no row&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#6B7583;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="650" y="622" width="344" height="76" as="geometry" />
+        </mxCell>
+        <mxCell id="b1_r6" value="&lt;b&gt;next_step ask_consent&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;no link: the line-holder grants on their own page&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#6B7583;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="650" y="712" width="344" height="76" as="geometry" />
+        </mxCell>
+        <mxCell id="b1_e0" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2BB3A0;strokeWidth=2;fontSize=9;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=0.5000;exitY=1.0000;exitDx=0;exitDy=0;entryX=0.5000;entryY=0.0000;entryDx=0;entryDy=0;" edge="1" parent="1" source="b1_r0" target="b1_r1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="b1_e1" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2BB3A0;strokeWidth=2;fontSize=9;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=0.5000;exitY=1.0000;exitDx=0;exitDy=0;entryX=0.5000;entryY=0.0000;entryDx=0;entryDy=0;" edge="1" parent="1" source="b1_r1" target="b1_r2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="b1_j" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#C57B7B;strokeWidth=2;fontSize=9;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=1.0000;exitY=0.5000;exitDx=0;exitDy=0;entryX=1.0000;entryY=0.5000;entryDx=0;entryDy=0;" edge="1" parent="1" source="b1_r2" target="b1_r5">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1002" y="390" />
+              <mxPoint x="1002" y="660" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="b1_j2" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#C57B7B;strokeWidth=2;fontSize=9;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=0.5000;exitY=1.0000;exitDx=0;exitDy=0;entryX=0.5000;entryY=0.0000;entryDx=0;entryDy=0;" edge="1" parent="1" source="b1_r5" target="b1_r6">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="b1_says" value="&lt;font style=&quot;font-size:11px&quot;&gt;“Mom hasn't shared that with you.”&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DDF3EF;strokeColor=#2BB3A0;fontSize=11;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="650" y="812" width="344" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="b1_note" value="&lt;font style=&quot;font-size:9px&quot;&gt;{Name} is the alias the caller used; without one, “That person”.&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#6B7583;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="650" y="904" width="344" height="56" as="geometry" />
+        </mxCell>
+        <mxCell id="b2_h" value="3 · STALE_DATA" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0E1726;strokeColor=#0E1726;fontSize=11;fontColor=#FFFFFF;align=center;verticalAlign=middle;dashed=0;fontStyle=1;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="1010" y="112" width="344" height="46" as="geometry" />
+        </mxCell>
+        <mxCell id="b2_r0" value="&lt;b&gt;user_id&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;the caller is known&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#6B7583;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="1010" y="172" width="344" height="76" as="geometry" />
+        </mxCell>
+        <mxCell id="b2_r1" value="&lt;b&gt;owner or active grant&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;one read&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#6B7583;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="1010" y="262" width="344" height="76" as="geometry" />
+        </mxCell>
+        <mxCell id="b2_r2" value="&lt;b&gt;consent holds&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;the line may be checked&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#6B7583;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="1010" y="352" width="344" height="76" as="geometry" />
+        </mxCell>
+        <mxCell id="b2_r3" value="&lt;b&gt;carrier times out&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;a call &amp;gt; 300 ms (timeouts.py:17, errors.py:124) or breaker open (errors.py:138) and the live answer would be refused; a Watch state exists → use it (line_is_ok.py)&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#6B7583;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="1010" y="442" width="344" height="76" as="geometry" />
+        </mxCell>
+        <mxCell id="b2_r4" value="&lt;b&gt;EXIT · STALE_DATA&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;that state is older than STALE 10 min (engine.py:45)&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FBEAEA;strokeColor=#C57B7B;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="1010" y="532" width="344" height="76" as="geometry" />
+        </mxCell>
+        <mxCell id="b2_r5" value="&lt;b&gt;audit row&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;refused · STALE_DATA · source=watch&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#6B7583;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="1010" y="622" width="344" height="76" as="geometry" />
+        </mxCell>
+        <mxCell id="b2_r6" value="&lt;b&gt;last-known facts&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;stale=true, as_of = the Watch's time; next_step none&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#6B7583;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="1010" y="712" width="344" height="76" as="geometry" />
+        </mxCell>
+        <mxCell id="b2_e0" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2BB3A0;strokeWidth=2;fontSize=9;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=0.5000;exitY=1.0000;exitDx=0;exitDy=0;entryX=0.5000;entryY=0.0000;entryDx=0;entryDy=0;" edge="1" parent="1" source="b2_r0" target="b2_r1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="b2_e1" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2BB3A0;strokeWidth=2;fontSize=9;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=0.5000;exitY=1.0000;exitDx=0;exitDy=0;entryX=0.5000;entryY=0.0000;entryDx=0;entryDy=0;" edge="1" parent="1" source="b2_r1" target="b2_r2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="b2_e2" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2BB3A0;strokeWidth=2;fontSize=9;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=0.5000;exitY=1.0000;exitDx=0;exitDy=0;entryX=0.5000;entryY=0.0000;entryDx=0;entryDy=0;" edge="1" parent="1" source="b2_r2" target="b2_r3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="b2_e3" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2BB3A0;strokeWidth=2;fontSize=9;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=0.5000;exitY=1.0000;exitDx=0;exitDy=0;entryX=0.5000;entryY=0.0000;entryDx=0;entryDy=0;" edge="1" parent="1" source="b2_r3" target="b2_r4">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="b2_e4" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#C57B7B;strokeWidth=2;fontSize=9;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=0.5000;exitY=1.0000;exitDx=0;exitDy=0;entryX=0.5000;entryY=0.0000;entryDx=0;entryDy=0;" edge="1" parent="1" source="b2_r4" target="b2_r5">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="b2_e5" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#C57B7B;strokeWidth=2;fontSize=9;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=0.5000;exitY=1.0000;exitDx=0;exitDy=0;entryX=0.5000;entryY=0.0000;entryDx=0;entryDy=0;" edge="1" parent="1" source="b2_r5" target="b2_r6">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="b2_says" value="&lt;font style=&quot;font-size:11px&quot;&gt;“I can't reach your carrier right now. The last I heard was at 2:14 today.”&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DDF3EF;strokeColor=#2BB3A0;fontSize=11;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="1010" y="812" width="344" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="b2_note" value="&lt;font style=&quot;font-size:9px&quot;&gt;Neutral on purpose: the last state may show a swap or forwarding (D5, fixed 2026-10-09).&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#6B7583;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="1010" y="904" width="344" height="56" as="geometry" />
+        </mxCell>
+        <mxCell id="b3_h" value="4 · CARRIER_ERROR" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0E1726;strokeColor=#0E1726;fontSize=11;fontColor=#FFFFFF;align=center;verticalAlign=middle;dashed=0;fontStyle=1;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="1370" y="112" width="344" height="46" as="geometry" />
+        </mxCell>
+        <mxCell id="b3_r0" value="&lt;b&gt;user_id&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;the caller is known&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#6B7583;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="1370" y="172" width="344" height="76" as="geometry" />
+        </mxCell>
+        <mxCell id="b3_r1" value="&lt;b&gt;owner or active grant&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;one read&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#6B7583;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="1370" y="262" width="344" height="76" as="geometry" />
+        </mxCell>
+        <mxCell id="b3_r2" value="&lt;b&gt;consent holds&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;the line may be checked&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#6B7583;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="1370" y="352" width="344" height="76" as="geometry" />
+        </mxCell>
+        <mxCell id="b3_r3" value="&lt;b&gt;carrier fails, nothing to fall back on&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;5xx (503 → errors.py:49), or breaker open after 5 × 5xx for 60 s (breaker.py:42), and no Watch state&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#6B7583;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="1370" y="442" width="344" height="76" as="geometry" />
+        </mxCell>
+        <mxCell id="b3_r4" value="&lt;b&gt;EXIT · CARRIER_ERROR&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;any fact unknown and no known alarm (engine.py:52), checked before staleness&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FBEAEA;strokeColor=#C57B7B;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="1370" y="532" width="344" height="76" as="geometry" />
+        </mxCell>
+        <mxCell id="b3_r5" value="&lt;b&gt;audit row&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;refused · CARRIER_ERROR · source=carrier&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#6B7583;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="1370" y="622" width="344" height="76" as="geometry" />
+        </mxCell>
+        <mxCell id="b3_r6" value="&lt;b&gt;no facts&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;next_step none; no carrier text ever reaches the result&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#6B7583;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="1370" y="712" width="344" height="76" as="geometry" />
+        </mxCell>
+        <mxCell id="b3_e0" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2BB3A0;strokeWidth=2;fontSize=9;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=0.5000;exitY=1.0000;exitDx=0;exitDy=0;entryX=0.5000;entryY=0.0000;entryDx=0;entryDy=0;" edge="1" parent="1" source="b3_r0" target="b3_r1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="b3_e1" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2BB3A0;strokeWidth=2;fontSize=9;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=0.5000;exitY=1.0000;exitDx=0;exitDy=0;entryX=0.5000;entryY=0.0000;entryDx=0;entryDy=0;" edge="1" parent="1" source="b3_r1" target="b3_r2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="b3_e2" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2BB3A0;strokeWidth=2;fontSize=9;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=0.5000;exitY=1.0000;exitDx=0;exitDy=0;entryX=0.5000;entryY=0.0000;entryDx=0;entryDy=0;" edge="1" parent="1" source="b3_r2" target="b3_r3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="b3_e3" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2BB3A0;strokeWidth=2;fontSize=9;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=0.5000;exitY=1.0000;exitDx=0;exitDy=0;entryX=0.5000;entryY=0.0000;entryDx=0;entryDy=0;" edge="1" parent="1" source="b3_r3" target="b3_r4">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="b3_e4" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#C57B7B;strokeWidth=2;fontSize=9;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=0.5000;exitY=1.0000;exitDx=0;exitDy=0;entryX=0.5000;entryY=0.0000;entryDx=0;entryDy=0;" edge="1" parent="1" source="b3_r4" target="b3_r5">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="b3_e5" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#C57B7B;strokeWidth=2;fontSize=9;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=0.5000;exitY=1.0000;exitDx=0;exitDy=0;entryX=0.5000;entryY=0.0000;entryDx=0;entryDy=0;" edge="1" parent="1" source="b3_r5" target="b3_r6">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="b3_says" value="&lt;font style=&quot;font-size:11px&quot;&gt;“I can't reach your carrier right now. Try again in a minute.”&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DDF3EF;strokeColor=#2BB3A0;fontSize=11;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="1370" y="812" width="344" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="b3_note" value="&lt;font style=&quot;font-size:9px&quot;&gt;One failed call is enough to refuse, unless the other fact alarms (D4, fixed 2026-10-09).&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#6B7583;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="1370" y="904" width="344" height="56" as="geometry" />
+        </mxCell>
+        <mxCell id="b4_h" value="5 · SERVICE_UNAVAILABLE" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0E1726;strokeColor=#0E1726;fontSize=11;fontColor=#FFFFFF;align=center;verticalAlign=middle;dashed=0;fontStyle=1;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="1730" y="112" width="344" height="46" as="geometry" />
+        </mxCell>
+        <mxCell id="b4_r0" value="&lt;b&gt;user_id&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;the caller is known&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#6B7583;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="1730" y="172" width="344" height="76" as="geometry" />
+        </mxCell>
+        <mxCell id="b4_r1" value="&lt;b&gt;consent read&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;a store error here is the same exit (common.py:88)&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#6B7583;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="1730" y="262" width="344" height="76" as="geometry" />
+        </mxCell>
+        <mxCell id="b4_r2" value="&lt;b&gt;consent holds&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;or a consent refusal, which also needs its audit row&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#6B7583;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="1730" y="352" width="344" height="76" as="geometry" />
+        </mxCell>
+        <mxCell id="b4_r3" value="&lt;b&gt;facts&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;stored state or carrier&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#6B7583;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="1730" y="442" width="344" height="76" as="geometry" />
+        </mxCell>
+        <mxCell id="b4_r4" value="&lt;b&gt;outcome decided&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;ok, changed or a refusal&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#6B7583;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="1730" y="532" width="344" height="76" as="geometry" />
+        </mxCell>
+        <mxCell id="b4_r5" value="&lt;b&gt;EXIT · audit write fails&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;append raises AuditWriteFailed (writer.py:100); release() never calls respond (writer.py:110)&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FBEAEA;strokeColor=#C57B7B;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="1730" y="622" width="344" height="76" as="geometry" />
+        </mxCell>
+        <mxCell id="b4_r6" value="&lt;b&gt;decided answer dropped&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;server.invoke → errors.refusal_code (errors.py:44) → common.unavailable (common.py:157); no facts&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#6B7583;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="1730" y="712" width="344" height="76" as="geometry" />
+        </mxCell>
+        <mxCell id="b4_e0" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2BB3A0;strokeWidth=2;fontSize=9;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=0.5000;exitY=1.0000;exitDx=0;exitDy=0;entryX=0.5000;entryY=0.0000;entryDx=0;entryDy=0;" edge="1" parent="1" source="b4_r0" target="b4_r1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="b4_e1" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2BB3A0;strokeWidth=2;fontSize=9;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=0.5000;exitY=1.0000;exitDx=0;exitDy=0;entryX=0.5000;entryY=0.0000;entryDx=0;entryDy=0;" edge="1" parent="1" source="b4_r1" target="b4_r2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="b4_e2" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2BB3A0;strokeWidth=2;fontSize=9;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=0.5000;exitY=1.0000;exitDx=0;exitDy=0;entryX=0.5000;entryY=0.0000;entryDx=0;entryDy=0;" edge="1" parent="1" source="b4_r2" target="b4_r3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="b4_e3" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2BB3A0;strokeWidth=2;fontSize=9;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=0.5000;exitY=1.0000;exitDx=0;exitDy=0;entryX=0.5000;entryY=0.0000;entryDx=0;entryDy=0;" edge="1" parent="1" source="b4_r3" target="b4_r4">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="b4_e4" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2BB3A0;strokeWidth=2;fontSize=9;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=0.5000;exitY=1.0000;exitDx=0;exitDy=0;entryX=0.5000;entryY=0.0000;entryDx=0;entryDy=0;" edge="1" parent="1" source="b4_r4" target="b4_r5">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="b4_e5" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#C57B7B;strokeWidth=2;fontSize=9;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=0.5000;exitY=1.0000;exitDx=0;exitDy=0;entryX=0.5000;entryY=0.0000;entryDx=0;entryDy=0;" edge="1" parent="1" source="b4_r5" target="b4_r6">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="b4_says" value="&lt;font style=&quot;font-size:11px&quot;&gt;“Something on my side isn't available. Try again in a minute.”&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DDF3EF;strokeColor=#2BB3A0;fontSize=11;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="1730" y="812" width="344" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="b4_note" value="&lt;font style=&quot;font-size:9px&quot;&gt;No audit, no answer: the outcome is never released (e2e §8 rule 5).&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#6B7583;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="1730" y="904" width="344" height="56" as="geometry" />
+        </mxCell>
+        <mxCell id="foot_never" value="&lt;b&gt;Never in any of the five&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;a phone number, a location, a carrier error string or a stack trace (02 §3, errors.py docstring);&lt;br&gt;a model's judgement — every exit is a branch in tower_policy or the audit writer (rule 2);&lt;br&gt;a fact about the line before the consent gate has passed (NOT_BOUND / NO_CONSENT come first).&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F3F5F8;strokeColor=#6B7583;fontSize=11;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="30" y="974" width="1012" height="96" as="geometry" />
+        </mxCell>
+        <mxCell id="foot_other" value="&lt;b&gt;Not drawn&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;HTTP 401 at step 1 (no identity) is a transport error, not a refusal envelope;&lt;br&gt;a bug anywhere (the policy raises) → bare MCP error &quot;internal error&quot;, never a partial result (server.py:66);&lt;br&gt;is_reachable never answers from stored state on the happy path — only on a timeout (D6).&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F3F5F8;strokeColor=#6B7583;fontSize=11;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="1062" y="974" width="1012" height="96" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

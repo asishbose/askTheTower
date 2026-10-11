@@ -1,0 +1,58 @@
+# kind: the compose stack on Kubernetes, no cloud (`make helm-kind`, scripts/helm_kind.sh). Same images (built
+# locally and `kind load`ed), same env as deploy/compose/docker-compose.yml: TOWER_ENV=local, DynamoDB Local, local
+# keys from the generated Secret, the mock's scenario and clock, Alerts with its in-process scheduler.
+global:
+  imageTag: latest
+  imagePullPolicy: IfNotPresent
+  storeEnv:
+    TOWER_ENV: local
+    DYNAMO_ENDPOINT: http://dynamodb-local:8000
+    # DynamoDB Local accepts any credentials; these are not AWS keys (compose sets the same). Never given to ref-client.
+    AWS_ACCESS_KEY_ID: dynamodblocal
+    AWS_SECRET_ACCESS_KEY: dynamodblocal
+  storeSecretEnv:
+    TOWER_LINE_ID_KEY: {key: TOWER_LINE_ID_KEY}
+    TOWER_MSISDN_KEY: {key: TOWER_MSISDN_KEY}
+
+localTls:
+  enabled: true
+
+seed:
+  enabled: true
+
+dynamodb-local:
+  enabled: true
+
+mock-carrier:
+  trustCA:
+    configMap: att-local-ca
+
+tower-mcp:
+  env:
+    BINDING_BASE_URL: http://localhost:8081      # the page as the laptop sees it (port-forward)
+
+binding-page:
+  env:
+    BASE_URL: http://localhost:8081
+    BIND_REDIRECT_URI: http://localhost:8081/bind/callback
+    BIND_ADMIN: "1"                               # the seed's bind links and the demo's grant revoke (local only)
+
+alerts:
+  env:
+    ALERTS_MODE: local                            # compose's in-process scheduler, at compose's scale
+    ALERTS_SENDER: log                            # "SMS" is a log line: kubectl logs deploy/alerts | grep SMS
+    ALERTS_CLOCK_SCALE: "60"
+    HOOKS_BASE_URL: https://alerts:8443
+  tls:
+    enabled: true
+  cronJobs:
+    enabled: false                                # the scheduler is in-process in local mode (no double polls)
+
+ref-client:
+  envName: local
+  web:
+    enabled: true            # the web chat page + agent, sign-in stub (09 §6): port-forward svc/ref-client-web 8083:8080
+
+# The demo control room (doc 11), scripted agent: kubectl -n ask-the-tower port-forward svc/demo-ui 8090:8090
+demo-ui:
+  enabled: true

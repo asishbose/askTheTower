@@ -1,0 +1,187 @@
+<mxfile host="app.diagrams.net" agent="Ask the Tower design generator" type="device">
+  <diagram id="11_local" name="1 ENV=local">
+    <mxGraphModel dx="1422" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1960" pageHeight="1360" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="t_main" value="11 · Demo UI (control room): four panes, ENV=local" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;fontSize=19;fontColor=#1B2B45;fontStyle=1;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="30" y="14" width="1900" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="t_sub" value="Demo tooling, laptop only (built 2026-10-09). It drives only what make demo and the showcase scripts already drive; it owns nothing." style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;fontSize=11;fontColor=#6B7A90;fontStyle=0;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="30" y="46" width="1900" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="t_sub2" value="Teal = the conversation (request path) · amber = the live feed (proactive evidence) · grey = demo controls and binding · Gn = the gap closed for it (doc 11 §10)." style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;fontSize=11;fontColor=#6B7A90;fontStyle=0;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="30" y="66" width="1900" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="z_laptop" value="Presenter's laptop (ENV=local)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#EEF0F5;strokeColor=#9AA7B5;verticalAlign=top;align=left;spacingLeft=10;spacingTop=4;spacing=2;fontStyle=1;fontSize=14;fontColor=#1B2B45;dashed=0;arcSize=12;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="30" y="100" width="1410" height="1010" as="geometry" />
+        </mxCell>
+        <mxCell id="browser" value="&lt;b&gt;Browser: desktop or phone (mobile layout)&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;one static page, HTMX + SSE, no build step · 127.0.0.1:8090 · any other address needs DEMO_UI_TOKEN&lt;br&gt;top-bar pill: agent mode (scripted in compose, bedrock on the host) and ENV&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#6B7583;fontSize=11;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="60" y="140" width="560" height="84" as="geometry" />
+        </mxCell>
+        <mxCell id="z_ui" value="services/demo-ui (FastAPI + HTMX)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#0E1726;verticalAlign=top;align=left;spacingLeft=10;spacingTop=4;spacing=2;fontStyle=1;fontSize=14;fontColor=#1B2B45;dashed=0;arcSize=12;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="60" y="250" width="560" height="840" as="geometry" />
+        </mxCell>
+        <mxCell id="p1" value="&lt;b&gt;1 · Conversation&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;type as Asish or Mom · macros: Moment 1 · Moment 2 · Moment 3 · Transplant&lt;br&gt;ref_client as a library: TowerClient, BedrockAgent, or ScriptedAgent without Bedrock&lt;br&gt;shows tool call · reason_codes chips (Tower's only) · summary / spoken · next_step&lt;br&gt;macros: run_demo(STORIES, reset=False, on_step) (G4): per step id, narration,&lt;br&gt;expected vs actual codes, pass/fail, timing · one timeline, one run at a time&lt;br&gt;next_step bind_line → url → QR code in pane 4 (D1: nothing texts the link)&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DDF3EF;strokeColor=#2BB3A0;fontSize=11;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="90" y="300" width="500" height="160" as="geometry" />
+        </mxCell>
+        <mxCell id="p2" value="&lt;b&gt;2 · Carrier controls (mock /_admin)&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;Reset = the make seed code · clock +1 / +12 / +20 min · fire sim_swap cf_set cf_clear&lt;br&gt;unreachable reachable by holder (Asish, Mom) and the mock's opaque ref, never by number:&lt;br&gt;GET /_admin/state?view=refs, POST /_admin/lines/{ref}/events (G2): no number on the wire&lt;br&gt;faults timeout / 500 / 429 · Bearer MOCK_ADMIN_TOKEN on every mutation (G1)&lt;br&gt;ENV=aws: off with the reason (decision 2)&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F3F5F8;strokeColor=#6B7583;fontSize=11;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="90" y="490" width="500" height="160" as="geometry" />
+        </mxCell>
+        <mxCell id="p3" value="&lt;b&gt;3 · Live feed (SSE, one poller, every 2 s)&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;audit: list_lines(owner) → list_for_line(line, owner): Asish's log + Mom's log, newest 50&lt;br&gt;sms: GET /internal/sent?after=n (G3): template id, role, user id, body; never a number&lt;br&gt;also per tick: mock /_admin/state?view=refs (pane 2) and binding /_admin/tables (pane 4)&lt;br&gt;no DynamoDB Streams · the chain check stays on the binding page /me (the UI holds no keys)&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FBEFD9;strokeColor=#E8A33D;fontSize=11;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="90" y="680" width="500" height="160" as="geometry" />
+        </mxCell>
+        <mxCell id="p4" value="&lt;b&gt;4 · Binding (QR code · grants · revoke)&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;QR code of POST /_admin/bind-tokens {user_id} → url + ?as=phone-&amp;lt;who&amp;gt;, drawn by the UI&lt;br&gt;grants: GET /_admin/tables?format=json · resolve: GET /_admin/resolve?user=..&amp;amp;line=..&lt;br&gt;revoke / re-grant: POST /_admin/grants {owner, grantee, grant, alias, action}&lt;br&gt;the QR code is drawn by the UI (segno, SVG); the phone opens the page, never the UI&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F3F5F8;strokeColor=#6B7583;fontSize=11;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="90" y="870" width="500" height="150" as="geometry" />
+        </mxCell>
+        <mxCell id="redact" value="&lt;font style=&quot;font-size:9px&quot;&gt;every HTML fragment and SSE frame → number filter (demo_ui.redact) · uvicorn access_log off&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#6B7583;fontSize=11;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="90" y="1035" width="500" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="z_compose" value="compose stack (built)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E4E9F2;strokeColor=#0E1726;verticalAlign=top;align=left;spacingLeft=10;spacingTop=4;spacing=2;fontStyle=1;fontSize=14;fontColor=#1B2B45;dashed=0;arcSize=12;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="880" y="250" width="530" height="840" as="geometry" />
+        </mxCell>
+        <mxCell id="tower" value="&lt;b&gt;tower-mcp :8080 /mcp&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;MCP tools/list · tools/call · Bearer TOWER_BEARER + X-Tower-User&lt;br&gt;each turn is an ordinary check: consent read, carrier calls, audit row&lt;br&gt;the UI adds nothing to this path&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DDF3EF;strokeColor=#2BB3A0;fontSize=11;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="910" y="350" width="470" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="mock" value="&lt;b&gt;mock-carrier 127.0.0.1:8443 /_admin/* (MOCK_ADMIN=1)&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;GET /state?view=refs · GET /scenarios · GET /clock: open (Tower, Alerts)&lt;br&gt;POST /scenarios/load · POST /clock {advance_s}&lt;br&gt;POST /lines/{ref}/events {event} · POST /faults · DELETE /faults&lt;br&gt;every POST / DELETE: Bearer MOCK_ADMIN_TOKEN (G1) · GET /healthz&lt;br&gt;(routers/admin.py)&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F3F5F8;strokeColor=#6B7583;fontSize=11;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="910" y="490" width="470" height="160" as="geometry" />
+        </mxCell>
+        <mxCell id="alerts" value="&lt;b&gt;alerts :8082&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;GET /internal/sent?after=n: ALERTS_MODE=local only, internal bearer (G3)&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FBEFD9;strokeColor=#E8A33D;fontSize=11;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="910" y="680" width="470" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="ddb" value="&lt;b&gt;DynamoDB Local :8000 (read only)&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;Lines by_owner (bind.py:124) · Audit via reader.py:63, owner check :57&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F3F5F8;strokeColor=#6B7583;fontSize=11;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="910" y="770" width="470" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="binding" value="&lt;b&gt;binding-page :8081 /_admin/*&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;POST /bind-tokens {user_id} · GET /tables?format=json&lt;br&gt;GET /resolve?user=..&amp;amp;line=.. · POST /grants {...}&lt;br&gt;404 unless TOWER_ENV=local and BIND_ADMIN=1 (config.py)&lt;br&gt;(routes/admin.py) · GET /bind/{token} for the phone&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F3F5F8;strokeColor=#6B7583;fontSize=11;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="910" y="870" width="470" height="150" as="geometry" />
+        </mxCell>
+        <mxCell id="z_aws" value="AWS: Bedrock only (optional)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FBF3E0;strokeColor=#E8A33D;verticalAlign=top;align=left;spacingLeft=10;spacingTop=4;spacing=2;fontStyle=1;fontSize=14;fontColor=#1B2B45;dashed=0;arcSize=12;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="1470" y="250" width="460" height="200" as="geometry" />
+        </mxCell>
+        <mxCell id="bedrock" value="&lt;b&gt;Bedrock Converse (tool use)&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;BEDROCK_MODEL_ID (amazon.nova-micro-v1:0) · AWS_PROFILE&lt;br&gt;the repo's only model call stays in ref_client/agent.py&lt;br&gt;absent → ScriptedAgent; free text turned off&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#6B7583;fontSize=11;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="1500" y="300" width="400" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="phone" value="Phone on the same Wi-Fi (scans the QR code)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8A33D;strokeColor=#E8A33D;fontSize=11;fontColor=#0E1726;align=center;verticalAlign=middle;dashed=0;fontStyle=1;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="910" y="1150" width="470" height="56" as="geometry" />
+        </mxCell>
+        <mxCell id="e_br" value="HTMX + SSE GET /events" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#6B7583;strokeWidth=1;fontSize=9;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=0.8929;exitY=1.0000;exitDx=0;exitDy=0;entryX=0.8929;entryY=0.0000;entryDx=0;entryDy=0;" edge="1" parent="1" source="browser" target="z_ui">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="-140" y="0" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_bed" value="Converse" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2BB3A0;strokeWidth=2;fontSize=9;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=1.0000;exitY=0.1875;exitDx=0;exitDy=0;entryX=0.0000;entryY=0.2727;entryDx=0;entryDy=0;" edge="1" parent="1" source="p1" target="bedrock">
+          <mxGeometry relative="1" as="geometry" x="-0.6484" />
+        </mxCell>
+        <mxCell id="e_tow" value="MCP Streamable HTTP" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2BB3A0;strokeWidth=2;fontSize=9;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=1.0000;exitY=0.6562;exitDx=0;exitDy=0;entryX=0.0000;entryY=0.5000;entryDx=0;entryDy=0;" edge="1" parent="1" source="p1" target="tower">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_mock" value="/_admin/* + Bearer (G1)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#6B7583;strokeWidth=1;fontSize=9;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=1.0000;exitY=0.5000;exitDx=0;exitDy=0;entryX=0.0000;entryY=0.5000;entryDx=0;entryDy=0;" edge="1" parent="1" source="p2" target="mock">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_al" value="GET /internal/sent (G3)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#E8A33D;strokeWidth=2;fontSize=9;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=1.0000;exitY=0.2188;exitDx=0;exitDy=0;entryX=0.0000;entryY=0.5000;entryDx=0;entryDy=0;" edge="1" parent="1" source="p3" target="alerts">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_ddb" value="read as owner; Reset" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#E8A33D;strokeWidth=2;fontSize=9;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=1.0000;exitY=0.7812;exitDx=0;exitDy=0;entryX=0.0000;entryY=0.5000;entryDx=0;entryDy=0;" edge="1" parent="1" source="p3" target="ddb">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_bind" value="/_admin bind-tokens · grants" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#6B7583;strokeWidth=1;fontSize=9;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=1.0000;exitY=0.5000;exitDx=0;exitDy=0;entryX=0.0000;entryY=0.5000;entryDx=0;entryDy=0;" edge="1" parent="1" source="p4" target="binding">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_phone" value="GET /bind/{token}?as=phone-asish" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#6B7583;strokeWidth=1;fontSize=9;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=0.5000;exitY=0.0000;exitDx=0;exitDy=0;entryX=0.5000;entryY=1.0000;entryDx=0;entryDy=0;" edge="1" parent="1" source="phone" target="binding">
+          <mxGeometry relative="1" as="geometry" x="-0.6154" />
+        </mxCell>
+        <mxCell id="never" value="&lt;b&gt;Never (doc 11 §8)&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;1 decides nothing: no tower_policy, no camara_client, no CAMARA path; chips are Tower's reason_codes · 2 never calls the carrier or the gateway, only the mock's /_admin (a simulation aid)&lt;br&gt;3 never sends, receives or renders a phone number (refs on the wire, filter on the way out) · 4 writes no consent: grants go through the binding page; Reset is the make seed code&lt;br&gt;5 reads an audit only as its line's owner · 6 cannot make Alexa+ speak first · 7 is never deployed to AWS: no ECR repository, no Terraform, values-eks enabled=false · 8 adds nothing to the hot path&lt;br&gt;Captions, not hidden: D1 (link not texted → QR code) · D15 remainder (the line-holder's own UNREACHABLE copy; withheld in the demo run anyway)&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#6B7583;fontSize=11;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="30" y="1240" width="1900" height="96" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="11_aws" name="2 ENV=aws (laptop)">
+    <mxGraphModel dx="1422" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1960" pageHeight="1300" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="t_main" value="11 · Demo UI, ENV=aws: on the laptop, pointed at the account, never deployed into it" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;fontSize=19;fontColor=#1B2B45;fontStyle=1;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="30" y="14" width="1900" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="t_sub" value="The same container (or uv run) with deploy/.env.aws loaded. Nothing is created in AWS. Each pane works only as far as a laptop can reach." style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;fontSize=11;fontColor=#6B7A90;fontStyle=0;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="30" y="46" width="1900" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="t_sub2" value="Solid edge = reachable from the laptop · no edge = no laptop path: pane 2, Reset and the macros are local-only (decision 2); Asish only (decision 3)." style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;fontSize=11;fontColor=#6B7A90;fontStyle=0;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="30" y="66" width="1900" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="z_laptop" value="Presenter's laptop" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#EEF0F5;strokeColor=#9AA7B5;verticalAlign=top;align=left;spacingLeft=10;spacingTop=4;spacing=2;fontStyle=1;fontSize=14;fontColor=#1B2B45;dashed=0;arcSize=12;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="30" y="100" width="700" height="900" as="geometry" />
+        </mxCell>
+        <mxCell id="z_ui" value="services/demo-ui (same image, or uv run)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#0E1726;verticalAlign=top;align=left;spacingLeft=10;spacingTop=4;spacing=2;fontStyle=1;fontSize=14;fontColor=#1B2B45;dashed=0;arcSize=12;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="60" y="140" width="640" height="820" as="geometry" />
+        </mxCell>
+        <mxCell id="p1" value="&lt;b&gt;1 · Conversation: works&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;TOWER_URL = the Runtime URL from deploy/.env.aws&lt;br&gt;TOWER_BEARER must be a JWT; D21: an empty discovery URL means every call gets 401&lt;br&gt;X-Tower-User is ignored on AWS: Asish only, no persona switch (decision 3)&lt;br&gt;Bedrock with the att profile, or ScriptedAgent; the pill shows mode + ENV=aws&lt;br&gt;macros off: they need pane 2&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DDF3EF;strokeColor=#2BB3A0;fontSize=11;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="90" y="190" width="580" height="180" as="geometry" />
+        </mxCell>
+        <mxCell id="p2" value="&lt;b&gt;2 · Carrier controls, Reset, macros: off&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;local-only by decision (2): no SSM tunnel is planned&lt;br&gt;MOCK_URL is empty (render_env.py)&lt;br&gt;the ALB is internal and never forwards /_admin (modules/mock_carrier/main.tf)&lt;br&gt;the pane says why, greyed out; no request goes to an empty URL&lt;br&gt;the demo's carrier moments run on ENV=local&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F7F8FA;strokeColor=#C9D3DF;fontSize=11;fontColor=#8A96A8;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=1;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="90" y="400" width="580" height="180" as="geometry" />
+        </mxCell>
+        <mxCell id="p3" value="&lt;b&gt;3 · Live feed: audit only&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;DynamoDB with the att profile; DYNAMO_ENDPOINT empty; TOWER_TABLE_PREFIX from .env.aws&lt;br&gt;polled every 5 s: about 3 reads/s while the page is open, cents per day&lt;br&gt;SMS: no laptop read path (Lambda + SNS); the text lands on the real phone&lt;br&gt;the audit row with message_ref is the evidence on screen&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FBEFD9;strokeColor=#E8A33D;fontSize=11;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="90" y="610" width="580" height="180" as="geometry" />
+        </mxCell>
+        <mxCell id="p4" value="&lt;b&gt;4 · Binding: QR code from next_step only&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;/_admin/* answers 404 on AWS (config.py): no grants list, no revoke from the UI&lt;br&gt;the bind link comes from Tower's NOT_BOUND next_step.url (next_step.py)&lt;br&gt;grants and revokes happen on the resident's own phone at /me (routes/grants.py)&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F3F5F8;strokeColor=#6B7583;fontSize=11;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="90" y="820" width="580" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="z_aws" value="AWS account (the demo UI is not in it)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E4E9F2;strokeColor=#0E1726;verticalAlign=top;align=left;spacingLeft=10;spacingTop=4;spacing=2;fontStyle=1;fontSize=14;fontColor=#1B2B45;dashed=0;arcSize=12;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="1000" y="100" width="930" height="900" as="geometry" />
+        </mxCell>
+        <mxCell id="bedrock" value="&lt;b&gt;Bedrock Converse&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;us-east-1 · BEDROCK_MODEL_ID&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#6B7583;fontSize=11;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="1040" y="190" width="420" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="runtime" value="&lt;b&gt;Tower on AgentCore Runtime&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;MCP over HTTPS · JWT sub → user_id&lt;br&gt;Gateway + Identity → mock (unchanged)&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DDF3EF;strokeColor=#2BB3A0;fontSize=11;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="1040" y="280" width="420" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="mock" value="&lt;b&gt;Mock carrier on Fargate&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;internal ALB: CAMARA prefixes and /oauth2 only&lt;br&gt;/_admin/* reachable only inside the task&lt;br&gt;ECS Exec enabled (aws_seed.py uses it)&lt;br&gt;no tunnel to the laptop (decision 2)&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F3F5F8;strokeColor=#6B7583;fontSize=11;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="1040" y="400" width="420" height="180" as="geometry" />
+        </mxCell>
+        <mxCell id="ddb" value="&lt;b&gt;DynamoDB (Lines, Audit)&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;Query Lines by_owner · Query Audit, read as owner&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F3F5F8;strokeColor=#6B7583;fontSize=11;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="1040" y="610" width="420" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="alerts" value="&lt;b&gt;Alerts Lambda + SNS&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;API Gateway exposes /hooks/* only: nothing to read&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FBEFD9;strokeColor=#E8A33D;fontSize=11;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="1040" y="710" width="420" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="apigw" value="&lt;b&gt;Binding page: API Gateway + Lambda&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;/bind/{token} · /bind/callback · /me (session)&lt;br&gt;/_admin/* → 404 (TOWER_ENV=aws)&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F3F5F8;strokeColor=#6B7583;fontSize=11;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="1040" y="820" width="420" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="absent" value="&lt;b&gt;Not in the account, by design&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;no demo-ui ECR repository (push stays five)&lt;br&gt;no Terraform resource&lt;br&gt;Helm values-eks.yaml: enabled=false&lt;br&gt;nothing listening publicly for the UI&lt;br&gt;a static test in tests/aws/ checks all four&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#6B7583;fontSize=11;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="1500" y="190" width="400" height="180" as="geometry" />
+        </mxCell>
+        <mxCell id="phone" value="Real phone (Wi-Fi off for binding)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8A33D;strokeColor=#E8A33D;fontSize=11;fontColor=#0E1726;align=center;verticalAlign=middle;dashed=0;fontStyle=1;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="1040" y="1060" width="420" height="56" as="geometry" />
+        </mxCell>
+        <mxCell id="e_bed" value="Converse (att profile)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2BB3A0;strokeWidth=2;fontSize=9;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=1.0000;exitY=0.1944;exitDx=0;exitDy=0;entryX=0.0000;entryY=0.5000;entryDx=0;entryDy=0;" edge="1" parent="1" source="p1" target="bedrock">
+          <mxGeometry relative="1" as="geometry" x="-0.1081" />
+        </mxCell>
+        <mxCell id="e_rt" value="MCP + JWT (Asish)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2BB3A0;strokeWidth=2;fontSize=9;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=1.0000;exitY=0.7500;exitDx=0;exitDy=0;entryX=0.0000;entryY=0.5000;entryDx=0;entryDy=0;" edge="1" parent="1" source="p1" target="runtime">
+          <mxGeometry relative="1" as="geometry" x="-0.1081" />
+        </mxCell>
+        <mxCell id="e_ddb" value="Query as owner" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#E8A33D;strokeWidth=2;fontSize=9;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=1.0000;exitY=0.2222;exitDx=0;exitDy=0;entryX=0.0000;entryY=0.5000;entryDx=0;entryDy=0;" edge="1" parent="1" source="p3" target="ddb">
+          <mxGeometry relative="1" as="geometry" x="-0.1081" />
+        </mxCell>
+        <mxCell id="e_bind" value="QR code of next_step.url only" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#6B7583;strokeWidth=1;fontSize=9;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=1.0000;exitY=0.5000;exitDx=0;exitDy=0;entryX=0.0000;entryY=0.5000;entryDx=0;entryDy=0;" edge="1" parent="1" source="p4" target="apigw">
+          <mxGeometry relative="1" as="geometry" x="-0.1081" />
+        </mxCell>
+        <mxCell id="e_sms" value="SNS SMS: the real buzz" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#E8A33D;strokeWidth=2;fontSize=9;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=1.0000;exitY=0.5000;exitDx=0;exitDy=0;entryX=1.0000;entryY=0.5000;entryDx=0;entryDy=0;" edge="1" parent="1" source="alerts" target="phone">
+          <mxGeometry relative="1" as="geometry" x="-0.0544">
+            <Array as="points">
+              <mxPoint x="1640" y="750" />
+              <mxPoint x="1640" y="1088" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_phone" value="bind link over mobile data" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#6B7583;strokeWidth=1;fontSize=9;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=0.5000;exitY=0.0000;exitDx=0;exitDy=0;entryX=0.5000;entryY=1.0000;entryDx=0;entryDy=0;" edge="1" parent="1" source="phone" target="apigw">
+          <mxGeometry relative="1" as="geometry" x="-0.5000" />
+        </mxCell>
+        <mxCell id="note" value="&lt;b&gt;What ENV=aws can demonstrate from the laptop&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;the conversation as Asish against the real Runtime, the audit feed, and the bind link as a QR code&lt;br&gt;not the macros: Moment 1–3 and Transplant need the mock's clock and events (local-only)&lt;br&gt;the video's Alexa+ simulator path does not depend on the UI at all&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#6B7583;fontSize=11;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="30" y="1150" width="960" height="110" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

@@ -1,0 +1,14 @@
+title = "ask-the-tower"
+[extend]
+useDefault = true
+[allowlist]
+description = "placeholders and fixtures"
+paths = [
+  '''\.env\.example$''',
+  '''specs/camara/.*\.yaml$''',
+  '''scenarios/.*\.yaml$''',
+  '''docs/.*\.md$''',
+]
+regexes = [
+  '''(?i)(changeme|placeholder|example|dummy|local-dev-only)''',
+]

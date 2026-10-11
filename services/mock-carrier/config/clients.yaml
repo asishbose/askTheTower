@@ -1,0 +1,41 @@
+# OAuth client registry for the mock carrier. Local-development placeholders, not secrets: the mock
+# accepts these and nothing else. A deployment overrides the file with MOCK_CLIENTS_FILE.
+#
+# Scopes: a granted scope covers every scope that starts with "<granted>:", so `sim-swap` covers
+# `sim-swap:check` and `sim-swap:retrieve-date` (the SIM Swap spec itself lists `sim-swap` as an
+# alternative). `mobile_data_client_ids` live on lines in scenarios/*.yaml, not here.
+clients:
+  tower:
+    secret: local-dev-tower
+    grant_types: [client_credentials, "urn:openid:params:grant-type:ciba"]
+    scopes:
+      - sim-swap
+      - sim-swap-subscriptions
+      - call-forwarding-signal
+      - device-reachability-status
+      - device-reachability-status-subscriptions
+  alerts:
+    secret: local-dev-alerts
+    grant_types: [client_credentials]
+    scopes:
+      - sim-swap
+      - sim-swap-subscriptions
+      - call-forwarding-signal
+      - device-reachability-status
+      - device-reachability-status-subscriptions
+  binding-page:
+    secret: local-dev-binding
+    grant_types: [authorization_code]
+    redirect_uri_prefixes:
+      - "http://localhost"
+      - "http://127.0.0.1"
+      - "http://binding-page"
+      - "https://binding-page"
+      - "https://bind."
+    scopes:
+      - number-verification
+  limited:
+    # test aid: may only check SIM swap — every other call is 403 PERMISSION_DENIED
+    secret: local-dev-limited
+    grant_types: [client_credentials]
+    scopes: [sim-swap:check]

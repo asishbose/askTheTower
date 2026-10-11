@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}Activity — Ask the Tower{% endblock %}
+{% block body %}
+<h1>Activity on line {{ line_id | short_line }}</h1>
+<div class="card">
+{% if chain.ok %}
+  <strong class="ok">Log verified</strong> — {{ chain.rows }} entr{{ "y" if chain.rows == 1 else "ies" }}, none altered{% if chain.trimmed %} (older entries were trimmed after 90 days){% endif %}.
+{% else %}
+  <strong class="bad">Log check failed</strong>{% if chain.first_bad_ts %} at the entry from {{ chain.first_bad_ts | minute }}{% endif %}.
+{% endif %}
+</div>
+{% if rows %}
+<table>
+  <tr><th>When</th><th>Who</th><th>What</th><th>Result</th></tr>
+  {% for r in rows %}
+  <tr><td>{{ r.ts | minute }}</td><td>{{ r.actor_user_id }}</td><td>{{ r.tool }} ({{ r.trigger }})</td><td>{{ r.outcome }}{% if r.reason_codes %} · {{ r.reason_codes | join(", ") }}{% endif %}</td></tr>
+  {% endfor %}
+</table>
+{% else %}
+<p class="muted">No activity yet.</p>
+{% endif %}
+<p><a href="/me">Back</a></p>
+{% endblock %}

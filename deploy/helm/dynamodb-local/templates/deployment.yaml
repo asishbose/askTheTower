@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "dynamodb-local.fullname" . }}
+  labels:
+    {{- include "dynamodb-local.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      {{- include "dynamodb-local.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "dynamodb-local.labels" . | nindent 8 }}
+    spec:
+      automountServiceAccountToken: false
+      securityContext:
+        {{- include "dynamodb-local.podSecurityContext" . | nindent 8 }}
+      {{- include "dynamodb-local.scheduling" . | nindent 6 }}
+      containers:
+        - name: dynamodb-local
+          image: {{ include "dynamodb-local.image" . | quote }}
+          imagePullPolicy: {{ include "dynamodb-local.pullPolicy" . }}
+          args: {{ toJson .Values.args }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.port }}
+              protocol: TCP
+          securityContext:
+            {{- include "dynamodb-local.securityContext" . | nindent 12 }}
+          readinessProbe:
+            tcpSocket:
+              port: http
+            periodSeconds: 3
+          livenessProbe:
+            tcpSocket:
+              port: http
+            periodSeconds: 20
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+      volumes:
+        - name: tmp
+          emptyDir:
+            sizeLimit: 64Mi

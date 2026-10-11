@@ -1,0 +1,45 @@
+# `transplant` profile: the watched line (Asish's) must stay reachable for the call.
+# Alerts' rule (06 §2): `reachable: false` continuously for 20 min → text the partner; no
+# acknowledgement for 15 more min → text the second contact (testing-and-showcase §2.6).
+# Default timeline: dark at +1 min and stays dark for 59 min (covers 20 min + 15 min escalation).
+# Variant `blip`: reachable again at minute 10 of the dark spell (resets the 20-min window), then
+# dark again at +12 min, so the first alert is due at +32 min, not +21.
+clock: "2026-10-05T14:00:00Z"
+lines:
+  "+16135550101":                # Asish (the watched line)
+    sim_change_at: "2026-09-01T10:00:00Z"
+    call_forwarding: none
+    reachable: true
+    connectivity: DATA
+    mobile_data_client_ids: [phone-asish]
+  "+16135550102":                # Mom
+    sim_change_at: "2026-08-12T09:30:00Z"
+    call_forwarding: none
+    reachable: true
+    connectivity: DATA
+    mobile_data_client_ids: [phone-mom]
+timeline:
+  - at: "+00:01:00"
+    line: "+16135550101"
+    event: unreachable
+  - at: "+01:00:00"
+    line: "+16135550101"
+    event: reachable
+    connectivity: [DATA]
+variants:
+  blip:
+    timeline:
+      - at: "+00:01:00"
+        line: "+16135550101"
+        event: unreachable
+      - at: "+00:11:00"          # minute 10 of the dark spell
+        line: "+16135550101"
+        event: reachable
+        connectivity: [DATA]
+      - at: "+00:12:00"
+        line: "+16135550101"
+        event: unreachable
+      - at: "+01:00:00"
+        line: "+16135550101"
+        event: reachable
+        connectivity: [DATA]

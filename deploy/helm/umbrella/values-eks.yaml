@@ -1,0 +1,95 @@
+# EKS: the same images from ECR (arm64 nodes), against the AgentCore stack's DynamoDB tables, KMS keys and SNS
+# (10 §1 EKS column). Install with the generated values on top:
+#   uv run python scripts/render_values.py      # terraform outputs → values-eks.generated.yaml (not committed)
+#   helm upgrade --install att deploy/helm/umbrella -n ask-the-tower --create-namespace \
+#     -f deploy/helm/umbrella/values-eks.yaml -f deploy/helm/umbrella/values-eks.generated.yaml --wait
+global:
+  imagePullPolicy: IfNotPresent
+  nodeSelector:
+    kubernetes.io/arch: arm64
+  storeEnv:
+    TOWER_ENV: aws               # KMS line ids / envelope; same tables and keys as the AgentCore deployment
+    DYNAMO_ENDPOINT: ""          # unset → real DynamoDB (IRSA)
+
+localTls:
+  enabled: false
+
+seed:
+  enabled: true
+  serviceAccountName: tower-mcp  # IRSA: the tables + both keys
+
+dynamodb-local:
+  enabled: false
+
+# Laptop-only tooling, never deployed to a cloud cluster (doc 11 §8.7): no ECR repository, no Terraform.
+demo-ui:
+  enabled: false
+
+# One internet-facing ALB for the three public paths (ingress group `ask-the-tower`), TLS from ACM, pods as IP
+# targets. Hosts may differ (tower., bind., hooks.) or be one name: group.order puts /mcp and /hooks before /.
+# The binding host must start with `bind.` — the mock's registry allows redirect URIs https://bind.* only.
+tower-mcp:
+  replicaCount: 2
+  autoscaling:
+    enabled: true
+  pdb:
+    enabled: true
+  ingress:
+    enabled: true
+    className: alb
+    paths: [/mcp, /healthz]
+    annotations:
+      alb.ingress.kubernetes.io/scheme: internet-facing
+      alb.ingress.kubernetes.io/target-type: ip
+      alb.ingress.kubernetes.io/group.name: ask-the-tower
+      alb.ingress.kubernetes.io/listen-ports: '[{"HTTPS":443}]'
+      alb.ingress.kubernetes.io/ssl-policy: ELBSecurityPolicy-TLS13-1-2-2021-06
+      alb.ingress.kubernetes.io/healthcheck-path: /healthz
+      alb.ingress.kubernetes.io/group.order: "10"   # /mcp before the page's catch-all /
+
+binding-page:
+  replicaCount: 2
+  pdb:
+    enabled: true
+  env:
+    BIND_ADMIN: "0"
+    SESSION_TTL_S: "86400"   # 04 §6, D-H: the page session lasts the demo day (chart default 1800)
+  ingress:
+    enabled: true
+    className: alb
+    paths: [/]
+    annotations:
+      alb.ingress.kubernetes.io/scheme: internet-facing
+      alb.ingress.kubernetes.io/target-type: ip
+      alb.ingress.kubernetes.io/group.name: ask-the-tower
+      alb.ingress.kubernetes.io/listen-ports: '[{"HTTPS":443}]'
+      alb.ingress.kubernetes.io/ssl-policy: ELBSecurityPolicy-TLS13-1-2-2021-06
+      alb.ingress.kubernetes.io/healthcheck-path: /healthz
+      alb.ingress.kubernetes.io/group.order: "30"
+
+alerts:
+  env:
+    ALERTS_MODE: k8s             # hooks + internal API; the 10 §3 schedules are CronJobs
+    ALERTS_SENDER: sns
+  ingress:
+    enabled: true
+    className: alb
+    paths: [/hooks]              # only the CAMARA sinks are public; /internal stays in-cluster
+    annotations:
+      alb.ingress.kubernetes.io/scheme: internet-facing
+      alb.ingress.kubernetes.io/target-type: ip
+      alb.ingress.kubernetes.io/group.name: ask-the-tower
+      alb.ingress.kubernetes.io/listen-ports: '[{"HTTPS":443}]'
+      alb.ingress.kubernetes.io/ssl-policy: ELBSecurityPolicy-TLS13-1-2-2021-06
+      alb.ingress.kubernetes.io/healthcheck-path: /healthz
+      alb.ingress.kubernetes.io/group.order: "20"
+  cronJobs:
+    enabled: true
+
+ref-client:
+  envName: eks
+  web:
+    enabled: true            # the web chat agent only (no page, no stub): ClusterIP
+    env:
+      TOWER_ENV: aws
+      WEB_CHAT_DIR: ""

@@ -1,0 +1,23 @@
+# TLS in front of Alerts' CAMARA webhook sinks (local compose only; on AWS API Gateway terminates TLS).
+# Only /hooks/* is exposed over https; the internal API stays on the plain network port.
+{
+	local_certs
+	skip_install_trust
+	admin 127.0.0.1:2019
+	log default {
+		output stdout
+		format console {
+			time_format iso8601
+		}
+	}
+}
+
+https://alerts-tls:8443 {
+	tls internal
+	handle /hooks/* {
+		reverse_proxy alerts:8082
+	}
+	handle {
+		respond 404
+	}
+}

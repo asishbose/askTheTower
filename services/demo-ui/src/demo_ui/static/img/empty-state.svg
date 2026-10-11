@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 160" role="img" aria-label="The tower, dark: the stack is not up">
+  <!-- "Waiting for the stack" (doc 11 §2 Presentation, state 1): hero.svg's tower with the lights off. -->
+  <defs>
+    <linearGradient id="es-sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#070b1f"/><stop offset="1" stop-color="#1d2b63"/></linearGradient>
+    <linearGradient id="es-hill" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1b2a55"/><stop offset="1" stop-color="#0d1736"/></linearGradient>
+  </defs>
+  <rect width="320" height="160" rx="14" fill="url(#es-sky)"/>
+  <g fill="#ffffff" opacity="0.6"><circle cx="40" cy="26" r="1.1"/><circle cx="96" cy="48" r="0.9"/><circle cx="238" cy="22" r="1.2"/><circle cx="284" cy="54" r="0.9"/></g>
+  <circle cx="262" cy="34" r="13" fill="#e9d9a6" opacity="0.8"/><circle cx="268" cy="29" r="11" fill="#0b1233"/>
+  <path d="M0 118 C 60 100, 120 112, 180 104 S 270 96, 320 110 L320 160 L0 160 Z" fill="url(#es-hill)"/>
+  <g fill="none" stroke="#4fe3ff" stroke-width="1.4" stroke-dasharray="3 5" opacity="0.35">
+    <circle cx="160" cy="44" r="22"/><circle cx="160" cy="44" r="38"/>
+  </g>
+  <g transform="translate(160,8) scale(0.3)" stroke="#5a6fb3" stroke-width="5" fill="none" stroke-linecap="round">
+    <path d="M-30 420 L-12 120 M30 420 L12 120"/>
+    <path d="M-28 380 L28 380 M-25 330 L25 330 M-22 280 L22 280 M-19 230 L19 230 M-16 180 L16 180"/>
+    <path d="M-28 380 L25 330 M28 380 L-25 330 M-22 280 L19 230 M22 280 L-19 230"/>
+    <path d="M0 120 L0 80"/>
+  </g>
+  <circle cx="160" cy="32" r="3" fill="#5a6fb3"/>
+  <g fill="#aab8e6" font-family="system-ui, sans-serif" font-size="12" font-weight="700" opacity="0.8">
+    <text x="182" y="40">z</text><text x="192" y="30" font-size="10">z</text><text x="200" y="22" font-size="8">z</text>
+  </g>
+</svg>

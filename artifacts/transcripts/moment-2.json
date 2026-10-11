@@ -1,0 +1,51 @@
+{
+  "story": "moment-2",
+  "title": "Moment 2 — is anything forwarding my calls?",
+  "user": "user-asish",
+  "agent": "scripted",
+  "model_id": null,
+  "env": "local",
+  "steps": [
+    {
+      "control": "mock clock +8 min; the demo timeline sets call forwarding on Asish's line (cf_set) (fired: cf_set)"
+    },
+    {
+      "utterance": "Is anything forwarding my calls?",
+      "tool_calls": [
+        {
+          "name": "line_is_ok",
+          "args": {
+            "line": "self"
+          }
+        }
+      ],
+      "result": {
+        "summary": "Your SIM was moved to another device at 10:12 today. If that wasn't you, call your carrier now. All your calls have been forwarding since 10:20 today. If you didn't set that, call your carrier.",
+        "facts": {
+          "line": "self",
+          "sim_swapped_recently": true,
+          "swapped_at": "2026-10-05T14:12:00Z",
+          "call_forwarding": "unconditional",
+          "source": "carrier",
+          "stale": false,
+          "as_of": "2026-10-05T14:20:00Z"
+        },
+        "reason_codes": [
+          "SIM_SWAPPED_RECENT",
+          "CALL_FORWARDING_SET"
+        ],
+        "next_step": {
+          "kind": "call_carrier",
+          "url": null,
+          "carrier_support_number": "611"
+        },
+        "checked_at": "2026-10-05T14:20:00Z"
+      },
+      "reason_codes": [
+        "SIM_SWAPPED_RECENT",
+        "CALL_FORWARDING_SET"
+      ],
+      "spoken": "Your SIM was moved to another device at 10:12 today. If that wasn't you, call your carrier now. All your calls have been forwarding since 10:20 today. If you didn't set that, call your carrier."
+    }
+  ]
+}

@@ -1,0 +1,10 @@
+// Ask the Tower web chat page config (09 §6.4). None of these is a secret.
+// AWS: `make web-chat-sync` renders config.js from the Terraform outputs and uploads it next to index.html.
+// Local: the agent serves /config.js from its env (TOWER_ENV=local), with COGNITO_DOMAIN empty → sign-in stub.
+window.WEB_CHAT_CONFIG = {
+  "COGNITO_DOMAIN": "https://<cognito-domain-prefix>.auth.<region>.amazoncognito.com",
+  "CLIENT_ID": "<cognito-app-client-id>",
+  "REDIRECT_URI": "https://<distribution>.cloudfront.net/",
+  "AGENT_URL": "https://<lambda-function-url-id>.lambda-url.<region>.on.aws/invocations",
+  "BINDING_BASE_URL": "https://<binding-page-host>"
+};

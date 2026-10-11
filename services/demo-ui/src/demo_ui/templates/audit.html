@@ -1,0 +1,13 @@
+{% if rows %}
+<ol class="timeline audit">{% for r in rows %}
+  <li class="ev ev-audit o-{{ r.outcome }}" data-key="{{ r.ts }}|{{ r.log }}|{{ r.line }}|{{ r.tool }}|{{ r.trigger }}|{{ r.outcome }}|{{ r.codes | join(' ') }}" data-codes="{{ r.codes | join(' ') }}" data-outcome="{{ r.outcome }}">
+    <span class="ev-icon" aria-hidden="true"><svg class="i"><use href="/static/img/icons.svg#link"></use></svg></span>
+    <div class="ev-body">
+      <p class="ev-head"><time class="ts">{{ r.ts }}</time> <b class="log">{{ r.log }}'s log</b> <code class="ref">{{ r.line }}</code> <span class="actor">{{ r.actor }}</span></p>
+      <p class="ev-what"><span class="tool">{{ r.tool }}</span> <span class="trigger">{{ r.trigger }}</span> <span class="outcome">{{ r.outcome }}</span>
+        {% for c in r.codes %}<span class="rc rc-{{ c }}"><span class="chip">{{ c }}</span></span>{% endfor %}
+        {% if r.message_ref %}<span class="tpl">{{ r.message_ref }}</span>{% endif %}</p>
+    </div>
+  </li>{% endfor %}
+</ol>
+{% else %}<p class="empty">no audit rows yet</p>{% endif %}

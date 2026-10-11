@@ -1,0 +1,51 @@
+suite: demo-ui
+templates:
+  - templates/deployment.yaml
+  - templates/service.yaml
+  - templates/serviceaccount.yaml
+tests:
+  - it: renders nothing unless enabled (laptop tooling; values-eks keeps it off)
+    asserts:
+      - template: templates/deployment.yaml
+        hasDocuments: {count: 0}
+      - template: templates/service.yaml
+        hasDocuments: {count: 0}
+      - template: templates/serviceaccount.yaml
+        hasDocuments: {count: 0}
+  - it: values-eks.yaml keeps it off
+    values: [../../demo-ui/values-eks.yaml]
+    asserts:
+      - template: templates/deployment.yaml
+        hasDocuments: {count: 0}
+  - it: on kind, one replica, scripted agent, loopback-published, non-root, read-only root
+    values: [../../demo-ui/values-kind.yaml]
+    template: templates/deployment.yaml
+    asserts:
+      - isKind: {of: Deployment}
+      - equal: {path: spec.replicas, value: 1}
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content: {name: REF_AGENT, value: scripted}
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content: {name: DEMO_UI_PUBLISHED_LOOPBACK, value: "1"}
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content: {name: ALERTS_INTERNAL_BEARER, valueFrom: {secretKeyRef: {name: att-secrets, key: INTERNAL_BEARER}}}
+      - equal: {path: spec.template.spec.securityContext.runAsNonRoot, value: true}
+      - equal: {path: "spec.template.spec.containers[0].securityContext.readOnlyRootFilesystem", value: true}
+  - it: never hands the DynamoDB Local dummy credentials to the agent (Bedrock detection)
+    values: [../../demo-ui/values-kind.yaml]
+    template: templates/deployment.yaml
+    set:
+      global.storeEnv: {AWS_ACCESS_KEY_ID: dynamodblocal}
+    asserts:
+      - notContains:
+          path: spec.template.spec.containers[0].env
+          content: {name: AWS_ACCESS_KEY_ID, value: dynamodblocal}
+  - it: the service is ClusterIP only (port-forward from the laptop)
+    values: [../../demo-ui/values-kind.yaml]
+    template: templates/service.yaml
+    asserts:
+      - equal: {path: spec.type, value: ClusterIP}
+      - equal: {path: "spec.ports[0].port", value: 8090}

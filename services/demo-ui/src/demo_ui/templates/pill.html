@@ -1,0 +1,3 @@
+{% set note = "scripted agent: tool calls from the script" if mode == "scripted" else "agent mode and environment" %}
+<span class="pill mode-{{ mode }}" data-mode="{{ mode }}" data-env="{{ env }}" title="{{ note }}"><i class="pill-dot" aria-hidden="true"></i>{{ mode }} · ENV={{ env }}</span>
+{% if mode == "scripted" %}<span class="pill-note">scripted agent: tool calls from the script</span>{% endif %}

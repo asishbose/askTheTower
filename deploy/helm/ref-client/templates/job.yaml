@@ -1,0 +1,47 @@
+{{- if .Values.job.enabled }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ include "ref-client.fullname" . }}-demo-{{ .Release.Revision }}
+  labels:
+    {{- include "ref-client.labels" . | nindent 4 }}
+    app.kubernetes.io/component: demo
+spec:
+  backoffLimit: {{ .Values.job.backoffLimit }}
+  ttlSecondsAfterFinished: {{ .Values.job.ttlSecondsAfterFinished }}
+  template:
+    metadata:
+      labels:
+        {{- include "ref-client.labels" . | nindent 8 }}
+        app.kubernetes.io/component: demo
+    spec:
+      restartPolicy: Never
+      serviceAccountName: {{ include "ref-client.serviceAccountName" . }}
+      automountServiceAccountToken: false
+      securityContext:
+        {{- include "ref-client.podSecurityContext" . | nindent 8 }}
+      {{- include "ref-client.scheduling" . | nindent 6 }}
+      containers:
+        - name: ref-client
+          image: {{ include "ref-client.image" . | quote }}
+          imagePullPolicy: {{ include "ref-client.pullPolicy" . }}
+          args: {{ toJson (.Values.job.args | default (list "demo" "--env" .Values.envName)) }}
+          env:
+            {{- include "ref-client.env" . | nindent 12 }}
+          securityContext:
+            {{- include "ref-client.securityContext" . | nindent 12 }}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+            - name: out
+              mountPath: /out
+      volumes:
+        - name: tmp
+          emptyDir:
+            sizeLimit: 64Mi
+        - name: out
+          emptyDir:
+            sizeLimit: 64Mi
+{{- end }}

@@ -1,0 +1,11 @@
+# kind (make helm-kind): the web chat agent and page next to the compose-shaped stack (TOWER_ENV=local, the
+# sign-in stub). Port-forward to reach it:
+#   kubectl -n ask-the-tower port-forward svc/ref-client-web 8083:8080   → http://127.0.0.1:8083/
+web:
+  enabled: true
+  env:
+    TOWER_ENV: local
+    WEB_CHAT_BINDING_BASE_URL: http://localhost:8081
+    WEB_CHAT_DIR: /app/web-chat
+  ingress:
+    enabled: false

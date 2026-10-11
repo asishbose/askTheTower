@@ -1,0 +1,40 @@
+{{- if .Values.localTls.enabled }}
+{{- $secret := lookup "v1" "Secret" .Release.Namespace .Values.localTls.secretName }}
+{{- $cm := lookup "v1" "ConfigMap" .Release.Namespace .Values.localTls.caConfigMap }}
+{{- $crt := "" }}{{ $key := "" }}{{ $ca := "" }}
+{{- if and $secret $cm }}
+{{- $crt = index $secret.data "tls.crt" }}{{ $key = index $secret.data "tls.key" }}{{ $ca = index $cm.data "ca.crt" }}
+{{- else }}
+{{- $gen := genCA "ask-the-tower local CA" 365 }}
+{{- $dns := list }}
+{{- range .Values.localTls.dnsNames }}
+{{- $dns = append $dns . }}
+{{- $dns = append $dns (printf "%s.%s.svc" . $.Release.Namespace) }}
+{{- $dns = append $dns (printf "%s.%s.svc.cluster.local" . $.Release.Namespace) }}
+{{- end }}
+{{- $cert := genSignedCert (first .Values.localTls.dnsNames) nil $dns 365 $gen }}
+{{- $crt = $cert.Cert | b64enc }}{{ $key = $cert.Key | b64enc }}{{ $ca = $gen.Cert }}
+{{- end }}
+# The compose `alerts-tls` CA, as Kubernetes objects: the certificate Alerts' tls sidecar serves for /hooks/*,
+# and the CA certificate alone (no key) for the mock carrier's SSL_CERT_FILE. Generated once, kept on upgrade.
+apiVersion: v1
+kind: Secret
+metadata:
+  name: {{ .Values.localTls.secretName }}
+  labels:
+    {{- include "att.labels" . | nindent 4 }}
+type: kubernetes.io/tls
+data:
+  tls.crt: {{ $crt }}
+  tls.key: {{ $key }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Values.localTls.caConfigMap }}
+  labels:
+    {{- include "att.labels" . | nindent 4 }}
+data:
+  ca.crt: |
+    {{- $ca | nindent 4 }}
+{{- end }}

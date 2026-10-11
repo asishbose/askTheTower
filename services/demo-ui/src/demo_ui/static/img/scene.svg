@@ -1,0 +1,139 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-400 0 2400 300" preserveAspectRatio="xMidYMax slice" font-family="system-ui, sans-serif" class="scene">
+  <!-- The Stage (doc 11 §2 Presentation). Shapes and palette from docs/img/hero.svg. stage.js only toggles classes
+       on the ids below; it never redraws. Coordinates have at most two decimals and the art carries no number. -->
+  <defs>
+    <linearGradient id="sc-sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#070b1f"/><stop offset="0.6" stop-color="#101a44"/><stop offset="1" stop-color="#1d2b63"/>
+    </linearGradient>
+    <linearGradient id="sc-hill1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1b2a55"/><stop offset="1" stop-color="#0d1736"/></linearGradient>
+    <linearGradient id="sc-hill2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#22366b"/><stop offset="1" stop-color="#131f49"/></linearGradient>
+    <linearGradient id="sc-ground" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1a2b5a"/><stop offset="1" stop-color="#0a1230"/></linearGradient>
+    <linearGradient id="sc-card" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1c2b5e"/><stop offset="1" stop-color="#0f1a40"/></linearGradient>
+    <radialGradient id="sc-moon" cx="0.4" cy="0.4" r="0.7"><stop offset="0" stop-color="#fff7d6"/><stop offset="1" stop-color="#e9d9a6"/></radialGradient>
+    <radialGradient id="sc-warm" cx="0.5" cy="0.5" r="0.5"><stop offset="0" stop-color="#ffcf6b" stop-opacity="0.7"/><stop offset="1" stop-color="#ffcf6b" stop-opacity="0"/></radialGradient>
+    <radialGradient id="sc-cyan" cx="0.5" cy="0.5" r="0.5"><stop offset="0" stop-color="#4fe3ff" stop-opacity="0.6"/><stop offset="1" stop-color="#4fe3ff" stop-opacity="0"/></radialGradient>
+    <radialGradient id="sc-red" cx="0.5" cy="0.5" r="0.5"><stop offset="0" stop-color="#ff6b6b" stop-opacity="0.95"/><stop offset="1" stop-color="#ff6b6b" stop-opacity="0"/></radialGradient>
+    <filter id="sc-blur"><feGaussianBlur stdDeviation="3"/></filter>
+  </defs>
+
+  <rect x="-400" width="2400" height="300" fill="url(#sc-sky)"/>
+  <g fill="#ffffff">
+    <circle cx="90" cy="40" r="1.4" opacity="0.8"/><circle cx="210" cy="90" r="1.1" opacity="0.6"/><circle cx="330" cy="30" r="1.6" opacity="0.9"/>
+    <circle cx="470" cy="70" r="1" opacity="0.5"/><circle cx="560" cy="35" r="1.4" opacity="0.7"/><circle cx="660" cy="100" r="1" opacity="0.5"/>
+    <circle cx="960" cy="40" r="1.1" opacity="0.5"/><circle cx="1050" cy="95" r="1.3" opacity="0.7"/><circle cx="1180" cy="30" r="1.6" opacity="0.9"/>
+    <circle cx="1290" cy="80" r="1.1" opacity="0.6"/><circle cx="1520" cy="100" r="1" opacity="0.5"/><circle cx="1560" cy="30" r="1.3" opacity="0.7"/>
+    <circle cx="150" cy="140" r="1" opacity="0.4"/><circle cx="1440" cy="140" r="1" opacity="0.4"/>
+    <circle cx="-320" cy="50" r="1.3" opacity="0.7"/><circle cx="-180" cy="110" r="1" opacity="0.5"/><circle cx="-60" cy="30" r="1.5" opacity="0.8"/>
+    <circle cx="1680" cy="45" r="1.4" opacity="0.8"/><circle cx="1790" cy="120" r="1" opacity="0.5"/><circle cx="1920" cy="60" r="1.5" opacity="0.7"/>
+  </g>
+  <circle cx="1450" cy="58" r="30" fill="url(#sc-moon)"/>
+  <circle cx="1464" cy="47" r="24" fill="#0b1233"/>
+
+  <path d="M-400 196 C -250 180, -120 214, 0 210 C 200 170, 380 190, 560 178 S 900 150, 1120 185 S 1420 165, 1600 200 S 1850 214, 2000 192 L2000 300 L-400 300 Z" fill="url(#sc-hill1)"/>
+  <path d="M-400 236 C -250 252, -110 226, 0 240 C 180 222, 330 250, 520 232 S 820 210, 1000 238 S 1300 250, 1600 225 S 1850 246, 2000 234 L2000 300 L-400 300 Z" fill="url(#sc-hill2)"/>
+  <path d="M-400 270 C -220 262, -100 276, 0 268 C 300 255, 600 278, 900 264 S 1400 258, 1600 270 S 1850 262, 2000 268 L2000 300 L-400 300 Z" fill="url(#sc-ground)"/>
+
+  <!-- beams: faint at rest, lit by stage.js (.go) -->
+  <g id="beam-req" class="beam beam-req" fill="none" stroke="#4fe3ff" stroke-linecap="round">
+    <path class="from-you" d="M335 186 Q 560 60 790 34" stroke-width="3" stroke-dasharray="2 14"/>
+    <path class="from-mom" d="M1300 150 Q 1060 60 810 34" stroke-width="3" stroke-dasharray="2 14"/>
+  </g>
+  <g id="beam-sms" class="beam beam-sms" fill="none" stroke="#ffd27a" stroke-linecap="round">
+    <path d="M812 40 Q 1000 60 1098 118" stroke-width="3" stroke-dasharray="2 14"/>
+  </g>
+
+  <!-- the tower: hero.svg's mast, rings and beacon, scaled -->
+  <g id="tower">
+    <g id="rings" fill="none" stroke="#4fe3ff" stroke-width="1.6">
+      <circle class="ring r1" cx="800" cy="39.5" r="34" opacity="0.55"/>
+      <circle class="ring r2" cx="800" cy="39.5" r="62" opacity="0.35"/>
+      <circle class="ring r3" cx="800" cy="39.5" r="94" opacity="0.2"/>
+      <circle class="ring r4" cx="800" cy="39.5" r="128" opacity="0.1"/>
+    </g>
+    <circle cx="800" cy="39.5" r="52" fill="url(#sc-cyan)"/>
+    <g transform="translate(800,-62) scale(0.58)">
+      <g stroke="#8fa3d9" stroke-width="3" fill="none" stroke-linecap="round">
+        <path d="M-30 520 L-12 180 M30 520 L12 180"/>
+        <path d="M-28 480 L28 480 M-26 440 L26 440 M-24 400 L24 400 M-22 360 L22 360 M-20 320 L20 320 M-18 280 L18 280 M-16 240 L16 240 M-14 200 L14 200"/>
+        <path d="M-28 480 L26 440 M28 480 L-26 440 M-24 400 L22 360 M24 400 L-22 360 M-20 320 L18 280 M20 320 L-18 280 M-16 240 L14 200 M16 240 L-14 200"/>
+        <path d="M0 180 L0 140"/>
+      </g>
+      <g fill="#cfd9f7" stroke="#8fa3d9" stroke-width="2">
+        <rect x="-40" y="190" width="14" height="48" rx="3"/><rect x="26" y="190" width="14" height="48" rx="3"/><rect x="-7" y="205" width="14" height="48" rx="3"/>
+      </g>
+      <path d="M-60 530 L60 530 L40 520 L-40 520 Z" fill="#0d1736"/>
+    </g>
+    <g id="beacon">
+      <circle class="glow" cx="800" cy="19.2" r="18" fill="url(#sc-red)"/>
+      <circle class="core" cx="800" cy="19.2" r="5" fill="#8fa3d9"/>
+    </g>
+  </g>
+
+  <!-- the audit ledger at the tower's foot -->
+  <g id="ledger" transform="translate(628,196)">
+    <rect width="96" height="50" rx="7" fill="url(#sc-card)" stroke="#8fa3d9" stroke-opacity="0.5"/>
+    <g fill="#8fa3d9" class="lines">
+      <rect x="9" y="10" width="44" height="3.5" rx="1.5"/><rect x="9" y="19" width="70" height="3.5" rx="1.5"/>
+      <rect x="9" y="28" width="58" height="3.5" rx="1.5"/><rect class="newest" x="9" y="37" width="76" height="3.5" rx="1.5"/>
+    </g>
+    <g transform="translate(70,7)" fill="none" stroke="#7CF2B4" stroke-width="1.8" stroke-linecap="round">
+      <circle cx="4" cy="4" r="4"/><circle cx="10.5" cy="4" r="4"/>
+    </g>
+    <text x="48" y="64" text-anchor="middle" font-size="10" fill="#aab8e6" letter-spacing="1.5">AUDIT</text>
+  </g>
+
+  <!-- your house: hero.svg's house, person and speaker (a plain cylinder with a light ring) -->
+  <g id="house-you" class="house" transform="translate(200,72) scale(0.6)">
+    <circle cx="150" cy="200" r="160" fill="url(#sc-warm)" opacity="0.5"/>
+    <path d="M30 150 L30 290 L270 290 L270 150 L150 50 Z" fill="#2a3a74" stroke="#5a6fb3" stroke-width="3" stroke-linejoin="round"/>
+    <path d="M10 160 L150 40 L290 160" fill="none" stroke="#8fa3d9" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+    <rect x="210" y="70" width="26" height="60" fill="#2a3a74" stroke="#5a6fb3" stroke-width="3"/>
+    <rect x="60" y="165" width="180" height="100" rx="8" fill="#ffd27a" opacity="0.95"/>
+    <rect x="60" y="165" width="180" height="100" rx="8" fill="none" stroke="#5a6fb3" stroke-width="3"/>
+    <circle cx="105" cy="200" r="13" fill="#2a3a74"/>
+    <path d="M85 265 L85 230 Q105 212 125 230 L125 265 Z" fill="#2a3a74"/>
+    <g transform="translate(190,215)" class="speaker">
+      <ellipse cx="0" cy="40" rx="18" ry="6" fill="#1a2550"/>
+      <rect x="-18" y="0" width="36" height="40" rx="6" fill="#283a7a"/>
+      <ellipse class="light" cx="0" cy="0" rx="18" ry="6" fill="#4fe3ff"/>
+      <ellipse cx="0" cy="0" rx="12" ry="4" fill="#283a7a"/>
+      <ellipse class="halo" cx="0" cy="0" rx="30" ry="12" fill="none" stroke="#4fe3ff" stroke-width="2" opacity="0.5"/>
+    </g>
+    <text x="150" y="322" text-anchor="middle" font-size="24" fill="#aab8e6" letter-spacing="2">YOU, AT HOME</text>
+  </g>
+
+  <!-- Mom's house -->
+  <g id="house-mom" class="house" transform="translate(1250,105) scale(0.6)">
+    <circle cx="110" cy="170" r="130" fill="url(#sc-warm)" opacity="0.35"/>
+    <path d="M30 140 L30 240 L200 240 L200 140 L115 70 Z" fill="#2a3a74" stroke="#5a6fb3" stroke-width="3" stroke-linejoin="round"/>
+    <path d="M15 150 L115 62 L215 150" fill="none" stroke="#8fa3d9" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+    <rect x="55" y="160" width="50" height="40" rx="5" fill="#ffd27a" opacity="0.9"/>
+    <rect x="125" y="160" width="50" height="40" rx="5" fill="#ffd27a" opacity="0.6"/>
+    <text x="115" y="272" text-anchor="middle" font-size="24" fill="#aab8e6" letter-spacing="2">MOM, ACROSS TOWN</text>
+  </g>
+
+  <!-- the consent shield (on: mint tick; off: grey with a slash) -->
+  <g id="shield" transform="translate(1228,128)">
+    <path class="body" d="M0 -22 L22 -14 L22 6 Q22 24 0 32 Q-22 24 -22 6 L-22 -14 Z" fill="#1c2b5e" stroke="#7CF2B4" stroke-width="2.5"/>
+    <path class="tick" d="M-9 4 L-3 10 L10 -6" fill="none" stroke="#7CF2B4" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+    <path class="slash" d="M-17 22 L17 -16" fill="none" stroke="#9aa6c7" stroke-width="3.5" stroke-linecap="round"/>
+  </g>
+
+  <!-- the phone that receives the text (one phone; the SMS role is its tooltip) -->
+  <g id="phone" transform="translate(1078,116)">
+    <title>SMS from Alerts</title>
+    <g class="buzz" stroke="#ffd27a" stroke-width="2" stroke-linecap="round">
+      <path d="M-6 24 L-11 20 M-6 36 L-12 36 M-6 48 L-11 52"/>
+      <path d="M53 24 L58 20 M53 36 L59 36 M53 48 L58 52"/>
+    </g>
+    <rect width="47" height="90" rx="9" fill="#0b1230" stroke="#8fa3d9" stroke-width="2"/>
+    <rect x="4" y="8" width="39" height="71" rx="5" fill="#15204a"/>
+    <rect x="16" y="4" width="15" height="2.5" rx="1.2" fill="#8fa3d9"/>
+    <g class="bubble">
+      <rect x="7" y="17" width="33" height="30" rx="5" fill="#ffd27a"/>
+      <rect x="11" y="23" width="22" height="3" rx="1.5" fill="#1a2550"/>
+      <rect x="11" y="30" width="16" height="3" rx="1.5" fill="#1a2550"/>
+      <rect x="11" y="37" width="19" height="3" rx="1.5" fill="#1a2550" opacity="0.6"/>
+    </g>
+  </g>
+</svg>

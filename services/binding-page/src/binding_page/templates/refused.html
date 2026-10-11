@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block title %}Not connected — Ask the Tower{% endblock %}
+{% block body %}
+{% if reason == "wifi" %}
+<h1 class="bad">Your carrier couldn't see this phone on mobile data</h1>
+<div class="card">
+  <p>Turn <strong>Wi-Fi off</strong>, make sure mobile data is on, then open the link from your message again and tap Verify.</p>
+  <p class="muted">Nothing was saved.</p>
+</div>
+{% elif reason == "expired" %}
+<h1 class="bad">This link has expired or was already used</h1>
+<div class="card"><p>Ask Alexa again and she'll send a fresh link. Links last 10 minutes and work once.</p><p class="muted">Nothing was saved.</p></div>
+{% elif reason == "taken" %}
+<h1 class="bad">This line is connected to another account</h1>
+<div class="card"><p>The line-holder's own account already has it. Nothing was changed.</p></div>
+{% elif reason == "flow" %}
+<h1 class="bad">That didn't go through</h1>
+<div class="card"><p>Open the link from your message again and tap Verify once.</p><p class="muted">Nothing was saved.</p></div>
+{% elif reason == "carrier" %}
+<h1 class="bad">The carrier didn't answer</h1>
+<div class="card"><p>Try again in a minute.</p><p class="muted">Nothing was saved.</p></div>
+{% elif reason == "session" %}
+<h1>Open your link first</h1>
+<div class="card"><p>This page is only for the line-holder. Open the link Alexa sent you on your phone (Wi-Fi off) to sign in.</p></div>
+{% elif reason == "not_owner" %}
+<h1 class="bad">Only the line-holder can see this</h1>
+<div class="card"><p>Activity for a line is shown to the person whose line it is.</p></div>
+{% elif reason == "unavailable" %}
+<h1 class="bad">We couldn't save that just now</h1>
+<div class="card"><p>Try again in a minute. <a href="/me">Back to your page</a></p><p class="muted">Nothing was saved.</p></div>
+{% elif reason == "audit" %}
+<h1 class="bad">Saved, but not yet in your activity log</h1>
+<div class="card"><p>Your choice was saved. We couldn't record the change in this line's activity log; save it again to retry. <a href="/me">Back to your page</a></p></div>
+{% elif reason == "csrf" %}
+<h1 class="bad">Please use the page's own buttons</h1>
+<div class="card"><p><a href="/me">Back to your page</a></p></div>
+{% else %}
+<h1 class="bad">This link isn't valid</h1>
+<div class="card"><p>Open the link from your message again.</p></div>
+{% endif %}
+{% endblock %}

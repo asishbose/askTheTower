@@ -1,0 +1,78 @@
+# demo-ui — the demo control room (doc 11). Laptop tooling: enabled on kind only (values-kind.yaml), never on EKS
+# or AWS (values-eks.yaml enabled: false; no ECR repository, no Terraform). Reach it with
+# `kubectl port-forward svc/demo-ui 8090:8090` (loopback), which is why DEMO_UI_PUBLISHED_LOOPBACK is 1.
+enabled: false
+
+image:
+  registry: ""
+  repository: ask-the-tower/demo-ui
+  tag: ""
+  pullPolicy: ""
+
+# No global.storeEnv: its DynamoDB Local AWS_* placeholders would look like Bedrock credentials to the agent;
+# the UI sets DynamoDB Local's credentials in code when DYNAMO_ENDPOINT is set (doc 11 §6).
+useStoreEnv: false
+
+env:
+  ENV: local
+  TOWER_URL: http://tower-mcp:8000/mcp
+  MOCK_URL: http://mock-carrier:8443
+  MOCK_ADMIN_TOKEN: ""     # the in-cluster mock has no admin token (mock-carrier values); compose sets one
+  BINDING_URL: http://binding-page:8081
+  ALERTS_URL: http://alerts:8082
+  DYNAMO_ENDPOINT: http://dynamodb-local:8000
+  AWS_REGION: us-east-1
+  TOWER_TABLE_PREFIX: ""
+  REF_AGENT: scripted
+  DEMO_UI_HOST: 0.0.0.0
+  DEMO_UI_PORT: "8090"
+  DEMO_UI_PUBLISHED_LOOPBACK: "1"
+  FEED_POLL_S: "2"
+  PYTHONUNBUFFERED: "1"
+  HOME: /tmp
+secretEnv:
+  TOWER_BEARER: {name: "", key: TOWER_BEARER}
+  ALERTS_INTERNAL_BEARER: {name: "", key: INTERNAL_BEARER}
+
+service:
+  port: 8090
+
+serviceAccount:
+  create: true
+  name: ""
+  annotations: {}
+
+podSecurityContextOverride: {}
+resources:
+  requests: {cpu: 50m, memory: 160Mi}
+  limits: {cpu: 500m, memory: 384Mi}
+
+global:
+  imageRegistry: ""
+  imageTag: ""
+  imagePullPolicy: ""
+  secretName: att-secrets
+  storeEnv: {}
+  storeSecretEnv: {}
+  nodeSelector: {}
+
+nameOverride: ""
+fullnameOverride: ""
+
+podAnnotations: {}
+podSecurityContext:
+  runAsNonRoot: true
+  runAsUser: 10001
+  runAsGroup: 10001
+  fsGroup: 10001
+  seccompProfile:
+    type: RuntimeDefault
+securityContext:
+  allowPrivilegeEscalation: false
+  readOnlyRootFilesystem: true
+  capabilities:
+    drop: [ALL]
+
+nodeSelector: {}
+tolerations: []
+affinity: {}

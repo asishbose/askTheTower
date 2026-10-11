@@ -1,0 +1,7 @@
+apiVersion: v2
+name: dynamodb-local
+description: "DynamoDB Local for kind (the compose store). Disabled on EKS: real DynamoDB via IRSA."
+type: application
+version: 0.1.0
+appVersion: "0.1.0"
+keywords: [ask-the-tower, camara]

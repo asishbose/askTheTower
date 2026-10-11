@@ -1,0 +1,698 @@
+{
+ "operation": "device-reachability-status/getReachabilityStatus",
+ "inputs": {
+  "line_id": "line-fixture-a",
+  "e164": "+16135550199",
+  "now": "2026-10-05T14:00:00Z",
+  "auth_code": "fixture-auth-code"
+ },
+ "cases": [
+  {
+   "case": "200 Reachable Using SMS",
+   "source": "spec",
+   "call": {
+    "method": "reachability",
+    "args": {
+     "line": {
+      "line_id": "line-fixture-a",
+      "e164": "+16135550199"
+     }
+    }
+   },
+   "exchanges": [
+    {
+     "request": {
+      "method": "POST",
+      "path": "/device-reachability-status/v1/retrieve",
+      "json": {
+       "device": {
+        "phoneNumber": "+16135550199"
+       }
+      }
+     },
+     "response": {
+      "status": 200,
+      "json": {
+       "lastStatusTime": "2024-02-20T10:41:38.657Z",
+       "reachable": true,
+       "connectivity": [
+        "SMS"
+       ]
+      }
+     }
+    }
+   ]
+  },
+  {
+   "case": "200 Reachable Using SMS With Device Disambguation",
+   "source": "spec",
+   "call": {
+    "method": "reachability",
+    "args": {
+     "line": {
+      "line_id": "line-fixture-a",
+      "e164": "+16135550199"
+     }
+    }
+   },
+   "exchanges": [
+    {
+     "request": {
+      "method": "POST",
+      "path": "/device-reachability-status/v1/retrieve",
+      "json": {
+       "device": {
+        "phoneNumber": "+16135550199"
+       }
+      }
+     },
+     "response": {
+      "status": 200,
+      "json": {
+       "device": {
+        "phoneNumber": "+123456789"
+       },
+       "lastStatusTime": "2024-02-20T10:41:38.657Z",
+       "reachable": true,
+       "connectivity": [
+        "SMS"
+       ]
+      }
+     }
+    }
+   ]
+  },
+  {
+   "case": "200 Reachable Using Data",
+   "source": "spec",
+   "call": {
+    "method": "reachability",
+    "args": {
+     "line": {
+      "line_id": "line-fixture-a",
+      "e164": "+16135550199"
+     }
+    }
+   },
+   "exchanges": [
+    {
+     "request": {
+      "method": "POST",
+      "path": "/device-reachability-status/v1/retrieve",
+      "json": {
+       "device": {
+        "phoneNumber": "+16135550199"
+       }
+      }
+     },
+     "response": {
+      "status": 200,
+      "json": {
+       "lastStatusTime": "2024-02-20T10:41:38.657Z",
+       "reachable": true,
+       "connectivity": [
+        "DATA"
+       ]
+      }
+     }
+    }
+   ]
+  },
+  {
+   "case": "200 Reachable Using Data and SMS",
+   "source": "spec",
+   "call": {
+    "method": "reachability",
+    "args": {
+     "line": {
+      "line_id": "line-fixture-a",
+      "e164": "+16135550199"
+     }
+    }
+   },
+   "exchanges": [
+    {
+     "request": {
+      "method": "POST",
+      "path": "/device-reachability-status/v1/retrieve",
+      "json": {
+       "device": {
+        "phoneNumber": "+16135550199"
+       }
+      }
+     },
+     "response": {
+      "status": 200,
+      "json": {
+       "lastStatusTime": "2024-02-20T10:41:38.657Z",
+       "reachable": true,
+       "connectivity": [
+        "DATA",
+        "SMS"
+       ]
+      }
+     }
+    }
+   ]
+  },
+  {
+   "case": "200 Not Reachable Over The Mobile Network",
+   "source": "spec",
+   "call": {
+    "method": "reachability",
+    "args": {
+     "line": {
+      "line_id": "line-fixture-a",
+      "e164": "+16135550199"
+     }
+    }
+   },
+   "exchanges": [
+    {
+     "request": {
+      "method": "POST",
+      "path": "/device-reachability-status/v1/retrieve",
+      "json": {
+       "device": {
+        "phoneNumber": "+16135550199"
+       }
+      }
+     },
+     "response": {
+      "status": 200,
+      "json": {
+       "lastStatusTime": "2024-02-20T10:41:38.657Z",
+       "reachable": false
+      }
+     }
+    }
+   ]
+  },
+  {
+   "case": "400 INVALID_ARGUMENT",
+   "source": "spec",
+   "call": {
+    "method": "reachability",
+    "args": {
+     "line": {
+      "line_id": "line-fixture-a",
+      "e164": "+16135550199"
+     }
+    }
+   },
+   "exchanges": [
+    {
+     "request": {
+      "method": "POST",
+      "path": "/device-reachability-status/v1/retrieve",
+      "json": {
+       "device": {
+        "phoneNumber": "+16135550199"
+       }
+      }
+     },
+     "response": {
+      "status": 400,
+      "json": {
+       "status": 400,
+       "code": "INVALID_ARGUMENT",
+       "message": "Client specified an invalid argument, request body or query param."
+      }
+     }
+    }
+   ]
+  },
+  {
+   "case": "401 UNAUTHENTICATED",
+   "source": "spec",
+   "call": {
+    "method": "reachability",
+    "args": {
+     "line": {
+      "line_id": "line-fixture-a",
+      "e164": "+16135550199"
+     }
+    }
+   },
+   "exchanges": [
+    {
+     "request": {
+      "method": "POST",
+      "path": "/device-reachability-status/v1/retrieve",
+      "json": {
+       "device": {
+        "phoneNumber": "+16135550199"
+       }
+      }
+     },
+     "response": {
+      "status": 401,
+      "json": {
+       "status": 401,
+       "code": "UNAUTHENTICATED",
+       "message": "Request not authenticated due to missing, invalid, or expired credentials. A new authentication is required."
+      }
+     }
+    }
+   ]
+  },
+  {
+   "case": "403 PERMISSION_DENIED",
+   "source": "spec",
+   "call": {
+    "method": "reachability",
+    "args": {
+     "line": {
+      "line_id": "line-fixture-a",
+      "e164": "+16135550199"
+     }
+    }
+   },
+   "exchanges": [
+    {
+     "request": {
+      "method": "POST",
+      "path": "/device-reachability-status/v1/retrieve",
+      "json": {
+       "device": {
+        "phoneNumber": "+16135550199"
+       }
+      }
+     },
+     "response": {
+      "status": 403,
+      "json": {
+       "status": 403,
+       "code": "PERMISSION_DENIED",
+       "message": "Client does not have sufficient permissions to perform this action."
+      }
+     }
+    }
+   ]
+  },
+  {
+   "case": "404 NOT_FOUND",
+   "source": "spec",
+   "call": {
+    "method": "reachability",
+    "args": {
+     "line": {
+      "line_id": "line-fixture-a",
+      "e164": "+16135550199"
+     }
+    }
+   },
+   "exchanges": [
+    {
+     "request": {
+      "method": "POST",
+      "path": "/device-reachability-status/v1/retrieve",
+      "json": {
+       "device": {
+        "phoneNumber": "+16135550199"
+       }
+      }
+     },
+     "response": {
+      "status": 404,
+      "json": {
+       "status": 404,
+       "code": "NOT_FOUND",
+       "message": "The specified resource is not found."
+      }
+     }
+    }
+   ]
+  },
+  {
+   "case": "404 IDENTIFIER_NOT_FOUND",
+   "source": "spec",
+   "call": {
+    "method": "reachability",
+    "args": {
+     "line": {
+      "line_id": "line-fixture-a",
+      "e164": "+16135550199"
+     }
+    }
+   },
+   "exchanges": [
+    {
+     "request": {
+      "method": "POST",
+      "path": "/device-reachability-status/v1/retrieve",
+      "json": {
+       "device": {
+        "phoneNumber": "+16135550199"
+       }
+      }
+     },
+     "response": {
+      "status": 404,
+      "json": {
+       "status": 404,
+       "code": "IDENTIFIER_NOT_FOUND",
+       "message": "The phone number provided is not associated with a customer account"
+      }
+     }
+    }
+   ]
+  },
+  {
+   "case": "422 SERVICE_NOT_APPLICABLE",
+   "source": "spec",
+   "call": {
+    "method": "reachability",
+    "args": {
+     "line": {
+      "line_id": "line-fixture-a",
+      "e164": "+16135550199"
+     }
+    }
+   },
+   "exchanges": [
+    {
+     "request": {
+      "method": "POST",
+      "path": "/device-reachability-status/v1/retrieve",
+      "json": {
+       "device": {
+        "phoneNumber": "+16135550199"
+       }
+      }
+     },
+     "response": {
+      "status": 422,
+      "json": {
+       "status": 422,
+       "code": "SERVICE_NOT_APPLICABLE",
+       "message": "The service is not available for the provided identifier."
+      }
+     }
+    }
+   ]
+  },
+  {
+   "case": "422 MISSING_IDENTIFIER",
+   "source": "spec",
+   "call": {
+    "method": "reachability",
+    "args": {
+     "line": {
+      "line_id": "line-fixture-a",
+      "e164": "+16135550199"
+     }
+    }
+   },
+   "exchanges": [
+    {
+     "request": {
+      "method": "POST",
+      "path": "/device-reachability-status/v1/retrieve",
+      "json": {
+       "device": {
+        "phoneNumber": "+16135550199"
+       }
+      }
+     },
+     "response": {
+      "status": 422,
+      "json": {
+       "status": 422,
+       "code": "MISSING_IDENTIFIER",
+       "message": "The device cannot be identified."
+      }
+     }
+    }
+   ]
+  },
+  {
+   "case": "422 UNSUPPORTED_IDENTIFIER",
+   "source": "spec",
+   "call": {
+    "method": "reachability",
+    "args": {
+     "line": {
+      "line_id": "line-fixture-a",
+      "e164": "+16135550199"
+     }
+    }
+   },
+   "exchanges": [
+    {
+     "request": {
+      "method": "POST",
+      "path": "/device-reachability-status/v1/retrieve",
+      "json": {
+       "device": {
+        "phoneNumber": "+16135550199"
+       }
+      }
+     },
+     "response": {
+      "status": 422,
+      "json": {
+       "status": 422,
+       "code": "UNSUPPORTED_IDENTIFIER",
+       "message": "The identifier provided is not supported."
+      }
+     }
+    }
+   ]
+  },
+  {
+   "case": "422 UNNECESSARY_IDENTIFIER",
+   "source": "spec",
+   "call": {
+    "method": "reachability",
+    "args": {
+     "line": {
+      "line_id": "line-fixture-a",
+      "e164": "+16135550199"
+     }
+    }
+   },
+   "exchanges": [
+    {
+     "request": {
+      "method": "POST",
+      "path": "/device-reachability-status/v1/retrieve",
+      "json": {
+       "device": {
+        "phoneNumber": "+16135550199"
+       }
+      }
+     },
+     "response": {
+      "status": 422,
+      "json": {
+       "status": 422,
+       "code": "UNNECESSARY_IDENTIFIER",
+       "message": "The device is already identified by the access token."
+      }
+     }
+    }
+   ]
+  },
+  {
+   "case": "429 QUOTA_EXCEEDED",
+   "source": "spec",
+   "call": {
+    "method": "reachability",
+    "args": {
+     "line": {
+      "line_id": "line-fixture-a",
+      "e164": "+16135550199"
+     }
+    }
+   },
+   "exchanges": [
+    {
+     "request": {
+      "method": "POST",
+      "path": "/device-reachability-status/v1/retrieve",
+      "json": {
+       "device": {
+        "phoneNumber": "+16135550199"
+       }
+      }
+     },
+     "response": {
+      "status": 429,
+      "json": {
+       "status": 429,
+       "code": "QUOTA_EXCEEDED",
+       "message": "Out of resource quota."
+      }
+     }
+    }
+   ]
+  },
+  {
+   "case": "429 TOO_MANY_REQUESTS",
+   "source": "spec",
+   "call": {
+    "method": "reachability",
+    "args": {
+     "line": {
+      "line_id": "line-fixture-a",
+      "e164": "+16135550199"
+     }
+    }
+   },
+   "exchanges": [
+    {
+     "request": {
+      "method": "POST",
+      "path": "/device-reachability-status/v1/retrieve",
+      "json": {
+       "device": {
+        "phoneNumber": "+16135550199"
+       }
+      }
+     },
+     "response": {
+      "status": 429,
+      "json": {
+       "status": 429,
+       "code": "TOO_MANY_REQUESTS",
+       "message": "Rate limit reached."
+      }
+     }
+    }
+   ]
+  },
+  {
+   "case": "503 UNAVAILABLE",
+   "source": "spec",
+   "call": {
+    "method": "reachability",
+    "args": {
+     "line": {
+      "line_id": "line-fixture-a",
+      "e164": "+16135550199"
+     }
+    }
+   },
+   "exchanges": [
+    {
+     "request": {
+      "method": "POST",
+      "path": "/device-reachability-status/v1/retrieve",
+      "json": {
+       "device": {
+        "phoneNumber": "+16135550199"
+       }
+      }
+     },
+     "response": {
+      "status": 503,
+      "json": {
+       "status": 503,
+       "code": "UNAVAILABLE",
+       "message": "Network issue"
+      }
+     }
+    }
+   ]
+  },
+  {
+   "case": "500 INTERNAL",
+   "source": "synthetic",
+   "call": {
+    "method": "reachability",
+    "args": {
+     "line": {
+      "line_id": "line-fixture-a",
+      "e164": "+16135550199"
+     }
+    }
+   },
+   "exchanges": [
+    {
+     "request": {
+      "method": "POST",
+      "path": "/device-reachability-status/v1/retrieve",
+      "json": {
+       "device": {
+        "phoneNumber": "+16135550199"
+       }
+      }
+     },
+     "response": {
+      "status": 500,
+      "json": {
+       "status": 500,
+       "code": "INTERNAL",
+       "message": "Synthetic fixture: internal error."
+      }
+     }
+    }
+   ]
+  },
+  {
+   "case": "400 SOMETHING_NEW",
+   "source": "synthetic",
+   "call": {
+    "method": "reachability",
+    "args": {
+     "line": {
+      "line_id": "line-fixture-a",
+      "e164": "+16135550199"
+     }
+    }
+   },
+   "exchanges": [
+    {
+     "request": {
+      "method": "POST",
+      "path": "/device-reachability-status/v1/retrieve",
+      "json": {
+       "device": {
+        "phoneNumber": "+16135550199"
+       }
+      }
+     },
+     "response": {
+      "status": 400,
+      "json": {
+       "status": 400,
+       "code": "SOMETHING_NEW",
+       "message": "Synthetic fixture: a code no spec declares."
+      }
+     }
+    }
+   ]
+  },
+  {
+   "case": "502 non-JSON body",
+   "source": "synthetic",
+   "call": {
+    "method": "reachability",
+    "args": {
+     "line": {
+      "line_id": "line-fixture-a",
+      "e164": "+16135550199"
+     }
+    }
+   },
+   "exchanges": [
+    {
+     "request": {
+      "method": "POST",
+      "path": "/device-reachability-status/v1/retrieve",
+      "json": {
+       "device": {
+        "phoneNumber": "+16135550199"
+       }
+      }
+     },
+     "response": {
+      "status": 502,
+      "text": "<html>Bad Gateway</html>"
+     }
+    }
+   ]
+  }
+ ]
+}

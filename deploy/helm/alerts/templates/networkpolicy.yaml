@@ -1,0 +1,32 @@
+{{- if .Values.networkPolicy.enabled }}
+# Ingress allow-list for alerts (prompt 14 step 1). Egress is open (DNS, AWS APIs, the carrier). kind's default
+# CNI does not enforce NetworkPolicy; EKS does with the VPC CNI network-policy agent (deploy/terraform/eks).
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ include "alerts.fullname" . }}
+  labels:
+    {{- include "alerts.labels" . | nindent 4 }}
+spec:
+  podSelector:
+    matchLabels:
+      {{- include "alerts.selectorLabels" . | nindent 6 }}
+  policyTypes: [Ingress]
+  ingress:
+    - ports:
+        - port: {{ .Values.port }}
+      {{- $r := .Values.networkPolicy.from }}
+      {{- if not $r.allowAll }}
+      from:
+        {{- include "alerts.npFrom" $r | nindent 8 }}
+      {{- end }}
+    {{- if .Values.tls.enabled }}
+    - ports:
+        - port: {{ .Values.tls.port }}
+      {{- $r := .Values.networkPolicy.hooksFrom }}
+      {{- if not $r.allowAll }}
+      from:
+        {{- include "alerts.npFrom" $r | nindent 8 }}
+      {{- end }}
+    {{- end }}
+{{- end }}

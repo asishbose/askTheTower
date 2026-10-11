@@ -1,0 +1,67 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "tower-mcp.fullname" . }}
+  labels:
+    {{- include "tower-mcp.labels" . | nindent 4 }}
+spec:
+  {{- if not (and .Values.autoscaling .Values.autoscaling.enabled) }}
+  replicas: {{ .Values.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "tower-mcp.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "tower-mcp.labels" . | nindent 8 }}
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    spec:
+      serviceAccountName: {{ include "tower-mcp.serviceAccountName" . }}
+      automountServiceAccountToken: false   # no app talks to the API server; IRSA projects its own token
+      securityContext:
+        {{- include "tower-mcp.podSecurityContext" . | nindent 8 }}
+      {{- include "tower-mcp.scheduling" . | nindent 6 }}
+      containers:
+        - name: tower-mcp
+          image: {{ include "tower-mcp.image" . | quote }}
+          imagePullPolicy: {{ include "tower-mcp.pullPolicy" . }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.port }}
+              protocol: TCP
+          env:
+            {{- include "tower-mcp.env" . | nindent 12 }}
+          securityContext:
+            {{- include "tower-mcp.securityContext" . | nindent 12 }}
+          startupProbe:
+            httpGet:
+              path: /healthz
+              port: http
+            periodSeconds: 2
+            failureThreshold: {{ .Values.startupFailureThreshold | default 90 }}
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: http
+            periodSeconds: 5
+            timeoutSeconds: 3
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: http
+            periodSeconds: 20
+            timeoutSeconds: 3
+            failureThreshold: 3
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+      volumes:
+        - name: tmp
+          emptyDir:
+            sizeLimit: 64Mi

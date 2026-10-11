@@ -1,0 +1,45 @@
+{
+  "GOLDEN": "hand-written",
+  "source": "artifacts/policy-table.md (reason codes) + docs/architecture/testing-and-showcase.md §4 (order)",
+  "asserts": "tool calls (name + args) and reason codes per utterance; wording is never compared",
+  "story": "moment-1",
+  "user": "user-asish",
+  "steps": [
+    {
+      "control": "mock clock 14:00Z, demo scenario loaded"
+    },
+    {
+      "utterance": "Is my line OK?",
+      "tool_calls": [
+        {
+          "name": "line_is_ok",
+          "args": {
+            "line": "self"
+          }
+        }
+      ],
+      "reason_codes": [
+        "OK"
+      ],
+      "why": "bound · owner · sim_swapped=true (outside: last change 2026-09-01) · none · fresh → ok · OK"
+    },
+    {
+      "control": "mock clock +12 min; timeline sim_swap on Asish's line"
+    },
+    {
+      "utterance": "My phone just lost signal. Is my line OK?",
+      "tool_calls": [
+        {
+          "name": "line_is_ok",
+          "args": {
+            "line": "self"
+          }
+        }
+      ],
+      "reason_codes": [
+        "SIM_SWAPPED_RECENT"
+      ],
+      "why": "bound · owner · sim_swapped=true (inside) · none · fresh → changed · SIM_SWAPPED_RECENT"
+    }
+  ]
+}

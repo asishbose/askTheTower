@@ -1,0 +1,20 @@
+suite: dynamodb-local
+templates:
+  - templates/deployment.yaml
+  - templates/networkpolicy.yaml
+tests:
+  - it: runs DynamoDB Local in memory as its image user
+    template: templates/deployment.yaml
+    asserts:
+      - equal: {path: "spec.template.spec.containers[0].args", value: [-jar, DynamoDBLocal.jar, -inMemory, -sharedDb]}
+      - equal: {path: spec.template.spec.securityContext.runAsUser, value: 1000}
+      - equal: {path: "spec.template.spec.containers[0].image", value: docker.io/amazon/dynamodb-local:2.5.2}
+  - it: is reachable from the store users only
+    template: templates/networkpolicy.yaml
+    asserts:
+      - contains:
+          path: spec.ingress[0].from
+          content: {podSelector: {matchLabels: {app.kubernetes.io/name: seed}}}
+      - notContains:
+          path: spec.ingress[0].from
+          content: {podSelector: {matchLabels: {app.kubernetes.io/name: ref-client}}}

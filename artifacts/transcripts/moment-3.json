@@ -1,0 +1,137 @@
+{
+  "story": "moment-3",
+  "title": "Moment 3 — Mom's line, a watch, a revoke",
+  "user": "user-asish",
+  "agent": "scripted",
+  "model_id": null,
+  "env": "local",
+  "steps": [
+    {
+      "utterance": "Is Mom's line OK?",
+      "tool_calls": [
+        {
+          "name": "line_is_ok",
+          "args": {
+            "line": "mom"
+          }
+        }
+      ],
+      "result": {
+        "summary": "Your line is as it was.",
+        "facts": {
+          "line": "mom",
+          "sim_swapped_recently": false,
+          "swapped_at": null,
+          "call_forwarding": "none",
+          "source": "carrier",
+          "stale": false,
+          "as_of": "2026-10-05T14:20:00Z"
+        },
+        "reason_codes": [
+          "OK"
+        ],
+        "next_step": {
+          "kind": "none",
+          "url": null,
+          "carrier_support_number": null
+        },
+        "checked_at": "2026-10-05T14:20:00Z"
+      },
+      "reason_codes": [
+        "OK"
+      ],
+      "spoken": "Your line is as it was."
+    },
+    {
+      "utterance": "Watch Mom's line for me.",
+      "tool_calls": [
+        {
+          "name": "watch_line",
+          "args": {
+            "line": "mom",
+            "enable": true
+          }
+        }
+      ],
+      "result": {
+        "summary": "Alerts are on for that line. A text goes out if it's SIM-swapped, forwarded, or off the network too long.",
+        "facts": {
+          "line": "mom",
+          "watching": true,
+          "since": null,
+          "notify_via": "sms",
+          "profile": "care",
+          "grants": [],
+          "recent_checks": null
+        },
+        "reason_codes": [
+          "OK"
+        ],
+        "next_step": {
+          "kind": "none",
+          "url": null,
+          "carrier_support_number": null
+        },
+        "checked_at": "2026-10-05T14:20:00Z"
+      },
+      "reason_codes": [
+        "OK"
+      ],
+      "spoken": "Alerts are on for that line. A text goes out if it's SIM-swapped, forwarded, or off the network too long."
+    },
+    {
+      "control": "mock: SIM swap on Mom's line"
+    },
+    {
+      "note": "Alerts texts the watcher now — the phone buzzes (SMS log locally; make showcase-alerts)."
+    },
+    {
+      "control": "Mom revokes Asish's watch grant (binding page)"
+    },
+    {
+      "control": "mock: SIM swap on Mom's line again"
+    },
+    {
+      "note": "No text this time: Alerts re-reads the grant and audits SUPPRESSED_REVOKED."
+    },
+    {
+      "utterance": "Is Mom's line OK?",
+      "tool_calls": [
+        {
+          "name": "line_is_ok",
+          "args": {
+            "line": "mom"
+          }
+        }
+      ],
+      "result": {
+        "summary": "Mom hasn't shared that with you.",
+        "facts": {
+          "line": "mom",
+          "sim_swapped_recently": null,
+          "swapped_at": null,
+          "call_forwarding": null,
+          "source": null,
+          "stale": false,
+          "as_of": null
+        },
+        "reason_codes": [
+          "NO_CONSENT"
+        ],
+        "next_step": {
+          "kind": "ask_consent",
+          "url": null,
+          "carrier_support_number": null
+        },
+        "checked_at": "2026-10-05T14:20:00Z"
+      },
+      "reason_codes": [
+        "NO_CONSENT"
+      ],
+      "spoken": "Mom hasn't shared that with you."
+    },
+    {
+      "control": "demo reset: Mom grants the watch again"
+    }
+  ]
+}

@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block title %}Line connected — Ask the Tower{% endblock %}
+{% block body %}
+<h1 class="ok">Line connected</h1>
+<div class="card">
+  <p class="big">{{ masked }}</p>
+  <p class="muted">Your carrier confirmed this line. You can turn Wi-Fi back on. Ask Alexa: “Is my line OK?”</p>
+</div>
+<a class="button" href="/me">Sharing and activity</a>
+{% endblock %}

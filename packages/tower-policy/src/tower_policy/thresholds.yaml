@@ -1,0 +1,13 @@
+# Policy thresholds — data, not code (docs/architecture/components/03-policy-engine.md §3).
+# Durations: <number><unit>, unit in s | m | h | d.
+# The loader refuses SWAP_WINDOW > 2400h (the SIM Swap API's maxAge cap) and STALE > 1h.
+
+SWAP_WINDOW: 72h          # a SIM change inside this window counts as SIM_SWAPPED_RECENT
+STALE: 10m                # facts older than this are a memory, not a fact → STALE_DATA
+FRESH: 10m                # Tower may reuse a result younger than this without re-fetching
+UNREACHABLE_ALERT:        # applied by Alerts (06 §2) over successive outcomes, per watch profile
+  transplant: 20m
+  care: 4h
+ESCALATE_NEXT: 15m        # Alerts (06 §3): no acknowledgement within this → next in the chain
+RATE_LIMIT: 6h            # Alerts (06 §5): at most one alert per line per reason per window
+ACK_DISTRUST: 24h         # Alerts (06 §3): replies from a line are ignored this long after its own SIM swap

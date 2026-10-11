@@ -1,0 +1,15 @@
+Ask the Tower ({{ .Values.global.storeEnv.TOWER_ENV }}) installed as release {{ .Release.Name }} in {{ .Release.Namespace }}.
+
+Services (in-cluster): tower-mcp:8000/mcp  binding-page:8081  alerts:8082  mock-carrier:8443
+{{- if index .Values "tower-mcp" "ingress" "enabled" }}
+Tower MCP:     https://{{ index .Values "tower-mcp" "ingress" "host" }}/mcp
+{{- end }}
+{{- if index .Values "binding-page" "ingress" "enabled" }}
+Binding page:  https://{{ index .Values "binding-page" "ingress" "host" }}/
+{{- end }}
+
+From a laptop (kind):
+  kubectl -n {{ .Release.Namespace }} port-forward svc/tower-mcp 8080:8000 &
+  kubectl -n {{ .Release.Namespace }} port-forward svc/mock-carrier 8443:8443 &
+  kubectl -n {{ .Release.Namespace }} port-forward svc/binding-page 8081:8081 &
+  make demo        # or: scripts/helm_kind.sh does all of this

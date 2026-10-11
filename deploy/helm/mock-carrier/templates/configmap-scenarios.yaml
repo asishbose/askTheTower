@@ -1,0 +1,13 @@
+{{- if .Values.scenarios.files }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "mock-carrier.fullname" . }}-scenarios
+  labels:
+    {{- include "mock-carrier.labels" . | nindent 4 }}
+data:
+  {{- range $name, $body := .Values.scenarios.files }}
+  {{ $name }}: |
+    {{- $body | nindent 4 }}
+  {{- end }}
+{{- end }}

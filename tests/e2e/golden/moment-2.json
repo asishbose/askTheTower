@@ -1,0 +1,28 @@
+{
+  "GOLDEN": "hand-written",
+  "source": "artifacts/policy-table.md (reason codes) + docs/architecture/testing-and-showcase.md §4 (order)",
+  "asserts": "tool calls (name + args) and reason codes per utterance; wording is never compared",
+  "story": "moment-2",
+  "user": "user-asish",
+  "steps": [
+    {
+      "control": "mock clock +8 min; timeline cf_set on Asish's line"
+    },
+    {
+      "utterance": "Is anything forwarding my calls?",
+      "tool_calls": [
+        {
+          "name": "line_is_ok",
+          "args": {
+            "line": "self"
+          }
+        }
+      ],
+      "reason_codes": [
+        "SIM_SWAPPED_RECENT",
+        "CALL_FORWARDING_SET"
+      ],
+      "why": "bound · owner · sim_swapped=true (inside) · unconditional · fresh → changed · SIM_SWAPPED_RECENT, CALL_FORWARDING_SET"
+    }
+  ]
+}

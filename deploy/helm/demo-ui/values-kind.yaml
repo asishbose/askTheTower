@@ -1,0 +1,3 @@
+# kind (make helm-kind): the control room next to the compose-shaped stack. Port-forward to reach it:
+#   kubectl -n ask-the-tower port-forward svc/demo-ui 8090:8090   → http://127.0.0.1:8090
+enabled: true

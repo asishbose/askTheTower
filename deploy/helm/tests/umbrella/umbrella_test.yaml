@@ -1,0 +1,54 @@
+suite: ask-the-tower umbrella
+templates:
+  - templates/secrets.yaml
+  - templates/local-tls.yaml
+  - templates/seed.yaml
+tests:
+  - it: generates every secret the services reference
+    template: templates/secrets.yaml
+    asserts:
+      - isKind: {of: Secret}
+      - equal: {path: metadata.name, value: att-secrets}
+      - exists: {path: data.TOWER_BEARER}
+      - exists: {path: data.INTERNAL_BEARER}
+      - exists: {path: data.SESSION_SECRET}
+      - exists: {path: data.MOCK_JWT_SECRET}
+      - exists: {path: data.TOWER_LINE_ID_KEY}
+      - exists: {path: data.TOWER_MSISDN_KEY}
+      - equal: {path: data.TOWER_CARRIER_CLIENT_SECRET, value: bG9jYWwtZGV2LXRvd2Vy}
+  - it: no local TLS by default (EKS terminates TLS at the ALB)
+    template: templates/local-tls.yaml
+    asserts:
+      - hasDocuments: {count: 0}
+  - it: makes the alerts certificate and the CA bundle for kind
+    template: templates/local-tls.yaml
+    set:
+      localTls.enabled: true
+    asserts:
+      - hasDocuments: {count: 2}
+      - isKind: {of: Secret}
+        documentIndex: 0
+      - equal: {path: type, value: kubernetes.io/tls}
+        documentIndex: 0
+      - matchRegex: {path: "data[\"ca.crt\"]", pattern: "BEGIN CERTIFICATE"}
+        documentIndex: 1
+  - it: seeds as a post-install/post-upgrade hook in the tower-mcp image
+    template: templates/seed.yaml
+    set:
+      seed.enabled: true
+      seed.serviceAccountName: tower-mcp
+      global.storeEnv: {TOWER_ENV: aws, DYNAMO_ENDPOINT: ""}
+    asserts:
+      - hasDocuments: {count: 2}
+      - equal: {path: "metadata.annotations[\"helm.sh/hook\"]", value: "post-install,post-upgrade"}
+        documentIndex: 1
+      - equal: {path: spec.template.spec.serviceAccountName, value: tower-mcp}
+        documentIndex: 1
+      - equal: {path: "spec.template.spec.containers[0].command", value: [python, /seed/k8s_seed.py, --in-cluster]}
+        documentIndex: 1
+      - matchRegex: {path: "spec.template.spec.containers[0].image", pattern: "ask-the-tower/tower-mcp:"}
+        documentIndex: 1
+      - notContains:
+          path: spec.template.spec.containers[0].env
+          content: {name: TOWER_DYNAMODB_ENDPOINT, value: ""}
+        documentIndex: 1

@@ -1,0 +1,53 @@
+== 1. watch_line('mom', enable=true) — Asish watches Mom's line (profile care)
+    [alerts.subscriptions] subscribed line=ln_kjhihefjk kinds=sim-swap,reachability-disconnected,reachability-data,reachability-sms ok=4
+   internal API → 200 {'line_id': 'ln_kjhihefjkhlhaceemlhbecmmhgnnfcfmhjdlhmghmkmibppgcbkhlhiikodmhoeb', 'subscribed': ['sim-swap', 'reachability-disconnected', 'reachability-data', 'reachability-sms'], 'subscriptions': 4, 'evaluated': 1}
+
+== 2. mock 14:00: admin sim_swap on Mom's line → the watcher's phone buzzes
+    [alerts.hooks] hook event line=ln_kjhihefjk type=swapped
+    [alerts] audit line=ln_kjhihefjk trigger=event outcome=changed codes=SIM_SWAPPED_RECENT ref=SIM_SWAPPED_RECENT.sms
+    [alerts.sms] SMS to=chain:user-asish body='SIM moved to another device at 10:00 today. Not you? Call your carrier now.'
+   alert logged 0.43 s after the carrier event (budget 5 s): ['chain:user-asish']
+   Mom's own number was not texted (it may now be the attacker's): True
+
+== 3. mock 14:10: sim_swap again within 6 h → audited, not sent
+    [alerts.hooks] hook event line=ln_kjhihefjk type=swapped
+    [alerts] audit line=ln_kjhihefjk trigger=event outcome=suppressed codes=SIM_SWAPPED_RECENT ref=-
+   texts sent: 0
+
+== 4. Mom revokes Asish's grant on the binding page; sim_swap again → SUPPRESSED_REVOKED
+    [alerts.hooks] hook event line=ln_kjhihefjk type=swapped
+    [alerts] audit line=ln_kjhihefjk trigger=event outcome=suppressed codes=SUPPRESSED_REVOKED ref=-
+   texts sent: 0
+
+== 5. transplant: Asish saves 'must stay reachable' on the binding page, contacts in order [partner (ack), neighbour]; then 'Alexa, watch my line' (04 §9, 06 §11)
+    [alerts.subscriptions] subscribed line=ln_dknpfajnb kinds=sim-swap,reachability-disconnected,reachability-data,reachability-sms ok=4
+   internal API → 200 {'line_id': 'ln_dknpfajnbjpndgdpebnaiiphfkfbflfhpjojhebdhbldacilagldmhnkomlnfejc', 'subscribed': ['sim-swap', 'reachability-disconnected', 'reachability-data', 'reachability-sms'], 'subscriptions': 4, 'evaluated': 1}
+   scheduler: transplant poll every simulated minute; 1 simulated minute = 0.00 s real
+    [alerts.hooks] hook event line=ln_dknpfajnb type=reachability-disconnected
+   mock 14:20 (+20 min, 19 min dark): texts none
+    [alerts] audit line=ln_dknpfajnb trigger=poll outcome=changed codes=UNREACHABLE ref=UNREACHABLE.sms
+    [alerts.sms] SMS to=line_holder:user-asish body="That person's phone has been off the network since 10:01 today - that's the network, nothing more."
+    [alerts.sms] SMS to=chain:user-partner body="asish's phone has been off the network since 10:01 today - that's the network, nothing more."
+   mock 14:21 (+21 min, 20 min dark): texts ['line_holder:user-asish', 'chain:user-partner']
+   mock 14:35 (+35 min, 34 min dark): texts none
+    [alerts.escalation] escalate line=ln_dknpfajnb from step 0
+    [alerts] audit line=ln_dknpfajnb trigger=poll outcome=changed codes=UNREACHABLE ref=UNREACHABLE.sms
+    [alerts.sms] SMS to=chain:user-neighbour body="asish's phone has been off the network since 10:01 today - that's the network, nothing more."
+   mock 14:36 (+36 min, 35 min dark): texts ['chain:user-neighbour']
+
+== audit rows (actor system:alerts) and chain verification
+   mom   14:00 system:alerts trigger=event outcome=changed codes=SIM_SWAPPED_RECENT ref=SIM_SWAPPED_RECENT.sms
+   mom   14:10 system:alerts trigger=event outcome=suppressed codes=SIM_SWAPPED_RECENT ref=-
+   mom   14:10 system:alerts trigger=event outcome=suppressed codes=SUPPRESSED_REVOKED ref=-
+   mom   verify → {'ok': True, 'rows': 3, 'trimmed': False, 'first_bad_ts': None}
+   asish 14:21 system:alerts trigger=poll outcome=changed codes=UNREACHABLE ref=UNREACHABLE.sms
+   asish 14:36 system:alerts trigger=poll outcome=changed codes=UNREACHABLE ref=UNREACHABLE.sms
+   asish verify → {'ok': True, 'rows': 2, 'trimmed': False, 'first_bad_ts': None}
+
+== SMS bodies (the 'phone' is the log locally)
+   to=chain:user-asish: SIM moved to another device at 10:00 today. Not you? Call your carrier now.
+   to=line_holder:user-asish: That person's phone has been off the network since 10:01 today - that's the network, nothing more.
+   to=chain:user-partner: asish's phone has been off the network since 10:01 today - that's the network, nothing more.
+   to=chain:user-neighbour: asish's phone has been off the network since 10:01 today - that's the network, nothing more.
+
+RESULT: PASS (first text after 20 min dark, second after 35)

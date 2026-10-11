@@ -1,0 +1,211 @@
+<mxfile host="app.diagrams.net" agent="Ask the Tower design generator" type="device">
+  <diagram id="10_watch_profiles" name="10 Watch Profiles">
+    <mxGraphModel dx="1422" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="2140" pageHeight="1062" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="t_main" value="Watch profiles over time — transplant and care (Alerts, 06 §2–§5; thresholds.yaml)" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;fontSize=19;fontColor=#1B2B45;fontStyle=1;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="30" y="14" width="2080" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="t_sub" value="Alexa+ is not on this page: every message is an SMS from Alerts (rule 5). “Continuously” means every observation in the window said false; one true resets the clock (windows.py:26). Not to scale; times in the line-holder's zone." style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;fontSize=11;fontColor=#6B7A90;fontStyle=0;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="30" y="46" width="2080" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="t_sub2" value="Every evaluation re-reads the grant first (evaluate.py:72) and again just before a send (send.py:173). The policy says whether; the Watch says to whom (03 §5)." style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;fontSize=11;fontColor=#6B7A90;fontStyle=0;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="30" y="66" width="2080" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="zt" value="Transplant — 20 min continuously unreachable, any hour; 5-min polls; escalation with acknowledgement" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FBF3E0;strokeColor=#E8A33D;verticalAlign=top;align=left;spacingLeft=10;spacingTop=4;spacing=2;fontStyle=1;fontSize=14;fontColor=#1B2B45;dashed=0;arcSize=12;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="30" y="100" width="2080" height="468" as="geometry" />
+        </mxCell>
+        <mxCell id="zt_l1" value="&lt;b&gt;Trigger → decision&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;carrier CloudEvent (seconds) or the 5-min poll (fallback) → evaluate() → decide() → deliver()&lt;br&gt;runner.py:72 process_line&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F3F5F8;strokeColor=#6B7583;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="50" y="140" width="220" height="112" as="geometry" />
+        </mxCell>
+        <mxCell id="tr_axis" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0E1726;strokeColor=#0E1726;fontSize=11;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="290" y="278" width="1764" height="6" as="geometry" />
+        </mxCell>
+        <mxCell id="tr_p0" value="&lt;b&gt;before 0:00 · watch on&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;page: line-holder picks transplant + contacts (04 §9) · voice: watch_line(self, true) keeps them · Alerts /internal/watch (internal_api.py:53) subscribes&lt;br&gt;baseline evaluation: last_state written, never an alert&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#6B7583;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="290" y="140" width="240" height="112" as="geometry" />
+        </mxCell>
+        <mxCell id="tr_pe0" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#6B7583;strokeWidth=1;fontSize=9;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=0.5000;exitY=1.0000;exitDx=0;exitDy=0;entryX=0.0680;entryY=0.0000;entryDx=0;entryDy=0;" edge="1" parent="1" source="tr_p0" target="tr_axis">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="tr_t0" value="&lt;b&gt;−&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;fontSize=10;fontColor=#1B2B45;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="350" y="286" width="120" height="18" as="geometry" />
+        </mxCell>
+        <mxCell id="tr_p1" value="&lt;b&gt;0:00 · goes dark&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;reachability-disconnected event → process_line(trigger=event)&lt;br&gt;unreachable_since = 0:00 (or the carrier's lastStatusTime, never before our last true)&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#6B7583;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="542" y="140" width="240" height="112" as="geometry" />
+        </mxCell>
+        <mxCell id="tr_pe1" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#6B7583;strokeWidth=1;fontSize=9;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=0.5000;exitY=1.0000;exitDx=0;exitDy=0;entryX=0.2109;entryY=0.0000;entryDx=0;entryDy=0;" edge="1" parent="1" source="tr_p1" target="tr_axis">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="tr_t1" value="&lt;b&gt;0:00&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;fontSize=10;fontColor=#1B2B45;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="602" y="286" width="120" height="18" as="geometry" />
+        </mxCell>
+        <mxCell id="tr_p2" value="&lt;b&gt;0:10 · one true&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;poll or -data event: reachable = true&lt;br&gt;unreachable_since cleared — the 20-min clock resets; nothing sent&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#6B7583;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="794" y="140" width="240" height="112" as="geometry" />
+        </mxCell>
+        <mxCell id="tr_pe2" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#6B7583;strokeWidth=1;fontSize=9;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=0.5000;exitY=1.0000;exitDx=0;exitDy=0;entryX=0.3537;entryY=0.0000;entryDx=0;entryDy=0;" edge="1" parent="1" source="tr_p2" target="tr_axis">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="tr_t2" value="&lt;b&gt;0:10&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;fontSize=10;fontColor=#1B2B45;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="854" y="286" width="120" height="18" as="geometry" />
+        </mxCell>
+        <mxCell id="tr_p3" value="&lt;b&gt;0:15 · dark again&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;new spell: unreachable_since = 0:15&lt;br&gt;the clock lives in Watches.last_state, so a cold Lambda can't forget it&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#6B7583;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="1046" y="140" width="240" height="112" as="geometry" />
+        </mxCell>
+        <mxCell id="tr_pe3" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#6B7583;strokeWidth=1;fontSize=9;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=0.5000;exitY=1.0000;exitDx=0;exitDy=0;entryX=0.4966;entryY=0.0000;entryDx=0;entryDy=0;" edge="1" parent="1" source="tr_p3" target="tr_axis">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="tr_t3" value="&lt;b&gt;0:15&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;fontSize=10;fontColor=#1B2B45;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="1106" y="286" width="120" height="18" as="geometry" />
+        </mxCell>
+        <mxCell id="tr_p4" value="&lt;b&gt;0:35–0:40 · first SMS&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;first evaluation ≥ 20 min dark → UNREACHABLE (windows.py:56); polls every 5 min, so up to 5 min late (D11)&lt;br&gt;deliver(): re-resolve → rate claim → audit changed → line-holder + escalation[0], by their own alias; no active grant → skipped, next at once (escalation.py:86)&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FBEFD9;strokeColor=#E8A33D;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="1298" y="140" width="240" height="112" as="geometry" />
+        </mxCell>
+        <mxCell id="tr_pe4" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#E8A33D;strokeWidth=2;fontSize=9;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=0.5000;exitY=1.0000;exitDx=0;exitDy=0;entryX=0.6395;entryY=0.0000;entryDx=0;entryDy=0;" edge="1" parent="1" source="tr_p4" target="tr_axis">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="tr_t4" value="&lt;b&gt;0:35&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;fontSize=10;fontColor=#1B2B45;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="1358" y="286" width="120" height="18" as="geometry" />
+        </mxCell>
+        <mxCell id="tr_p5" value="&lt;b&gt;0:50–0:55 · escalation[1]&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;no ack after ESCALATE_NEXT 15 min → tick (every poll + rate(5 min) schedule; escalation.py:193)&lt;br&gt;walks the snapshot parked with the alert (remaining, 06 §11.3), re-checking each step's grant → audit changed → SMS&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FBEFD9;strokeColor=#E8A33D;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="1550" y="140" width="240" height="112" as="geometry" />
+        </mxCell>
+        <mxCell id="tr_pe5" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#E8A33D;strokeWidth=2;fontSize=9;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=0.5000;exitY=1.0000;exitDx=0;exitDy=0;entryX=0.7823;entryY=0.0000;entryDx=0;entryDy=0;" edge="1" parent="1" source="tr_p5" target="tr_axis">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="tr_t5" value="&lt;b&gt;0:50&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;fontSize=10;fontColor=#1B2B45;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="1610" y="286" width="120" height="18" as="geometry" />
+        </mxCell>
+        <mxCell id="tr_p6" value="&lt;b&gt;within 6 h · repeat&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;same reason for the same line and watcher → audited suppressed · UNREACHABLE, not sent (windows.py:75 + atomic claim in AlertsState)&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#6B7583;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="1802" y="140" width="240" height="112" as="geometry" />
+        </mxCell>
+        <mxCell id="tr_pe6" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#6B7583;strokeWidth=1;fontSize=9;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=0.5000;exitY=1.0000;exitDx=0;exitDy=0;entryX=0.9252;entryY=0.0000;entryDx=0;entryDy=0;" edge="1" parent="1" source="tr_p6" target="tr_axis">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="tr_t6" value="&lt;b&gt;&amp;lt; 6:35&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;fontSize=10;fontColor=#1B2B45;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="1862" y="286" width="120" height="18" as="geometry" />
+        </mxCell>
+        <mxCell id="tr_w0_0" value="&lt;b&gt;10 min dark — reset&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;one true clears the clock&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F3F5F8;strokeColor=#6B7583;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=1;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="662" y="312" width="252" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="tr_w0_1" value="&lt;b&gt;≥ 20 min continuous&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;UNREACHABLE_ALERT.transplant&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FBEFD9;strokeColor=#E8A33D;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="1166" y="312" width="252" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="tr_w0_2" value="&lt;b&gt;15 min, no ack&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;ESCALATE_NEXT&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FBEFD9;strokeColor=#E8A33D;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="1418" y="312" width="252" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="tr_w1_0" value="&lt;b&gt;RATE_LIMIT 6 h — one alert per line, per reason, per watcher&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;repeats go to the audit, not the phone&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F3F5F8;strokeColor=#6B7583;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=1;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="1418" y="370" width="504" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="tr_bh" value="&lt;b&gt;Branches inside the 15-min window (as built)&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;fontSize=11;fontColor=#1B2B45;fontStyle=0;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="50" y="430" width="900" height="22" as="geometry" />
+        </mxCell>
+        <mxCell id="tr_b0" value="&lt;b&gt;Ack accepted&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;watcher replies OK or CANCEL (SNS inbound → handler.py → escalation.py:175 handle_reply)&lt;br&gt;audit ok · OK; chain cleared; escalation[1] is never texted&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DDF3EF;strokeColor=#2BB3A0;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="50" y="456" width="499.5" height="92" as="geometry" />
+        </mxCell>
+        <mxCell id="tr_b1" value="&lt;b&gt;ACK_IGNORED_SWAPPED_LINE&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;the reply comes from a line SIM-swapped &amp;lt; 24 h ago (ACK_DISTRUST; escalation.py:161; a carrier error counts as swapped)&lt;br&gt;audited; chain continues; the next SMS adds “A reply from the affected line was ignored.” (templates.py:15) — the watcher's, or on the line-holder's own chain the next contact's&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FBEAEA;strokeColor=#C57B7B;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="563.5" y="456" width="499.5" height="92" as="geometry" />
+        </mxCell>
+        <mxCell id="tr_b2" value="&lt;b&gt;Revoked before send → SUPPRESSED_REVOKED&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;line-holder revokes on the binding page; deliver() (send.py:174) or the tick (escalation.py:118) re-reads the grant&lt;br&gt;audit suppressed · SUPPRESSED_REVOKED; nothing sent; no rate claim; chain cleared&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FBEAEA;strokeColor=#C57B7B;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="1077" y="456" width="499.5" height="92" as="geometry" />
+        </mxCell>
+        <mxCell id="tr_b3" value="&lt;b&gt;Who sets the profile and the chain? (built: D8, D9)&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;the line-holder on the binding page /me (04 §9; watch_settings.py:26): profile + up to 3 watch grantees in order on their own Watch; ack on all but the last.&lt;br&gt;&quot;watch my line&quot; keeps them (watch_line.py:121); revoking a contact drops them from the chain (watches.py:83)&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DDF3EF;strokeColor=#2BB3A0;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="1590.5" y="456" width="499.5" height="92" as="geometry" />
+        </mxCell>
+        <mxCell id="zc" value="Care — 4 h continuously unreachable, released only 08:00–22:00; 30-min polls + 08:00 daily" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E4E9F2;strokeColor=#0E1726;verticalAlign=top;align=left;spacingLeft=10;spacingTop=4;spacing=2;fontStyle=1;fontSize=14;fontColor=#1B2B45;dashed=0;arcSize=12;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="30" y="598" width="2080" height="434" as="geometry" />
+        </mxCell>
+        <mxCell id="zc_l1" value="&lt;b&gt;Trigger → decision&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;events as above; polls rate(30 minutes) all day + cron 08:00 (scheduler/main.tf); the handler applies the window&lt;br&gt;windows.py:51 is_daytime&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F3F5F8;strokeColor=#6B7583;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="50" y="638" width="220" height="112" as="geometry" />
+        </mxCell>
+        <mxCell id="ca_axis" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0E1726;strokeColor=#0E1726;fontSize=11;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="290" y="776" width="1764" height="6" as="geometry" />
+        </mxCell>
+        <mxCell id="ca_p0" value="&lt;b&gt;16:00 · watch on&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;&quot;Alexa, watch mom's line&quot; → watch_line(alias) → profile care (the default for an alias; watch_line.py:62)&lt;br&gt;subscribe sim-swap + reachability; baseline&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#6B7583;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="290" y="638" width="240" height="112" as="geometry" />
+        </mxCell>
+        <mxCell id="ca_pe0" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#6B7583;strokeWidth=1;fontSize=9;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=0.5000;exitY=1.0000;exitDx=0;exitDy=0;entryX=0.0680;entryY=0.0000;entryDx=0;entryDy=0;" edge="1" parent="1" source="ca_p0" target="ca_axis">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ca_t0" value="&lt;b&gt;16:00&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;fontSize=10;fontColor=#1B2B45;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="350" y="784" width="120" height="18" as="geometry" />
+        </mxCell>
+        <mxCell id="ca_p1" value="&lt;b&gt;18:30 · goes dark&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;event or poll: unreachable_since = 18:30&lt;br&gt;any true from here on would reset the clock&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#6B7583;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="542" y="638" width="240" height="112" as="geometry" />
+        </mxCell>
+        <mxCell id="ca_pe1" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#6B7583;strokeWidth=1;fontSize=9;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=0.5000;exitY=1.0000;exitDx=0;exitDy=0;entryX=0.2109;entryY=0.0000;entryDx=0;entryDy=0;" edge="1" parent="1" source="ca_p1" target="ca_axis">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ca_t1" value="&lt;b&gt;18:30&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;fontSize=10;fontColor=#1B2B45;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="602" y="784" width="120" height="18" as="geometry" />
+        </mxCell>
+        <mxCell id="ca_p2" value="&lt;b&gt;22:30 · 4 h reached, night&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;unreachable_due() is false outside 08:00–22:00 (windows.py:70)&lt;br&gt;held: no SMS, no audit row&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#6B7583;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="794" y="638" width="240" height="112" as="geometry" />
+        </mxCell>
+        <mxCell id="ca_pe2" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#6B7583;strokeWidth=1;fontSize=9;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=0.5000;exitY=1.0000;exitDx=0;exitDy=0;entryX=0.3537;entryY=0.0000;entryDx=0;entryDy=0;" edge="1" parent="1" source="ca_p2" target="ca_axis">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ca_t2" value="&lt;b&gt;22:30&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;fontSize=10;fontColor=#1B2B45;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="854" y="784" width="120" height="18" as="geometry" />
+        </mxCell>
+        <mxCell id="ca_p3" value="&lt;b&gt;22:30–08:00 · polls&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;every 30 min: still dark, still held&lt;br&gt;dark time at night still counts toward the 4 h&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#6B7583;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="1046" y="638" width="240" height="112" as="geometry" />
+        </mxCell>
+        <mxCell id="ca_pe3" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#6B7583;strokeWidth=1;fontSize=9;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=0.5000;exitY=1.0000;exitDx=0;exitDy=0;entryX=0.4966;entryY=0.0000;entryDx=0;entryDy=0;" edge="1" parent="1" source="ca_p3" target="ca_axis">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ca_t3" value="&lt;b&gt;night&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;fontSize=10;fontColor=#1B2B45;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="1106" y="784" width="120" height="18" as="geometry" />
+        </mxCell>
+        <mxCell id="ca_p4" value="&lt;b&gt;08:00 · first SMS&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;first daytime evaluation releases UNREACHABLE: SMS to the watcher + line-holder&lt;br&gt;“Mom's phone has been off the network since yesterday at 6:30 - that's the network, nothing more.”&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FBEFD9;strokeColor=#E8A33D;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="1298" y="638" width="240" height="112" as="geometry" />
+        </mxCell>
+        <mxCell id="ca_pe4" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#E8A33D;strokeWidth=2;fontSize=9;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=0.5000;exitY=1.0000;exitDx=0;exitDy=0;entryX=0.6395;entryY=0.0000;entryDx=0;entryDy=0;" edge="1" parent="1" source="ca_p4" target="ca_axis">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ca_t4" value="&lt;b&gt;08:00&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;fontSize=10;fontColor=#1B2B45;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="1358" y="784" width="120" height="18" as="geometry" />
+        </mxCell>
+        <mxCell id="ca_p5" value="&lt;b&gt;08:00 · daily check&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;SIM swap + call forwarding for self and care profiles&lt;br&gt;fraud alerts have no quiet hours: a swap at 03:00 is texted at once&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#6B7583;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="1550" y="638" width="240" height="112" as="geometry" />
+        </mxCell>
+        <mxCell id="ca_pe5" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#6B7583;strokeWidth=1;fontSize=9;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=0.5000;exitY=1.0000;exitDx=0;exitDy=0;entryX=0.7823;entryY=0.0000;entryDx=0;entryDy=0;" edge="1" parent="1" source="ca_p5" target="ca_axis">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ca_t5" value="&lt;b&gt;08:00&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;fontSize=10;fontColor=#1B2B45;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="1610" y="784" width="120" height="18" as="geometry" />
+        </mxCell>
+        <mxCell id="ca_p6" value="&lt;b&gt;until 14:00 · repeat&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;another UNREACHABLE within 6 h → audited suppressed, not sent&lt;br&gt;once reported, a spell is not re-sent (last_alert_at ≥ unreachable_since)&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#6B7583;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="1802" y="638" width="240" height="112" as="geometry" />
+        </mxCell>
+        <mxCell id="ca_pe6" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#6B7583;strokeWidth=1;fontSize=9;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=0.5000;exitY=1.0000;exitDx=0;exitDy=0;entryX=0.9252;entryY=0.0000;entryDx=0;entryDy=0;" edge="1" parent="1" source="ca_p6" target="ca_axis">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ca_t6" value="&lt;b&gt;14:00&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;fontSize=10;fontColor=#1B2B45;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="1862" y="784" width="120" height="18" as="geometry" />
+        </mxCell>
+        <mxCell id="ca_w0_0" value="&lt;b&gt;daytime 08:00–22:00&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;reachability alerts released&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DDF3EF;strokeColor=#2BB3A0;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="290" y="810" width="574" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="ca_w0_1" value="&lt;b&gt;night 22:00–08:00 — held&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;dark time still counts&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F3F5F8;strokeColor=#6B7583;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=1;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="864" y="810" width="554" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="ca_w0_2" value="&lt;b&gt;daytime&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;released&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DDF3EF;strokeColor=#2BB3A0;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="1418" y="810" width="636" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="ca_w1_0" value="&lt;b&gt;≥ 4 h continuous&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;UNREACHABLE_ALERT.care&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FBEFD9;strokeColor=#E8A33D;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="662" y="868" width="252" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="ca_w1_1" value="&lt;b&gt;RATE_LIMIT 6 h&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;per line, per reason, per watcher&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F3F5F8;strokeColor=#6B7583;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=1;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="1418" y="868" width="504" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="ca_self" value="&lt;b&gt;self profile (&quot;watch my line&quot;)&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;SIM swap + call forwarding only, daily 08:00 + events; no reachability alert;&lt;br&gt;Tower's stored-state path reads this Watch when it is ≤ 10 min old (02 §4).&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F3F5F8;strokeColor=#6B7583;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="50" y="932" width="1013" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="ca_sms" value="&lt;b&gt;Who is texted, every profile&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;escalation chain from step 0, plus the line-holder at Users.alert_phone (default: the bound line);&lt;br&gt;after a SIM swap of the line: its backup phone instead, never the swapped number (send.py:115).&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F3F5F8;strokeColor=#6B7583;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="1077" y="932" width="1013" height="80" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

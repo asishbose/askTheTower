@@ -1,0 +1,90 @@
+[project]
+name = "ask-the-tower"
+version = "0.1.0"
+description = "Your own agent on Alexa+ asking the carrier about your line, over CAMARA network APIs. Consent first."
+readme = "README.md"
+requires-python = ">=3.12"
+license = "Apache-2.0"
+dependencies = []
+
+[dependency-groups]
+dev = [
+  "pytest>=8.3",
+  "pytest-asyncio>=0.24",
+  "pytest-cov>=5.0",
+  "ruff>=0.6",
+  "mypy>=1.11",
+  "pyyaml>=6.0",
+  "httpx>=0.27",
+  "moto[dynamodb]>=5.0",
+  "boto3>=1.35",
+  "types-PyYAML",
+  "boto3-stubs[dynamodb,sns,kms]",
+  "hypothesis>=6.100",
+  "schemathesis>=3.39",
+  "testcontainers>=4.8",
+  "playwright>=1.47",
+  "qrcode>=7.4",
+]
+
+[tool.uv.workspace]
+members = ["packages/*", "services/*"]
+# Static files + a stdlib Lambda handler, not a Python package (09 §6.4); its tests run from the root.
+exclude = ["services/web-chat"]
+
+[tool.uv.sources]
+tower-policy = { workspace = true }
+tower-consent = { workspace = true }
+tower-audit = { workspace = true }
+camara-client = { workspace = true }
+mock-carrier = { workspace = true }
+tower-mcp = { workspace = true }
+binding-page = { workspace = true }
+alerts = { workspace = true }
+ref-client = { workspace = true }
+demo-ui = { workspace = true }
+
+[tool.ruff]
+line-length = 110
+target-version = "py312"
+extend-exclude = ["artifacts", "specs", "deploy"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP", "S"]
+ignore = ["S101", "S105", "S106", "E501"]
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+ignore_missing_imports = true
+exclude = ["tests/", "scripts/", "deploy/"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["packages", "services", "tests"]
+markers = [
+  "unit: pure code, no I/O",
+  "integration: component pairs over real interfaces (in-process or containers)",
+  "e2e: full stack, needs ENV=local|eks|aws",
+  "nightly: cloud-only or slow chaos (ENV=aws, kind); not part of `make test`",
+  "slow: takes more than a few seconds (orthogonal to the layer)",
+]
+addopts = "-q --strict-markers -p no:cacheprovider --import-mode=importlib"
+pythonpath = ["."]
+filterwarnings = ["ignore::DeprecationWarning"]
+
+[tool.coverage.run]
+source = ["packages", "services"]
+# not product code: tests, the showcase/ops scripts, and generated or vendored files
+omit = ["*/tests/*", "*/scripts/*", "scripts/*", "*/__main__.py", "*/_version.py", "*/generated/*"]
+data_file = ".coverage"
+
+[tool.coverage.report]
+skip_empty = true
+exclude_also = ["if TYPE_CHECKING:", "raise NotImplementedError", "@overload", "if __name__ == .__main__.:"]
+
+# Per-path coverage gates (prompt 18): lines covered by unit + integration together, from artifacts/coverage.xml.
+# coverage.py has one global fail_under; `make test-report` (scripts/test_report.py) enforces these per path.
+[tool.att.coverage-gates]
+packages = 90
+services = 80

@@ -1,0 +1,1034 @@
+<mxfile host="app.diagrams.net" agent="Ask the Tower design generator" type="device">
+  <diagram id="08_target_state" name="1 Target state">
+    <mxGraphModel dx="1422" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="2920" pageHeight="2550" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="t1" value="Ask the Tower on Amazon Bedrock AgentCore — the AWS account after &lt;code&gt;make deploy&lt;/code&gt; (as the repo builds it today)" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;fontSize=20;fontColor=#1B2B45;fontStyle=1;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="30" y="14" width="2860" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="t2" value="Every box names the Terraform module / resource that creates it and the image it runs (tag = git sha from &lt;code&gt;make push&lt;/code&gt;). Teal = request path (Alexa+ → Runtime → Gateway → mock; web chat W1–W5), amber = proactive path (mock → API → Alerts → SNS), grey = binding, data and management, dashed = deploy-time or deferred, pale = intended or optional, not deployed by default." style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;fontSize=11;fontColor=#6B7A90;fontStyle=0;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="30" y="46" width="2860" height="22" as="geometry" />
+        </mxCell>
+        <mxCell id="t3" value="Status: written and &lt;code&gt;terraform validate&lt;/code&gt;-clean; never planned or applied (docs/submission/build-log/13.md). Region us-east-1, name prefix &lt;code&gt;att-dev&lt;/code&gt; (name_prefix + environment), tag &lt;code&gt;project=ask-the-tower&lt;/code&gt; on everything." style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;fontSize=11;fontColor=#6B7A90;fontStyle=0;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="30" y="68" width="2860" height="22" as="geometry" />
+        </mxCell>
+        <mxCell id="z_ext" value="External" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#EEF0F5;strokeColor=#9AA7B5;verticalAlign=top;align=left;spacingLeft=10;spacingTop=4;spacing=2;fontStyle=1;fontSize=14;fontColor=#1B2B45;dashed=0;arcSize=12;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="30" y="110" width="300" height="1750" as="geometry" />
+        </mxCell>
+        <mxCell id="z_aws" value="AWS account (us-east-1) — main Terraform root deploy/terraform, state key ask-the-tower/aws/terraform.tfstate" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#0E1726;verticalAlign=top;align=left;spacingLeft=10;spacingTop=4;spacing=2;fontStyle=1;fontSize=14;fontColor=#1B2B45;dashed=0;arcSize=12;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="360" y="110" width="2230" height="1990" as="geometry" />
+        </mxCell>
+        <mxCell id="z_ext2" value="External (alternative)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#C9D3DF;verticalAlign=top;align=left;spacingLeft=10;spacingTop=4;spacing=2;fontStyle=1;fontSize=14;fontColor=#8A96A8;dashed=0;arcSize=12;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="2620" y="110" width="270" height="1460" as="geometry" />
+        </mxCell>
+        <mxCell id="z_ac" value="Bedrock AgentCore — Runtime · Gateway · Identity · Observability" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#EAF7F4;strokeColor=#2BB3A0;verticalAlign=top;align=left;spacingLeft=10;spacingTop=4;spacing=2;fontStyle=1;fontSize=14;fontColor=#1B2B45;dashed=0;arcSize=12;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="380" y="150" width="2190" height="370" as="geometry" />
+        </mxCell>
+        <mxCell id="z_data" value="Data" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#EEF0F5;strokeColor=#9AA7B5;verticalAlign=top;align=left;spacingLeft=10;spacingTop=4;spacing=2;fontStyle=1;fontSize=14;fontColor=#1B2B45;dashed=0;arcSize=12;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="380" y="550" width="2190" height="190" as="geometry" />
+        </mxCell>
+        <mxCell id="z_comp" value="Compute — Lambda · API Gateway · Fargate" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E4E9F2;strokeColor=#0E1726;verticalAlign=top;align=left;spacingLeft=10;spacingTop=4;spacing=2;fontStyle=1;fontSize=14;fontColor=#1B2B45;dashed=0;arcSize=12;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="380" y="770" width="2190" height="520" as="geometry" />
+        </mxCell>
+        <mxCell id="z_vpc" value="VPC — modules/network" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#0E1726;verticalAlign=top;align=left;spacingLeft=10;spacingTop=4;spacing=2;fontStyle=1;fontSize=12;fontColor=#1B2B45;dashed=0;arcSize=12;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="1360" y="805" width="1190" height="440" as="geometry" />
+        </mxCell>
+        <mxCell id="z_msg" value="Messaging / scheduling — SNS · EventBridge Scheduler" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FBF3E0;strokeColor=#E8A33D;verticalAlign=top;align=left;spacingLeft=10;spacingTop=4;spacing=2;fontStyle=1;fontSize=14;fontColor=#1B2B45;dashed=0;arcSize=12;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="380" y="1320" width="940" height="245" as="geometry" />
+        </mxCell>
+        <mxCell id="z_manual" value="In the account, not created by this Terraform (by hand, per the runbooks)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#C9D3DF;verticalAlign=top;align=left;spacingLeft=10;spacingTop=4;spacing=2;fontStyle=1;fontSize=14;fontColor=#8A96A8;dashed=1;arcSize=12;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="1360" y="1320" width="1190" height="245" as="geometry" />
+        </mxCell>
+        <mxCell id="z_web" value="Web chat (prompt 20, 09 §6) — modules/cognito · modules/web_chat; the agent runtime sits in AgentCore above" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#EAF7F4;strokeColor=#2BB3A0;verticalAlign=top;align=left;spacingLeft=10;spacingTop=4;spacing=2;fontStyle=1;fontSize=14;fontColor=#1B2B45;dashed=0;arcSize=12;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="380" y="1590" width="2190" height="260" as="geometry" />
+        </mxCell>
+        <mxCell id="z_ecr" value="ECR — own Terraform root deploy/terraform/ecr, state key ask-the-tower/ecr/terraform.tfstate (survives make down)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#EEF0F5;strokeColor=#9AA7B5;verticalAlign=top;align=left;spacingLeft=10;spacingTop=4;spacing=2;fontStyle=1;fontSize=14;fontColor=#1B2B45;dashed=0;arcSize=12;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="380" y="1880" width="2190" height="200" as="geometry" />
+        </mxCell>
+        <mxCell id="z_dev" value="Developer machine (WSL2) — make, terraform, docker buildx, uv run scripts/" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#EEF0F5;strokeColor=#9AA7B5;verticalAlign=top;align=left;spacingLeft=10;spacingTop=4;spacing=2;fontStyle=1;fontSize=14;fontColor=#1B2B45;dashed=0;arcSize=12;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="30" y="2130" width="2860" height="230" as="geometry" />
+        </mxCell>
+        <mxCell id="alexa" value="&lt;b&gt;Alexa+ MCP Toolkit&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;web simulator · Amazon's cloud, not ours&lt;br&gt;MCP client; phrases results; never speaks first&lt;br&gt;registered with the output tower_mcp_url&lt;br&gt;+ OAuth account linking (Cognito)&lt;br&gt;TODO(human): alexa/registration.md §2–§6&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DDF3EF;strokeColor=#2BB3A0;fontSize=11;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=1;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="50" y="230" width="230" height="160" as="geometry" />
+        </mxCell>
+        <mxCell id="phone" value="&lt;b&gt;Line-holder's phone&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;mobile data, Wi-Fi off (rule 7)&lt;br&gt;opens the binding link and the carrier&lt;br&gt;authorize page; one tap&lt;br&gt;TODO(human): §2.6 real-phone run&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F3F5F8;strokeColor=#6B7583;fontSize=11;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=1;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="50" y="820" width="230" height="150" as="geometry" />
+        </mxCell>
+        <mxCell id="watcher" value="&lt;b&gt;Watcher's phone&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;receives the templated SMS&lt;br&gt;never the number just swapped&lt;br&gt;must be a verified SNS sandbox number&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FBEFD9;strokeColor=#E8A33D;fontSize=11;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="50" y="1380" width="230" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="sandbox" value="&lt;b&gt;Carrier sandbox&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;carrier_backend = &quot;sandbox&quot;:&lt;br&gt;mock_carrier count = 0; Gateway&lt;br&gt;targets' servers[0] = sandbox_base_url;&lt;br&gt;Identity holds sandbox_client_id and&lt;br&gt;TF_VAR_sandbox_client_secret&lt;br&gt;(public HTTPS, no VPC resource)&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F7F8FA;strokeColor=#C9D3DF;fontSize=11;fontColor=#8A96A8;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=1;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="2640" y="820" width="230" height="170" as="geometry" />
+        </mxCell>
+        <mxCell id="runtime" value="&lt;b&gt;AgentCore Runtime — Tower MCP server&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;modules/agentcore_runtime&lt;br&gt;aws_bedrockagentcore_agent_runtime.tower&lt;br&gt;image att-dev/tower-mcp:&amp;lt;git sha&amp;gt; (linux/arm64)&lt;br&gt;server_protocol MCP · :8000/mcp, stateless&lt;br&gt;network_mode PUBLIC (VPC on the cut line)&lt;br&gt;inbound: custom_jwt_authorizer (Cognito&lt;br&gt;discovery URL); Authorization header&lt;br&gt;allow-listed, Tower re-verifies, sub → user_id&lt;br&gt;aws_iam_role.runtime: ECR pull, logs, X-Ray,&lt;br&gt;DynamoDB, KMS, InvokeGateway&lt;br&gt;aws_cloudwatch_log_group.tower&lt;br&gt;output tower_mcp_url (?qualifier=DEFAULT)&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DDF3EF;strokeColor=#2BB3A0;fontSize=11;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="400" y="200" width="320" height="295" as="geometry" />
+        </mxCell>
+        <mxCell id="gateway" value="&lt;b&gt;AgentCore Gateway — CAMARA as MCP tools&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;modules/agentcore_gateway&lt;br&gt;aws_bedrockagentcore_gateway.this&lt;br&gt;authorizer_type AWS_IAM · protocol MCP&lt;br&gt;6 × aws_bedrockagentcore_gateway_target&lt;br&gt;.camara — one per specs/camara/*.yaml,&lt;br&gt;inline OpenAPI, servers → carrier URL&lt;br&gt;tools &amp;lt;target&amp;gt;___&amp;lt;operationId&amp;gt;&lt;br&gt;outbound OAuth: CLIENT_CREDENTIALS;&lt;br&gt;AUTHORIZATION_CODE (number-verification)&lt;br&gt;private_endpoint: managed VPC resource&lt;br&gt;aws_iam_role.gateway&lt;br&gt;outputs gateway_url, gateway_target_ids&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DDF3EF;strokeColor=#2BB3A0;fontSize=11;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="860" y="200" width="320" height="295" as="geometry" />
+        </mxCell>
+        <mxCell id="identity" value="&lt;b&gt;AgentCore Identity — outbound carrier OAuth&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;modules/agentcore_identity&lt;br&gt;2 × aws_bedrockagentcore_oauth2_credential_&lt;br&gt;provider.this (CustomOauth2):&lt;br&gt;· service — client credentials, client &quot;tower&quot;&lt;br&gt;· binding — auth code, client &quot;binding-page&quot;&lt;br&gt;client_secret_basic; token URL&lt;br&gt;https://&amp;lt;mock_domain_name&amp;gt;/oauth2/token&lt;br&gt;private_endpoint: managed VPC resource&lt;br&gt;aws_bedrockagentcore_workload_identity&lt;br&gt;.binding (return URL …/bind/callback)&lt;br&gt;the only holder of carrier secrets&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DDF3EF;strokeColor=#2BB3A0;fontSize=11;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="1420" y="200" width="340" height="295" as="geometry" />
+        </mxCell>
+        <mxCell id="obs" value="&lt;b&gt;Observability — CloudWatch&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;modules/observability&lt;br&gt;aws_cloudwatch_dashboard.this&lt;br&gt;(p95 per tool, alerts, reconcile misses)&lt;br&gt;aws_cloudwatch_log_metric_filter.alerts,&lt;br&gt;.line_id_on_metric (guard)&lt;br&gt;aws_cloudwatch_metric_alarm ×3&lt;br&gt;traces: aws/spans via CloudWatch&lt;br&gt;Transaction Search + ADOT in Tower —&lt;br&gt;both by hand: TODO(human) build-log/13&lt;br&gt;no metric carries line_id&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F3F5F8;strokeColor=#6B7583;fontSize=11;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="1820" y="200" width="340" height="295" as="geometry" />
+        </mxCell>
+        <mxCell id="refclient" value="&lt;b&gt;AgentCore Runtime — web chat agent&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;aws_bedrockagentcore_agent_runtime.ref_client&lt;br&gt;(enable_web_chat, default true)&lt;br&gt;image att-dev/ref-client:&amp;lt;git sha&amp;gt;, HTTP app&lt;br&gt;server_protocol HTTP · :8080 POST /invocations,&lt;br&gt;GET /ping (09 §6)&lt;br&gt;inbound: custom_jwt_authorizer (Cognito,&lt;br&gt;allowed_clients web-chat); Authorization&lt;br&gt;allow-listed and forwarded to Tower unchanged&lt;br&gt;aws_iam_role.agent: Bedrock invoke + logs only&lt;br&gt;(no DynamoDB, KMS or Gateway — 09 §5)&lt;br&gt;env TOWER_URL, WEB_CHAT_BINDING_BASE_URL&lt;br&gt;TODO(human) build-log/20 · F9 being resolved&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DDF3EF;strokeColor=#2BB3A0;fontSize=11;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=1;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="2200" y="200" width="340" height="295" as="geometry" />
+        </mxCell>
+        <mxCell id="ddb" value="&lt;b&gt;DynamoDB on-demand — 7 tables&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;modules/dynamodb → aws_dynamodb_table.this (for_each over tables.auto.tfvars.json)&lt;br&gt;att-dev-Users · Lines · Grants · Watches · Audit (PITR) · BindTokens (TTL) · AlertsState (TTL)&lt;br&gt;SSE with aws_kms_key.main · keys are HMAC line_id, never a number&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F3F5F8;strokeColor=#6B7583;fontSize=11;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="400" y="595" width="560" height="125" as="geometry" />
+        </mxCell>
+        <mxCell id="tfsecrets" value="&lt;b&gt;Generated secrets&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;random_password&lt;br&gt;.carrier_client ×3,&lt;br&gt;.internal_bearer,&lt;br&gt;.session_secret — in&lt;br&gt;encrypted S3 state&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#6B7583;fontSize=11;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="1085" y="595" width="180" height="125" as="geometry" />
+        </mxCell>
+        <mxCell id="secrets" value="&lt;b&gt;Secrets Manager&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;aws_secretsmanager_secret.registry&lt;br&gt;(modules/mock_carrier): the mock's own&lt;br&gt;client registry + JWT secret; recovery 0 d&lt;br&gt;nothing carrier-side the consumer holds&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F3F5F8;strokeColor=#6B7583;fontSize=11;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="1840" y="595" width="320" height="125" as="geometry" />
+        </mxCell>
+        <mxCell id="kms" value="&lt;b&gt;KMS — two keys&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;modules/kms → aws_kms_key.main (symmetric,&lt;br&gt;rotation on: msisdn_enc, logs, SNS, tables)&lt;br&gt;aws_kms_key.hmac (HMAC_256: line_id)&lt;br&gt;aliases; key policy: Runtime + 3 Lambda roles&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F3F5F8;strokeColor=#6B7583;fontSize=11;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="2200" y="595" width="340" height="125" as="geometry" />
+        </mxCell>
+        <mxCell id="cf" value="&lt;b&gt;CloudFront + WAF&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;aws_cloudfront_distribution.this&lt;br&gt;aws_wafv2_web_acl.edge&lt;br&gt;(rate rule on /hooks/*)&lt;br&gt;modules/lambdas&lt;br&gt;= public_base_url&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F3F5F8;strokeColor=#6B7583;fontSize=11;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="400" y="830" width="220" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="api" value="&lt;b&gt;API Gateway HTTP API&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;aws_apigatewayv2_api.this, stage&lt;br&gt;$default → binding-page&lt;br&gt;ANY /hooks/{proxy+} → alerts&lt;br&gt;ANY /internal/{proxy+} → alerts&lt;br&gt;GET /carrier/oauth2/authorize&lt;br&gt;→ VPC link → mock ALB&lt;br&gt;outputs binding_url, hooks_base_url&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F3F5F8;strokeColor=#6B7583;fontSize=11;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="680" y="830" width="260" height="200" as="geometry" />
+        </mxCell>
+        <mxCell id="l_bind" value="&lt;b&gt;Lambda — binding page&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;aws_lambda_function.fn[&quot;binding-page&quot;]&lt;br&gt;image att-dev/binding-page:&amp;lt;sha&amp;gt; · arm64&lt;br&gt;awslambdaric binding_page.app.handler&lt;br&gt;role aws_iam_role.fn: DynamoDB, KMS, Gateway&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F3F5F8;strokeColor=#6B7583;fontSize=11;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="980" y="830" width="320" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="l_rec" value="&lt;b&gt;Lambda — reconcile (nightly)&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;aws_lambda_function.fn[&quot;reconcile&quot;]&lt;br&gt;image att-dev/alerts:&amp;lt;sha&amp;gt; (same image)&lt;br&gt;tower_audit.aws.reconcile_handler&lt;br&gt;Logs Insights over aws/spans; trims Audit&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F3F5F8;strokeColor=#6B7583;fontSize=11;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="980" y="975" width="320" height="115" as="geometry" />
+        </mxCell>
+        <mxCell id="l_alerts" value="&lt;b&gt;Lambda — alerts&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;aws_lambda_function.fn[&quot;alerts&quot;]&lt;br&gt;image att-dev/alerts:&amp;lt;sha&amp;gt; · arm64&lt;br&gt;alerts.handler.lambda_handler: hooks,&lt;br&gt;/internal/watch, polls, ticks, SMS replies&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FBEFD9;strokeColor=#E8A33D;fontSize=11;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="980" y="1115" width="320" height="115" as="geometry" />
+        </mxCell>
+        <mxCell id="alb" value="&lt;b&gt;Internal ALB — mock carrier front&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;modules/mock_carrier → aws_lb.this (internal)&lt;br&gt;aws_lb_listener.this HTTPS :443 →&lt;br&gt;aws_lb_target_group.this HTTP :8443&lt;br&gt;aws_acm_certificate.this (DNS-validated)&lt;br&gt;aws_route53_record.alb (mock_domain_name)&lt;br&gt;forwards CAMARA paths, /oauth2/*,&lt;br&gt;/.well-known/*, /healthz — never /_admin/*&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DDF3EF;strokeColor=#2BB3A0;fontSize=11;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="1420" y="850" width="340" height="170" as="geometry" />
+        </mxCell>
+        <mxCell id="mock" value="&lt;b&gt;ECS Fargate — mock carrier&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;aws_ecs_cluster.this · aws_ecs_service.this&lt;br&gt;(1 task, enable_execute_command)&lt;br&gt;aws_ecs_task_definition.this ARM64&lt;br&gt;0.25 vCPU / 0.5 GB · :8443&lt;br&gt;image att-dev/mock-carrier:&amp;lt;sha&amp;gt;&lt;br&gt;MOCK_SCENARIO=demo, MOCK_ADMIN=1&lt;br&gt;public subnet + public IP (no NAT)&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DDF3EF;strokeColor=#2BB3A0;fontSize=11;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="1840" y="850" width="320" height="170" as="geometry" />
+        </mxCell>
+        <mxCell id="vpclink" value="&lt;b&gt;VPC link + egress SG&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;aws_apigatewayv2_vpc_link.this&lt;br&gt;(only GET /carrier/oauth2/authorize)&lt;br&gt;aws_security_group.agentcore_egress —&lt;br&gt;used by the Gateway / Identity managed&lt;br&gt;VPC resources and the cut-line Runtime&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F3F5F8;strokeColor=#6B7583;fontSize=11;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="1420" y="1080" width="340" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="net" value="&lt;b&gt;Network&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;aws_vpc.this · 2 public + 2 private subnets&lt;br&gt;aws_internet_gateway.this&lt;br&gt;aws_vpc_endpoint.gateway (S3, DynamoDB)&lt;br&gt;aws_nat_gateway.this only if&lt;br&gt;enable_nat_gateway (off; cut line needs it)&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F3F5F8;strokeColor=#6B7583;fontSize=11;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="1840" y="1080" width="320" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="sched" value="&lt;b&gt;EventBridge Scheduler&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;modules/scheduler → aws_scheduler_schedule_group.this, aws_iam_role.scheduler&lt;br&gt;aws_scheduler_schedule.this ×6, flexible window off:&lt;br&gt;poll-transplant rate(5 min) · poll-care rate(30 min) → alerts {profile}&lt;br&gt;daily-self, daily-care cron 08:00 (alerts_timezone) → alerts {profile}&lt;br&gt;escalation-tick rate(5 min) → alerts {action: tick}&lt;br&gt;reconcile cron 03:00 → reconcile {scheduled_time}&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FBEFD9;strokeColor=#E8A33D;fontSize=11;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="400" y="1365" width="520" height="170" as="geometry" />
+        </mxCell>
+        <mxCell id="sns" value="&lt;b&gt;SNS — SMS&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;modules/sns → aws_sns_sms_preferences.this&lt;br&gt;(Transactional, spend cap $1/month)&lt;br&gt;aws_sns_topic.replies → aws_sns_topic_&lt;br&gt;subscription.replies_to_alerts (two-way)&lt;br&gt;aws_sns_topic.push (optional, off)&lt;br&gt;sandbox: verified numbers only&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FBEFD9;strokeColor=#E8A33D;fontSize=11;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="960" y="1365" width="340" height="170" as="geometry" />
+        </mxCell>
+        <mxCell id="m_state" value="&lt;b&gt;S3 state + lock table&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;backend.tf commands;&lt;br&gt;REPLACE-ME placeholders&lt;br&gt;→ -backend-config&lt;br&gt;holds generated secrets&lt;br&gt;TODO(human) build-log/13&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F7F8FA;strokeColor=#C9D3DF;fontSize=11;fontColor=#8A96A8;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=1;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="1380" y="1365" width="220" height="170" as="geometry" />
+        </mxCell>
+        <mxCell id="m_cognito" value="&lt;b&gt;Cognito users + Alexa client&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;make cognito-users: asish,&lt;br&gt;mom (scripts/cognito_user.py)&lt;br&gt;alexa-link client by CLI&lt;br&gt;(registration.md §2)&lt;br&gt;TODO(human) build-log/20, /15&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F7F8FA;strokeColor=#C9D3DF;fontSize=11;fontColor=#8A96A8;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=1;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="1615" y="1365" width="220" height="170" as="geometry" />
+        </mxCell>
+        <mxCell id="m_r53" value="&lt;b&gt;Route 53 public zone&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;input mock_route53_zone_id&lt;br&gt;(or mock_certificate_arn)&lt;br&gt;ACM DNS validation;&lt;br&gt;record → internal ALB IPs&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F7F8FA;strokeColor=#C9D3DF;fontSize=11;fontColor=#8A96A8;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=1;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="1850" y="1365" width="220" height="170" as="geometry" />
+        </mxCell>
+        <mxCell id="m_sms" value="&lt;b&gt;SMS sandbox numbers&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;output sms_sandbox_commands&lt;br&gt;create + verify with the&lt;br&gt;OTP on each demo phone&lt;br&gt;TODO(human) build-log/13&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F7F8FA;strokeColor=#C9D3DF;fontSize=11;fontColor=#8A96A8;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=1;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="2085" y="1365" width="220" height="170" as="geometry" />
+        </mxCell>
+        <mxCell id="m_xray" value="&lt;b&gt;Transaction Search + ADOT&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;aws xray update-trace-&lt;br&gt;segment-destination;&lt;br&gt;Tower under opentelemetry-&lt;br&gt;instrument (image change)&lt;br&gt;TODO(human) build-log/13&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F7F8FA;strokeColor=#C9D3DF;fontSize=11;fontColor=#8A96A8;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=1;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="2320" y="1365" width="220" height="170" as="geometry" />
+        </mxCell>
+        <mxCell id="browser" value="&lt;b&gt;Browser — web chat page&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;laptop; Asish and Mom in two&lt;br&gt;browser profiles&lt;br&gt;no number field, no SMS, no QR&lt;br&gt;TODO(human): build-log/20&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DDF3EF;strokeColor=#2BB3A0;fontSize=11;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=1;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="50" y="1640" width="230" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="wc_cdn" value="&lt;b&gt;S3 + CloudFront — the page&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;modules/web_chat&lt;br&gt;aws_s3_bucket (private, force_destroy)&lt;br&gt;aws_cloudfront_distribution + OAC&lt;br&gt;index.html · app.js · styles.css · config.js&lt;br&gt;outputs web_chat_url, web_chat_bucket&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DDF3EF;strokeColor=#2BB3A0;fontSize=11;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="400" y="1640" width="320" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="wc_cognito" value="&lt;b&gt;Amazon Cognito — modules/cognito&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;aws_cognito_user_pool (admin-create only)&lt;br&gt;aws_cognito_user_pool_domain (Hosted UI)&lt;br&gt;aws_cognito_user_pool_client web-chat:&lt;br&gt;code + PKCE, no secret, callback = page URL&lt;br&gt;outputs cognito_pool_id, _client_id, _issuer, …&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DDF3EF;strokeColor=#2BB3A0;fontSize=11;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="760" y="1640" width="340" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="wc_url" value="&lt;b&gt;Lambda function URL — proxy&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;modules/web_chat · zip proxy/handler.py&lt;br&gt;auth NONE; CORS = the page origin&lt;br&gt;forwards Authorization, Content-Type,&lt;br&gt;session header to the agent runtime only&lt;br&gt;output agent_url · no credential held&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DDF3EF;strokeColor=#2BB3A0;fontSize=11;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="1140" y="1640" width="320" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="wc_note" value="&lt;font style=&quot;font-size:9px&quot;&gt;Not Terraform: users (make cognito-users), config.js + upload (make web-chat-sync), URL (make web-chat-url). Tower's TOWER_JWKS_URL, TOWER_JWT_ISSUER and&lt;br&gt;TOWER_JWT_CLIENT_IDS come from modules/cognito. Local: compose web-chat on 127.0.0.1:8083 serves page and agent, sign-in stub, no Cognito, no proxy.&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#6B7583;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="1500" y="1725" width="1040" height="55" as="geometry" />
+        </mxCell>
+        <mxCell id="e_w1" value="W1 GET" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2BB3A0;strokeWidth=2;fontSize=9;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=1.0000;exitY=0.2857;exitDx=0;exitDy=0;entryX=0.0000;entryY=0.2857;entryDx=0;entryDy=0;" edge="1" parent="1" source="browser" target="wc_cdn">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_w2" value="W2 Hosted UI sign-in · code + PKCE" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2BB3A0;strokeWidth=2;fontSize=9;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=0.7826;exitY=1.0000;exitDx=0;exitDy=0;entryX=0.5000;entryY=1.0000;entryDx=0;entryDy=0;" edge="1" parent="1" source="browser" target="wc_cognito">
+          <mxGeometry relative="1" as="geometry" x="-0.0541">
+            <Array as="points">
+              <mxPoint x="230" y="1800" />
+              <mxPoint x="930" y="1800" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_w3" value="W3 POST /invocations + Bearer (CORS)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2BB3A0;strokeWidth=2;fontSize=9;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=0.3478;exitY=1.0000;exitDx=0;exitDy=0;entryX=0.5000;entryY=1.0000;entryDx=0;entryDy=0;" edge="1" parent="1" source="browser" target="wc_url">
+          <mxGeometry relative="1" as="geometry" x="0.4488">
+            <Array as="points">
+              <mxPoint x="130" y="1830" />
+              <mxPoint x="1300" y="1830" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_w4" value="W4 HTTPS /runtimes/{arn}/invocations · Bearer + session header" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2BB3A0;strokeWidth=2;fontSize=9;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=1.0000;exitY=0.3571;exitDx=0;exitDy=0;entryX=1.0000;entryY=0.5085;entryDx=0;entryDy=0;" edge="1" parent="1" source="wc_url" target="refclient">
+          <mxGeometry relative="1" as="geometry" x="-0.6080">
+            <Array as="points">
+              <mxPoint x="2580" y="1690" />
+              <mxPoint x="2580" y="350" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_w5" value="W5 MCP · the same Bearer" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2BB3A0;strokeWidth=2;fontSize=9;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=0.1471;exitY=1.0000;exitDx=0;exitDy=0;entryX=0.8750;entryY=1.0000;entryDx=0;entryDy=0;" edge="1" parent="1" source="refclient" target="runtime">
+          <mxGeometry relative="1" as="geometry" x="-0.7080">
+            <Array as="points">
+              <mxPoint x="2250" y="508" />
+              <mxPoint x="680" y="508" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="ecr" value="&lt;b&gt;ECR — aws_ecr_repository.service ×5 (deploy/terraform/ecr/main.tf)&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;att-dev/tower-mcp · att-dev/mock-carrier · att-dev/binding-page · att-dev/alerts · att-dev/ref-client&lt;br&gt;aws_ecr_lifecycle_policy.service (keep the last 10) · scan on push · AES256 · force_delete = true&lt;br&gt;tags &amp;lt;git sha&amp;gt; + latest, single-manifest linux/arm64; pulled by Runtime, Lambda ×3 and the ECS task&lt;br&gt;make ecr-up creates (once) · make down ENV=aws keeps · make down-all is the only deleter&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F3F5F8;strokeColor=#6B7583;fontSize=11;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="400" y="1925" width="900" height="135" as="geometry" />
+        </mxCell>
+        <mxCell id="ecr_read" value="&lt;b&gt;Main root reads it — data &quot;aws_ecr_repository&quot;.service&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;for_each over the five services, by name &amp;lt;name_prefix&amp;gt;-&amp;lt;environment&amp;gt;/&amp;lt;service&amp;gt;;&lt;br&gt;local.images = &amp;lt;repository_url&amp;gt;:&amp;lt;image_tag&amp;gt; → Runtime, Lambda ×3, ECS task.&lt;br&gt;Output ecr_repositories kept (push_images.py, the eks root). image_tag = the tag&lt;br&gt;the last make push recorded (artifacts/image-tag); deploy verifies it in ECR first.&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#6B7583;fontSize=11;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="1360" y="1925" width="700" height="135" as="geometry" />
+        </mxCell>
+        <mxCell id="d_env" value="&lt;b&gt;root .env + envs/aws.tfvars&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;mk/vars.mk exports every non-empty .env key:&lt;br&gt;AWS keys of IAM user ask-the-tower-dev, TF_VAR_*&lt;br&gt;envs/aws.tfvars (gitignored): mock_domain_name,&lt;br&gt;mock_route53_zone_id, tower_jwt_*, sms numbers&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#6B7583;fontSize=11;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="50" y="2175" width="400" height="160" as="geometry" />
+        </mxCell>
+        <mxCell id="d_make" value="&lt;b&gt;make — mk/aws.mk, mk/build.mk&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;ecr-up · ecr-outputs · plan · deploy · outputs&lt;br&gt;register-gateway · seed-aws · latency-aws&lt;br&gt;build · push ENV=aws · down ENV=aws · down-all&lt;br&gt;image_tag = artifacts/image-tag on plan / deploy&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#6B7583;fontSize=11;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="480" y="2175" width="400" height="160" as="geometry" />
+        </mxCell>
+        <mxCell id="d_buildx" value="&lt;b&gt;docker buildx (scripts/push_images.py)&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;docker buildx build --platform linux/arm64&lt;br&gt;--provenance=false --sbom=false --push&lt;br&gt;-t &amp;lt;repo&amp;gt;:&amp;lt;sha&amp;gt; -t &amp;lt;repo&amp;gt;:latest · QEMU binfmt&lt;br&gt;(make build images are host-arch, not pushed)&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#6B7583;fontSize=11;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="910" y="2175" width="400" height="160" as="geometry" />
+        </mxCell>
+        <mxCell id="d_tf" value="&lt;b&gt;terraform ≥ 1.9 · aws ≥ 6.20, &amp;lt; 7 · random&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;-chdir=deploy/terraform and …/ecr (two states)&lt;br&gt;S3 backend (backend.tf), lock table&lt;br&gt;apply / destroy as the IAM user&lt;br&gt;make tf-check: init -backend=false + validate&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#6B7583;fontSize=11;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="1340" y="2175" width="420" height="160" as="geometry" />
+        </mxCell>
+        <mxCell id="d_scripts" value="&lt;b&gt;scripts/ (uv run python)&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;register_gateway.py · aws_seed.py&lt;br&gt;render_env.py · latency.py · push_images.py&lt;br&gt;read artifacts/tf-outputs.json (_tf_outputs.py);&lt;br&gt;push falls back to tf-outputs-ecr.json&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#6B7583;fontSize=11;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="1790" y="2175" width="420" height="160" as="geometry" />
+        </mxCell>
+        <mxCell id="d_files" value="&lt;b&gt;Generated files (gitignored)&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;artifacts/tf-outputs.json · tf-outputs-ecr.json · image-tag&lt;br&gt;artifacts/tfplan · terraform-plan.txt · gateway-tools.json&lt;br&gt;deploy/.env.aws (endpoints for ENV=aws targets, no secrets)&lt;br&gt;artifacts/latency-aws.md&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#6B7583;fontSize=11;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="2240" y="2175" width="620" height="160" as="geometry" />
+        </mxCell>
+        <mxCell id="e_alexa" value="① MCP Streamable&lt;br&gt;HTTP + Bearer JWT" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2BB3A0;strokeWidth=2;fontSize=9;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=1.0000;exitY=0.4375;exitDx=0;exitDy=0;entryX=0.0000;entryY=0.3390;entryDx=0;entryDy=0;" edge="1" parent="1" source="alexa" target="runtime">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_rt_gw" value="② MCP tools/call&lt;br&gt;SigV4 (AWS_IAM)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2BB3A0;strokeWidth=2;fontSize=9;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=1.0000;exitY=0.3390;exitDx=0;exitDy=0;entryX=0.0000;entryY=0.3390;entryDx=0;entryDy=0;" edge="1" parent="1" source="runtime" target="gateway">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_gw_id" value="③ get token for target&lt;br&gt;(workload identity)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2BB3A0;strokeWidth=2;fontSize=9;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=1.0000;exitY=0.3390;exitDx=0;exitDy=0;entryX=0.0000;entryY=0.3390;entryDx=0;entryDy=0;" edge="1" parent="1" source="gateway" target="identity">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_id_mock" value="④ HTTPS /oauth2/token&lt;br&gt;client_secret_basic" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2BB3A0;strokeWidth=2;fontSize=9;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=0.5000;exitY=1.0000;exitDx=0;exitDy=0;entryX=0.5000;entryY=0.0000;entryDx=0;entryDy=0;" edge="1" parent="1" source="identity" target="alb">
+          <mxGeometry relative="1" as="geometry" x="-0.1268" />
+        </mxCell>
+        <mxCell id="e_gw_mock" value="⑤ HTTPS + OAuth2 bearer&lt;br&gt;(VPC resource)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2BB3A0;strokeWidth=2;fontSize=9;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=1.0000;exitY=0.7797;exitDx=0;exitDy=0;entryX=0.0000;entryY=0.1765;entryDx=0;entryDy=0;" edge="1" parent="1" source="gateway" target="alb">
+          <mxGeometry relative="1" as="geometry" x="-0.7623">
+            <Array as="points">
+              <mxPoint x="1340" y="430" />
+              <mxPoint x="1340" y="880" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_alb_mock" value="HTTP :8443" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2BB3A0;strokeWidth=2;fontSize=9;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=1.0000;exitY=0.5000;exitDx=0;exitDy=0;entryX=0.0000;entryY=0.5000;entryDx=0;entryDy=0;" edge="1" parent="1" source="alb" target="mock">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_hook" value="P1 CloudEvents · HTTPS POST /hooks/{kind}/{sink_token} (token in path; WAF rate rule)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#E8A33D;strokeWidth=2;fontSize=9;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=1.0000;exitY=0.8235;exitDx=0;exitDy=0;entryX=0.5000;entryY=1.0000;entryDx=0;entryDy=0;" edge="1" parent="1" source="mock" target="cf">
+          <mxGeometry relative="1" as="geometry" x="-0.4192">
+            <Array as="points">
+              <mxPoint x="2200" y="990" />
+              <mxPoint x="2200" y="1272" />
+              <mxPoint x="510" y="1272" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_api_alerts" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#E8A33D;strokeWidth=2;fontSize=9;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=1.0000;exitY=0.9250;exitDx=0;exitDy=0;entryX=0.0000;entryY=0.4957;entryDx=0;entryDy=0;" edge="1" parent="1" source="api" target="l_alerts">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="960" y="1015" />
+              <mxPoint x="960" y="1172" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_sched_alerts" value="P2 invoke&lt;br&gt;role" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#E8A33D;strokeWidth=2;fontSize=9;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=0.9712;exitY=0.0000;exitDx=0;exitDy=0;entryX=0.0000;entryY=0.7826;entryDx=0;entryDy=0;" edge="1" parent="1" source="sched" target="l_alerts">
+          <mxGeometry relative="1" as="geometry" x="-0.7447">
+            <Array as="points">
+              <mxPoint x="905" y="1205" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_alerts_gw" value="P3 MCP · SigV4" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#E8A33D;strokeWidth=2;fontSize=9;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=1.0000;exitY=0.3043;exitDx=0;exitDy=0;entryX=1.0000;entryY=0.9153;entryDx=0;entryDy=0;" edge="1" parent="1" source="l_alerts" target="gateway">
+          <mxGeometry relative="1" as="geometry" x="0.8333">
+            <Array as="points">
+              <mxPoint x="1320" y="1150" />
+              <mxPoint x="1320" y="470" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_alerts_sns" value="P4 Publish&lt;br&gt;IAM role" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#E8A33D;strokeWidth=2;fontSize=9;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=0.5000;exitY=1.0000;exitDx=0;exitDy=0;entryX=0.5294;entryY=0.0000;entryDx=0;entryDy=0;" edge="1" parent="1" source="l_alerts" target="sns">
+          <mxGeometry relative="1" as="geometry" x="0.6000" />
+        </mxCell>
+        <mxCell id="e_sms" value="SMS · templated, no number" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#E8A33D;strokeWidth=2;fontSize=9;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=0.5000;exitY=1.0000;exitDx=0;exitDy=0;entryX=0.5000;entryY=1.0000;entryDx=0;entryDy=0;" edge="1" parent="1" source="sns" target="watcher">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1130" y="1552" />
+              <mxPoint x="165" y="1552" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_phone" value="B1 HTTPS&lt;br&gt;mobile data" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#6B7583;strokeWidth=1;fontSize=9;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=1.0000;exitY=0.4667;exitDx=0;exitDy=0;entryX=0.0000;entryY=0.4286;entryDx=0;entryDy=0;" edge="1" parent="1" source="phone" target="cf">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_cf_api" value="HTTPS" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#6B7583;strokeWidth=1;fontSize=9;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=1.0000;exitY=0.4286;exitDx=0;exitDy=0;entryX=0.0000;entryY=0.3000;entryDx=0;entryDy=0;" edge="1" parent="1" source="cf" target="api">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_api_bind" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#6B7583;strokeWidth=1;fontSize=9;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=1.0000;exitY=0.3000;exitDx=0;exitDy=0;entryX=0.0000;entryY=0.5000;entryDx=0;entryDy=0;" edge="1" parent="1" source="api" target="l_bind">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_api_link" value="B2 GET /carrier/oauth2/authorize" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#6B7583;strokeWidth=1;fontSize=9;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=0.5000;exitY=1.0000;exitDx=0;exitDy=0;entryX=0.2353;entryY=1.0000;entryDx=0;entryDy=0;" edge="1" parent="1" source="api" target="vpclink">
+          <mxGeometry relative="1" as="geometry" x="0.2542">
+            <Array as="points">
+              <mxPoint x="810" y="1252" />
+              <mxPoint x="1500" y="1252" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_link_alb" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#6B7583;strokeWidth=1;fontSize=9;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=0.5000;exitY=0.0000;exitDx=0;exitDy=0;entryX=0.5000;entryY=1.0000;entryDx=0;entryDy=0;" edge="1" parent="1" source="vpclink" target="alb">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_bind_gw" value="B3 MCP · SigV4&lt;br&gt;auth code (Identity)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#6B7583;strokeWidth=1;fontSize=9;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=0.2500;exitY=0.0000;exitDx=0;exitDy=0;entryX=0.6250;entryY=1.0000;entryDx=0;entryDy=0;" edge="1" parent="1" source="l_bind" target="gateway">
+          <mxGeometry relative="1" as="geometry" x="0.7612" />
+        </mxCell>
+        <mxCell id="e_bind_ddb" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#6B7583;strokeWidth=1;fontSize=9;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=0.0625;exitY=0.0000;exitDx=0;exitDy=0;entryX=1.0000;entryY=0.4960;entryDx=0;entryDy=0;" edge="1" parent="1" source="l_bind" target="ddb">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1000" y="657" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_rt_ddb" value="SDK · IAM role: 1 read + audit put" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#6B7583;strokeWidth=1;fontSize=9;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=0.5000;exitY=1.0000;exitDx=0;exitDy=0;entryX=0.2857;entryY=0.0000;entryDx=0;entryDy=0;" edge="1" parent="1" source="runtime" target="ddb">
+          <mxGeometry relative="1" as="geometry" x="-0.1600" />
+        </mxCell>
+        <mxCell id="e_rt_alerts" value="Tower → Alerts&lt;br&gt;/internal/watch · bearer" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#6B7583;strokeWidth=1;fontSize=9;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=0.0000;exitY=0.9153;exitDx=0;exitDy=0;entryX=0.0000;entryY=0.7857;entryDx=0;entryDy=0;" edge="1" parent="1" source="runtime" target="cf">
+          <mxGeometry relative="1" as="geometry" x="-0.6350">
+            <Array as="points">
+              <mxPoint x="372" y="470" />
+              <mxPoint x="372" y="940" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_rt_obs" value="OTel spans + logs (ADOT)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#6B7583;strokeWidth=1;fontSize=9;fontColor=#3C4858;dashed=1;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=0.5000;exitY=0.0000;exitDx=0;exitDy=0;entryX=0.5000;entryY=0.0000;entryDx=0;entryDy=0;" edge="1" parent="1" source="runtime" target="obs">
+          <mxGeometry relative="1" as="geometry" x="0.4434">
+            <Array as="points">
+              <mxPoint x="560" y="182" />
+              <mxPoint x="1990" y="182" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_mock_sec" value="GetSecretValue&lt;br&gt;(execution role)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#6B7583;strokeWidth=1;fontSize=9;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=0.5000;exitY=0.0000;exitDx=0;exitDy=0;entryX=0.5000;entryY=1.0000;entryDx=0;entryDy=0;" edge="1" parent="1" source="mock" target="secrets">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_sandbox" value="or: carrier_backend = sandbox" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#B8C2CF;strokeWidth=1;fontSize=9;fontColor=#3C4858;dashed=1;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=1.0000;exitY=0.2941;exitDx=0;exitDy=0;entryX=0.0000;entryY=0.4706;entryDx=0;entryDy=0;" edge="1" parent="1" source="mock" target="sandbox">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_push" value="docker push · ECR token" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#6B7583;strokeWidth=1;fontSize=9;fontColor=#3C4858;dashed=1;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=0.5000;exitY=0.0000;exitDx=0;exitDy=0;entryX=0.7889;entryY=1.0000;entryDx=0;entryDy=0;" edge="1" parent="1" source="d_buildx" target="ecr">
+          <mxGeometry relative="1" as="geometry" x="0.0261" />
+        </mxCell>
+        <mxCell id="e_tf" value="AWS APIs · IAM user keys" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#6B7583;strokeWidth=1;fontSize=9;fontColor=#3C4858;dashed=1;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=0.5000;exitY=0.0000;exitDx=0;exitDy=0;entryX=0.5336;entryY=1.0000;entryDx=0;entryDy=0;" edge="1" parent="1" source="d_tf" target="z_aws">
+          <mxGeometry relative="1" as="geometry" x="0.5733" />
+        </mxCell>
+        <mxCell id="e_scripts" value="SigV4 · ECS Exec · SDK" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#6B7583;strokeWidth=1;fontSize=9;fontColor=#3C4858;dashed=1;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=0.5000;exitY=0.0000;exitDx=0;exitDy=0;entryX=0.7354;entryY=1.0000;entryDx=0;entryDy=0;" edge="1" parent="1" source="d_scripts" target="z_aws">
+          <mxGeometry relative="1" as="geometry" x="0.5733" />
+        </mxCell>
+        <mxCell id="legend" value="&lt;b&gt;Request (teal)&lt;/b&gt; ① Alexa+ → Runtime: MCP over Streamable HTTP, bearer JWT from Cognito account linking (Runtime's JWT authorizer, then Tower) · ② Tower → Gateway: MCP tools/call signed SigV4 by the Runtime role (Gateway authorizer AWS_IAM) · ③ Gateway asks Identity for the target's token · ④ Identity → mock /oauth2/token: OAuth2 client credentials over HTTPS through the managed VPC resource · ⑤ Gateway → mock: CAMARA call over HTTPS with that bearer. Tower → DynamoDB is one consent read and one audit put (SDK, Runtime role) — the hot path adds nothing else.&lt;br&gt;&lt;b&gt;Proactive (amber)&lt;/b&gt; P1 mock → CloudFront/HTTP API → alerts Lambda: CloudEvents webhook, sink token in the path (the task egresses via its public IP) · P2 Scheduler → alerts / reconcile: Lambda invoke with the scheduler role · P3 alerts → Gateway: MCP SigV4 (facts re-fetched, consent re-checked) · P4 alerts → SNS → SMS to the watcher.&lt;br&gt;&lt;b&gt;Binding (grey)&lt;/b&gt; B1 phone → binding page over mobile data · B2 phone → carrier authorize through the VPC link (the only public route to the mock) · B3 binding page → Gateway number-verification, auth code via the Identity binding provider.&lt;br&gt;&lt;b&gt;Web chat (teal, W)&lt;/b&gt; W1 browser → CloudFront/S3 page · W2 Cognito Hosted UI, code + PKCE → access token · W3 page → Lambda URL (CORS) · W4 proxy → agent runtime (JWT authorizer, web-chat client) · W5 agent → Tower with the same bearer; Tower verifies it again. Companion: docs/architecture/deployment-agentcore.md." style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;fontSize=11;fontColor=#6B7A90;fontStyle=0;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="30" y="2375" width="2860" height="160" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="08_install_sequence" name="2 Install sequence">
+    <mxGraphModel dx="1422" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="3856" pageHeight="1560" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="t1" value="Install sequence — empty account to working demo, and back (what the repo does today)" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;fontSize=20;fontColor=#1B2B45;fontStyle=1;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="30" y="14" width="3796" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="t2" value="One column per step, one lane per actor: the Developer types the command; make, Terraform or a script does the work; the AWS lane says what exists afterwards. Teal arrows = the order. Dashed border = deferred or unverified in docs/submission/build-log.md (the TODO(human) is in the step header)." style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;fontSize=11;fontColor=#6B7A90;fontStyle=0;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="30" y="46" width="3796" height="22" as="geometry" />
+        </mxCell>
+        <mxCell id="t3" value="Steps 7–9 run inside step 6 (make deploy chains them) and can be re-run alone. Inputs: credentials (root .env), Terraform outputs (artifacts/tf-outputs.json, artifacts/tf-outputs-ecr.json), envs/aws.tfvars. Companion with preconditions and rollback per step: docs/architecture/deployment-agentcore.md." style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;fontSize=11;fontColor=#6B7A90;fontStyle=0;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="30" y="68" width="3796" height="22" as="geometry" />
+        </mxCell>
+        <mxCell id="lane_dev" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#EAF7F4;strokeColor=#2BB3A0;verticalAlign=top;align=left;spacingLeft=10;spacingTop=4;spacing=2;fontStyle=1;fontSize=14;fontColor=#1B2B45;dashed=0;arcSize=12;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="30" y="110" width="3806" height="270" as="geometry" />
+        </mxCell>
+        <mxCell id="lab_dev" value="&lt;b&gt;Developer (WSL2)&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;fontSize=13;fontColor=#1B2B45;fontStyle=0;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="40" y="120" width="150" height="250" as="geometry" />
+        </mxCell>
+        <mxCell id="lane_make" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#EEF0F5;strokeColor=#9AA7B5;verticalAlign=top;align=left;spacingLeft=10;spacingTop=4;spacing=2;fontStyle=1;fontSize=14;fontColor=#1B2B45;dashed=0;arcSize=12;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="30" y="390" width="3806" height="200" as="geometry" />
+        </mxCell>
+        <mxCell id="lab_make" value="&lt;b&gt;make target&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;fontSize=13;fontColor=#1B2B45;fontStyle=0;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="40" y="400" width="150" height="180" as="geometry" />
+        </mxCell>
+        <mxCell id="lane_tf" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E4E9F2;strokeColor=#0E1726;verticalAlign=top;align=left;spacingLeft=10;spacingTop=4;spacing=2;fontStyle=1;fontSize=14;fontColor=#1B2B45;dashed=0;arcSize=12;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="30" y="600" width="3806" height="330" as="geometry" />
+        </mxCell>
+        <mxCell id="lab_tf" value="&lt;b&gt;Terraform&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;fontSize=13;fontColor=#1B2B45;fontStyle=0;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="40" y="610" width="150" height="310" as="geometry" />
+        </mxCell>
+        <mxCell id="lane_scripts" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#EEF0F5;strokeColor=#9AA7B5;verticalAlign=top;align=left;spacingLeft=10;spacingTop=4;spacing=2;fontStyle=1;fontSize=14;fontColor=#1B2B45;dashed=0;arcSize=12;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="30" y="940" width="3806" height="250" as="geometry" />
+        </mxCell>
+        <mxCell id="lab_scripts" value="&lt;b&gt;scripts/&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;fontSize=13;fontColor=#1B2B45;fontStyle=0;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="40" y="950" width="150" height="230" as="geometry" />
+        </mxCell>
+        <mxCell id="lane_aws" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FBF3E0;strokeColor=#E8A33D;verticalAlign=top;align=left;spacingLeft=10;spacingTop=4;spacing=2;fontStyle=1;fontSize=14;fontColor=#1B2B45;dashed=0;arcSize=12;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="30" y="1200" width="3806" height="230" as="geometry" />
+        </mxCell>
+        <mxCell id="lab_aws" value="&lt;b&gt;AWS — what exists after&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;fontSize=13;fontColor=#1B2B45;fontStyle=0;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="40" y="1210" width="150" height="210" as="geometry" />
+        </mxCell>
+        <mxCell id="s1_dev" value="&lt;font style=&quot;font-size:9px&quot;&gt;&lt;b&gt;&lt;font style=&quot;font-size:12px&quot;&gt;Step 1 — Credentials, state, tfvars&lt;/font&gt;&lt;/b&gt;&lt;br&gt;&lt;i&gt;&lt;font style=&quot;font-size:9px&quot; color=&quot;#9A6A1C&quot;&gt;TODO(human) build-log/13: state backend; fill envs/aws.tfvars&lt;/font&gt;&lt;/i&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px&quot; face=&quot;Courier New&quot;&gt;aws configure --profile att&lt;/font&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;or AWS_ACCESS_KEY_ID / _SECRET_ in&lt;br&gt;the root .env (mk/vars.mk exports)&lt;br&gt;aws sts get-caller-identity&lt;br&gt;create the S3 bucket + lock table&lt;br&gt;(commands in backend.tf)&lt;br&gt;cp envs/aws.tfvars.example&lt;br&gt;envs/aws.tfvars → mock_domain_name,&lt;br&gt;mock_route53_zone_id, tower_jwt_*&lt;/font&gt;&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DDF3EF;strokeColor=#2BB3A0;fontSize=11;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=1;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="200" y="122" width="250" height="246" as="geometry" />
+        </mxCell>
+        <mxCell id="s1_make" value="&lt;b&gt;make config-check&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;validates the root .env, masks&lt;br&gt;secrets; no AWS call&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#6B7583;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=1;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="200" y="402" width="250" height="176" as="geometry" />
+        </mxCell>
+        <mxCell id="s1_tf" value="&lt;b&gt;deploy/terraform/backend.tf&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;REPLACE-ME bucket / lock table:&lt;br&gt;edit, or pass -backend-config&lt;br&gt;bucket=… region=…&lt;br&gt;dynamodb_table=… at init&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#6B7583;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=1;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="200" y="612" width="250" height="306" as="geometry" />
+        </mxCell>
+        <mxCell id="s1_aws" value="&lt;b&gt;S3 state bucket + lock table&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;versioned, KMS-encrypted, private&lt;br&gt;outside Terraform; never destroyed&lt;br&gt;by any make target&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FBEFD9;strokeColor=#E8A33D;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=1;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="200" y="1212" width="250" height="206" as="geometry" />
+        </mxCell>
+        <mxCell id="v_s1_dev_s1_make" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#6B7583;strokeWidth=1;fontSize=9;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=0.5000;exitY=1.0000;exitDx=0;exitDy=0;entryX=0.5000;entryY=0.0000;entryDx=0;entryDy=0;" edge="1" parent="1" source="s1_dev" target="s1_make">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="v_s1_make_s1_tf" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#6B7583;strokeWidth=1;fontSize=9;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=0.5000;exitY=1.0000;exitDx=0;exitDy=0;entryX=0.5000;entryY=0.0000;entryDx=0;entryDy=0;" edge="1" parent="1" source="s1_make" target="s1_tf">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="v_s1_tf_s1_aws" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#6B7583;strokeWidth=1;fontSize=9;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=0.5000;exitY=1.0000;exitDx=0;exitDy=0;entryX=0.5000;entryY=0.0000;entryDx=0;entryDy=0;" edge="1" parent="1" source="s1_tf" target="s1_aws">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="s2_dev" value="&lt;font style=&quot;font-size:9px&quot;&gt;&lt;b&gt;&lt;font style=&quot;font-size:12px&quot;&gt;Step 2 — make ecr-up&lt;/font&gt;&lt;/b&gt;&lt;br&gt;&lt;i&gt;&lt;font style=&quot;font-size:9px&quot; color=&quot;#9A6A1C&quot;&gt;TODO(human) build-log/13: images (validated offline, not applied)&lt;/font&gt;&lt;/i&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px&quot; face=&quot;Courier New&quot;&gt;make ecr-up&lt;/font&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;once; idempotent (re-run = no&lt;br&gt;changes). Repos made earlier with&lt;br&gt;-target in the main state: state mv&lt;br&gt;first (deploy/terraform/README.md)&lt;/font&gt;&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DDF3EF;strokeColor=#2BB3A0;fontSize=11;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=1;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="462" y="122" width="250" height="246" as="geometry" />
+        </mxCell>
+        <mxCell id="s2_make" value="&lt;b&gt;ecr-up (mk/aws.mk)&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;TFR = terraform -chdir=&lt;br&gt;deploy/terraform/ecr: init →&lt;br&gt;apply $(TFR_VARS) → ecr-outputs&lt;br&gt;→ artifacts/tf-outputs-ecr.json&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#6B7583;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=1;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="462" y="402" width="250" height="176" as="geometry" />
+        </mxCell>
+        <mxCell id="s2_tf" value="&lt;b&gt;ecr root: aws_ecr_repository ×5&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;+ aws_ecr_lifecycle_policy.service&lt;br&gt;own state ask-the-tower/ecr/…;&lt;br&gt;main root reads it by data source&lt;br&gt;outputs ecr_repositories,&lt;br&gt;registry, region&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#6B7583;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=1;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="462" y="612" width="250" height="306" as="geometry" />
+        </mxCell>
+        <mxCell id="s2_aws" value="&lt;b&gt;5 empty repositories&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;att-dev/&amp;lt;service&amp;gt;&lt;br&gt;kept by make down ENV=aws&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FBEFD9;strokeColor=#E8A33D;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=1;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="462" y="1212" width="250" height="206" as="geometry" />
+        </mxCell>
+        <mxCell id="v_s2_dev_s2_make" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#6B7583;strokeWidth=1;fontSize=9;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=0.5000;exitY=1.0000;exitDx=0;exitDy=0;entryX=0.5000;entryY=0.0000;entryDx=0;entryDy=0;" edge="1" parent="1" source="s2_dev" target="s2_make">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="v_s2_make_s2_tf" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#6B7583;strokeWidth=1;fontSize=9;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=0.5000;exitY=1.0000;exitDx=0;exitDy=0;entryX=0.5000;entryY=0.0000;entryDx=0;entryDy=0;" edge="1" parent="1" source="s2_make" target="s2_tf">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="v_s2_tf_s2_aws" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#6B7583;strokeWidth=1;fontSize=9;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=0.5000;exitY=1.0000;exitDx=0;exitDy=0;entryX=0.5000;entryY=0.0000;entryDx=0;entryDy=0;" edge="1" parent="1" source="s2_tf" target="s2_aws">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="n_s1_dev" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2BB3A0;strokeWidth=2;fontSize=9;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=1.0000;exitY=0.1626;exitDx=0;exitDy=0;entryX=0.0000;entryY=0.1626;entryDx=0;entryDy=0;" edge="1" parent="1" source="s1_dev" target="s2_dev">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="s3_dev" value="&lt;font style=&quot;font-size:9px&quot;&gt;&lt;b&gt;&lt;font style=&quot;font-size:12px&quot;&gt;Step 3 — make build&lt;/font&gt;&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px&quot; face=&quot;Courier New&quot;&gt;make build&lt;/font&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;all five services, local Docker&lt;/font&gt;&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DDF3EF;strokeColor=#2BB3A0;fontSize=11;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="724" y="122" width="230" height="246" as="geometry" />
+        </mxCell>
+        <mxCell id="s3_make" value="&lt;b&gt;build → build-% (mk/build.mk)&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;docker build -f services/&amp;lt;svc&amp;gt;/&lt;br&gt;Dockerfile -t ask-the-tower/&amp;lt;svc&amp;gt;&lt;br&gt;:&amp;lt;sha&amp;gt; and :latest .&lt;br&gt;host architecture&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#6B7583;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="724" y="402" width="230" height="176" as="geometry" />
+        </mxCell>
+        <mxCell id="s3_aws" value="&lt;b&gt;nothing&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;local images only; make push&lt;br&gt;rebuilds for arm64, so these&lt;br&gt;are not what AWS runs&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FBEFD9;strokeColor=#E8A33D;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="724" y="1212" width="230" height="206" as="geometry" />
+        </mxCell>
+        <mxCell id="v_s3_dev_s3_make" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#6B7583;strokeWidth=1;fontSize=9;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=0.5000;exitY=1.0000;exitDx=0;exitDy=0;entryX=0.5000;entryY=0.0000;entryDx=0;entryDy=0;" edge="1" parent="1" source="s3_dev" target="s3_make">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="v_s3_make_s3_aws" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#6B7583;strokeWidth=1;fontSize=9;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=0.5000;exitY=1.0000;exitDx=0;exitDy=0;entryX=0.5000;entryY=0.0000;entryDx=0;entryDy=0;" edge="1" parent="1" source="s3_make" target="s3_aws">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="n_s2_dev" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2BB3A0;strokeWidth=2;fontSize=9;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=1.0000;exitY=0.1626;exitDx=0;exitDy=0;entryX=0.0000;entryY=0.1626;entryDx=0;entryDy=0;" edge="1" parent="1" source="s2_dev" target="s3_dev">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="s4_dev" value="&lt;font style=&quot;font-size:9px&quot;&gt;&lt;b&gt;&lt;font style=&quot;font-size:12px&quot;&gt;Step 4 — make push ENV=aws&lt;/font&gt;&lt;/b&gt;&lt;br&gt;&lt;i&gt;&lt;font style=&quot;font-size:9px&quot; color=&quot;#9A6A1C&quot;&gt;TODO(human) build-log/13: images (dry run only so far)&lt;/font&gt;&lt;/i&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px&quot; face=&quot;Courier New&quot;&gt;make push ENV=aws&lt;/font&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;needs docker buildx; QEMU&lt;br&gt;binfmt for arm64 on amd64&lt;br&gt;artifacts/tf-outputs-ecr.json&lt;br&gt;from step 2 is enough&lt;/font&gt;&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DDF3EF;strokeColor=#2BB3A0;fontSize=11;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=1;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="966" y="122" width="250" height="246" as="geometry" />
+        </mxCell>
+        <mxCell id="s4_make" value="&lt;b&gt;push (mk/build.mk)&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;scripts/push_images.py --env aws&lt;br&gt;--tag $(GIT_SHA); on success&lt;br&gt;writes artifacts/image-tag&lt;br&gt;(the script hard-codes arm64)&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#6B7583;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=1;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="966" y="402" width="250" height="176" as="geometry" />
+        </mxCell>
+        <mxCell id="s4_scripts" value="&lt;b&gt;scripts/push_images.py&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;aws ecr get-login-password |&lt;br&gt;docker login &amp;lt;registry&amp;gt;&lt;br&gt;per service: docker buildx build&lt;br&gt;--platform linux/arm64&lt;br&gt;--provenance=false --sbom=false&lt;br&gt;-t &amp;lt;repo&amp;gt;:&amp;lt;sha&amp;gt; -t &amp;lt;repo&amp;gt;:latest&lt;br&gt;--push .&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#6B7583;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=1;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="966" y="952" width="250" height="226" as="geometry" />
+        </mxCell>
+        <mxCell id="s4_aws" value="&lt;b&gt;10 image tags&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;5 arm64 images × (&amp;lt;sha&amp;gt;, latest)&lt;br&gt;single manifest, no attestation&lt;br&gt;index (Lambda/Runtime-safe)&lt;br&gt;scan on push&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FBEFD9;strokeColor=#E8A33D;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=1;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="966" y="1212" width="250" height="206" as="geometry" />
+        </mxCell>
+        <mxCell id="v_s4_dev_s4_make" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#6B7583;strokeWidth=1;fontSize=9;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=0.5000;exitY=1.0000;exitDx=0;exitDy=0;entryX=0.5000;entryY=0.0000;entryDx=0;entryDy=0;" edge="1" parent="1" source="s4_dev" target="s4_make">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="v_s4_make_s4_scripts" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#6B7583;strokeWidth=1;fontSize=9;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=0.5000;exitY=1.0000;exitDx=0;exitDy=0;entryX=0.5000;entryY=0.0000;entryDx=0;entryDy=0;" edge="1" parent="1" source="s4_make" target="s4_scripts">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="v_s4_scripts_s4_aws" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#6B7583;strokeWidth=1;fontSize=9;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=0.5000;exitY=1.0000;exitDx=0;exitDy=0;entryX=0.5000;entryY=0.0000;entryDx=0;entryDy=0;" edge="1" parent="1" source="s4_scripts" target="s4_aws">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="n_s3_dev" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2BB3A0;strokeWidth=2;fontSize=9;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=1.0000;exitY=0.1626;exitDx=0;exitDy=0;entryX=0.0000;entryY=0.1626;entryDx=0;entryDy=0;" edge="1" parent="1" source="s3_dev" target="s4_dev">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="s5_dev" value="&lt;font style=&quot;font-size:9px&quot;&gt;&lt;b&gt;&lt;font style=&quot;font-size:12px&quot;&gt;Step 5 — make plan&lt;/font&gt;&lt;/b&gt;&lt;br&gt;&lt;i&gt;&lt;font style=&quot;font-size:9px&quot; color=&quot;#9A6A1C&quot;&gt;TODO(human) build-log/13: make plan ENV=aws → review&lt;/font&gt;&lt;/i&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px&quot; face=&quot;Courier New&quot;&gt;make plan&lt;/font&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;prints the image_tag it uses:&lt;br&gt;the tag step 4 recorded&lt;br&gt;review artifacts/terraform-plan.txt&lt;/font&gt;&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DDF3EF;strokeColor=#2BB3A0;fontSize=11;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=1;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="1228" y="122" width="240" height="246" as="geometry" />
+        </mxCell>
+        <mxCell id="s5_make" value="&lt;b&gt;plan (mk/aws.mk)&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;terraform init&lt;br&gt;plan -var-file=envs/aws.tfvars&lt;br&gt;-var=image_tag=$(IMAGE_TAG)&lt;br&gt;-out artifacts/tfplan → show &amp;gt;&lt;br&gt;artifacts/terraform-plan.txt&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#6B7583;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=1;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="1228" y="402" width="240" height="176" as="geometry" />
+        </mxCell>
+        <mxCell id="s5_tf" value="&lt;b&gt;init + refresh + plan&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;S3 backend; aws ≥ 6.20 &amp;lt; 7;&lt;br&gt;the main root; ECR read by&lt;br&gt;data source (needs step 2)&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#6B7583;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=1;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="1228" y="612" width="240" height="306" as="geometry" />
+        </mxCell>
+        <mxCell id="s5_aws" value="&lt;b&gt;nothing new&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FBEFD9;strokeColor=#E8A33D;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=1;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="1228" y="1212" width="240" height="206" as="geometry" />
+        </mxCell>
+        <mxCell id="v_s5_dev_s5_make" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#6B7583;strokeWidth=1;fontSize=9;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=0.5000;exitY=1.0000;exitDx=0;exitDy=0;entryX=0.5000;entryY=0.0000;entryDx=0;entryDy=0;" edge="1" parent="1" source="s5_dev" target="s5_make">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="v_s5_make_s5_tf" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#6B7583;strokeWidth=1;fontSize=9;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=0.5000;exitY=1.0000;exitDx=0;exitDy=0;entryX=0.5000;entryY=0.0000;entryDx=0;entryDy=0;" edge="1" parent="1" source="s5_make" target="s5_tf">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="v_s5_tf_s5_aws" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#6B7583;strokeWidth=1;fontSize=9;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=0.5000;exitY=1.0000;exitDx=0;exitDy=0;entryX=0.5000;entryY=0.0000;entryDx=0;entryDy=0;" edge="1" parent="1" source="s5_tf" target="s5_aws">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="n_s4_dev" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2BB3A0;strokeWidth=2;fontSize=9;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=1.0000;exitY=0.1626;exitDx=0;exitDy=0;entryX=0.0000;entryY=0.1626;entryDx=0;entryDy=0;" edge="1" parent="1" source="s4_dev" target="s5_dev">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="s6_dev" value="&lt;font style=&quot;font-size:9px&quot;&gt;&lt;b&gt;&lt;font style=&quot;font-size:12px&quot;&gt;Step 6 — make deploy — terraform apply&lt;/font&gt;&lt;/b&gt;&lt;br&gt;&lt;i&gt;&lt;font style=&quot;font-size:9px&quot; color=&quot;#9A6A1C&quot;&gt;TODO(human) build-log/13: make deploy ENV=aws&lt;/font&gt;&lt;/i&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px&quot; face=&quot;Courier New&quot;&gt;make deploy&lt;/font&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;one command; chains steps 7–9&lt;br&gt;(outputs → register-gateway →&lt;br&gt;seed-aws → outputs)&lt;br&gt;slow parts: CloudFront, ACM&lt;br&gt;DNS validation, ECS service steady&lt;/font&gt;&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DDF3EF;strokeColor=#2BB3A0;fontSize=11;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=1;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="1480" y="122" width="430" height="246" as="geometry" />
+        </mxCell>
+        <mxCell id="s6_make" value="&lt;b&gt;deploy (mk/aws.mk)&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;push_images.py --verify (tag in ECR)&lt;br&gt;→ terraform init → apply -auto-approve&lt;br&gt;$(TF_VARS) → make outputs → make&lt;br&gt;register-gateway → seed-aws → outputs&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#6B7583;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=1;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="1480" y="402" width="430" height="176" as="geometry" />
+        </mxCell>
+        <mxCell id="s6_tf" value="&lt;b&gt;apply — creation order by dependency&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;1 random_password ×5 · network (VPC, subnets, IGW, endpoints, egress SG,&lt;br&gt;  VPC link) · IAM roles (Runtime, Lambda ×3, Gateway, ECS, Scheduler)&lt;br&gt;2 kms (key policy names the roles) → dynamodb (7 tables) · SNS topics&lt;br&gt;  · Secrets Manager registry&lt;br&gt;3 lambdas edge: HTTP API + CloudFront + WAF → public_base_url&lt;br&gt;4 mock_carrier: ACM cert + Route 53 validation → internal ALB + listener&lt;br&gt;  → ECS cluster, task definition, service (image …/mock-carrier:&amp;lt;sha&amp;gt;)&lt;br&gt;5 agentcore_identity: 2 OAuth2 providers (token URL = mock) +&lt;br&gt;  binding workload identity (return URL = public_base_url)&lt;br&gt;6 agentcore_gateway: Gateway → 6 OpenAPI targets (provider ARNs)&lt;br&gt;7 agentcore_runtime (gateway ARN/URL, KMS, tables) · Lambda ×3&lt;br&gt;  (gateway URL, SNS topic) · authorize route over the VPC link&lt;br&gt;8 SNS subscription · scheduler (6 schedules) · observability&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#6B7583;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=1;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="1480" y="612" width="430" height="306" as="geometry" />
+        </mxCell>
+        <mxCell id="s6_aws" value="&lt;b&gt;everything on page 1&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;Runtime DEFAULT endpoint (tower_mcp_url)&lt;br&gt;Gateway with 6 targets; Identity providers&lt;br&gt;mock task running scenario demo&lt;br&gt;Lambda ×3, HTTP API, CloudFront + WAF&lt;br&gt;7 tables (empty), 2 keys, SNS, 6 schedules&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FBEFD9;strokeColor=#E8A33D;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=1;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="1480" y="1212" width="430" height="206" as="geometry" />
+        </mxCell>
+        <mxCell id="v_s6_dev_s6_make" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#6B7583;strokeWidth=1;fontSize=9;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=0.5000;exitY=1.0000;exitDx=0;exitDy=0;entryX=0.5000;entryY=0.0000;entryDx=0;entryDy=0;" edge="1" parent="1" source="s6_dev" target="s6_make">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="v_s6_make_s6_tf" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#6B7583;strokeWidth=1;fontSize=9;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=0.5000;exitY=1.0000;exitDx=0;exitDy=0;entryX=0.5000;entryY=0.0000;entryDx=0;entryDy=0;" edge="1" parent="1" source="s6_make" target="s6_tf">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="v_s6_tf_s6_aws" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#6B7583;strokeWidth=1;fontSize=9;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=0.5000;exitY=1.0000;exitDx=0;exitDy=0;entryX=0.5000;entryY=0.0000;entryDx=0;entryDy=0;" edge="1" parent="1" source="s6_tf" target="s6_aws">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="n_s5_dev" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2BB3A0;strokeWidth=2;fontSize=9;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=1.0000;exitY=0.1626;exitDx=0;exitDy=0;entryX=0.0000;entryY=0.1626;entryDx=0;entryDy=0;" edge="1" parent="1" source="s5_dev" target="s6_dev">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="s7_dev" value="&lt;font style=&quot;font-size:9px&quot;&gt;&lt;b&gt;&lt;font style=&quot;font-size:12px&quot;&gt;Step 7 — make register-gateway&lt;/font&gt;&lt;/b&gt;&lt;br&gt;&lt;i&gt;&lt;font style=&quot;font-size:9px&quot; color=&quot;#9A6A1C&quot;&gt;TODO(human) build-log/13: verify the Gateway contract&lt;/font&gt;&lt;/i&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px&quot; face=&quot;Courier New&quot;&gt;(chained by deploy; or alone)&lt;/font&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;make register-gateway&lt;/font&gt;&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DDF3EF;strokeColor=#2BB3A0;fontSize=11;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=1;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="1922" y="122" width="250" height="246" as="geometry" />
+        </mxCell>
+        <mxCell id="s7_make" value="&lt;b&gt;register-gateway (mk/aws.mk)&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;uv run python&lt;br&gt;scripts/register_gateway.py&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#6B7583;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=1;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="1922" y="402" width="250" height="176" as="geometry" />
+        </mxCell>
+        <mxCell id="s7_scripts" value="&lt;b&gt;scripts/register_gateway.py&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;registers nothing: Terraform made&lt;br&gt;the targets in step 6. Lists the&lt;br&gt;tools over MCP (SigV4) on&lt;br&gt;gateway_url, maps them with&lt;br&gt;resolve_tool_names → writes&lt;br&gt;artifacts/gateway-tools.json&lt;br&gt;(--check diffs)&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#6B7583;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=1;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="1922" y="952" width="250" height="226" as="geometry" />
+        </mxCell>
+        <mxCell id="s7_aws" value="&lt;b&gt;no change&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;services resolve the same names&lt;br&gt;at warm-up (CARRIER_GATEWAY_&lt;br&gt;TOOLS=discover)&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FBEFD9;strokeColor=#E8A33D;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=1;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="1922" y="1212" width="250" height="206" as="geometry" />
+        </mxCell>
+        <mxCell id="v_s7_dev_s7_make" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#6B7583;strokeWidth=1;fontSize=9;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=0.5000;exitY=1.0000;exitDx=0;exitDy=0;entryX=0.5000;entryY=0.0000;entryDx=0;entryDy=0;" edge="1" parent="1" source="s7_dev" target="s7_make">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="v_s7_make_s7_scripts" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#6B7583;strokeWidth=1;fontSize=9;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=0.5000;exitY=1.0000;exitDx=0;exitDy=0;entryX=0.5000;entryY=0.0000;entryDx=0;entryDy=0;" edge="1" parent="1" source="s7_make" target="s7_scripts">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="v_s7_scripts_s7_aws" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#6B7583;strokeWidth=1;fontSize=9;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=0.5000;exitY=1.0000;exitDx=0;exitDy=0;entryX=0.5000;entryY=0.0000;entryDx=0;entryDy=0;" edge="1" parent="1" source="s7_scripts" target="s7_aws">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="n_s6_dev" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2BB3A0;strokeWidth=2;fontSize=9;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=1.0000;exitY=0.1626;exitDx=0;exitDy=0;entryX=0.0000;entryY=0.1626;entryDx=0;entryDy=0;" edge="1" parent="1" source="s6_dev" target="s7_dev">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="s8_dev" value="&lt;font style=&quot;font-size:9px&quot;&gt;&lt;b&gt;&lt;font style=&quot;font-size:12px&quot;&gt;Step 8 — make seed-aws&lt;/font&gt;&lt;/b&gt;&lt;br&gt;&lt;i&gt;&lt;font style=&quot;font-size:9px&quot; color=&quot;#9A6A1C&quot;&gt;TODO(human) build-log/13: deploy chain (dry run only so far)&lt;/font&gt;&lt;/i&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px&quot; face=&quot;Courier New&quot;&gt;(chained by deploy; or alone)&lt;/font&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;needs the AWS CLI + the&lt;br&gt;Session Manager plugin&lt;/font&gt;&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DDF3EF;strokeColor=#2BB3A0;fontSize=11;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=1;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="2184" y="122" width="260" height="246" as="geometry" />
+        </mxCell>
+        <mxCell id="s8_make" value="&lt;b&gt;seed-aws (mk/aws.mk)&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;uv run python scripts/aws_seed.py&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#6B7583;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=1;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="2184" y="402" width="260" height="176" as="geometry" />
+        </mxCell>
+        <mxCell id="s8_scripts" value="&lt;b&gt;scripts/aws_seed.py&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;1 ecs list-tasks → ecs execute-&lt;br&gt;command into the mock task:&lt;br&gt;POST 127.0.0.1:8443/_admin/&lt;br&gt;scenarios/load {demo}&lt;br&gt;2 tower_mcp.seed.seed_demo over&lt;br&gt;boto3 with KMS GenerateMac /&lt;br&gt;Encrypt: users, two bound lines,&lt;br&gt;Mom → Asish watch grant&lt;br&gt;idempotent; --dry-run&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#6B7583;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=1;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="2184" y="952" width="260" height="226" as="geometry" />
+        </mxCell>
+        <mxCell id="s8_aws" value="&lt;b&gt;demo state&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;mock reset to scenarios/demo.yaml&lt;br&gt;Users, Lines, Grants rows&lt;br&gt;(line_id HMAC, msisdn_enc)&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FBEFD9;strokeColor=#E8A33D;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=1;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="2184" y="1212" width="260" height="206" as="geometry" />
+        </mxCell>
+        <mxCell id="v_s8_dev_s8_make" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#6B7583;strokeWidth=1;fontSize=9;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=0.5000;exitY=1.0000;exitDx=0;exitDy=0;entryX=0.5000;entryY=0.0000;entryDx=0;entryDy=0;" edge="1" parent="1" source="s8_dev" target="s8_make">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="v_s8_make_s8_scripts" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#6B7583;strokeWidth=1;fontSize=9;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=0.5000;exitY=1.0000;exitDx=0;exitDy=0;entryX=0.5000;entryY=0.0000;entryDx=0;entryDy=0;" edge="1" parent="1" source="s8_make" target="s8_scripts">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="v_s8_scripts_s8_aws" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#6B7583;strokeWidth=1;fontSize=9;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=0.5000;exitY=1.0000;exitDx=0;exitDy=0;entryX=0.5000;entryY=0.0000;entryDx=0;entryDy=0;" edge="1" parent="1" source="s8_scripts" target="s8_aws">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="n_s7_dev" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2BB3A0;strokeWidth=2;fontSize=9;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=1.0000;exitY=0.1626;exitDx=0;exitDy=0;entryX=0.0000;entryY=0.1626;entryDx=0;entryDy=0;" edge="1" parent="1" source="s7_dev" target="s8_dev">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="s9_dev" value="&lt;font style=&quot;font-size:9px&quot;&gt;&lt;b&gt;&lt;font style=&quot;font-size:12px&quot;&gt;Step 9 — make outputs&lt;/font&gt;&lt;/b&gt;&lt;br&gt;&lt;i&gt;&lt;font style=&quot;font-size:9px&quot; color=&quot;#9A6A1C&quot;&gt;TODO(human) build-log/13: needs a real state&lt;/font&gt;&lt;/i&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px&quot; face=&quot;Courier New&quot;&gt;make outputs&lt;/font&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;(deploy runs it twice)&lt;/font&gt;&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DDF3EF;strokeColor=#2BB3A0;fontSize=11;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=1;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="2456" y="122" width="250" height="246" as="geometry" />
+        </mxCell>
+        <mxCell id="s9_make" value="&lt;b&gt;outputs (mk/aws.mk)&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;terraform output -json &amp;gt;&lt;br&gt;artifacts/tf-outputs.json&lt;br&gt;render_env.py --env aws&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#6B7583;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=1;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="2456" y="402" width="250" height="176" as="geometry" />
+        </mxCell>
+        <mxCell id="s9_scripts" value="&lt;b&gt;scripts/render_env.py&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;→ deploy/.env.aws: TOWER_URL,&lt;br&gt;BINDING_URL, ALERTS_URL,&lt;br&gt;CARRIER_GATEWAY_URL, TOWER_&lt;br&gt;TABLE_PREFIX, TOWER_KMS_*, …&lt;br&gt;no secrets; mk/vars.mk includes&lt;br&gt;it for every ENV=aws target&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#6B7583;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=1;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="2456" y="952" width="250" height="226" as="geometry" />
+        </mxCell>
+        <mxCell id="s9_aws" value="&lt;b&gt;no change&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FBEFD9;strokeColor=#E8A33D;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=1;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="2456" y="1212" width="250" height="206" as="geometry" />
+        </mxCell>
+        <mxCell id="v_s9_dev_s9_make" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#6B7583;strokeWidth=1;fontSize=9;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=0.5000;exitY=1.0000;exitDx=0;exitDy=0;entryX=0.5000;entryY=0.0000;entryDx=0;entryDy=0;" edge="1" parent="1" source="s9_dev" target="s9_make">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="v_s9_make_s9_scripts" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#6B7583;strokeWidth=1;fontSize=9;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=0.5000;exitY=1.0000;exitDx=0;exitDy=0;entryX=0.5000;entryY=0.0000;entryDx=0;entryDy=0;" edge="1" parent="1" source="s9_make" target="s9_scripts">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="v_s9_scripts_s9_aws" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#6B7583;strokeWidth=1;fontSize=9;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=0.5000;exitY=1.0000;exitDx=0;exitDy=0;entryX=0.5000;entryY=0.0000;entryDx=0;entryDy=0;" edge="1" parent="1" source="s9_scripts" target="s9_aws">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="n_s8_dev" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2BB3A0;strokeWidth=2;fontSize=9;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=1.0000;exitY=0.1626;exitDx=0;exitDy=0;entryX=0.0000;entryY=0.1626;entryDx=0;entryDy=0;" edge="1" parent="1" source="s8_dev" target="s9_dev">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="s10_dev" value="&lt;font style=&quot;font-size:9px&quot;&gt;&lt;b&gt;&lt;font style=&quot;font-size:12px&quot;&gt;Step 10 — Web chat users and page&lt;/font&gt;&lt;/b&gt;&lt;br&gt;&lt;i&gt;&lt;font style=&quot;font-size:9px&quot; color=&quot;#9A6A1C&quot;&gt;TODO(human) build-log/20: users, seed, page upload, sign-in&lt;/font&gt;&lt;/i&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px&quot; face=&quot;Courier New&quot;&gt;make cognito-users&lt;/font&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;→ make seed-aws → make web-chat-sync&lt;br&gt;→ make web-chat-url&lt;br&gt;passwords: COGNITO_PASSWORD_ASISH /&lt;br&gt;_MOM in the root .env, or a prompt;&lt;br&gt;never written to disk&lt;br&gt;sign in as asish and as mom&lt;br&gt;(two browser profiles)&lt;/font&gt;&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DDF3EF;strokeColor=#2BB3A0;fontSize=11;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=1;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="2718" y="122" width="270" height="246" as="geometry" />
+        </mxCell>
+        <mxCell id="s10_make" value="&lt;b&gt;cognito-users · web-chat-sync · web-chat-url&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;(mk/aws.mk, ENV=aws)&lt;br&gt;read artifacts/tf-outputs.json&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#6B7583;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=1;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="2718" y="402" width="270" height="176" as="geometry" />
+        </mxCell>
+        <mxCell id="s10_scripts" value="&lt;b&gt;scripts/cognito_user.py&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;create | delete | sub &amp;lt;name&amp;gt;:&lt;br&gt;admin_create_user + permanent&lt;br&gt;password → artifacts/cognito-users.json&lt;br&gt;aws_seed.py --user name=&amp;lt;sub&amp;gt;&lt;br&gt;(or that json): Lines, Grants&lt;br&gt;web-chat-sync: config.js from the&lt;br&gt;outputs, s3 sync, invalidation&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#6B7583;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=1;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="2718" y="952" width="270" height="226" as="geometry" />
+        </mxCell>
+        <mxCell id="s10_aws" value="&lt;b&gt;web chat live&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;Cognito users asish, mom&lt;br&gt;demo rows under their subs&lt;br&gt;page at web_chat_url&lt;br&gt;agent behind agent_url&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FBEFD9;strokeColor=#E8A33D;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=1;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="2718" y="1212" width="270" height="206" as="geometry" />
+        </mxCell>
+        <mxCell id="v_s10_dev_s10_make" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#6B7583;strokeWidth=1;fontSize=9;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=0.5000;exitY=1.0000;exitDx=0;exitDy=0;entryX=0.5000;entryY=0.0000;entryDx=0;entryDy=0;" edge="1" parent="1" source="s10_dev" target="s10_make">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="v_s10_make_s10_scripts" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#6B7583;strokeWidth=1;fontSize=9;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=0.5000;exitY=1.0000;exitDx=0;exitDy=0;entryX=0.5000;entryY=0.0000;entryDx=0;entryDy=0;" edge="1" parent="1" source="s10_make" target="s10_scripts">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="v_s10_scripts_s10_aws" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#6B7583;strokeWidth=1;fontSize=9;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=0.5000;exitY=1.0000;exitDx=0;exitDy=0;entryX=0.5000;entryY=0.0000;entryDx=0;entryDy=0;" edge="1" parent="1" source="s10_scripts" target="s10_aws">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="n_s9_dev" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2BB3A0;strokeWidth=2;fontSize=9;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=1.0000;exitY=0.1626;exitDx=0;exitDy=0;entryX=0.0000;entryY=0.1626;entryDx=0;entryDy=0;" edge="1" parent="1" source="s9_dev" target="s10_dev">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="s11_dev" value="&lt;font style=&quot;font-size:9px&quot;&gt;&lt;b&gt;&lt;font style=&quot;font-size:12px&quot;&gt;Step 11 — Alexa+ registration&lt;/font&gt;&lt;/b&gt;&lt;br&gt;&lt;i&gt;&lt;font style=&quot;font-size:9px&quot; color=&quot;#9A6A1C&quot;&gt;TODO(human) alexa/registration.md §2–§6 (build-log/15)&lt;/font&gt;&lt;/i&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px&quot; face=&quot;Courier New&quot;&gt;docs/architecture/alexa/registration.md&lt;/font&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;§2 alexa-link client on the&lt;br&gt;Terraform pool (aws cognito-idp, CLI;&lt;br&gt;secret + toolkit redirect URLs)&lt;br&gt;§3 tfvars tower_jwt_allowed_clients&lt;br&gt;+= that client → make deploy again&lt;br&gt;§4 toolkit form: Server URL =&lt;br&gt;tower_mcp_url, Streamable HTTP,&lt;br&gt;OAuth account linking · §5–§6&lt;/font&gt;&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DDF3EF;strokeColor=#2BB3A0;fontSize=11;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=1;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="3000" y="122" width="260" height="246" as="geometry" />
+        </mxCell>
+        <mxCell id="s11_make" value="&lt;b&gt;make showcase-alexa&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;simulator script + Tower log tail&lt;br&gt;(no registration target)&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#6B7583;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=1;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="3000" y="402" width="260" height="176" as="geometry" />
+        </mxCell>
+        <mxCell id="s11_tf" value="&lt;b&gt;re-apply&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;Runtime custom_jwt_authorizer&lt;br&gt;+ TOWER_JWT_* environment&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#6B7583;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=1;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="3000" y="612" width="260" height="306" as="geometry" />
+        </mxCell>
+        <mxCell id="s11_aws" value="&lt;b&gt;identity wired&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;alexa-link client on the pool&lt;br&gt;Runtime authorizer allows it&lt;br&gt;toolkit holds the URL + client&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FBEFD9;strokeColor=#E8A33D;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=1;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="3000" y="1212" width="260" height="206" as="geometry" />
+        </mxCell>
+        <mxCell id="v_s11_dev_s11_make" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#6B7583;strokeWidth=1;fontSize=9;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=0.5000;exitY=1.0000;exitDx=0;exitDy=0;entryX=0.5000;entryY=0.0000;entryDx=0;entryDy=0;" edge="1" parent="1" source="s11_dev" target="s11_make">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="v_s11_make_s11_tf" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#6B7583;strokeWidth=1;fontSize=9;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=0.5000;exitY=1.0000;exitDx=0;exitDy=0;entryX=0.5000;entryY=0.0000;entryDx=0;entryDy=0;" edge="1" parent="1" source="s11_make" target="s11_tf">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="v_s11_tf_s11_aws" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#6B7583;strokeWidth=1;fontSize=9;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=0.5000;exitY=1.0000;exitDx=0;exitDy=0;entryX=0.5000;entryY=0.0000;entryDx=0;entryDy=0;" edge="1" parent="1" source="s11_tf" target="s11_aws">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="n_s10_dev" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2BB3A0;strokeWidth=2;fontSize=9;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=1.0000;exitY=0.1626;exitDx=0;exitDy=0;entryX=0.0000;entryY=0.1626;entryDx=0;entryDy=0;" edge="1" parent="1" source="s10_dev" target="s11_dev">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="s12_dev" value="&lt;font style=&quot;font-size:9px&quot;&gt;&lt;b&gt;&lt;font style=&quot;font-size:12px&quot;&gt;Step 12 — Smoke&lt;/font&gt;&lt;/b&gt;&lt;br&gt;&lt;i&gt;&lt;font style=&quot;font-size:9px&quot; color=&quot;#9A6A1C&quot;&gt;TODO(human) build-log/13: latency, test-e2e; build-log/14: ref-client JWT&lt;/font&gt;&lt;/i&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px&quot; face=&quot;Courier New&quot;&gt;curl $BINDING_URL/healthz&lt;/font&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;MCP Inspector → TOWER_URL with&lt;br&gt;the bearer (Tower's /healthz is&lt;br&gt;not on the Runtime URL, which&lt;br&gt;proxies /invocations → /mcp —&lt;br&gt;unverified)&lt;/font&gt;&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DDF3EF;strokeColor=#2BB3A0;fontSize=11;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=1;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="3272" y="122" width="270" height="246" as="geometry" />
+        </mxCell>
+        <mxCell id="s12_make" value="&lt;b&gt;make demo ENV=aws&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;make latency-aws&lt;br&gt;make test-e2e ENV=aws&lt;br&gt;(require-env: deploy/.env.aws)&lt;br&gt;make showcase-gateway&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#6B7583;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=1;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="3272" y="402" width="270" height="176" as="geometry" />
+        </mxCell>
+        <mxCell id="s12_scripts" value="&lt;b&gt;scripts/latency.py&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;TOWER_JWT from the root .env&lt;br&gt;→ artifacts/latency-aws.md&lt;br&gt;pytest tests/aws -m nightly:&lt;br&gt;conformance fixtures through&lt;br&gt;GatewayClient → Gateway → mock&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#6B7583;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=1;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="3272" y="952" width="270" height="226" as="geometry" />
+        </mxCell>
+        <mxCell id="s12_aws" value="&lt;b&gt;traffic only&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;spans in aws/spans only after&lt;br&gt;Transaction Search + ADOT&lt;br&gt;SMS only to verified numbers&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FBEFD9;strokeColor=#E8A33D;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=1;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="3272" y="1212" width="270" height="206" as="geometry" />
+        </mxCell>
+        <mxCell id="v_s12_dev_s12_make" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#6B7583;strokeWidth=1;fontSize=9;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=0.5000;exitY=1.0000;exitDx=0;exitDy=0;entryX=0.5000;entryY=0.0000;entryDx=0;entryDy=0;" edge="1" parent="1" source="s12_dev" target="s12_make">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="v_s12_make_s12_scripts" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#6B7583;strokeWidth=1;fontSize=9;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=0.5000;exitY=1.0000;exitDx=0;exitDy=0;entryX=0.5000;entryY=0.0000;entryDx=0;entryDy=0;" edge="1" parent="1" source="s12_make" target="s12_scripts">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="v_s12_scripts_s12_aws" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#6B7583;strokeWidth=1;fontSize=9;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=0.5000;exitY=1.0000;exitDx=0;exitDy=0;entryX=0.5000;entryY=0.0000;entryDx=0;entryDy=0;" edge="1" parent="1" source="s12_scripts" target="s12_aws">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="n_s11_dev" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2BB3A0;strokeWidth=2;fontSize=9;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=1.0000;exitY=0.1626;exitDx=0;exitDy=0;entryX=0.0000;entryY=0.1626;entryDx=0;entryDy=0;" edge="1" parent="1" source="s11_dev" target="s12_dev">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="s13_dev" value="&lt;font style=&quot;font-size:9px&quot;&gt;&lt;b&gt;&lt;font style=&quot;font-size:12px&quot;&gt;Step 13 — make down ENV=aws&lt;/font&gt;&lt;/b&gt;&lt;br&gt;&lt;i&gt;&lt;font style=&quot;font-size:9px&quot; color=&quot;#9A6A1C&quot;&gt;TODO(human) build-log/13: make down, confirm zero except ECR&lt;/font&gt;&lt;/i&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px&quot; face=&quot;Courier New&quot;&gt;make down ENV=aws&lt;/font&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;asks first; FORCE=1 skips&lt;br&gt;also runs compose down -v&lt;br&gt;after judging only: make down-all&lt;br&gt;(down-eks → down → ECR root)&lt;/font&gt;&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DDF3EF;strokeColor=#2BB3A0;fontSize=11;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=1;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="3554" y="122" width="270" height="246" as="geometry" />
+        </mxCell>
+        <mxCell id="s13_make" value="&lt;b&gt;down (mk/aws.mk)&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;terraform init → destroy&lt;br&gt;-auto-approve (tfvars, no&lt;br&gt;image_tag) · compose down -v&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#6B7583;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=1;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="3554" y="402" width="270" height="176" as="geometry" />
+        </mxCell>
+        <mxCell id="s13_tf" value="&lt;b&gt;destroy — reverse order&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;everything in the main state;&lt;br&gt;not ECR (other root, read by a&lt;br&gt;data source); registry secret&lt;br&gt;(0-day), log groups; KMS keys&lt;br&gt;→ 7-day pending deletion&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#6B7583;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=1;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="3554" y="612" width="270" height="306" as="geometry" />
+        </mxCell>
+        <mxCell id="s13_aws" value="&lt;b&gt;what remains&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;5 ECR repositories + images,&lt;br&gt;S3 state + lock table,&lt;br&gt;Route 53 zone, SMS sandbox numbers,&lt;br&gt;KMS keys (pending), AWS-made log&lt;br&gt;groups — tag project=ask-the-tower&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FBEFD9;strokeColor=#E8A33D;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=1;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="3554" y="1212" width="270" height="206" as="geometry" />
+        </mxCell>
+        <mxCell id="v_s13_dev_s13_make" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#6B7583;strokeWidth=1;fontSize=9;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=0.5000;exitY=1.0000;exitDx=0;exitDy=0;entryX=0.5000;entryY=0.0000;entryDx=0;entryDy=0;" edge="1" parent="1" source="s13_dev" target="s13_make">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="v_s13_make_s13_tf" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#6B7583;strokeWidth=1;fontSize=9;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=0.5000;exitY=1.0000;exitDx=0;exitDy=0;entryX=0.5000;entryY=0.0000;entryDx=0;entryDy=0;" edge="1" parent="1" source="s13_make" target="s13_tf">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="v_s13_tf_s13_aws" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#6B7583;strokeWidth=1;fontSize=9;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=0.5000;exitY=1.0000;exitDx=0;exitDy=0;entryX=0.5000;entryY=0.0000;entryDx=0;entryDy=0;" edge="1" parent="1" source="s13_tf" target="s13_aws">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="n_s12_dev" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2BB3A0;strokeWidth=2;fontSize=9;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=1.0000;exitY=0.1626;exitDx=0;exitDy=0;entryX=0.0000;entryY=0.1626;entryDx=0;entryDy=0;" edge="1" parent="1" source="s12_dev" target="s13_dev">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="foot" value="&lt;b&gt;ECR&lt;/b&gt;: its own root (step 2, make ecr-up), so make down ENV=aws keeps the repositories and images and a redeploy skips steps 2–4 unless the code changed; make down-all (EKS → main → ECR) is the only target that deletes images. &lt;b&gt;Image tag&lt;/b&gt;: make push records the pushed sha in artifacts/image-tag; plan and deploy use it (IMAGE_TAG= overrides) and deploy checks it exists in ECR before apply; down passes none, so a later commit cannot break any of the three. &lt;b&gt;Rollback&lt;/b&gt; for steps 5–12 is make down ENV=aws (main stack); there is no per-module destroy target. &lt;b&gt;Cut line&lt;/b&gt; (prompts/00): tower_carrier_client = &quot;direct&quot; + enable_nat_gateway = true in envs/aws.tfvars, then steps 5–6 again — see page 3." style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;fontSize=11;fontColor=#6B7A90;fontStyle=0;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="30" y="1450" width="3796" height="100" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="08_integrations" name="3 Integrations and config">
+    <mxGraphModel dx="1422" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="2338" pageHeight="1740" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="t1" value="Integrations and config — every edge on page 1, where its settings come from, and what proves it" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;fontSize=20;fontColor=#1B2B45;fontStyle=1;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="30" y="14" width="2278" height="32" as="geometry" />
+        </mxCell>
+        <mxCell id="t2" value="Config travels two ways: Terraform variable / resource → module → service environment (Runtime environment_variables, Lambda environment, ECS task env); and Terraform output → make outputs → artifacts/tf-outputs.json → scripts/render_env.py → deploy/.env.aws → mk/vars.mk exports for ENV=aws targets." style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;fontSize=11;fontColor=#6B7A90;fontStyle=0;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="30" y="46" width="2278" height="22" as="geometry" />
+        </mxCell>
+        <mxCell id="t3" value="† = env var not in any services/*/.env.example (finding F8 in the companion doc). Row colour: teal request path, amber proactive path, grey binding / data / management." style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;fontSize=11;fontColor=#6B7A90;fontStyle=0;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="30" y="68" width="2278" height="22" as="geometry" />
+        </mxCell>
+        <mxCell id="h0" value="&lt;b&gt;#&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E4E9F2;strokeColor=#0E1726;fontSize=11;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="30" y="110" width="44" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="h1" value="&lt;b&gt;Producer → consumer&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E4E9F2;strokeColor=#0E1726;fontSize=11;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="80" y="110" width="250" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="h2" value="&lt;b&gt;Protocol · auth&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E4E9F2;strokeColor=#0E1726;fontSize=11;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="336" y="110" width="330" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="h3" value="&lt;b&gt;Config: where it is set → how it travels → env var → reader&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E4E9F2;strokeColor=#0E1726;fontSize=11;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="672" y="110" width="640" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="h4" value="&lt;b&gt;Proof&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E4E9F2;strokeColor=#0E1726;fontSize=11;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="1318" y="110" width="390" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="r1c0" value="&lt;font style=&quot;font-size:11px&quot;&gt;1&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DDF3EF;strokeColor=#2BB3A0;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="30" y="150" width="44" height="74" as="geometry" />
+        </mxCell>
+        <mxCell id="r1c1" value="&lt;b&gt;Alexa+ → Tower (AgentCore Runtime)&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DDF3EF;strokeColor=#2BB3A0;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="80" y="150" width="250" height="74" as="geometry" />
+        </mxCell>
+        <mxCell id="r1c2" value="&lt;font style=&quot;font-size:9px&quot;&gt;MCP over Streamable HTTP · Bearer JWT (Cognito); Runtime custom_jwt_authorizer, then Tower's auth.py (sub → user_id)&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#6B7583;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="336" y="150" width="330" height="74" as="geometry" />
+        </mxCell>
+        <mxCell id="r1c3" value="&lt;font style=&quot;font-size:9px&quot;&gt;tfvars tower_jwt_discovery_url, tower_jwt_allowed_clients / _audience → Runtime authorizer; tower_jwks_url, tower_jwt_issuer → Runtime env TOWER_JWKS_URL, TOWER_JWT_ISSUER, TOWER_JWT_AUDIENCE, TOWER_JWT_CLIENT_IDS → tower-mcp. Output tower_mcp_url → pasted into the toolkit form.&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#6B7583;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="672" y="150" width="640" height="74" as="geometry" />
+        </mxCell>
+        <mxCell id="r1c4" value="&lt;font style=&quot;font-size:9px&quot;&gt;services/tower-mcp/tests/test_auth.py · registration.md §6 (TODO(human))&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#6B7583;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="1318" y="150" width="390" height="74" as="geometry" />
+        </mxCell>
+        <mxCell id="r2c0" value="&lt;font style=&quot;font-size:11px&quot;&gt;2&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DDF3EF;strokeColor=#2BB3A0;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="30" y="230" width="44" height="74" as="geometry" />
+        </mxCell>
+        <mxCell id="r2c1" value="&lt;b&gt;Browser → web chat page + Cognito Hosted UI&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DDF3EF;strokeColor=#2BB3A0;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="80" y="230" width="250" height="74" as="geometry" />
+        </mxCell>
+        <mxCell id="r2c2" value="&lt;font style=&quot;font-size:9px&quot;&gt;HTTPS · CloudFront (OAC → private S3) · Cognito authorization code + PKCE, no client secret&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#6B7583;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="336" y="230" width="330" height="74" as="geometry" />
+        </mxCell>
+        <mxCell id="r2c3" value="&lt;font style=&quot;font-size:9px&quot;&gt;module.web_chat page URL → Cognito client callback / logout URL; outputs cognito_hosted_ui_url, cognito_client_id, web_chat_url, agent_url, binding_url → make web-chat-sync → config.js keys COGNITO_DOMAIN, CLIENT_ID, REDIRECT_URI, AGENT_URL, BINDING_BASE_URL&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#6B7583;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="672" y="230" width="640" height="74" as="geometry" />
+        </mxCell>
+        <mxCell id="r2c4" value="&lt;font style=&quot;font-size:9px&quot;&gt;services/web-chat/tests/test_static.py · sign-in on AWS: TODO(human) build-log/20&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#6B7583;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="1318" y="230" width="390" height="74" as="geometry" />
+        </mxCell>
+        <mxCell id="r3c0" value="&lt;font style=&quot;font-size:11px&quot;&gt;3&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DDF3EF;strokeColor=#2BB3A0;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="30" y="310" width="44" height="74" as="geometry" />
+        </mxCell>
+        <mxCell id="r3c1" value="&lt;b&gt;Web chat page → Lambda URL → agent runtime&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DDF3EF;strokeColor=#2BB3A0;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="80" y="310" width="250" height="74" as="geometry" />
+        </mxCell>
+        <mxCell id="r3c2" value="&lt;font style=&quot;font-size:9px&quot;&gt;HTTPS POST /invocations · Cognito Bearer + Content-Type + Runtime session header, nothing else; CORS = page origin; Runtime custom_jwt_authorizer (allowed_clients = web-chat)&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#6B7583;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="336" y="310" width="330" height="74" as="geometry" />
+        </mxCell>
+        <mxCell id="r3c3" value="&lt;font style=&quot;font-size:9px&quot;&gt;proxy env AGENT_INVOKE_URL = the agent runtime's invocation URL; agent env TOWER_URL = tower_mcp_url, WEB_CHAT_BINDING_BASE_URL = binding_url, BEDROCK_MODEL_ID, TOWER_ENV=aws, REF_AGENT=bedrock&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#6B7583;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="672" y="310" width="640" height="74" as="geometry" />
+        </mxCell>
+        <mxCell id="r3c4" value="&lt;font style=&quot;font-size:9px&quot;&gt;services/web-chat/tests/test_proxy.py · services/ref-client/tests/test_http.py (401 before any model call)&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#6B7583;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="1318" y="310" width="390" height="74" as="geometry" />
+        </mxCell>
+        <mxCell id="r4c0" value="&lt;font style=&quot;font-size:11px&quot;&gt;4&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DDF3EF;strokeColor=#2BB3A0;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="30" y="390" width="44" height="74" as="geometry" />
+        </mxCell>
+        <mxCell id="r4c1" value="&lt;b&gt;Agent → Tower (bearer pass-through)&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DDF3EF;strokeColor=#2BB3A0;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="80" y="390" width="250" height="74" as="geometry" />
+        </mxCell>
+        <mxCell id="r4c2" value="&lt;font style=&quot;font-size:9px&quot;&gt;MCP over Streamable HTTP · the caller's Bearer, byte for byte; Tower verifies it again&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#6B7583;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="336" y="390" width="330" height="74" as="geometry" />
+        </mxCell>
+        <mxCell id="r4c3" value="&lt;font style=&quot;font-size:9px&quot;&gt;module.cognito issuer, jwks_url, client_id (+ var.tower_jwt_allowed_clients) → Tower env TOWER_JWKS_URL, TOWER_JWT_ISSUER, TOWER_JWT_CLIENT_IDS and both Runtime authorizers&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#6B7583;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="672" y="390" width="640" height="74" as="geometry" />
+        </mxCell>
+        <mxCell id="r4c4" value="&lt;font style=&quot;font-size:9px&quot;&gt;services/ref-client/tests/test_http.py (bearer reaches a fake Tower unchanged) · tests/e2e/test_web_chat_story.py&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#6B7583;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="1318" y="390" width="390" height="74" as="geometry" />
+        </mxCell>
+        <mxCell id="r5c0" value="&lt;font style=&quot;font-size:11px&quot;&gt;5&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DDF3EF;strokeColor=#2BB3A0;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="30" y="470" width="44" height="74" as="geometry" />
+        </mxCell>
+        <mxCell id="r5c1" value="&lt;b&gt;Reference client / latency run → Tower&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DDF3EF;strokeColor=#2BB3A0;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="80" y="470" width="250" height="74" as="geometry" />
+        </mxCell>
+        <mxCell id="r5c2" value="&lt;font style=&quot;font-size:9px&quot;&gt;MCP · Bearer (TOWER_JWT†); SigV4 only if no JWT authorizer is configured&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#6B7583;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="336" y="470" width="330" height="74" as="geometry" />
+        </mxCell>
+        <mxCell id="r5c3" value="&lt;font style=&quot;font-size:9px&quot;&gt;output tower_mcp_url → render_env.py → TOWER_URL in deploy/.env.aws → ref-client, scripts/latency.py; TOWER_JWT† from the root .env&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#6B7583;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="672" y="470" width="640" height="74" as="geometry" />
+        </mxCell>
+        <mxCell id="r5c4" value="&lt;font style=&quot;font-size:9px&quot;&gt;make latency-aws → artifacts/latency-aws.md · tests/aws/test_latency_aws.py · tests/e2e/test_make_demo.py (ENV=aws; TODO(human))&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#6B7583;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="1318" y="470" width="390" height="74" as="geometry" />
+        </mxCell>
+        <mxCell id="r6c0" value="&lt;font style=&quot;font-size:11px&quot;&gt;6&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DDF3EF;strokeColor=#2BB3A0;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="30" y="550" width="44" height="74" as="geometry" />
+        </mxCell>
+        <mxCell id="r6c1" value="&lt;b&gt;Tower → AgentCore Gateway&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DDF3EF;strokeColor=#2BB3A0;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="80" y="550" width="250" height="74" as="geometry" />
+        </mxCell>
+        <mxCell id="r6c2" value="&lt;font style=&quot;font-size:9px&quot;&gt;MCP tools/call · SigV4, authorizer AWS_IAM (Runtime role: bedrock-agentcore:InvokeGateway)&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#6B7583;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="336" y="550" width="330" height="74" as="geometry" />
+        </mxCell>
+        <mxCell id="r6c3" value="&lt;font style=&quot;font-size:9px&quot;&gt;module.agentcore_gateway.gateway_url → Runtime env CARRIER_GATEWAY_URL; CARRIER_CLIENT=gateway, CARRIER_GATEWAY_TOOLS=discover, CARRIER_GATEWAY_AUTH†=sigv4, CARRIER_GATEWAY_REGION† → camara_client.config. Output gateway_url → render_env.py CARRIER_GATEWAY_URL (+ CARRIER_GATEWAY_TOOLS = artifacts/gateway-tools.json for local runs)&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#6B7583;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="672" y="550" width="640" height="74" as="geometry" />
+        </mxCell>
+        <mxCell id="r6c4" value="&lt;font style=&quot;font-size:9px&quot;&gt;packages/camara-client/tests/test_gateway_live_wiring.py · tests/aws/test_gateway_conformance.py (nightly: conformance fixtures through GatewayClient)&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#6B7583;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="1318" y="550" width="390" height="74" as="geometry" />
+        </mxCell>
+        <mxCell id="r7c0" value="&lt;font style=&quot;font-size:11px&quot;&gt;7&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DDF3EF;strokeColor=#2BB3A0;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="30" y="630" width="44" height="74" as="geometry" />
+        </mxCell>
+        <mxCell id="r7c1" value="&lt;b&gt;Gateway → Identity → mock /oauth2/token&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DDF3EF;strokeColor=#2BB3A0;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="80" y="630" width="250" height="74" as="geometry" />
+        </mxCell>
+        <mxCell id="r7c2" value="&lt;font style=&quot;font-size:9px&quot;&gt;OAuth2 client credentials, client_secret_basic, HTTPS through the managed VPC resource&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#6B7583;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="336" y="630" width="330" height="74" as="geometry" />
+        </mxCell>
+        <mxCell id="r7c3" value="&lt;font style=&quot;font-size:9px&quot;&gt;random_password.carrier_client[&quot;tower&quot;] → Identity provider client_secret and the mock's registry (Secrets Manager → MOCK_CLIENTS_YAML† → MOCK_CLIENTS_FILE); var.carrier_target_scopes → target scopes; issuer / token URL = https://&amp;lt;mock_domain_name&amp;gt;&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#6B7583;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="672" y="630" width="640" height="74" as="geometry" />
+        </mxCell>
+        <mxCell id="r7c4" value="&lt;font style=&quot;font-size:9px&quot;&gt;tests/aws/test_terraform_static.py (no carrier secret outside Identity on the gateway path) · tests/aws/test_gateway_conformance.py&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#6B7583;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="1318" y="630" width="390" height="74" as="geometry" />
+        </mxCell>
+        <mxCell id="r8c0" value="&lt;font style=&quot;font-size:11px&quot;&gt;8&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DDF3EF;strokeColor=#2BB3A0;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="30" y="710" width="44" height="74" as="geometry" />
+        </mxCell>
+        <mxCell id="r8c1" value="&lt;b&gt;Gateway → mock carrier (CAMARA calls)&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DDF3EF;strokeColor=#2BB3A0;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="80" y="710" width="250" height="74" as="geometry" />
+        </mxCell>
+        <mxCell id="r8c2" value="&lt;font style=&quot;font-size:9px&quot;&gt;HTTPS + OAuth2 bearer injected from Identity; internal ALB via managed VPC resource (routing_domain = mock_domain_name)&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#6B7583;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="336" y="710" width="330" height="74" as="geometry" />
+        </mxCell>
+        <mxCell id="r8c3" value="&lt;font style=&quot;font-size:9px&quot;&gt;local.carrier.base_url → each target's servers[0]; output carrier_base_url → render_env.py CARRIER_BASE_URL; Runtime / Lambda env CARRIER_BASE_URL, CARRIER_BACKEND (recorded, never branched on)&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#6B7583;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="672" y="710" width="640" height="74" as="geometry" />
+        </mxCell>
+        <mxCell id="r8c4" value="&lt;font style=&quot;font-size:9px&quot;&gt;tests/aws/test_gateway_conformance.py · tests/aws/test_backend_swap.py (ATT_ALLOW_APPLY†=1, sandbox vars)&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#6B7583;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="1318" y="710" width="390" height="74" as="geometry" />
+        </mxCell>
+        <mxCell id="r9c0" value="&lt;font style=&quot;font-size:11px&quot;&gt;9&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F3F5F8;strokeColor=#6B7583;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="30" y="790" width="44" height="74" as="geometry" />
+        </mxCell>
+        <mxCell id="r9c1" value="&lt;b&gt;Phone → binding page (CloudFront → HTTP API → Lambda)&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F3F5F8;strokeColor=#6B7583;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="80" y="790" width="250" height="74" as="geometry" />
+        </mxCell>
+        <mxCell id="r9c2" value="&lt;font style=&quot;font-size:9px&quot;&gt;HTTPS over mobile data · single-use token · session cookie signed with SESSION_SECRET&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#6B7583;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="336" y="790" width="330" height="74" as="geometry" />
+        </mxCell>
+        <mxCell id="r9c3" value="&lt;font style=&quot;font-size:9px&quot;&gt;output binding_url (= public_base_url) → render_env.py BINDING_URL; Lambda env BASE_URL, BIND_REDIRECT_URI, SESSION_SECRET ← random_password.session_secret&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#6B7583;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="672" y="790" width="640" height="74" as="geometry" />
+        </mxCell>
+        <mxCell id="r9c4" value="&lt;font style=&quot;font-size:9px&quot;&gt;services/binding-page/tests/test_bind_flow.py, test_lambda.py, test_playwright.py (local) · §2.6 real phone (TODO(human))&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#6B7583;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="1318" y="790" width="390" height="74" as="geometry" />
+        </mxCell>
+        <mxCell id="r10c0" value="&lt;font style=&quot;font-size:11px&quot;&gt;10&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F3F5F8;strokeColor=#6B7583;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="30" y="870" width="44" height="74" as="geometry" />
+        </mxCell>
+        <mxCell id="r10c1" value="&lt;b&gt;Phone → carrier authorize (mock)&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F3F5F8;strokeColor=#6B7583;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="80" y="870" width="250" height="74" as="geometry" />
+        </mxCell>
+        <mxCell id="r10c2" value="&lt;font style=&quot;font-size:9px&quot;&gt;HTTPS · GET /carrier/oauth2/authorize on the HTTP API → VPC link → internal ALB (the only public route to the mock)&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#6B7583;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="336" y="870" width="330" height="74" as="geometry" />
+        </mxCell>
+        <mxCell id="r10c3" value="&lt;font style=&quot;font-size:9px&quot;&gt;binding Lambda env CARRIER_AUTHORIZE_URL = &amp;lt;public_base_url&amp;gt;/carrier/oauth2/authorize, CARRIER_TOKEN_URL, CARRIER_CLIENT_ID = binding-page&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#6B7583;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="672" y="870" width="640" height="74" as="geometry" />
+        </mxCell>
+        <mxCell id="r10c4" value="&lt;font style=&quot;font-size:9px&quot;&gt;§2.6 real phone (TODO(human) build-log/13)&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#6B7583;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="1318" y="870" width="390" height="74" as="geometry" />
+        </mxCell>
+        <mxCell id="r11c0" value="&lt;font style=&quot;font-size:11px&quot;&gt;11&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F3F5F8;strokeColor=#6B7583;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="30" y="950" width="44" height="74" as="geometry" />
+        </mxCell>
+        <mxCell id="r11c1" value="&lt;b&gt;Binding page → Gateway (number-verification)&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F3F5F8;strokeColor=#6B7583;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="80" y="950" width="250" height="74" as="geometry" />
+        </mxCell>
+        <mxCell id="r11c2" value="&lt;font style=&quot;font-size:9px&quot;&gt;MCP · SigV4; AUTHORIZATION_CODE through the Identity binding provider + workload identity&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#6B7583;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="336" y="950" width="330" height="74" as="geometry" />
+        </mxCell>
+        <mxCell id="r11c3" value="&lt;font style=&quot;font-size:9px&quot;&gt;binding_carrier_client = gateway → CARRIER_CLIENT=gateway, CARRIER_GATEWAY_URL, CARRIER_GATEWAY_TOOLS=discover (direct → CARRIER_SECRET_REF=env:CARRIER_CLIENT_SECRET)&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#6B7583;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="672" y="950" width="640" height="74" as="geometry" />
+        </mxCell>
+        <mxCell id="r11c4" value="&lt;font style=&quot;font-size:9px&quot;&gt;unverified: TODO(human) build-log/13 — real-phone bind; fallback binding_carrier_client = direct&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#6B7583;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="1318" y="950" width="390" height="74" as="geometry" />
+        </mxCell>
+        <mxCell id="r12c0" value="&lt;font style=&quot;font-size:11px&quot;&gt;12&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F3F5F8;strokeColor=#6B7583;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="30" y="1030" width="44" height="74" as="geometry" />
+        </mxCell>
+        <mxCell id="r12c1" value="&lt;b&gt;Tower → Alerts /internal/watch&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F3F5F8;strokeColor=#6B7583;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="80" y="1030" width="250" height="74" as="geometry" />
+        </mxCell>
+        <mxCell id="r12c2" value="&lt;font style=&quot;font-size:9px&quot;&gt;HTTPS through CloudFront · shared bearer&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#6B7583;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="336" y="1030" width="330" height="74" as="geometry" />
+        </mxCell>
+        <mxCell id="r12c3" value="&lt;font style=&quot;font-size:9px&quot;&gt;random_password.internal_bearer → Runtime ALERTS_INTERNAL_BEARER and alerts INTERNAL_BEARER; ALERTS_INTERNAL_URL = public_base_url&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#6B7583;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="672" y="1030" width="640" height="74" as="geometry" />
+        </mxCell>
+        <mxCell id="r12c4" value="&lt;font style=&quot;font-size:9px&quot;&gt;services/alerts/tests/test_handler.py · tests/e2e/test_alerts.py (local)&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#6B7583;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="1318" y="1030" width="390" height="74" as="geometry" />
+        </mxCell>
+        <mxCell id="r13c0" value="&lt;font style=&quot;font-size:11px&quot;&gt;13&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FBEFD9;strokeColor=#E8A33D;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="30" y="1110" width="44" height="74" as="geometry" />
+        </mxCell>
+        <mxCell id="r13c1" value="&lt;b&gt;Mock carrier → Alerts webhook&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FBEFD9;strokeColor=#E8A33D;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="80" y="1110" width="250" height="74" as="geometry" />
+        </mxCell>
+        <mxCell id="r13c2" value="&lt;font style=&quot;font-size:9px&quot;&gt;HTTPS POST /hooks/{kind}/{sink_token} · CloudEvents · sink token · WAF rate rule + route throttling&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#6B7583;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="336" y="1110" width="330" height="74" as="geometry" />
+        </mxCell>
+        <mxCell id="r13c3" value="&lt;font style=&quot;font-size:9px&quot;&gt;alerts env HOOKS_BASE_URL = public_base_url (sinks registered with the carrier); output hooks_base_url → render_env.py ALERTS_URL&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#6B7583;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="672" y="1110" width="640" height="74" as="geometry" />
+        </mxCell>
+        <mxCell id="r13c4" value="&lt;font style=&quot;font-size:9px&quot;&gt;services/alerts/tests/test_hooks.py · tests/e2e/test_alerts.py · make showcase-alerts (local)&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#6B7583;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="1318" y="1110" width="390" height="74" as="geometry" />
+        </mxCell>
+        <mxCell id="r14c0" value="&lt;font style=&quot;font-size:11px&quot;&gt;14&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FBEFD9;strokeColor=#E8A33D;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="30" y="1190" width="44" height="74" as="geometry" />
+        </mxCell>
+        <mxCell id="r14c1" value="&lt;b&gt;EventBridge Scheduler → alerts / reconcile&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FBEFD9;strokeColor=#E8A33D;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="80" y="1190" width="250" height="74" as="geometry" />
+        </mxCell>
+        <mxCell id="r14c2" value="&lt;font style=&quot;font-size:9px&quot;&gt;Lambda invoke · aws_iam_role.scheduler · payload {profile} | {action: tick} | {scheduled_time}&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#6B7583;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="336" y="1190" width="330" height="74" as="geometry" />
+        </mxCell>
+        <mxCell id="r14c3" value="&lt;font style=&quot;font-size:9px&quot;&gt;var.alerts_timezone → cron timezone and ALERTS_DEFAULT_TZ; ALERTS_MODE=lambda&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#6B7583;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="672" y="1190" width="640" height="74" as="geometry" />
+        </mxCell>
+        <mxCell id="r14c4" value="&lt;font style=&quot;font-size:9px&quot;&gt;tests/aws/test_terraform_static.py (schedules match 10 §3)&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#6B7583;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="1318" y="1190" width="390" height="74" as="geometry" />
+        </mxCell>
+        <mxCell id="r15c0" value="&lt;font style=&quot;font-size:11px&quot;&gt;15&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FBEFD9;strokeColor=#E8A33D;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="30" y="1270" width="44" height="74" as="geometry" />
+        </mxCell>
+        <mxCell id="r15c1" value="&lt;b&gt;Alerts → SNS → watcher's phone&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FBEFD9;strokeColor=#E8A33D;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="80" y="1270" width="250" height="74" as="geometry" />
+        </mxCell>
+        <mxCell id="r15c2" value="&lt;font style=&quot;font-size:9px&quot;&gt;SNS Publish (SMS) · Lambda execution role; replies topic → alerts (two-way)&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#6B7583;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="336" y="1270" width="330" height="74" as="geometry" />
+        </mxCell>
+        <mxCell id="r15c3" value="&lt;font style=&quot;font-size:9px&quot;&gt;ALERTS_SENDER=sns, SNS_TOPIC_ARN (replies topic); var.sms_monthly_spend_limit → SMS preferences&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#6B7583;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="672" y="1270" width="640" height="74" as="geometry" />
+        </mxCell>
+        <mxCell id="r15c4" value="&lt;font style=&quot;font-size:9px&quot;&gt;services/alerts/tests/test_sim_swap_recipients.py · SMS sandbox run (TODO(human))&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#6B7583;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="1318" y="1270" width="390" height="74" as="geometry" />
+        </mxCell>
+        <mxCell id="r16c0" value="&lt;font style=&quot;font-size:11px&quot;&gt;16&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F3F5F8;strokeColor=#6B7583;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="30" y="1350" width="44" height="74" as="geometry" />
+        </mxCell>
+        <mxCell id="r16c1" value="&lt;b&gt;Tower, Lambdas, aws_seed.py → DynamoDB + KMS&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F3F5F8;strokeColor=#6B7583;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="80" y="1350" width="250" height="74" as="geometry" />
+        </mxCell>
+        <mxCell id="r16c2" value="&lt;font style=&quot;font-size:9px&quot;&gt;AWS SDK · IAM roles (Runtime, Lambda ×3); IAM user for aws_seed.py&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#6B7583;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="336" y="1350" width="330" height="74" as="geometry" />
+        </mxCell>
+        <mxCell id="r16c3" value="&lt;font style=&quot;font-size:9px&quot;&gt;outputs table_prefix, kms_key_arn, kms_hmac_key_arn → env TOWER_TABLE_PREFIX, TOWER_KMS_KEY_ID, TOWER_KMS_HMAC_KEY_ID, TOWER_ENV=aws (Terraform for services; render_env.py and aws_seed.py for local tools)&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#6B7583;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="672" y="1350" width="640" height="74" as="geometry" />
+        </mxCell>
+        <mxCell id="r16c4" value="&lt;font style=&quot;font-size:9px&quot;&gt;tests/aws/test_kms_wiring.py · packages/tower-consent tests (moto + DynamoDB Local)&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#6B7583;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="1318" y="1350" width="390" height="74" as="geometry" />
+        </mxCell>
+        <mxCell id="r17c0" value="&lt;font style=&quot;font-size:11px&quot;&gt;17&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F3F5F8;strokeColor=#6B7583;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="30" y="1430" width="44" height="74" as="geometry" />
+        </mxCell>
+        <mxCell id="r17c1" value="&lt;b&gt;Runtime spans → reconcile Lambda&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F3F5F8;strokeColor=#6B7583;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="80" y="1430" width="250" height="74" as="geometry" />
+        </mxCell>
+        <mxCell id="r17c2" value="&lt;font style=&quot;font-size:9px&quot;&gt;OTel → aws/spans (Transaction Search) · Logs Insights with the Lambda role&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#6B7583;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="336" y="1430" width="330" height="74" as="geometry" />
+        </mxCell>
+        <mxCell id="r17c3" value="&lt;font style=&quot;font-size:9px&quot;&gt;reconcile env TOWER_TRACE_LOG_GROUP†, TOWER_METRICS_NAMESPACE†, TOWER_RECONCILE_WINDOW_H†&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#6B7583;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="672" y="1430" width="640" height="74" as="geometry" />
+        </mxCell>
+        <mxCell id="r17c4" value="&lt;font style=&quot;font-size:9px&quot;&gt;packages/tower-audit/tests/test_aws_nightly.py · TODO(human): traces, expect checked &amp;gt; 0&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#6B7583;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="1318" y="1430" width="390" height="74" as="geometry" />
+        </mxCell>
+        <mxCell id="r18c0" value="&lt;font style=&quot;font-size:11px&quot;&gt;18&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F3F5F8;strokeColor=#6B7583;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="30" y="1510" width="44" height="74" as="geometry" />
+        </mxCell>
+        <mxCell id="r18c1" value="&lt;b&gt;Developer → ECR, mock task (ECS Exec)&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F3F5F8;strokeColor=#6B7583;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="80" y="1510" width="250" height="74" as="geometry" />
+        </mxCell>
+        <mxCell id="r18c2" value="&lt;font style=&quot;font-size:9px&quot;&gt;docker login with an ECR token · ecs execute-command (SSM) · IAM user&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#6B7583;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="336" y="1510" width="330" height="74" as="geometry" />
+        </mxCell>
+        <mxCell id="r18c3" value="&lt;font style=&quot;font-size:9px&quot;&gt;output ecr_repositories → push_images.py; mock_cluster_name / _service_name / _container_name → aws_seed.py (render_env.py also writes MOCK_CLUSTER†, MOCK_SERVICE†, MOCK_CONTAINER†, read by nothing)&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#6B7583;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="672" y="1510" width="640" height="74" as="geometry" />
+        </mxCell>
+        <mxCell id="r18c4" value="&lt;font style=&quot;font-size:9px&quot;&gt;tests/aws/test_scripts.py (dry runs against fake outputs)&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#6B7583;fontSize=10;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="1318" y="1510" width="390" height="74" as="geometry" />
+        </mxCell>
+        <mxCell id="z_cut" value="Cut-line variants (prompts/00) — not the default" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#C9D3DF;verticalAlign=top;align=left;spacingLeft=10;spacingTop=4;spacing=2;fontStyle=1;fontSize=13;fontColor=#8A96A8;dashed=1;arcSize=12;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="1748" y="110" width="560" height="880" as="geometry" />
+        </mxCell>
+        <mxCell id="cut_a" value="&lt;b&gt;A · DirectClient from Runtime → Fargate mock (expressible today)&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;envs/aws.tfvars: tower_carrier_client = &quot;direct&quot; + enable_nat_gateway = true&lt;br&gt;Runtime network_mode VPC (private subnets, agentcore_egress SG, NAT for ECR/logs)&lt;br&gt;Runtime env CARRIER_CLIENT=direct, CARRIER_SECRET_REF=env:CARRIER_CLIENT_SECRET,&lt;br&gt;CARRIER_CLIENT_SECRET — the documented exception: Tower's client secret is&lt;br&gt;Runtime config (tests/aws/test_terraform_static.py allows it only here)&lt;br&gt;Tower → mock: HTTPS + OAuth2 client credentials minted by the mock itself&lt;br&gt;Gateway and Identity are still created; alerts always uses Gateway;&lt;br&gt;binding uses it unless binding_carrier_client = &quot;direct&quot;&lt;br&gt;render_env.py still writes CARRIER_CLIENT=gateway (finding F7)&lt;br&gt;cost: + NAT gateway ≈ $0.045/h + data&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F7F8FA;strokeColor=#C9D3DF;fontSize=11;fontColor=#8A96A8;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=1;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="1768" y="150" width="520" height="230" as="geometry" />
+        </mxCell>
+        <mxCell id="cut_rt" value="&lt;b&gt;Runtime (VPC)&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;DirectClient&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F7F8FA;strokeColor=#C9D3DF;fontSize=11;fontColor=#8A96A8;align=center;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="1768" y="410" width="150" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="cut_alb" value="&lt;b&gt;internal ALB&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;HTTPS :443&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F7F8FA;strokeColor=#C9D3DF;fontSize=11;fontColor=#8A96A8;align=center;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="1953" y="410" width="150" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="cut_mock" value="&lt;b&gt;Fargate mock&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;/oauth2/token + CAMARA&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F7F8FA;strokeColor=#C9D3DF;fontSize=11;fontColor=#8A96A8;align=center;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="2138" y="410" width="150" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="cut_e1" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#B8C2CF;strokeWidth=1;fontSize=9;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=1.0000;exitY=0.5000;exitDx=0;exitDy=0;entryX=0.0000;entryY=0.5000;entryDx=0;entryDy=0;" edge="1" parent="1" source="cut_rt" target="cut_alb">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="cut_e2" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#B8C2CF;strokeWidth=1;fontSize=9;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=1.0000;exitY=0.5000;exitDx=0;exitDy=0;entryX=0.0000;entryY=0.5000;entryDx=0;entryDy=0;" edge="1" parent="1" source="cut_alb" target="cut_mock">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="cut_gw" value="&lt;b&gt;Gateway + Identity (still deployed)&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;used by alerts (always) and binding (unless direct) — not by Tower&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F7F8FA;strokeColor=#C9D3DF;fontSize=11;fontColor=#8A96A8;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=1;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="1768" y="520" width="520" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="cut_b" value="&lt;b&gt;B · No Gateway / Identity at all (not expressible today)&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;prompts/00: &quot;Gateway and Identity become a documented experiment&quot;&lt;br&gt;Terraform has no switch for it: modules agentcore_gateway and&lt;br&gt;agentcore_identity are unconditional, the alerts Lambda always gets&lt;br&gt;gateway_environment, and agentcore_runtime / lambdas take gateway_arn&lt;br&gt;Needs: count on both modules, a direct environment for alerts (secret&lt;br&gt;via Secrets Manager or env), binding_carrier_client = &quot;direct&quot; —&lt;br&gt;a Terraform change, not made here (finding F10)&lt;br&gt;What would remain: Runtime (VPC) + Fargate mock + Lambda ×3 + data&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F7F8FA;strokeColor=#C9D3DF;fontSize=11;fontColor=#8A96A8;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=1;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="1768" y="610" width="520" height="220" as="geometry" />
+        </mxCell>
+        <mxCell id="cut_note" value="Either variant keeps the rules: policy stays deterministic code in Tower, Alexa+ only phrases, the mock stays the demo default, binding still needs the phone on mobile data, and the hot path stays one DynamoDB read plus the carrier calls." style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;fontSize=11;fontColor=#6B7A90;fontStyle=0;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="1768" y="850" width="520" height="120" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

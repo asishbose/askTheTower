@@ -1,0 +1,1241 @@
+{
+ "generated_by": "packages/camara-client/scripts/gen_fixtures.py",
+ "source": "specs/camara (CAMARA Fall25)",
+ "apis": {
+  "sim-swap": {
+   "file": "sim-swap.yaml",
+   "sha256": "b0cda1408fc88b366fc16d04f157478205a1736e81393332172a67f20832648c",
+   "version": "2.1.0",
+   "base_path": "/sim-swap/v2"
+  },
+  "sim-swap-subscriptions": {
+   "file": "sim-swap-subscriptions.yaml",
+   "sha256": "e3d2d6132cf87e7739a567a1e7ca6e3dc5baa729d501b9b211a72946223aff86",
+   "version": "0.3.0",
+   "base_path": "/sim-swap-subscriptions/v0.3"
+  },
+  "call-forwarding-signal": {
+   "file": "call-forwarding-signal.yaml",
+   "sha256": "553015e6d917ad0c137e284747ca33d8d2558ef4af1bdc344f1c4c4b76ffbaf4",
+   "version": "0.4.0",
+   "base_path": "/call-forwarding-signal/v0.4"
+  },
+  "number-verification": {
+   "file": "number-verification.yaml",
+   "sha256": "45a2d3344275e4682d291ad010a9aad3250f590194a4ca60b22a56ba5afafd40",
+   "version": "2.1.0",
+   "base_path": "/number-verification/v2"
+  },
+  "device-reachability-status": {
+   "file": "device-reachability-status.yaml",
+   "sha256": "522514fe2af8c4fafaa008a4eaf386259ce870ca579b50ac38250794b6b7e456",
+   "version": "1.1.0",
+   "base_path": "/device-reachability-status/v1"
+  },
+  "device-reachability-status-subscriptions": {
+   "file": "device-reachability-status-subscriptions.yaml",
+   "sha256": "8535406dabfd71ebfcc3106a55933b8f194ed4156dc3c0d207ffe430bbef669b",
+   "version": "0.8.0",
+   "base_path": "/device-reachability-status-subscriptions/v0.8"
+  }
+ },
+ "operations": {
+  "call-forwarding-signal/retrieveCallForwarding": {
+   "api": "call-forwarding-signal",
+   "operation_id": "retrieveCallForwarding",
+   "method": "POST",
+   "path": "/call-forwarding-signal/v0.4/call-forwardings",
+   "path_params": [],
+   "scopes": [
+    [
+     "call-forwarding-signal:call-forwardings:read"
+    ]
+   ],
+   "statuses": [
+    200,
+    400,
+    401,
+    403,
+    404,
+    422,
+    429,
+    501
+   ],
+   "errors": [
+    [
+     400,
+     "INVALID_ARGUMENT"
+    ],
+    [
+     404,
+     "NOT_FOUND"
+    ],
+    [
+     404,
+     "IDENTIFIER_NOT_FOUND"
+    ],
+    [
+     401,
+     "UNAUTHENTICATED"
+    ],
+    [
+     403,
+     "PERMISSION_DENIED"
+    ],
+    [
+     422,
+     "SERVICE_NOT_APPLICABLE"
+    ],
+    [
+     422,
+     "MISSING_IDENTIFIER"
+    ],
+    [
+     422,
+     "UNNECESSARY_IDENTIFIER"
+    ],
+    [
+     429,
+     "QUOTA_EXCEEDED"
+    ],
+    [
+     429,
+     "TOO_MANY_REQUESTS"
+    ],
+    [
+     501,
+     "NOT_IMPLEMENTED"
+    ]
+   ],
+   "request_schema": {
+    "description": "resource containing the phone number (PhoneNumber) regarding which the Call Forwarding Service must be checked. To be provided/valued only in case of two-legged authentication. If provided/valued with three-legged authentication a 422-UNNECESSARY_IDENTIFIER error code is returned.",
+    "type": "object",
+    "properties": {
+     "phoneNumber": {
+      "description": "A public identifier addressing a telephone subscription. In mobile networks it corresponds to the MSISDN (Mobile Station International Subscriber Directory Number). In order to be globally unique it has to be formatted in international format, according to E.164 standard, prefixed with '+'.",
+      "type": "string",
+      "pattern": "^\\+[1-9][0-9]{4,14}$"
+     }
+    }
+   }
+  },
+  "call-forwarding-signal/retrieveUnconditionalCallForwarding": {
+   "api": "call-forwarding-signal",
+   "operation_id": "retrieveUnconditionalCallForwarding",
+   "method": "POST",
+   "path": "/call-forwarding-signal/v0.4/unconditional-call-forwardings",
+   "path_params": [],
+   "scopes": [
+    [
+     "call-forwarding-signal:unconditional-call-forwardings:read"
+    ]
+   ],
+   "statuses": [
+    200,
+    400,
+    401,
+    403,
+    404,
+    422,
+    429
+   ],
+   "errors": [
+    [
+     400,
+     "INVALID_ARGUMENT"
+    ],
+    [
+     404,
+     "NOT_FOUND"
+    ],
+    [
+     404,
+     "IDENTIFIER_NOT_FOUND"
+    ],
+    [
+     401,
+     "UNAUTHENTICATED"
+    ],
+    [
+     403,
+     "PERMISSION_DENIED"
+    ],
+    [
+     422,
+     "SERVICE_NOT_APPLICABLE"
+    ],
+    [
+     422,
+     "MISSING_IDENTIFIER"
+    ],
+    [
+     422,
+     "UNNECESSARY_IDENTIFIER"
+    ],
+    [
+     429,
+     "QUOTA_EXCEEDED"
+    ],
+    [
+     429,
+     "TOO_MANY_REQUESTS"
+    ]
+   ],
+   "request_schema": {
+    "description": "resource containing the phone number (PhoneNumber) regarding which the Call Forwarding Service must be checked. To be provided/valued only in case of two-legged authentication. If provided/valued with three-legged authentication a 422-UNNECESSARY_IDENTIFIER error code is returned.",
+    "type": "object",
+    "properties": {
+     "phoneNumber": {
+      "description": "A public identifier addressing a telephone subscription. In mobile networks it corresponds to the MSISDN (Mobile Station International Subscriber Directory Number). In order to be globally unique it has to be formatted in international format, according to E.164 standard, prefixed with '+'.",
+      "type": "string",
+      "pattern": "^\\+[1-9][0-9]{4,14}$"
+     }
+    }
+   }
+  },
+  "device-reachability-status-subscriptions/createDeviceReachabilityStatusSubscription": {
+   "api": "device-reachability-status-subscriptions",
+   "operation_id": "createDeviceReachabilityStatusSubscription",
+   "method": "POST",
+   "path": "/device-reachability-status-subscriptions/v0.8/subscriptions",
+   "path_params": [],
+   "scopes": [
+    [
+     "device-reachability-status-subscriptions:org.camaraproject.device-reachability-status-subscriptions.v0.reachability-data:create",
+     "device-reachability-status-subscriptions:org.camaraproject.device-reachability-status-subscriptions.v0.reachability-sms:create",
+     "device-reachability-status-subscriptions:org.camaraproject.device-reachability-status-subscriptions.v0.reachability-disconnected:create"
+    ]
+   ],
+   "statuses": [
+    201,
+    202,
+    400,
+    401,
+    403,
+    409,
+    422,
+    429
+   ],
+   "errors": [
+    [
+     400,
+     "INVALID_ARGUMENT"
+    ],
+    [
+     400,
+     "OUT_OF_RANGE"
+    ],
+    [
+     400,
+     "INVALID_PROTOCOL"
+    ],
+    [
+     400,
+     "INVALID_CREDENTIAL"
+    ],
+    [
+     400,
+     "INVALID_TOKEN"
+    ],
+    [
+     400,
+     "INVALID_SINK"
+    ],
+    [
+     401,
+     "UNAUTHENTICATED"
+    ],
+    [
+     403,
+     "PERMISSION_DENIED"
+    ],
+    [
+     403,
+     "SUBSCRIPTION_MISMATCH"
+    ],
+    [
+     409,
+     "ABORTED"
+    ],
+    [
+     409,
+     "ALREADY_EXISTS"
+    ],
+    [
+     422,
+     "SERVICE_NOT_APPLICABLE"
+    ],
+    [
+     422,
+     "MISSING_IDENTIFIER"
+    ],
+    [
+     422,
+     "UNSUPPORTED_IDENTIFIER"
+    ],
+    [
+     422,
+     "UNNECESSARY_IDENTIFIER"
+    ],
+    [
+     422,
+     "MULTIEVENT_SUBSCRIPTION_NOT_SUPPORTED"
+    ],
+    [
+     429,
+     "QUOTA_EXCEEDED"
+    ],
+    [
+     429,
+     "TOO_MANY_REQUESTS"
+    ]
+   ],
+   "request_schema": {
+    "description": "The request for creating a event-type event subscription",
+    "type": "object",
+    "required": [
+     "sink",
+     "protocol",
+     "config",
+     "types"
+    ],
+    "properties": {
+     "protocol": {
+      "type": "string",
+      "enum": [
+       "HTTP",
+       "MQTT3",
+       "MQTT5",
+       "AMQP",
+       "NATS",
+       "KAFKA"
+      ],
+      "description": "Identifier of a delivery protocol. Only HTTP is allowed for now"
+     },
+     "sink": {
+      "type": "string",
+      "format": "uri",
+      "pattern": "^https:\\/\\/.+$",
+      "description": "The address to which events shall be delivered using the selected protocol."
+     },
+     "sinkCredential": {
+      "description": "A sink credential provides authentication or authorization information necessary to enable delivery of events to a target.",
+      "type": "object",
+      "properties": {
+       "credentialType": {
+        "type": "string",
+        "enum": [
+         "PLAIN",
+         "ACCESSTOKEN",
+         "REFRESHTOKEN"
+        ],
+        "description": "The type of the credential.\nNote: Type of the credential - MUST be set to ACCESSTOKEN for now\n"
+       }
+      },
+      "required": [
+       "credentialType"
+      ]
+     },
+     "types": {
+      "description": "Camara Event types eligible to be delivered by this subscription.\nNote: For the current Commonalities API design guidelines, only one event type per subscription is allowed, yet in the following releases use of array of event types SHALL be specified without changing this definition.\n",
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 1,
+      "items": {
+       "type": "string",
+       "description": "reachability-data - Event triggered when the device is connected to the network for Data usage (regardless of the SMS reachability).\n\nreachability-sms - Event triggered when the device is connected to the network only for SMS usage\n\nreachability-disconnected - Event triggered when the device is not connected.\n",
+       "enum": [
+        "org.camaraproject.device-reachability-status-subscriptions.v0.reachability-data",
+        "org.camaraproject.device-reachability-status-subscriptions.v0.reachability-sms",
+        "org.camaraproject.device-reachability-status-subscriptions.v0.reachability-disconnected"
+       ]
+      }
+     },
+     "config": {
+      "description": "Implementation-specific configuration parameters needed by the subscription manager for acquiring events.\nIn CAMARA we have predefined attributes like `subscriptionExpireTime`, `subscriptionMaxEvents`, `initialEvent`\nSpecific event type attributes must be defined in `subscriptionDetail`\nNote: if a request is performed for several event type, all subscribed event will use same `config` parameters.\n",
+      "type": "object",
+      "required": [
+       "subscriptionDetail"
+      ],
+      "properties": {
+       "subscriptionDetail": {
+        "description": "The detail of the requested event subscription.",
+        "type": "object",
+        "properties": {
+         "device": {
+          "description": "End-user equipment able to connect to a mobile network. Examples of devices include smartphones or IoT sensors/actuators.\n\nThe developer can choose to provide the below specified device identifiers:\n\n* `ipv4Address`\n* `ipv6Address`\n* `phoneNumber`\n* `networkAccessIdentifier`\n\nNOTE: the MNO might support only a subset of these options. The API invoker can provide multiple identifiers to be compatible across different MNOs. In this case the identifiers MUST belong to the same device.\n",
+          "type": "object",
+          "properties": {
+           "phoneNumber": {
+            "description": "A public identifier addressing a telephone subscription. In mobile networks it corresponds to the MSISDN (Mobile Station International Subscriber Directory Number). In order to be globally unique it has to be formatted in international format, according to E.164 standard, prefixed with '+'.",
+            "type": "string",
+            "pattern": "^\\+[1-9][0-9]{4,14}$"
+           },
+           "networkAccessIdentifier": {
+            "description": "A public identifier addressing a subscription in a mobile network. In 3GPP terminology, it corresponds to the GPSI formatted with the External Identifier ({Local Identifier}@{Domain Identifier}). Unlike the telephone number, the network access identifier is not subjected to portability ruling in force, and is individually managed by each operator.",
+            "type": "string"
+           },
+           "ipv4Address": {
+            "type": "object",
+            "description": "The device should be identified by either the public (observed) IP address and port as seen by the application server, or the private (local) and any public (observed) IP addresses in use by the device (this information can be obtained by various means, for example from some DNS servers).\n\nIf the allocated and observed IP addresses are the same (i.e. NAT is not in use) then  the same address should be specified for both publicAddress and privateAddress.\n\nIf NAT64 is in use, the device should be identified by its publicAddress and publicPort, or separately by its allocated IPv6 address (field ipv6Address of the Device object)\n\nIn all cases, publicAddress must be specified, along with at least one of either privateAddress or publicPort, dependent upon which is known. In general, mobile devices cannot be identified by their public IPv4 address alone.\n",
+            "properties": {
+             "publicAddress": {
+              "description": "A single IPv4 address with no subnet mask",
+              "type": "string",
+              "format": "ipv4"
+             },
+             "privateAddress": {
+              "description": "A single IPv4 address with no subnet mask",
+              "type": "string",
+              "format": "ipv4"
+             },
+             "publicPort": {
+              "description": "TCP or UDP port number",
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 65535
+             }
+            },
+            "anyOf": [
+             {
+              "required": [
+               "publicAddress",
+               "privateAddress"
+              ]
+             },
+             {
+              "required": [
+               "publicAddress",
+               "publicPort"
+              ]
+             }
+            ]
+           },
+           "ipv6Address": {
+            "description": "The device should be identified by the observed IPv6 address, or by any single IPv6 address from within the subnet allocated to the device (e.g. adding ::0 to the /64 prefix).\n",
+            "type": "string",
+            "format": "ipv6"
+           }
+          },
+          "minProperties": 1
+         }
+        }
+       },
+       "subscriptionExpireTime": {
+        "type": "string",
+        "format": "date-time",
+        "description": "The subscription expiration time (in date-time format) requested by the API consumer."
+       },
+       "subscriptionMaxEvents": {
+        "type": "integer",
+        "description": "Identifies the maximum number of event reports to be generated (>=1) requested by the API consumer - Once this number is reached, the subscription ends.",
+        "minimum": 1
+       },
+       "initialEvent": {
+        "type": "boolean",
+        "description": "Set to `true` by API consumer if consumer wants to get an event as soon as the subscription is created and current situation reflects event request.\nExample: Consumer subscribes to reachability SMS. If consumer sets initialEvent to true and device is already reachable by SMS, an event is triggered.\n"
+       }
+      }
+     }
+    }
+   }
+  },
+  "device-reachability-status-subscriptions/deleteDeviceReachabilityStatusSubscription": {
+   "api": "device-reachability-status-subscriptions",
+   "operation_id": "deleteDeviceReachabilityStatusSubscription",
+   "method": "DELETE",
+   "path": "/device-reachability-status-subscriptions/v0.8/subscriptions/{subscriptionId}",
+   "path_params": [
+    "subscriptionId"
+   ],
+   "scopes": [
+    [
+     "device-reachability-status-subscriptions:delete"
+    ]
+   ],
+   "statuses": [
+    202,
+    204,
+    400,
+    401,
+    403,
+    404
+   ],
+   "errors": [
+    [
+     400,
+     "INVALID_ARGUMENT"
+    ],
+    [
+     401,
+     "UNAUTHENTICATED"
+    ],
+    [
+     403,
+     "PERMISSION_DENIED"
+    ],
+    [
+     404,
+     "NOT_FOUND"
+    ]
+   ],
+   "request_schema": null
+  },
+  "device-reachability-status-subscriptions/retrieveDeviceReachabilityStatusSubscription": {
+   "api": "device-reachability-status-subscriptions",
+   "operation_id": "retrieveDeviceReachabilityStatusSubscription",
+   "method": "GET",
+   "path": "/device-reachability-status-subscriptions/v0.8/subscriptions/{subscriptionId}",
+   "path_params": [
+    "subscriptionId"
+   ],
+   "scopes": [
+    [
+     "device-reachability-status-subscriptions:read"
+    ]
+   ],
+   "statuses": [
+    200,
+    400,
+    401,
+    403,
+    404
+   ],
+   "errors": [
+    [
+     400,
+     "INVALID_ARGUMENT"
+    ],
+    [
+     401,
+     "UNAUTHENTICATED"
+    ],
+    [
+     403,
+     "PERMISSION_DENIED"
+    ],
+    [
+     404,
+     "NOT_FOUND"
+    ]
+   ],
+   "request_schema": null
+  },
+  "device-reachability-status-subscriptions/retrieveDeviceReachabilityStatusSubscriptionList": {
+   "api": "device-reachability-status-subscriptions",
+   "operation_id": "retrieveDeviceReachabilityStatusSubscriptionList",
+   "method": "GET",
+   "path": "/device-reachability-status-subscriptions/v0.8/subscriptions",
+   "path_params": [],
+   "scopes": [
+    [
+     "device-reachability-status-subscriptions:read"
+    ]
+   ],
+   "statuses": [
+    200,
+    400,
+    401,
+    403
+   ],
+   "errors": [
+    [
+     400,
+     "INVALID_ARGUMENT"
+    ],
+    [
+     401,
+     "UNAUTHENTICATED"
+    ],
+    [
+     403,
+     "PERMISSION_DENIED"
+    ]
+   ],
+   "request_schema": null
+  },
+  "device-reachability-status/getReachabilityStatus": {
+   "api": "device-reachability-status",
+   "operation_id": "getReachabilityStatus",
+   "method": "POST",
+   "path": "/device-reachability-status/v1/retrieve",
+   "path_params": [],
+   "scopes": [
+    [
+     "device-reachability-status:read"
+    ]
+   ],
+   "statuses": [
+    200,
+    400,
+    401,
+    403,
+    404,
+    422,
+    429,
+    503
+   ],
+   "errors": [
+    [
+     400,
+     "INVALID_ARGUMENT"
+    ],
+    [
+     401,
+     "UNAUTHENTICATED"
+    ],
+    [
+     403,
+     "PERMISSION_DENIED"
+    ],
+    [
+     404,
+     "NOT_FOUND"
+    ],
+    [
+     404,
+     "IDENTIFIER_NOT_FOUND"
+    ],
+    [
+     422,
+     "SERVICE_NOT_APPLICABLE"
+    ],
+    [
+     422,
+     "MISSING_IDENTIFIER"
+    ],
+    [
+     422,
+     "UNSUPPORTED_IDENTIFIER"
+    ],
+    [
+     422,
+     "UNNECESSARY_IDENTIFIER"
+    ],
+    [
+     429,
+     "QUOTA_EXCEEDED"
+    ],
+    [
+     429,
+     "TOO_MANY_REQUESTS"
+    ],
+    [
+     503,
+     "UNAVAILABLE"
+    ]
+   ],
+   "request_schema": {
+    "description": "The request to retrieve the current roaming-status for the requested device.",
+    "type": "object",
+    "properties": {
+     "device": {
+      "description": "End-user equipment able to connect to a mobile network. Examples of devices include smartphones or IoT sensors/actuators.\n\nThe developer can choose to provide the below specified device identifiers:\n\n* `ipv4Address`\n* `ipv6Address`\n* `phoneNumber`\n* `networkAccessIdentifier`\n\nNOTE: the MNO might support only a subset of these options. The API invoker can provide multiple identifiers to be compatible across different MNOs. In this case the identifiers MUST belong to the same device.\n",
+      "type": "object",
+      "properties": {
+       "phoneNumber": {
+        "description": "A public identifier addressing a telephone subscription. In mobile networks it corresponds to the MSISDN (Mobile Station International Subscriber Directory Number). In order to be globally unique it has to be formatted in international format, according to E.164 standard, prefixed with '+'.",
+        "type": "string",
+        "pattern": "^\\+[1-9][0-9]{4,14}$"
+       },
+       "networkAccessIdentifier": {
+        "description": "A public identifier addressing a subscription in a mobile network. In 3GPP terminology, it corresponds to the GPSI formatted with the External Identifier ({Local Identifier}@{Domain Identifier}). Unlike the telephone number, the network access identifier is not subjected to portability ruling in force, and is individually managed by each operator.",
+        "type": "string"
+       },
+       "ipv4Address": {
+        "type": "object",
+        "description": "The device should be identified by either the public (observed) IP address and port as seen by the application server, or the private (local) and any public (observed) IP addresses in use by the device (this information can be obtained by various means, for example from some DNS servers).\n\nIf the allocated and observed IP addresses are the same (i.e. NAT is not in use) then  the same address should be specified for both publicAddress and privateAddress.\n\nIf NAT64 is in use, the device should be identified by its publicAddress and publicPort, or separately by its allocated IPv6 address (field ipv6Address of the Device object)\n\nIn all cases, publicAddress must be specified, along with at least one of either privateAddress or publicPort, dependent upon which is known. In general, mobile devices cannot be identified by their public IPv4 address alone.\n",
+        "properties": {
+         "publicAddress": {
+          "description": "A single IPv4 address with no subnet mask",
+          "type": "string",
+          "format": "ipv4"
+         },
+         "privateAddress": {
+          "description": "A single IPv4 address with no subnet mask",
+          "type": "string",
+          "format": "ipv4"
+         },
+         "publicPort": {
+          "description": "TCP or UDP port number",
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 65535
+         }
+        },
+        "anyOf": [
+         {
+          "required": [
+           "publicAddress",
+           "privateAddress"
+          ]
+         },
+         {
+          "required": [
+           "publicAddress",
+           "publicPort"
+          ]
+         }
+        ]
+       },
+       "ipv6Address": {
+        "description": "The device should be identified by the observed IPv6 address, or by any single IPv6 address from within the subnet allocated to the device (e.g. adding ::0 to the /64 prefix).\n",
+        "type": "string",
+        "format": "ipv6"
+       }
+      },
+      "minProperties": 1
+     }
+    }
+   }
+  },
+  "number-verification/phoneNumberShare": {
+   "api": "number-verification",
+   "operation_id": "phoneNumberShare",
+   "method": "GET",
+   "path": "/number-verification/v2/device-phone-number",
+   "path_params": [],
+   "scopes": [
+    [
+     "number-verification:device-phone-number:read"
+    ]
+   ],
+   "statuses": [
+    200,
+    400,
+    401,
+    403
+   ],
+   "errors": [
+    [
+     400,
+     "INVALID_ARGUMENT"
+    ],
+    [
+     401,
+     "UNAUTHENTICATED"
+    ],
+    [
+     403,
+     "PERMISSION_DENIED"
+    ],
+    [
+     403,
+     "NUMBER_VERIFICATION.USER_NOT_AUTHENTICATED_BY_MOBILE_NETWORK"
+    ]
+   ],
+   "request_schema": null
+  },
+  "number-verification/phoneNumberVerify": {
+   "api": "number-verification",
+   "operation_id": "phoneNumberVerify",
+   "method": "POST",
+   "path": "/number-verification/v2/verify",
+   "path_params": [],
+   "scopes": [
+    [
+     "number-verification:verify"
+    ]
+   ],
+   "statuses": [
+    200,
+    400,
+    401,
+    403
+   ],
+   "errors": [
+    [
+     400,
+     "INVALID_ARGUMENT"
+    ],
+    [
+     401,
+     "UNAUTHENTICATED"
+    ],
+    [
+     403,
+     "PERMISSION_DENIED"
+    ],
+    [
+     403,
+     "NUMBER_VERIFICATION.USER_NOT_AUTHENTICATED_BY_MOBILE_NETWORK"
+    ]
+   ],
+   "request_schema": {
+    "type": "object",
+    "description": "Payload to verify the phone number.",
+    "minProperties": 1,
+    "maxProperties": 1,
+    "properties": {
+     "phoneNumber": {
+      "type": "string",
+      "pattern": "^\\+[1-9][0-9]{4,14}$",
+      "description": "A public identifier addressing a telephone subscription. In mobile networks it corresponds to the MSISDN (Mobile Station International Subscriber Directory Number). In order to be globally unique it has to be formatted in international format, according to E.164 standard, prefixed with '+'."
+     },
+     "hashedPhoneNumber": {
+      "description": "Hashed phone number. SHA-256 (in hexadecimal representation) of the mobile phone number in **E.164 format (starting with country code)**. Prefixed with '+'.",
+      "type": "string",
+      "pattern": "^[a-fA-F0-9]{64}$"
+     }
+    }
+   }
+  },
+  "sim-swap-subscriptions/createSimSwapSubscription": {
+   "api": "sim-swap-subscriptions",
+   "operation_id": "createSimSwapSubscription",
+   "method": "POST",
+   "path": "/sim-swap-subscriptions/v0.3/subscriptions",
+   "path_params": [],
+   "scopes": [
+    [
+     "sim-swap-subscriptions:org.camaraproject.sim-swap-subscriptions.v0.swapped:create"
+    ]
+   ],
+   "statuses": [
+    201,
+    202,
+    400,
+    401,
+    403,
+    409,
+    422,
+    429
+   ],
+   "errors": [
+    [
+     400,
+     "INVALID_ARGUMENT"
+    ],
+    [
+     400,
+     "OUT_OF_RANGE"
+    ],
+    [
+     400,
+     "INVALID_PROTOCOL"
+    ],
+    [
+     400,
+     "INVALID_CREDENTIAL"
+    ],
+    [
+     400,
+     "INVALID_TOKEN"
+    ],
+    [
+     400,
+     "INVALID_SINK"
+    ],
+    [
+     401,
+     "UNAUTHENTICATED"
+    ],
+    [
+     403,
+     "PERMISSION_DENIED"
+    ],
+    [
+     409,
+     "ABORTED"
+    ],
+    [
+     409,
+     "ALREADY_EXISTS"
+    ],
+    [
+     422,
+     "SERVICE_NOT_APPLICABLE"
+    ],
+    [
+     422,
+     "MISSING_IDENTIFIER"
+    ],
+    [
+     422,
+     "UNNECESSARY_IDENTIFIER"
+    ],
+    [
+     429,
+     "QUOTA_EXCEEDED"
+    ],
+    [
+     429,
+     "TOO_MANY_REQUESTS"
+    ]
+   ],
+   "request_schema": {
+    "description": "The request for creating a sim swap event subscription",
+    "type": "object",
+    "required": [
+     "sink",
+     "protocol",
+     "config",
+     "types"
+    ],
+    "properties": {
+     "protocol": {
+      "type": "string",
+      "enum": [
+       "HTTP",
+       "MQTT3",
+       "MQTT5",
+       "AMQP",
+       "NATS",
+       "KAFKA"
+      ],
+      "description": "Identifier of a delivery protocol. Only HTTP is allowed for now"
+     },
+     "sink": {
+      "type": "string",
+      "format": "uri",
+      "pattern": "^https:\\/\\/.+$",
+      "description": "The address to which events shall be delivered using the selected protocol."
+     },
+     "sinkCredential": {
+      "description": "A sink credential provides authentication or authorization information necessary to enable delivery of events to a target.",
+      "type": "object",
+      "properties": {
+       "credentialType": {
+        "type": "string",
+        "enum": [
+         "PLAIN",
+         "ACCESSTOKEN",
+         "REFRESHTOKEN"
+        ],
+        "description": "The type of the credential. With the current API version the type MUST be set to ACCESSTOKEN."
+       }
+      },
+      "required": [
+       "credentialType"
+      ]
+     },
+     "types": {
+      "description": "Camara Event types eligible for subscription:\n- org.camaraproject.sim-swap-subscriptions.v0.swapped: receive a notification when a sim swap is performed on the line.\n",
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 1,
+      "items": {
+       "type": "string",
+       "description": "swapped - Event triggered when a sim swap occurs on the line\n",
+       "enum": [
+        "org.camaraproject.sim-swap-subscriptions.v0.swapped"
+       ]
+      }
+     },
+     "config": {
+      "description": "Implementation-specific configuration parameters needed by the subscription manager for acquiring events.\nIn CAMARA we have predefined attributes like `subscriptionExpireTime` or `subscriptionMaxEvents` to limit subscription lifetime.\nEvent type attributes must be defined in `subscriptionDetail`\n",
+      "type": "object",
+      "required": [
+       "subscriptionDetail"
+      ],
+      "properties": {
+       "subscriptionDetail": {
+        "description": "The detail of the requested event subscription",
+        "type": "object",
+        "properties": {
+         "phoneNumber": {
+          "type": "string",
+          "pattern": "^\\+[1-9][0-9]{4,14}$",
+          "description": "A public identifier addressing a telephone subscription. In mobile networks it corresponds to the MSISDN (Mobile Station International Subscriber Directory Number). In order to be globally unique it has to be formatted in international format, according to E.164 standard, prefixed with '+'."
+         }
+        }
+       },
+       "subscriptionExpireTime": {
+        "type": "string",
+        "format": "date-time",
+        "description": "The subscription expiration time (in date-time format) requested by the API consumer. It must follow [RFC 3339](https://datatracker.ietf.org/doc/html/rfc3339#section-5.6) and must have time zone."
+       },
+       "subscriptionMaxEvents": {
+        "type": "integer",
+        "description": "Identifies the maximum number of event reports to be generated (>=1) requested by the API consumer - Once this number is reached, the subscription ends.\n",
+        "minimum": 1
+       }
+      }
+     }
+    }
+   }
+  },
+  "sim-swap-subscriptions/deleteSubscription": {
+   "api": "sim-swap-subscriptions",
+   "operation_id": "deleteSubscription",
+   "method": "DELETE",
+   "path": "/sim-swap-subscriptions/v0.3/subscriptions/{subscriptionId}",
+   "path_params": [
+    "subscriptionId"
+   ],
+   "scopes": [
+    [
+     "sim-swap-subscriptions:delete"
+    ]
+   ],
+   "statuses": [
+    202,
+    204,
+    400,
+    401,
+    403,
+    404
+   ],
+   "errors": [
+    [
+     400,
+     "INVALID_ARGUMENT"
+    ],
+    [
+     401,
+     "UNAUTHENTICATED"
+    ],
+    [
+     403,
+     "PERMISSION_DENIED"
+    ],
+    [
+     404,
+     "NOT_FOUND"
+    ]
+   ],
+   "request_schema": null
+  },
+  "sim-swap-subscriptions/retrieveSubscription": {
+   "api": "sim-swap-subscriptions",
+   "operation_id": "retrieveSubscription",
+   "method": "GET",
+   "path": "/sim-swap-subscriptions/v0.3/subscriptions/{subscriptionId}",
+   "path_params": [
+    "subscriptionId"
+   ],
+   "scopes": [
+    [
+     "sim-swap-subscriptions:read"
+    ]
+   ],
+   "statuses": [
+    200,
+    400,
+    401,
+    403,
+    404
+   ],
+   "errors": [
+    [
+     400,
+     "INVALID_ARGUMENT"
+    ],
+    [
+     401,
+     "UNAUTHENTICATED"
+    ],
+    [
+     403,
+     "PERMISSION_DENIED"
+    ],
+    [
+     404,
+     "NOT_FOUND"
+    ]
+   ],
+   "request_schema": null
+  },
+  "sim-swap-subscriptions/retrieveSubscriptionList": {
+   "api": "sim-swap-subscriptions",
+   "operation_id": "retrieveSubscriptionList",
+   "method": "GET",
+   "path": "/sim-swap-subscriptions/v0.3/subscriptions",
+   "path_params": [],
+   "scopes": [
+    [
+     "sim-swap-subscriptions:read"
+    ]
+   ],
+   "statuses": [
+    200,
+    400,
+    401,
+    403
+   ],
+   "errors": [
+    [
+     400,
+     "INVALID_ARGUMENT"
+    ],
+    [
+     401,
+     "UNAUTHENTICATED"
+    ],
+    [
+     403,
+     "PERMISSION_DENIED"
+    ]
+   ],
+   "request_schema": null
+  },
+  "sim-swap/checkSimSwap": {
+   "api": "sim-swap",
+   "operation_id": "checkSimSwap",
+   "method": "POST",
+   "path": "/sim-swap/v2/check",
+   "path_params": [],
+   "scopes": [
+    [
+     "sim-swap:check"
+    ],
+    [
+     "sim-swap"
+    ]
+   ],
+   "statuses": [
+    200,
+    400,
+    401,
+    403,
+    404,
+    422,
+    429
+   ],
+   "errors": [
+    [
+     400,
+     "INVALID_ARGUMENT"
+    ],
+    [
+     400,
+     "OUT_OF_RANGE"
+    ],
+    [
+     401,
+     "UNAUTHENTICATED"
+    ],
+    [
+     403,
+     "PERMISSION_DENIED"
+    ],
+    [
+     404,
+     "NOT_FOUND"
+    ],
+    [
+     404,
+     "IDENTIFIER_NOT_FOUND"
+    ],
+    [
+     422,
+     "SERVICE_NOT_APPLICABLE"
+    ],
+    [
+     422,
+     "MISSING_IDENTIFIER"
+    ],
+    [
+     422,
+     "UNNECESSARY_IDENTIFIER"
+    ],
+    [
+     429,
+     "QUOTA_EXCEEDED"
+    ],
+    [
+     429,
+     "TOO_MANY_REQUESTS"
+    ]
+   ],
+   "request_schema": {
+    "type": "object",
+    "properties": {
+     "phoneNumber": {
+      "type": "string",
+      "pattern": "^\\+[1-9][0-9]{4,14}$",
+      "description": "A public identifier addressing a telephone subscription. In mobile networks it corresponds to the MSISDN (Mobile Station International Subscriber Directory Number). In order to be globally unique it has to be formatted in international format, according to E.164 standard, prefixed with '+'."
+     },
+     "maxAge": {
+      "type": "integer",
+      "description": "Period in hours to be checked for SIM swap.\n",
+      "format": "int32",
+      "minimum": 1,
+      "maximum": 2400,
+      "default": 240
+     }
+    }
+   }
+  },
+  "sim-swap/retrieveSimSwapDate": {
+   "api": "sim-swap",
+   "operation_id": "retrieveSimSwapDate",
+   "method": "POST",
+   "path": "/sim-swap/v2/retrieve-date",
+   "path_params": [],
+   "scopes": [
+    [
+     "sim-swap:retrieve-date"
+    ],
+    [
+     "sim-swap"
+    ]
+   ],
+   "statuses": [
+    200,
+    400,
+    401,
+    403,
+    404,
+    422,
+    429
+   ],
+   "errors": [
+    [
+     400,
+     "INVALID_ARGUMENT"
+    ],
+    [
+     400,
+     "OUT_OF_RANGE"
+    ],
+    [
+     401,
+     "UNAUTHENTICATED"
+    ],
+    [
+     403,
+     "PERMISSION_DENIED"
+    ],
+    [
+     404,
+     "NOT_FOUND"
+    ],
+    [
+     404,
+     "IDENTIFIER_NOT_FOUND"
+    ],
+    [
+     422,
+     "SERVICE_NOT_APPLICABLE"
+    ],
+    [
+     422,
+     "MISSING_IDENTIFIER"
+    ],
+    [
+     422,
+     "UNNECESSARY_IDENTIFIER"
+    ],
+    [
+     429,
+     "QUOTA_EXCEEDED"
+    ],
+    [
+     429,
+     "TOO_MANY_REQUESTS"
+    ]
+   ],
+   "request_schema": {
+    "type": "object",
+    "properties": {
+     "phoneNumber": {
+      "type": "string",
+      "pattern": "^\\+[1-9][0-9]{4,14}$",
+      "description": "A public identifier addressing a telephone subscription. In mobile networks it corresponds to the MSISDN (Mobile Station International Subscriber Directory Number). In order to be globally unique it has to be formatted in international format, according to E.164 standard, prefixed with '+'."
+     }
+    }
+   }
+  }
+ }
+}

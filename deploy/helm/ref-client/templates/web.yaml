@@ -1,0 +1,122 @@
+{{- /* The web chat agent (09 §6): the image's default command, `ref-client serve` — POST /invocations, GET /ping,
+       /healthz, and the page at / when WEB_CHAT_DIR is set. ClusterIP; reach it with
+       kubectl port-forward svc/ref-client-web 8083:8080. An Ingress only when web.ingress.enabled. */ -}}
+{{- if .Values.web.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "ref-client.fullname" . }}-web
+  labels:
+    {{- include "ref-client.labels" . | nindent 4 }}
+    app.kubernetes.io/component: web
+spec:
+  replicas: {{ .Values.web.replicas }}
+  selector:
+    matchLabels:
+      {{- include "ref-client.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: web
+  template:
+    metadata:
+      labels:
+        {{- include "ref-client.labels" . | nindent 8 }}
+        app.kubernetes.io/component: web
+    spec:
+      serviceAccountName: {{ include "ref-client.serviceAccountName" . }}
+      automountServiceAccountToken: false
+      securityContext:
+        {{- include "ref-client.podSecurityContext" . | nindent 8 }}
+      {{- include "ref-client.scheduling" . | nindent 6 }}
+      containers:
+        - name: web
+          image: {{ include "ref-client.image" . | quote }}
+          imagePullPolicy: {{ include "ref-client.pullPolicy" . }}
+          args: [serve]
+          ports:
+            - name: http
+              containerPort: {{ .Values.web.port }}
+          env:
+            {{- include "ref-client.env" . | nindent 12 }}
+            {{- range $k := keys .Values.web.env | sortAlpha }}
+            {{- $v := index $.Values.web.env $k }}
+            {{- if ne (toString $v) "" }}
+            - name: {{ $k }}
+              value: {{ tpl (toString $v) $ | quote }}
+            {{- end }}
+            {{- end }}
+            - name: REF_CLIENT_HTTP_PORT
+              value: {{ .Values.web.port | quote }}
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: http
+            periodSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /ping
+              port: http
+            periodSeconds: 20
+          securityContext:
+            {{- include "ref-client.securityContext" . | nindent 12 }}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+      volumes:
+        - name: tmp
+          emptyDir:
+            sizeLimit: 64Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "ref-client.fullname" . }}-web
+  labels:
+    {{- include "ref-client.labels" . | nindent 4 }}
+    app.kubernetes.io/component: web
+spec:
+  type: ClusterIP
+  selector:
+    {{- include "ref-client.selectorLabels" . | nindent 4 }}
+    app.kubernetes.io/component: web
+  ports:
+    - name: http
+      port: {{ .Values.web.service.port }}
+      targetPort: http
+      protocol: TCP
+{{- if .Values.web.ingress.enabled }}
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ include "ref-client.fullname" . }}-web
+  labels:
+    {{- include "ref-client.labels" . | nindent 4 }}
+    app.kubernetes.io/component: web
+  {{- with .Values.web.ingress.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  {{- with .Values.web.ingress.className }}
+  ingressClassName: {{ . }}
+  {{- end }}
+  {{- with .Values.web.ingress.tls }}
+  tls:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  rules:
+    - {{- with .Values.web.ingress.host }}
+      host: {{ . | quote }}
+      {{- end }}
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ include "ref-client.fullname" . }}-web
+                port:
+                  name: http
+{{- end }}
+{{- end }}

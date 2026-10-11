@@ -1,0 +1,140 @@
+{
+  "story": "transplant",
+  "title": "Transplant closing story — the line must stay reachable",
+  "user": "user-asish",
+  "agent": "scripted",
+  "model_id": null,
+  "env": "local",
+  "steps": [
+    {
+      "control": "binding page: Asish saves watch settings — must stay reachable; text the partner, then the neighbour"
+    },
+    {
+      "utterance": "Turn on alerts for my line.",
+      "tool_calls": [
+        {
+          "name": "watch_line",
+          "args": {
+            "line": "self",
+            "enable": true
+          }
+        }
+      ],
+      "result": {
+        "summary": "Alerts are on for that line. A text goes out if it's SIM-swapped, forwarded, or off the network too long.",
+        "facts": {
+          "line": "self",
+          "watching": true,
+          "since": null,
+          "notify_via": "sms",
+          "profile": "transplant",
+          "grants": [],
+          "recent_checks": null
+        },
+        "reason_codes": [
+          "OK"
+        ],
+        "next_step": {
+          "kind": "none",
+          "url": null,
+          "carrier_support_number": null
+        },
+        "checked_at": "2026-10-05T14:20:00Z"
+      },
+      "reason_codes": [
+        "OK"
+      ],
+      "spoken": "Alerts are on for that line. A text goes out if it's SIM-swapped, forwarded, or off the network too long."
+    },
+    {
+      "control": "mock: Asish's phone drops off the network"
+    },
+    {
+      "control": "mock clock +20 min dark"
+    },
+    {
+      "note": "Alerts' transplant rule: 20 min dark → the partner's text (SMS log: to=chain:user-partner). Asish's own copy is withheld: his line was SIM-swapped at +12 min."
+    },
+    {
+      "utterance": "Is my phone on?",
+      "tool_calls": [
+        {
+          "name": "is_reachable",
+          "args": {
+            "line": "self"
+          }
+        }
+      ],
+      "result": {
+        "summary": "That person's phone has been off the network since 10:20 today — that's the network, nothing more.",
+        "facts": {
+          "line": "self",
+          "reachable": false,
+          "connectivity": "NONE",
+          "last_status_time": "2026-10-05T14:20:00Z",
+          "source": "carrier",
+          "stale": false,
+          "as_of": "2026-10-05T14:40:00Z"
+        },
+        "reason_codes": [
+          "UNREACHABLE"
+        ],
+        "next_step": {
+          "kind": "none",
+          "url": null,
+          "carrier_support_number": null
+        },
+        "checked_at": "2026-10-05T14:40:00Z"
+      },
+      "reason_codes": [
+        "UNREACHABLE"
+      ],
+      "spoken": "That person's phone has been off the network since 10:20 today — that's the network, nothing more."
+    },
+    {
+      "control": "mock clock +15 min, no acknowledgement"
+    },
+    {
+      "note": "15 more minutes with no reply → the neighbour's text (SMS log: to=chain:user-neighbour)."
+    },
+    {
+      "control": "mock: Asish's phone is back on the network"
+    },
+    {
+      "utterance": "Is my phone reachable now?",
+      "tool_calls": [
+        {
+          "name": "is_reachable",
+          "args": {
+            "line": "self"
+          }
+        }
+      ],
+      "result": {
+        "summary": "Your line is as it was.",
+        "facts": {
+          "line": "self",
+          "reachable": true,
+          "connectivity": "DATA",
+          "last_status_time": "2026-10-05T14:55:00Z",
+          "source": "carrier",
+          "stale": false,
+          "as_of": "2026-10-05T14:55:00Z"
+        },
+        "reason_codes": [
+          "OK"
+        ],
+        "next_step": {
+          "kind": "none",
+          "url": null,
+          "carrier_support_number": null
+        },
+        "checked_at": "2026-10-05T14:55:00Z"
+      },
+      "reason_codes": [
+        "OK"
+      ],
+      "spoken": "Your line is as it was."
+    }
+  ]
+}

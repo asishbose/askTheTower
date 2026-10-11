@@ -1,0 +1,27 @@
+suite: binding-page
+templates:
+  - templates/deployment.yaml
+  - templates/ingress.yaml
+  - templates/networkpolicy.yaml
+tests:
+  - it: runs python -m binding_page on 8081 with its secrets from the Secret
+    template: templates/deployment.yaml
+    asserts:
+      - equal: {path: "spec.template.spec.containers[0].ports[0].containerPort", value: 8081}
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content: {name: SESSION_SECRET, valueFrom: {secretKeyRef: {name: att-secrets, key: SESSION_SECRET}}}
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content: {name: BIND_ADMIN, value: "0"}
+  - it: has a public TLS ingress when enabled
+    template: templates/ingress.yaml
+    set:
+      ingress: {enabled: true, host: bind.example.org, tls: [{hosts: [bind.example.org], secretName: bind-tls}]}
+    asserts:
+      - equal: {path: "spec.tls[0].hosts[0]", value: bind.example.org}
+      - equal: {path: "spec.rules[0].http.paths[0].path", value: /}
+  - it: is public (the phone) — no from-restriction
+    template: templates/networkpolicy.yaml
+    asserts:
+      - notExists: {path: "spec.ingress[0].from"}

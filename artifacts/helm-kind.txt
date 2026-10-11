@@ -1,0 +1,12 @@
+# make helm-kind — 2026-10-06T21:46:19Z
+cluster: kind att (v1.31.0); release att in ask-the-tower; images ask-the-tower/*:kind
+elapsed: 72s; demo exit 0; golden compare exit 0
+pod: alerts-5f57f5c9bb-4vtfx 2/2 Running
+pod: att-seed-h7bjn 0/1 Completed
+pod: binding-page-677869ff-78vsc 1/1 Running
+pod: dynamodb-local-584d6b4448-pjkf4 1/1 Running
+pod: mock-carrier-699d478bf8-w9k77 1/1 Running
+pod: tower-mcp-6669576c88-fwcw8 1/1 Running
+demo:     transcript → artifacts/transcripts-kind/transplant.json
+demo: 
+demo: demo ok: 4 stories, reason codes as expected

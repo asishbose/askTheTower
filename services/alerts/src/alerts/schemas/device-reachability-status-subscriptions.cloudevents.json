@@ -1,0 +1,372 @@
+{
+ "$comment": "Generated from specs/camara/device-reachability-status-subscriptions.yaml by services/alerts/scripts/vendor_schemas.py",
+ "$defs": {
+  "CloudEvent": {
+   "description": "The notification callback",
+   "properties": {
+    "data": {
+     "description": "Event details payload described in each CAMARA API and referenced by its type",
+     "type": "object"
+    },
+    "datacontenttype": {
+     "description": "media-type that describes the event payload encoding, must be \"application/json\" for CAMARA APIs",
+     "enum": [
+      "application/json"
+     ],
+     "type": "string"
+    },
+    "id": {
+     "description": "identifier of this event, that must be unique in the source context.",
+     "type": "string"
+    },
+    "source": {
+     "$ref": "#/$defs/Source"
+    },
+    "specversion": {
+     "description": "Version of the specification to which this event conforms (must be 1.0 if it conforms to cloudevents 1.0.2 version)",
+     "enum": [
+      "1.0"
+     ],
+     "type": "string"
+    },
+    "time": {
+     "$ref": "#/$defs/DateTime"
+    },
+    "type": {
+     "$ref": "#/$defs/EventTypeNotification"
+    }
+   },
+   "required": [
+    "id",
+    "source",
+    "specversion",
+    "type",
+    "time"
+   ]
+  },
+  "DateTime": {
+   "description": "Timestamp of when the occurrence happened.\nIf the time of the occurrence cannot be determined then this attribute MAY be set to some other time (such as the current time) by the CloudEvents producer,\nhowever all producers for the same source MUST be consistent in this respect. In other words,\neither they all use the actual time of the occurrence or they all use the same algorithm to determine the value used.\nIt must follow [RFC 3339](https://datatracker.ietf.org/doc/html/rfc3339#section-5.6) and must have time zone.\nRecommended format is yyyy-MM-dd'T'HH:mm:ss.SSSZ (i.e. which allows 2023-07-03T14:27:08.312+02:00 or 2023-07-03T12:27:08.312Z)\n",
+   "format": "date-time",
+   "type": "string"
+  },
+  "Device": {
+   "description": "End-user equipment able to connect to a mobile network. Examples of devices include smartphones or IoT sensors/actuators.\n\nThe developer can choose to provide the below specified device identifiers:\n\n* `ipv4Address`\n* `ipv6Address`\n* `phoneNumber`\n* `networkAccessIdentifier`\n\nNOTE: the MNO might support only a subset of these options. The API invoker can provide multiple identifiers to be compatible across different MNOs. In this case the identifiers MUST belong to the same device.\n",
+   "minProperties": 1,
+   "properties": {
+    "ipv4Address": {
+     "$ref": "#/$defs/DeviceIpv4Addr"
+    },
+    "ipv6Address": {
+     "$ref": "#/$defs/DeviceIpv6Address"
+    },
+    "networkAccessIdentifier": {
+     "$ref": "#/$defs/NetworkAccessIdentifier"
+    },
+    "phoneNumber": {
+     "$ref": "#/$defs/PhoneNumber"
+    }
+   },
+   "type": "object"
+  },
+  "DeviceIpv4Addr": {
+   "anyOf": [
+    {
+     "required": [
+      "publicAddress",
+      "privateAddress"
+     ]
+    },
+    {
+     "required": [
+      "publicAddress",
+      "publicPort"
+     ]
+    }
+   ],
+   "description": "The device should be identified by either the public (observed) IP address and port as seen by the application server, or the private (local) and any public (observed) IP addresses in use by the device (this information can be obtained by various means, for example from some DNS servers).\n\nIf the allocated and observed IP addresses are the same (i.e. NAT is not in use) then  the same address should be specified for both publicAddress and privateAddress.\n\nIf NAT64 is in use, the device should be identified by its publicAddress and publicPort, or separately by its allocated IPv6 address (field ipv6Address of the Device object)\n\nIn all cases, publicAddress must be specified, along with at least one of either privateAddress or publicPort, dependent upon which is known. In general, mobile devices cannot be identified by their public IPv4 address alone.\n",
+   "properties": {
+    "privateAddress": {
+     "$ref": "#/$defs/SingleIpv4Addr"
+    },
+    "publicAddress": {
+     "$ref": "#/$defs/SingleIpv4Addr"
+    },
+    "publicPort": {
+     "$ref": "#/$defs/Port"
+    }
+   },
+   "type": "object"
+  },
+  "DeviceIpv6Address": {
+   "description": "The device should be identified by the observed IPv6 address, or by any single IPv6 address from within the subnet allocated to the device (e.g. adding ::0 to the /64 prefix).\n",
+   "format": "ipv6",
+   "type": "string"
+  },
+  "DeviceResponse": {
+   "allOf": [
+    {
+     "$ref": "#/$defs/Device"
+    },
+    {
+     "maxProperties": 1
+    }
+   ],
+   "description": "An identifier for the end-user equipment able to connect to the network that the response refers to. This parameter is only returned when the API consumer includes the `device` parameter in their request (i.e. they are using a two-legged access token), and is relevant when more than one device identifier is specified, as only one of those device identifiers is allowed in the response.\n\nIf the API consumer provides more than one device identifier in their request, the API provider must return a single identifier which is the one they are using to fulfil the request, even if the identifiers do not match the same device. API provider does not perform any logic to validate/correlate that the indicated device identifiers match the same device. No error should be returned if the identifiers are otherwise valid to prevent API consumers correlating different identifiers with a given end user.\n"
+  },
+  "EventReachabilityData": {
+   "allOf": [
+    {
+     "$ref": "#/$defs/CloudEvent"
+    },
+    {
+     "properties": {
+      "data": {
+       "$ref": "#/$defs/ReachabilityDataSmsDisconnected"
+      }
+     },
+     "type": "object"
+    }
+   ],
+   "description": "event structure for reachability data usage"
+  },
+  "EventReachabilityDisconnected": {
+   "allOf": [
+    {
+     "$ref": "#/$defs/CloudEvent"
+    },
+    {
+     "properties": {
+      "data": {
+       "$ref": "#/$defs/ReachabilityDataSmsDisconnected"
+      }
+     },
+     "type": "object"
+    }
+   ],
+   "description": "event structure for disconnection"
+  },
+  "EventReachabilitySms": {
+   "allOf": [
+    {
+     "$ref": "#/$defs/CloudEvent"
+    },
+    {
+     "properties": {
+      "data": {
+       "$ref": "#/$defs/ReachabilityDataSmsDisconnected"
+      }
+     },
+     "type": "object"
+    }
+   ],
+   "description": "event structure for reachability SMS usage"
+  },
+  "EventSubscriptionEnded": {
+   "allOf": [
+    {
+     "$ref": "#/$defs/CloudEvent"
+    },
+    {
+     "properties": {
+      "data": {
+       "$ref": "#/$defs/SubscriptionEnded"
+      }
+     },
+     "type": "object"
+    }
+   ],
+   "description": "Event structure for sending subscription-ended event"
+  },
+  "EventSubscriptionStarted": {
+   "allOf": [
+    {
+     "$ref": "#/$defs/CloudEvent"
+    },
+    {
+     "properties": {
+      "data": {
+       "$ref": "#/$defs/SubscriptionStarted"
+      }
+     },
+     "type": "object"
+    }
+   ],
+   "description": "Event structure for event subscription started"
+  },
+  "EventSubscriptionUpdated": {
+   "allOf": [
+    {
+     "$ref": "#/$defs/CloudEvent"
+    },
+    {
+     "properties": {
+      "data": {
+       "$ref": "#/$defs/SubscriptionUpdated"
+      }
+     },
+     "type": "object"
+    }
+   ],
+   "description": "Event structure for event subscription updated"
+  },
+  "EventTypeNotification": {
+   "description": "reachability-data - Event triggered when the device is connected to the network for Data usage (regardless of the SMS reachability).\n\nreachability-sms - Event triggered when the device is connected to the network only for SMS usage.\n\nreachability-disconnected - Event triggered when the device is not connected.\n\nsubscription-started - Event triggered when the subscription starts.\n\nsubscription-updated - Event triggered when the subscription is updated.\n\nsubscription-ended - Event triggered when the subscription ends.\n",
+   "enum": [
+    "org.camaraproject.device-reachability-status-subscriptions.v0.reachability-data",
+    "org.camaraproject.device-reachability-status-subscriptions.v0.reachability-sms",
+    "org.camaraproject.device-reachability-status-subscriptions.v0.reachability-disconnected",
+    "org.camaraproject.device-reachability-status-subscriptions.v0.subscription-started",
+    "org.camaraproject.device-reachability-status-subscriptions.v0.subscription-updated",
+    "org.camaraproject.device-reachability-status-subscriptions.v0.subscription-ended"
+   ],
+   "type": "string"
+  },
+  "InitiationReason": {
+   "description": "- SUBSCRIPTION_CREATED - Subscription created by API Server\n",
+   "enum": [
+    "SUBSCRIPTION_CREATED"
+   ],
+   "type": "string"
+  },
+  "NetworkAccessIdentifier": {
+   "description": "A public identifier addressing a subscription in a mobile network. In 3GPP terminology, it corresponds to the GPSI formatted with the External Identifier ({Local Identifier}@{Domain Identifier}). Unlike the telephone number, the network access identifier is not subjected to portability ruling in force, and is individually managed by each operator.",
+   "type": "string"
+  },
+  "PhoneNumber": {
+   "description": "A public identifier addressing a telephone subscription. In mobile networks it corresponds to the MSISDN (Mobile Station International Subscriber Directory Number). In order to be globally unique it has to be formatted in international format, according to E.164 standard, prefixed with '+'.",
+   "pattern": "^\\+[1-9][0-9]{4,14}$",
+   "type": "string"
+  },
+  "Port": {
+   "description": "TCP or UDP port number",
+   "maximum": 65535,
+   "minimum": 0,
+   "type": "integer"
+  },
+  "ReachabilityDataSmsDisconnected": {
+   "properties": {
+    "device": {
+     "$ref": "#/$defs/DeviceResponse"
+    },
+    "subscriptionId": {
+     "$ref": "#/$defs/SubscriptionId"
+    }
+   },
+   "required": [
+    "subscriptionId"
+   ]
+  },
+  "SingleIpv4Addr": {
+   "description": "A single IPv4 address with no subnet mask",
+   "format": "ipv4",
+   "type": "string"
+  },
+  "Source": {
+   "description": "Identifies the context in which an event happened - be a non-empty `URI-reference` like:\n- URI with a DNS authority:\n  * https://github.com/cloudevents\n  * mailto:cncf-wg-serverless@lists.cncf.io\n- Universally-unique URN with a UUID:\n  * urn:uuid:6e8bc430-9c3a-11d9-9669-0800200c9a66\n- Application-specific identifier:\n  * /cloudevents/spec/pull/123\n  * 1-555-123-4567\n",
+   "format": "uri-reference",
+   "minLength": 1,
+   "type": "string"
+  },
+  "SubscriptionEnded": {
+   "description": "Event detail structure for org.camaraproject.device-reachability-status-subscriptions.v0.subscription-ended event",
+   "properties": {
+    "device": {
+     "$ref": "#/$defs/DeviceResponse"
+    },
+    "subscriptionId": {
+     "$ref": "#/$defs/SubscriptionId"
+    },
+    "terminationDescription": {
+     "type": "string"
+    },
+    "terminationReason": {
+     "$ref": "#/$defs/TerminationReason"
+    }
+   },
+   "required": [
+    "terminationReason",
+    "subscriptionId"
+   ],
+   "type": "object"
+  },
+  "SubscriptionId": {
+   "description": "The unique identifier of the subscription in the scope of the subscription manager. When this information is contained within an event notification, this concept SHALL be referred as subscriptionId as per Commonalities Event Notification Model.",
+   "type": "string"
+  },
+  "SubscriptionStarted": {
+   "description": "Event detail structure for subscription started event",
+   "properties": {
+    "device": {
+     "$ref": "#/$defs/Device"
+    },
+    "initiationDescription": {
+     "description": "Description about the start of the subscription.",
+     "type": "string"
+    },
+    "initiationReason": {
+     "$ref": "#/$defs/InitiationReason"
+    },
+    "subscriptionId": {
+     "$ref": "#/$defs/SubscriptionId"
+    }
+   },
+   "required": [
+    "initiationReason",
+    "subscriptionId"
+   ],
+   "type": "object"
+  },
+  "SubscriptionUpdated": {
+   "description": "Event detail structure for subscription updated event",
+   "properties": {
+    "device": {
+     "$ref": "#/$defs/Device"
+    },
+    "subscriptionId": {
+     "$ref": "#/$defs/SubscriptionId"
+    },
+    "updateDescription": {
+     "description": "Description about the subscription update.",
+     "type": "string"
+    },
+    "updateReason": {
+     "$ref": "#/$defs/UpdateReason"
+    }
+   },
+   "required": [
+    "updateReason",
+    "subscriptionId"
+   ],
+   "type": "object"
+  },
+  "TerminationReason": {
+   "description": "- NETWORK_TERMINATED - API server stopped sending notification\n- SUBSCRIPTION_EXPIRED - Subscription expire time (optionally set by the requester) has been reached\n- MAX_EVENTS_REACHED - Maximum number of events (optionally set by the requester) has been reached\n- ACCESS_TOKEN_EXPIRED - Access Token sinkCredential (optionally set by the requester) expiration time has been reached\n- SUBSCRIPTION_DELETED - Subscription was deleted by the requester\n",
+   "enum": [
+    "MAX_EVENTS_REACHED",
+    "NETWORK_TERMINATED",
+    "SUBSCRIPTION_EXPIRED",
+    "ACCESS_TOKEN_EXPIRED",
+    "SUBSCRIPTION_DELETED"
+   ],
+   "type": "string"
+  },
+  "UpdateReason": {
+   "description": "- SUBSCRIPTION_ACTIVE - API server transitioned susbcription status to `ACTIVE`\n- SUBSCRIPTION_INACTIVE - API server transitioned susbcription status to `INACTIVE`\n",
+   "enum": [
+    "SUBSCRIPTION_ACTIVE",
+    "SUBSCRIPTION_INACTIVE"
+   ],
+   "type": "string"
+  }
+ },
+ "api": "device-reachability-status-subscriptions",
+ "info_version": "0.8.0",
+ "mapping": {
+  "org.camaraproject.device-reachability-status-subscriptions.v0.reachability-data": "EventReachabilityData",
+  "org.camaraproject.device-reachability-status-subscriptions.v0.reachability-disconnected": "EventReachabilityDisconnected",
+  "org.camaraproject.device-reachability-status-subscriptions.v0.reachability-sms": "EventReachabilitySms",
+  "org.camaraproject.device-reachability-status-subscriptions.v0.subscription-ended": "EventSubscriptionEnded",
+  "org.camaraproject.device-reachability-status-subscriptions.v0.subscription-started": "EventSubscriptionStarted",
+  "org.camaraproject.device-reachability-status-subscriptions.v0.subscription-updated": "EventSubscriptionUpdated"
+ }
+}

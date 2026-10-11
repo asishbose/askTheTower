@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}Tables (local admin) — Ask the Tower{% endblock %}
+{% block body %}
+<h1>Tables</h1>
+<p class="sim">Local showcase view (BIND_ADMIN=1). No phone numbers here by construction: lines are keyed by an HMAC <code>line_id</code>; the number exists only as ciphertext.</p>
+{% for name, rows in data.items() %}
+<h2>{{ name }} ({{ rows | length }})</h2>
+{% if rows %}
+<div style="overflow-x:auto"><table>
+  <tr>{% for c in cols[name] %}<th>{{ c }}</th>{% endfor %}</tr>
+  {% for row in rows %}<tr>{% for c in cols[name] %}<td>{{ row.get(c, "") }}</td>{% endfor %}</tr>{% endfor %}
+</table></div>
+{% endif %}
+{% endfor %}
+{% endblock %}

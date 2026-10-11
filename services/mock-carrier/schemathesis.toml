@@ -1,0 +1,26 @@
+# Schemathesis configuration for the mock carrier — used by tests/test_conformance.py (in-process)
+# and by the CLI run against a live mock (scripts/conformance.py). Every check is on ("--checks all").
+#
+# One deliberate widening: `positive_data_acceptance` also accepts 422. CAMARA's identifier rules
+# are prose, not schema — a schema-valid body with no `phoneNumber` under a two-legged token is a
+# spec-mandated 422 MISSING_IDENTIFIER — so 422 is a correct answer to schema-valid data here.
+# (Unknown numbers are 404 IDENTIFIER_NOT_FOUND, which the default list already accepts.)
+
+[checks]
+enabled = true
+
+[checks.positive_data_acceptance]
+expected-statuses = ["2xx", "401", "403", "404", "409", "422", "429"]
+
+[generation]
+max-examples = 30
+
+# Subscription create: two spec-defined business-rule 400s answer schema-valid bodies — the
+# `Protocol` enum lists MQTT/AMQP/KAFKA/NATS but only HTTP is supported (400 INVALID_PROTOCOL, in
+# the spec's Generic400 for this operation), and a `subscriptionExpireTime` already past the clock
+# is 400 OUT_OF_RANGE. Every other operation keeps the stricter list above.
+[[operations]]
+include-operation-id = ["createSimSwapSubscription", "createDeviceReachabilityStatusSubscription"]
+
+[operations.checks.positive_data_acceptance]
+expected-statuses = ["2xx", "400", "401", "403", "404", "409", "422", "429"]

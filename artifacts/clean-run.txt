@@ -1,0 +1,454 @@
+# clean-machine run — 2026-10-06T21:42:31Z
+# host: Linux 6.18.40.1-microsoft-standard-WSL2 x86_64; docker 29.2.1; dind: docker:29-dind
+# commit: fc871e6 + uncommitted changes
+# inside: x86_64; uv: absent; images cached: 0
+deploy/compose/.env: 29 setting(s) written (random local secrets; gitignored)
+docker compose -f deploy/compose/docker-compose.yml up -d --build --wait --wait-timeout 600
+ Image amazon/dynamodb-local:2.5.2 Pulling 
+ Image caddy:2.10-alpine Pulling 
+ b510243a5cd9 Pulling fs layer 0B
+ 88169dbe8767 Pulling fs layer 0B
+ 25f617ca51f7 Pulling fs layer 0B
+ 4f4fb700ef54 Pulling fs layer 0B
+ 0d11073b6d26 Downloading 1.176kB
+ 4f4fb700ef54 Pulling fs layer 0B
+ 0f5b24603697 Pulling fs layer 0B
+ c108b7dc59eb Pulling fs layer 0B
+ 15dab9c57989 Pulling fs layer 0B
+ d49a2dee86fb Pulling fs layer 0B
+ 88169dbe8767 Downloading 2.097MB
+ 0d11073b6d26 Downloading 1.176kB
+ 0d11073b6d26 Download complete 0B
+ 88169dbe8767 Downloading 5.243MB
+ 88169dbe8767 Downloading 8.389MB
+ b510243a5cd9 Downloading 1.049MB
+ 88169dbe8767 Downloading 12.58MB
+ b510243a5cd9 Downloading 1.049MB
+ 88169dbe8767 Downloading 15.73MB
+ b510243a5cd9 Downloading 2.097MB
+ 88169dbe8767 Downloading 18.87MB
+ b510243a5cd9 Downloading 2.097MB
+ 88169dbe8767 Downloading 22.02MB
+ 25f617ca51f7 Downloading 1.049MB
+ b510243a5cd9 Downloading 3.146MB
+ 88169dbe8767 Downloading 25.17MB
+ 25f617ca51f7 Downloading 1.049MB
+ 25f617ca51f7 Downloading 1.049MB
+ b510243a5cd9 Downloading 3.146MB
+ 88169dbe8767 Downloading 27.26MB
+ 25f617ca51f7 Downloading 1.049MB
+ b510243a5cd9 Downloading 4.194MB
+ 88169dbe8767 Downloading 30.41MB
+ b510243a5cd9 Downloading 4.194MB
+ 88169dbe8767 Downloading 33.55MB
+ 25f617ca51f7 Downloading 1.049MB
+ b510243a5cd9 Downloading 5.243MB
+ 88169dbe8767 Downloading 36.7MB
+ 25f617ca51f7 Downloading 2.097MB
+ b510243a5cd9 Downloading 5.243MB
+ 88169dbe8767 Downloading 40.89MB
+ 25f617ca51f7 Downloading 2.097MB
+ b510243a5cd9 Downloading 6.291MB
+ 88169dbe8767 Downloading 44.04MB
+ 25f617ca51f7 Downloading 2.097MB
+ 88169dbe8767 Downloading 46.14MB
+ 25f617ca51f7 Downloading 3.146MB
+ b510243a5cd9 Downloading 6.291MB
+ 25f617ca51f7 Downloading 3.146MB
+ b510243a5cd9 Downloading 7.34MB
+ 88169dbe8767 Downloading 49.28MB
+ b510243a5cd9 Downloading 7.34MB
+ 88169dbe8767 Downloading 52.43MB
+ 25f617ca51f7 Downloading 3.146MB
+ 25f617ca51f7 Downloading 3.146MB
+ b510243a5cd9 Downloading 8.389MB
+ 88169dbe8767 Downloading 55.57MB
+ 25f617ca51f7 Downloading 4.194MB
+ b510243a5cd9 Downloading 8.389MB
+ 88169dbe8767 Downloading 58.72MB
+ 25f617ca51f7 Downloading 4.194MB
+ b510243a5cd9 Downloading 9.437MB
+ 88169dbe8767 Downloading 61.87MB
+ b510243a5cd9 Downloading 10.49MB
+ 88169dbe8767 Downloading 65.01MB
+ 25f617ca51f7 Downloading 4.194MB
+ 88169dbe8767 Downloading 68.16MB
+ 25f617ca51f7 Downloading 5.243MB
+ b510243a5cd9 Downloading 10.49MB
+ b510243a5cd9 Downloading 11.53MB
+ 88169dbe8767 Downloading 71.3MB
+ 25f617ca51f7 Downloading 5.243MB
+ b510243a5cd9 Downloading 11.53MB
+ 88169dbe8767 Downloading 74.45MB
+ 25f617ca51f7 Downloading 5.243MB
+ b510243a5cd9 Downloading 12.58MB
+ 88169dbe8767 Downloading 76.55MB
+ 25f617ca51f7 Downloading 6.291MB
+ b510243a5cd9 Downloading 12.58MB
+ 88169dbe8767 Downloading 79.69MB
+ 25f617ca51f7 Downloading 6.291MB
+ b510243a5cd9 Downloading 13.63MB
+ 88169dbe8767 Downloading 82.84MB
+ 25f617ca51f7 Downloading 6.291MB
+ b510243a5cd9 Downloading 14.68MB
+ 88169dbe8767 Downloading 85.98MB
+ 25f617ca51f7 Downloading 7.34MB
+ b510243a5cd9 Downloading 14.68MB
+ 88169dbe8767 Downloading 89.13MB
+ 25f617ca51f7 Downloading 7.34MB
+ b510243a5cd9 Downloading 15.73MB
+ 88169dbe8767 Downloading 92.27MB
+ 25f617ca51f7 Downloading 7.34MB
+ b510243a5cd9 Downloading 15.73MB
+ 88169dbe8767 Downloading 94.37MB
+ 25f617ca51f7 Downloading 8.389MB
+ b510243a5cd9 Downloading 15.73MB
+ 88169dbe8767 Downloading 94.37MB
+ 25f617ca51f7 Downloading 8.389MB
+ b510243a5cd9 Downloading 15.73MB
+ 88169dbe8767 Downloading 95.42MB
+ 25f617ca51f7 Downloading 8.389MB
+ b510243a5cd9 Downloading 16.78MB
+ 88169dbe8767 Downloading 98.57MB
+ 25f617ca51f7 Downloading 8.389MB
+ b510243a5cd9 Downloading 17.83MB
+ 88169dbe8767 Downloading 101.7MB
+ 25f617ca51f7 Downloading 9.437MB
+ b510243a5cd9 Downloading 17.83MB
+ 88169dbe8767 Downloading 103.8MB
+ 25f617ca51f7 Downloading 9.437MB
+ b510243a5cd9 Downloading 18.87MB
+ 88169dbe8767 Downloading 107MB
+ 25f617ca51f7 Downloading 9.437MB
+ b510243a5cd9 Downloading 18.87MB
+ 88169dbe8767 Downloading 109.1MB
+ 25f617ca51f7 Downloading 10.49MB
+ 25f617ca51f7 Downloading 10.49MB
+ b510243a5cd9 Downloading 19.92MB
+ 88169dbe8767 Downloading 112.2MB
+ b510243a5cd9 Downloading 19.92MB
+ 88169dbe8767 Downloading 114.3MB
+ 25f617ca51f7 Downloading 10.49MB
+ 25f617ca51f7 Downloading 11.53MB
+ b510243a5cd9 Downloading 20.97MB
+ 88169dbe8767 Downloading 116.4MB
+ b510243a5cd9 Downloading 20.97MB
+ 88169dbe8767 Downloading 119.5MB
+ 25f617ca51f7 Downloading 11.53MB
+ b510243a5cd9 Downloading 22.02MB
+ 88169dbe8767 Downloading 121.6MB
+ 25f617ca51f7 Downloading 11.53MB
+ b510243a5cd9 Downloading 22.02MB
+ 88169dbe8767 Downloading 124.8MB
+ 25f617ca51f7 Downloading 12.58MB
+ b510243a5cd9 Downloading 23.07MB
+ 88169dbe8767 Downloading 126.9MB
+ 25f617ca51f7 Downloading 12.58MB
+ b510243a5cd9 Downloading 23.07MB
+ 88169dbe8767 Downloading 130MB
+ 25f617ca51f7 Downloading 13.63MB
+ b510243a5cd9 Downloading 24.12MB
+ 88169dbe8767 Downloading 133.7MB
+ 25f617ca51f7 Downloading 13.63MB
+ b510243a5cd9 Downloading 25.17MB
+ 88169dbe8767 Downloading 133.7MB
+ 25f617ca51f7 Downloading 14.68MB
+ 4f4fb700ef54 Downloading 32B
+ 4f4fb700ef54 Downloading 32B
+ b510243a5cd9 Downloading 26.21MB
+ 88169dbe8767 Download complete 0B
+ 25f617ca51f7 Downloading 15.73MB
+ 4f4fb700ef54 Download complete 0B
+ dfa8d6bed712 Download complete 0B
+ 7441b80a9e30 Download complete 0B
+ 4f4fb700ef54 Download complete 0B
+ b510243a5cd9 Downloading 27.26MB
+ 25f617ca51f7 Downloading 16.78MB
+ 0f5b24603697 Downloading 1.049MB
+ 25f617ca51f7 Downloading 17.83MB
+ b510243a5cd9 Downloading 28.31MB
+ 0f5b24603697 Downloading 2.097MB
+ b510243a5cd9 Downloading 29.36MB
+ 25f617ca51f7 Downloading 18.87MB
+ 0f5b24603697 Downloading 4.194MB
+ 25f617ca51f7 Downloading 19.92MB
+ b510243a5cd9 Downloading 30.41MB
+ 0f5b24603697 Downloading 5.243MB
+ b510243a5cd9 Downloading 31.46MB
+ 25f617ca51f7 Downloading 19.92MB
+ 0f5b24603697 Downloading 7.34MB
+ b510243a5cd9 Downloading 33.55MB
+ 25f617ca51f7 Downloading 20.97MB
+ 0f5b24603697 Downloading 9.437MB
+ b510243a5cd9 Downloading 34.6MB
+ 25f617ca51f7 Downloading 22.02MB
+ 0f5b24603697 Downloading 10.49MB
+ b510243a5cd9 Downloading 35.65MB
+ 25f617ca51f7 Downloading 23.07MB
+ 0f5b24603697 Downloading 12.58MB
+ b510243a5cd9 Downloading 36.7MB
+ 25f617ca51f7 Downloading 24.12MB
+ 0f5b24603697 Downloading 13.63MB
+ b510243a5cd9 Downloading 37.75MB
+ 25f617ca51f7 Downloading 25.17MB
+ 0f5b24603697 Downloading 15.73MB
+ 25f617ca51f7 Downloading 26.21MB
+ b510243a5cd9 Downloading 38.8MB
+ 0f5b24603697 Download complete 0B
+ b510243a5cd9 Downloading 40.89MB
+ 25f617ca51f7 Downloading 27.26MB
+ c108b7dc59eb Download complete 0B
+ d49a2dee86fb Downloading 1.049MB
+ b510243a5cd9 Downloading 41.94MB
+ 25f617ca51f7 Downloading 28.31MB
+ d49a2dee86fb Downloading 2.097MB
+ b510243a5cd9 Downloading 42.99MB
+ 25f617ca51f7 Downloading 29.36MB
+ 25f617ca51f7 Downloading 30.41MB
+ b510243a5cd9 Downloading 44.04MB
+ d49a2dee86fb Download complete 0B
+ d49a2dee86fb Extracting 1B
+ b510243a5cd9 Downloading 46.14MB
+ 25f617ca51f7 Downloading 31.46MB
+ 15dab9c57989 Downloading 1.049MB
+ d49a2dee86fb Pull complete 0B
+ b510243a5cd9 Downloading 47.19MB
+ 25f617ca51f7 Downloading 32.51MB
+ 15dab9c57989 Download complete 0B
+ 15dab9c57989 Extracting 1B
+ 25f617ca51f7 Downloading 33.55MB
+ b510243a5cd9 Downloading 48.23MB
+ 15dab9c57989 Extracting 1B
+ b510243a5cd9 Downloading 50.33MB
+ 25f617ca51f7 Downloading 34.6MB
+ 0f5b24603697 Extracting 1B
+ c108b7dc59eb Pull complete 0B
+ 15dab9c57989 Pull complete 0B
+ b510243a5cd9 Downloading 51.38MB
+ 25f617ca51f7 Downloading 36.7MB
+ 0f5b24603697 Extracting 1B
+ 25f617ca51f7 Downloading 38.8MB
+ b510243a5cd9 Downloading 53.86MB
+ 0f5b24603697 Extracting 1B
+ 25f617ca51f7 Downloading 41.94MB
+ b510243a5cd9 Download complete 0B
+ 0f5b24603697 Pull complete 0B
+ 4f4fb700ef54 Pull complete 0B
+ Image caddy:2.10-alpine Pulled 
+ 25f617ca51f7 Downloading 45.09MB
+ 25f617ca51f7 Downloading 48.23MB
+ 25f617ca51f7 Downloading 52.32MB
+ 25f617ca51f7 Download complete 0B
+ 25f617ca51f7 Extracting 1B
+ 25f617ca51f7 Extracting 1B
+ 25f617ca51f7 Extracting 1B
+ 25f617ca51f7 Extracting 1B
+ 25f617ca51f7 Extracting 1B
+ 25f617ca51f7 Extracting 1B
+ 25f617ca51f7 Extracting 1B
+ 25f617ca51f7 Extracting 1B
+ 25f617ca51f7 Extracting 1B
+ 25f617ca51f7 Extracting 1B
+ 25f617ca51f7 Extracting 2B
+ 88169dbe8767 Extracting 1B
+ 25f617ca51f7 Pull complete 0B
+ 88169dbe8767 Extracting 1B
+ 88169dbe8767 Extracting 1B
+ 88169dbe8767 Extracting 1B
+ 88169dbe8767 Extracting 1B
+ 88169dbe8767 Extracting 1B
+ 88169dbe8767 Extracting 1B
+ 88169dbe8767 Extracting 1B
+ 88169dbe8767 Extracting 1B
+ 88169dbe8767 Extracting 1B
+ 88169dbe8767 Extracting 2B
+ 88169dbe8767 Extracting 2B
+ 88169dbe8767 Extracting 2B
+ 88169dbe8767 Extracting 2B
+ 88169dbe8767 Pull complete 0B
+ 4f4fb700ef54 Pull complete 0B
+ b510243a5cd9 Extracting 1B
+ b510243a5cd9 Extracting 1B
+ b510243a5cd9 Extracting 1B
+ b510243a5cd9 Pull complete 0B
+ Image amazon/dynamodb-local:2.5.2 Pulled 
+ Image ask-the-tower/tower-mcp:latest Building 
+ Image ask-the-tower/mock-carrier:latest Building 
+ Image ask-the-tower/binding-page:latest Building 
+ Image ask-the-tower/alerts:latest Building 
+ Image ask-the-tower/mock-carrier:latest Built 
+ Image ask-the-tower/binding-page:latest Built 
+ Image ask-the-tower/alerts:latest Built 
+ Image ask-the-tower/tower-mcp:latest Built 
+ Network ask-the-tower_tower Creating 
+ Volume ask-the-tower_caddy-data Creating 
+ Volume ask-the-tower_caddy-data Creating 
+ Network ask-the-tower_tower Creating 
+ Volume ask-the-tower_tls-trust Creating 
+ Volume ask-the-tower_tls-trust Creating 
+ Volume ask-the-tower_caddy-data Created 
+ Volume ask-the-tower_caddy-data Created 
+ Volume ask-the-tower_tls-trust Created 
+ Volume ask-the-tower_tls-trust Created 
+ Network ask-the-tower_tower Created 
+ Network ask-the-tower_tower Created 
+ Container ask-the-tower-dynamodb-local-1 Creating 
+ Container ask-the-tower-alerts-tls-1 Creating 
+ Container ask-the-tower-alerts-tls-1 Created 
+ Container ask-the-tower-mock-carrier-1 Creating 
+ Container ask-the-tower-dynamodb-local-1 Created 
+ Container ask-the-tower-mock-carrier-1 Created 
+ Container ask-the-tower-alerts-1 Creating 
+ Container ask-the-tower-binding-page-1 Creating 
+ Container ask-the-tower-binding-page-1 Created 
+ Container ask-the-tower-alerts-1 Created 
+ Container ask-the-tower-tower-mcp-1 Creating 
+ Container ask-the-tower-tower-mcp-1 Created 
+ Container ask-the-tower-alerts-tls-1 Starting 
+ Container ask-the-tower-dynamodb-local-1 Starting 
+ Container ask-the-tower-alerts-tls-1 Started 
+ Container ask-the-tower-alerts-tls-1 Waiting 
+ Container ask-the-tower-dynamodb-local-1 Started 
+ Container ask-the-tower-alerts-tls-1 Healthy 
+ Container ask-the-tower-mock-carrier-1 Starting 
+ Container ask-the-tower-mock-carrier-1 Started 
+ Container ask-the-tower-dynamodb-local-1 Waiting 
+ Container ask-the-tower-mock-carrier-1 Waiting 
+ Container ask-the-tower-dynamodb-local-1 Waiting 
+ Container ask-the-tower-mock-carrier-1 Waiting 
+ Container ask-the-tower-dynamodb-local-1 Healthy 
+ Container ask-the-tower-dynamodb-local-1 Healthy 
+ Container ask-the-tower-mock-carrier-1 Healthy 
+ Container ask-the-tower-mock-carrier-1 Healthy 
+ Container ask-the-tower-binding-page-1 Starting 
+ Container ask-the-tower-alerts-1 Starting 
+ Container ask-the-tower-binding-page-1 Started 
+ Container ask-the-tower-alerts-1 Started 
+ Container ask-the-tower-mock-carrier-1 Waiting 
+ Container ask-the-tower-alerts-1 Waiting 
+ Container ask-the-tower-dynamodb-local-1 Waiting 
+ Container ask-the-tower-dynamodb-local-1 Healthy 
+ Container ask-the-tower-mock-carrier-1 Healthy 
+ Container ask-the-tower-alerts-1 Healthy 
+ Container ask-the-tower-tower-mcp-1 Starting 
+ Container ask-the-tower-tower-mcp-1 Started 
+ Container ask-the-tower-alerts-1 Waiting 
+ Container ask-the-tower-alerts-tls-1 Waiting 
+ Container ask-the-tower-tower-mcp-1 Waiting 
+ Container ask-the-tower-dynamodb-local-1 Waiting 
+ Container ask-the-tower-mock-carrier-1 Waiting 
+ Container ask-the-tower-binding-page-1 Waiting 
+ Container ask-the-tower-alerts-1 Healthy 
+ Container ask-the-tower-dynamodb-local-1 Healthy 
+ Container ask-the-tower-mock-carrier-1 Healthy 
+ Container ask-the-tower-binding-page-1 Healthy 
+ Container ask-the-tower-alerts-tls-1 Healthy 
+ Container ask-the-tower-tower-mcp-1 Healthy 
+docker compose -f deploy/compose/docker-compose.yml --profile tools run --rm --no-deps -T seed 2>&1 | tee deploy/compose/logs/seed.log; exit ${PIPESTATUS[0]}
+ Container ask-the-tower-seed-run-1056a13a57a1 Creating 
+ Container ask-the-tower-seed-run-1056a13a57a1 Created 
+seed: tables ready (all existed)
+seed: previous run cleared: 0 watch(es), 0 AlertsState row(s)
+seed: users: user-asish, user-mom
+seed: mock: scenarios/demo.yaml loaded (clock and lines reset)
+seed: bound user-asish's line via the mock's auth-code flow (simulated client id phone-asish)
+seed: bound user-mom's line via the mock's auth-code flow (simulated client id phone-mom)
+seed: user-mom → user-asish: watch as 'mom' (granted)
+  who          asks about   bound  grant
+  user-asish   self         True   owner
+  user-mom     self         True   owner
+  user-asish   mom          True   watch
+  tables: Users 2, Lines 2, Grants 1, Watches 0, Audit 0, BindTokens 0
+  mock clock: 2026-10-05T14:00:00.000Z   (Tower and Alerts follow it)
+seed: done — `make demo` next
+stack up: Tower http://localhost:8080/mcp · binding http://localhost:8081 · mock http://localhost:8443 · alerts http://localhost:8082 — next: make demo
+ Container ask-the-tower-alerts-1 Running 
+ Container ask-the-tower-alerts-tls-1 Running 
+ Container ask-the-tower-mock-carrier-1 Running 
+ Container ask-the-tower-binding-page-1 Running 
+ Container ask-the-tower-dynamodb-local-1 Running 
+ Container ask-the-tower-tower-mcp-1 Recreate 
+ Container ask-the-tower-tower-mcp-1 Recreated 
+ Container ask-the-tower-alerts-tls-1 Waiting 
+ Container ask-the-tower-alerts-tls-1 Healthy 
+ Container ask-the-tower-dynamodb-local-1 Waiting 
+ Container ask-the-tower-mock-carrier-1 Waiting 
+ Container ask-the-tower-dynamodb-local-1 Waiting 
+ Container ask-the-tower-mock-carrier-1 Waiting 
+ Container ask-the-tower-mock-carrier-1 Healthy 
+ Container ask-the-tower-mock-carrier-1 Healthy 
+ Container ask-the-tower-dynamodb-local-1 Healthy 
+ Container ask-the-tower-dynamodb-local-1 Healthy 
+ Container ask-the-tower-mock-carrier-1 Waiting 
+ Container ask-the-tower-alerts-1 Waiting 
+ Container ask-the-tower-dynamodb-local-1 Waiting 
+ Container ask-the-tower-mock-carrier-1 Healthy 
+ Container ask-the-tower-alerts-1 Healthy 
+ Container ask-the-tower-dynamodb-local-1 Healthy 
+ Container ask-the-tower-tower-mcp-1 Starting 
+ Container ask-the-tower-tower-mcp-1 Started 
+ Image ask-the-tower/ref-client:latest Pulling 
+ Image ask-the-tower/ref-client:latest pull access denied for ask-the-tower/ref-client, repository does not exist or may require 'docker login' 
+ Image ask-the-tower/ref-client:latest Building 
+ Image ask-the-tower/ref-client:latest Built 
+ Container ask-the-tower-binding-page-1 Waiting 
+ Container ask-the-tower-tower-mcp-1 Waiting 
+ Container ask-the-tower-binding-page-1 Healthy 
+ Container ask-the-tower-tower-mcp-1 Healthy 
+ Container ask-the-tower-ref-client-run-3544b04e0220 Creating 
+ Container ask-the-tower-ref-client-run-3544b04e0220 Created 
+ref-client demo: scripted agent (no Bedrock: tool calls come from the demo script, `summary` is read verbatim). Set AWS credentials for the model-driven run.
+=== Moment 1 — my phone just lost signal ===
+  you> Is my line OK?
+       → line_is_ok(line=self)  ['OK']
+  ref> Your line is as it was.
+  [mock] mock clock +12 min; the demo timeline moves Asish's SIM to another device (fired: sim_swap)
+  you> My phone just lost signal. Is my line OK?
+       → line_is_ok(line=self)  ['SIM_SWAPPED_RECENT']
+  ref> Your SIM was moved to another device at 10:12 today. If that wasn't you, call your carrier now.
+    transcript → /out/transcripts/moment-1.json
+=== Moment 2 — is anything forwarding my calls? ===
+  [mock] mock clock +8 min; the demo timeline sets call forwarding on Asish's line (cf_set) (fired: cf_set)
+  you> Is anything forwarding my calls?
+       → line_is_ok(line=self)  ['SIM_SWAPPED_RECENT', 'CALL_FORWARDING_SET']
+  ref> Your SIM was moved to another device at 10:12 today. If that wasn't you, call your carrier now. All your calls have been forwarding since 10:20 today. If you didn't set that, call your carrier.
+    transcript → /out/transcripts/moment-2.json
+=== Moment 3 — Mom's line, a watch, a revoke ===
+  you> Is Mom's line OK?
+       → line_is_ok(line=mom)  ['OK']
+  ref> Your line is as it was.
+  you> Watch Mom's line for me.
+       → watch_line(line=mom, enable=True)  ['OK']
+  ref> Alerts are on for that line. You'll get a text if it's SIM-swapped or forwarded.
+  [mock] mock: SIM swap on Mom's line
+  (Alerts texts the watcher now — the phone buzzes (SMS log locally; make showcase-alerts).)
+  [consent] Mom revokes Asish's watch grant (binding page)
+  [mock] mock: SIM swap on Mom's line again
+  (No text this time: Alerts re-reads the grant and audits SUPPRESSED_REVOKED.)
+  you> Is Mom's line OK?
+       → line_is_ok(line=mom)  ['NO_CONSENT']
+  ref> Mom hasn't shared that with you.
+  [consent] demo reset: Mom grants the watch again
+    transcript → /out/transcripts/moment-3.json
+=== Transplant closing story — the line must stay reachable ===
+  you> Turn on alerts for my line.
+       → watch_line(line=self, enable=True)  ['OK']
+  ref> Alerts are on for that line. You'll get a text if it's SIM-swapped or forwarded.
+  [mock] mock: Asish's phone drops off the network
+  [mock] mock clock +20 min dark
+  (Alerts' transplant rule: 20 min dark → the partner's text (make showcase-alerts).)
+  you> Is my phone on?
+       → is_reachable(line=self)  ['UNREACHABLE']
+  ref> That person's phone has been off the network since 10:20 today — that's the network, nothing more.
+  [mock] mock clock +15 min, no acknowledgement
+  (15 more minutes with no reply → the second contact's text.)
+  [mock] mock: Asish's phone is back on the network
+  you> Is my phone reachable now?
+       → is_reachable(line=self)  ['OK']
+  ref> Your line is as it was.
+    transcript → /out/transcripts/transplant.json
+demo ok: 4 stories, reason codes as expected
+logs → deploy/compose/logs/stack.log
+TIMING make up && make demo: 105.999 s wall
+# exit: 0
+# after make down: containers=0 volumes=0 networks=0

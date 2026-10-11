@@ -1,0 +1,115 @@
+{{- if .Values.seed.enabled }}
+{{- $script := .Files.Get "files/k8s_seed.py" }}
+{{- if not $script }}
+{{- fail "seed.enabled needs files/k8s_seed.py: run `uv run python scripts/k8s_seed.py --sync-chart` first" }}
+{{- end }}
+{{- $tower := index .Values "tower-mcp" }}
+{{- $img := $tower.image | default dict }}
+{{- $reg := $img.registry | default .Values.global.imageRegistry }}
+{{- $tag := $img.tag | default .Values.global.imageTag }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-seed
+  labels:
+    {{- include "att.labels" . | nindent 4 }}
+  annotations:
+    helm.sh/hook: post-install,post-upgrade
+    helm.sh/hook-weight: "-5"
+    helm.sh/hook-delete-policy: before-hook-creation
+data:
+  {{- range $path, $_ := .Files.Glob "files/*.py" }}
+  {{ base $path }}: |
+    {{- $.Files.Get $path | nindent 4 }}
+  {{- end }}
+---
+# `make seed` for Kubernetes: scripts/k8s_seed.py --in-cluster in the tower-mcp image (it has tower_consent,
+# tower_mcp.seed and httpx). TOWER_ENV=local (kind) runs the compose seed (bind through the binding page's
+# one-tap flow); otherwise (EKS) the AWS seed (KMS-made line ids, tower_mcp.seed.seed_demo). Re-run with
+# `uv run python scripts/k8s_seed.py`.
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ .Release.Name }}-seed
+  labels:
+    {{- include "att.labels" . | nindent 4 }}
+    app.kubernetes.io/name: seed
+  annotations:
+    helm.sh/hook: post-install,post-upgrade
+    helm.sh/hook-weight: "0"
+    helm.sh/hook-delete-policy: before-hook-creation
+spec:
+  backoffLimit: 1
+  activeDeadlineSeconds: {{ .Values.seed.activeDeadlineSeconds }}
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: seed
+        app.kubernetes.io/instance: {{ .Release.Name }}
+        app.kubernetes.io/part-of: ask-the-tower
+    spec:
+      restartPolicy: Never
+      {{- with .Values.seed.serviceAccountName }}
+      serviceAccountName: {{ . }}
+      {{- end }}
+      automountServiceAccountToken: false
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 10001
+        runAsGroup: 10001
+        seccompProfile:
+          type: RuntimeDefault
+      {{- with .Values.global.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      containers:
+        - name: seed
+          image: {{ printf "%s%s:%s" (ternary (printf "%s/" $reg) "" (ne $reg "")) $img.repository $tag | quote }}
+          imagePullPolicy: {{ .Values.global.imagePullPolicy }}
+          command: [python, /seed/k8s_seed.py, --in-cluster]
+          env:
+            {{- range $k, $v := .Values.global.storeEnv }}
+            {{- if ne (toString $v) "" }}
+            - name: {{ $k }}
+              value: {{ $v | toString | quote }}
+            {{- end }}
+            {{- end }}
+            {{- with .Values.global.storeEnv.DYNAMO_ENDPOINT }}
+            - name: TOWER_DYNAMODB_ENDPOINT
+              value: {{ . | quote }}
+            {{- end }}
+            {{- range $k, $ref := .Values.global.storeSecretEnv }}
+            {{- if $ref }}
+            - name: {{ $k }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ default $.Values.global.secretName $ref.name }}
+                  key: {{ $ref.key }}
+            {{- end }}
+            {{- end }}
+            - name: MOCK_URL
+              value: {{ .Values.seed.mockUrl | quote }}
+            - name: BINDING_URL
+              value: {{ .Values.seed.bindingUrl | quote }}
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: [ALL]
+          resources:
+            {{- toYaml .Values.seed.resources | nindent 12 }}
+          volumeMounts:
+            - name: seed
+              mountPath: /seed
+              readOnly: true
+            - name: tmp
+              mountPath: /tmp
+      volumes:
+        - name: seed
+          configMap:
+            name: {{ .Release.Name }}-seed
+        - name: tmp
+          emptyDir:
+            sizeLimit: 64Mi
+{{- end }}

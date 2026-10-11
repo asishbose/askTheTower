@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="referrer" content="no-referrer">
+<title>{% block title %}Ask the Tower{% endblock %}</title>
+<style>
+  body { font: 17px/1.45 system-ui, -apple-system, "Segoe UI", sans-serif; margin: 0; background: #f6f6f3; color: #1d1d1b; }
+  main { max-width: 30rem; margin: 0 auto; padding: 1.25rem 1rem 3rem; }
+  h1 { font-size: 1.45rem; margin: .4rem 0 1rem; }
+  h2 { font-size: 1.1rem; margin: 1.6rem 0 .5rem; }
+  .card { background: #fff; border: 1px solid #e2e2dc; border-radius: 12px; padding: 1rem; margin: .75rem 0; }
+  .big { font-size: 1.6rem; font-weight: 600; letter-spacing: .04em; }
+  .muted { color: #66665f; font-size: .92rem; }
+  .ok { color: #1f6f3a; } .bad { color: #a12a1f; }
+  button, .button { display: block; width: 100%; box-sizing: border-box; font: inherit; font-weight: 600; padding: .85rem 1rem;
+           border: 0; border-radius: 10px; background: #1f4fa3; color: #fff; text-align: center; text-decoration: none; margin: .6rem 0; }
+  button.secondary { background: #e7e7e1; color: #1d1d1b; }
+  button.small { display: inline-block; width: auto; padding: .4rem .8rem; font-size: .9rem; margin: 0; }
+  label { display: block; margin: .6rem 0 .2rem; font-weight: 600; }
+  input[type=text], select { width: 100%; box-sizing: border-box; font: inherit; padding: .6rem; border: 1px solid #c9c9c2; border-radius: 8px; }
+  ol li { margin: .35rem 0; }
+  table { border-collapse: collapse; width: 100%; font-size: .85rem; }
+  td, th { border-bottom: 1px solid #e2e2dc; padding: .35rem .3rem; text-align: left; vertical-align: top; word-break: break-all; }
+  .error { background: #fbeae8; border: 1px solid #e9b9b3; border-radius: 8px; padding: .7rem; }
+  .sim { background: #fff7d6; border: 1px dashed #c9a400; border-radius: 8px; padding: .5rem .7rem; font-size: .85rem; }
+</style>
+</head>
+<body><main>
+{% block body %}{% endblock %}
+</main></body>
+</html>

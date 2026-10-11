@@ -1,0 +1,7 @@
+apiVersion: v2
+name: mock-carrier
+description: "Mock CAMARA carrier (08): six APIs, OAuth, scenarios, webhooks. In-memory: one replica."
+type: application
+version: 0.1.0
+appVersion: "0.1.0"
+keywords: [ask-the-tower, camara]

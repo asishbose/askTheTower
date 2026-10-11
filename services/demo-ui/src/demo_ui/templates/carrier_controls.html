@@ -1,0 +1,22 @@
+{% set icons = {"sim_swap": "sim", "cf_set": "forward", "cf_clear": "unforward", "unreachable": "offline", "reachable": "online"} %}
+{% if not enabled %}
+<div class="off-panel" data-off><svg class="i" aria-hidden="true"><use href="/static/img/icons.svg#pause"></use></svg><p class="off">{{ reason }}</p></div>
+{% else %}
+<div class="toolbar">
+  <button class="btn" hx-post="/carrier/reset" hx-target="#carrier-status"><svg class="i" aria-hidden="true"><use href="/static/img/icons.svg#reset"></use></svg>Reset (make seed)</button>
+  <span class="seg" role="group" aria-label="advance the mock clock">
+    <svg class="i seg-icon" aria-hidden="true"><use href="/static/img/icons.svg#clock"></use></svg>
+    {% for m in (1, 12, 20) %}<button class="btn" hx-post="/carrier/advance" hx-vals='{"minutes": {{ m }}}' hx-target="#carrier-status">+{{ m }} min</button>{% endfor %}
+  </span>
+</div>
+{% for who in ("asish", "mom") %}
+<div class="fire-row" role="group" aria-label="events on {{ who | capitalize }}'s line"><span class="who"><span class="avatar" aria-hidden="true">{{ who[:1] | upper }}</span>{{ who | capitalize }}</span>
+  {% for ev in events %}<button class="btn icon-btn" hx-post="/carrier/fire" hx-vals='{"who": "{{ who }}", "event": "{{ ev }}"}' hx-target="#carrier-status" title="{{ ev }} on {{ who | capitalize }}'s line"><svg class="i" aria-hidden="true"><use href="/static/img/icons.svg#{{ icons.get(ev, 'bolt') }}"></use></svg>{{ ev }}</button>{% endfor %}
+</div>
+{% endfor %}
+<div class="fire-row" role="group" aria-label="carrier faults"><span class="who"><svg class="i" aria-hidden="true"><use href="/static/img/icons.svg#bolt"></use></svg>faults</span>
+  <span class="seg">{% for k in faults %}<button class="btn" hx-post="/carrier/fault" hx-vals='{"kind": "{{ k }}"}' hx-target="#carrier-status" title="inject one {{ k }} fault">{{ k }}</button>{% endfor %}
+  <button class="btn" hx-post="/carrier/faults/clear" hx-target="#carrier-status">clear</button></span>
+</div>
+{% endif %}
+<div id="carrier-status"></div>

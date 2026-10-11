@@ -1,0 +1,53 @@
+{{- if .Values.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "demo-ui.fullname" . }}
+  labels:
+    {{- include "demo-ui.labels" . | nindent 4 }}
+spec:
+  replicas: 1   # one process holds the one feed poller and the one macro runner (doc 11 §2)
+  selector:
+    matchLabels:
+      {{- include "demo-ui.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "demo-ui.labels" . | nindent 8 }}
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    spec:
+      serviceAccountName: {{ include "demo-ui.serviceAccountName" . }}
+      automountServiceAccountToken: false
+      securityContext:
+        {{- include "demo-ui.podSecurityContext" . | nindent 8 }}
+      {{- include "demo-ui.scheduling" . | nindent 6 }}
+      containers:
+        - name: demo-ui
+          image: {{ include "demo-ui.image" . | quote }}
+          imagePullPolicy: {{ include "demo-ui.pullPolicy" . }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.service.port }}
+          env:
+            {{- include "demo-ui.env" . | nindent 12 }}
+          readinessProbe:
+            httpGet: {path: /healthz, port: http}
+            periodSeconds: 5
+          livenessProbe:
+            httpGet: {path: /healthz, port: http}
+            periodSeconds: 20
+          securityContext:
+            {{- include "demo-ui.securityContext" . | nindent 12 }}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+      volumes:
+        - name: tmp
+          emptyDir:
+            sizeLimit: 64Mi
+{{- end }}

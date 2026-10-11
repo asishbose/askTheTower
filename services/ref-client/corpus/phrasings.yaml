@@ -1,0 +1,151 @@
+# The phrasing corpus (docs/architecture/components/09-reference-client.md §3).
+# One entry = one thing a person might say to the speaker, and what the model should do with it:
+#   expect: { tool: <name>, args: {...} }   call this tool with these arguments (unlisted args: defaults)
+#   expect: { tool: null }                  answer without calling any tool
+#   expect: { clarify: true }               call no tool; ask which line
+#   expect_any: [ ... ]                     any one of these is a pass (edge cases only)
+# Written from how people actually talk about their phone, not from the tool names. The user speaking is
+# Asish: he holds his own line ("self") and has been granted Mom's line under the alias "mom".
+# No numbers and no health words in here: transcripts quote these sentences.
+
+# --- line_is_ok -------------------------------------------------------------------------------------------
+- say: "my phone just lost signal, is my line ok?"
+  tags: [line_is_ok, demo]
+  expect: { tool: line_is_ok, args: { line: self } }
+- say: "is anything forwarding my calls"
+  tags: [line_is_ok, demo]
+  expect: { tool: line_is_ok, args: { line: self } }
+- say: "did my sim get jacked"
+  tags: [line_is_ok, slang]
+  expect: { tool: line_is_ok, args: { line: self } }
+- say: "has somebody hijacked my number"
+  tags: [line_is_ok]
+  expect: { tool: line_is_ok, args: { line: self } }
+- say: "my phone says no service out of nowhere, did someone swap my sim"
+  tags: [line_is_ok]
+  expect: { tool: line_is_ok, args: { line: self } }
+- say: "is my phone number safe right now"
+  tags: [line_is_ok]
+  expect: { tool: line_is_ok, args: { line: self } }
+- say: "are my calls getting redirected somewhere"
+  tags: [line_is_ok]
+  expect: { tool: line_is_ok, args: { line: self } }
+- say: "is mom's line ok"
+  tags: [line_is_ok, demo]
+  expect: { tool: line_is_ok, args: { line: mom } }
+- say: "check if anyone messed with my mom's sim"
+  tags: [line_is_ok, slang]
+  expect: { tool: line_is_ok, args: { line: mom } }
+- say: "are mom's calls being forwarded"
+  tags: [line_is_ok]
+  expect: { tool: line_is_ok, args: { line: mom } }
+- say: "yo is my number still mine or did somebody port it"
+  tags: [line_is_ok, slang]
+  expect: { tool: line_is_ok, args: { line: self } }
+- say: "my bank text never came, is my line alright"
+  tags: [line_is_ok]
+  expect: { tool: line_is_ok, args: { line: self } }
+
+# --- is_reachable -----------------------------------------------------------------------------------------
+- say: "is mom's phone on"
+  tags: [is_reachable, demo]
+  expect: { tool: is_reachable, args: { line: mom } }
+- say: "can mom's phone be reached right now"
+  tags: [is_reachable]
+  expect: { tool: is_reachable, args: { line: mom } }
+- say: "does mom's phone have signal"
+  tags: [is_reachable]
+  expect: { tool: is_reachable, args: { line: mom } }
+- say: "is my phone on the network"
+  tags: [is_reachable]
+  expect: { tool: is_reachable, args: { line: self } }
+- say: "is my phone on"
+  tags: [is_reachable, demo]
+  expect: { tool: is_reachable, args: { line: self } }
+- say: "is mom's cell switched off"
+  tags: [is_reachable]
+  expect: { tool: is_reachable, args: { line: mom } }
+- say: "is my mobile connected"
+  tags: [is_reachable]
+  expect: { tool: is_reachable, args: { line: self } }
+- say: "is mom's phone dead or just off the grid"
+  tags: [is_reachable, slang]
+  expect: { tool: is_reachable, args: { line: mom } }
+- say: "would a call to mom even go through right now"
+  tags: [is_reachable]
+  expect: { tool: is_reachable, args: { line: mom } }
+- say: "is my phone reachable now"
+  tags: [is_reachable, demo]
+  expect: { tool: is_reachable, args: { line: self } }
+
+# --- watch_line -------------------------------------------------------------------------------------------
+- say: "watch mom's line for me"
+  tags: [watch_line, demo]
+  expect: { tool: watch_line, args: { line: mom, enable: true } }
+- say: "text me if anything happens to mom's sim"
+  tags: [watch_line]
+  expect: { tool: watch_line, args: { line: mom, enable: true } }
+- say: "stop watching mom's line"
+  tags: [watch_line]
+  expect: { tool: watch_line, args: { line: mom, enable: false } }
+- say: "turn on alerts for my line"
+  tags: [watch_line, demo]
+  expect: { tool: watch_line, args: { line: self, enable: true } }
+- say: "turn off the alerts on my number"
+  tags: [watch_line]
+  expect: { tool: watch_line, args: { line: self, enable: false } }
+- say: "am i watching mom's line"
+  tags: [watch_line, status]
+  expect: { tool: watch_line, args: { line: mom, enable: null } }
+- say: "are alerts on for my line"
+  tags: [watch_line, status]
+  expect: { tool: watch_line, args: { line: self, enable: null } }
+- say: "keep an eye on mom's number and ping me if it gets forwarded"
+  tags: [watch_line, slang]
+  expect: { tool: watch_line, args: { line: mom, enable: true } }
+- say: "quit texting me about mom's phone"
+  tags: [watch_line, slang]
+  expect: { tool: watch_line, args: { line: mom, enable: false } }
+- say: "let me know by text if my sim ever gets swapped"
+  tags: [watch_line]
+  expect: { tool: watch_line, args: { line: self, enable: true } }
+
+# --- off-topic: no tool -----------------------------------------------------------------------------------
+- say: "what's the weather in ottawa"
+  tags: [off-topic]
+  expect: { tool: null }
+- say: "play some jazz"
+  tags: [off-topic]
+  expect: { tool: null }
+- say: "set a timer for ten minutes"
+  tags: [off-topic]
+  expect: { tool: null }
+- say: "what's a good phone plan for a teenager"
+  tags: [off-topic, near-miss]
+  expect: { tool: null }
+- say: "how do i turn on airplane mode"
+  tags: [off-topic, near-miss]
+  expect: { tool: null }
+
+# --- ambiguous: ask which line ----------------------------------------------------------------------------
+- say: "is the line ok"
+  tags: [ambiguous]
+  expect: { clarify: true }
+- say: "check the phone"
+  tags: [ambiguous]
+  expect: { clarify: true }
+- say: "is it still switched on"
+  tags: [ambiguous]
+  expect: { clarify: true }
+
+# --- wrong language: Alexa+ is English (US); either the right call or no call, never a wrong tool -----------
+- say: "est-ce que ma ligne va bien"
+  tags: [wrong-language]
+  expect_any:
+    - { tool: line_is_ok, args: { line: self } }
+    - { tool: null }
+- say: "el teléfono de mamá está encendido"
+  tags: [wrong-language]
+  expect_any:
+    - { tool: is_reachable, args: { line: mom } }
+    - { tool: null }

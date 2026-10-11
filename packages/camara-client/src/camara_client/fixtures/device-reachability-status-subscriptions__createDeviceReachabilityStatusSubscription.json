@@ -1,0 +1,1185 @@
+{
+ "operation": "device-reachability-status-subscriptions/createDeviceReachabilityStatusSubscription",
+ "inputs": {
+  "line_id": "line-fixture-a",
+  "e164": "+16135550199",
+  "now": "2026-10-05T14:00:00Z",
+  "auth_code": "fixture-auth-code"
+ },
+ "cases": [
+  {
+   "case": "201 Active Subscription",
+   "source": "spec",
+   "call": {
+    "method": "subscribe",
+    "args": {
+     "kind": "reachability-disconnected",
+     "line": {
+      "line_id": "line-fixture-a",
+      "e164": "+16135550199"
+     },
+     "ttl_h": 24,
+     "now": "2026-10-05T14:00:00Z",
+     "sink_url": "https://sink.test/hooks/fixture-line-a"
+    }
+   },
+   "exchanges": [
+    {
+     "request": {
+      "method": "POST",
+      "path": "/device-reachability-status-subscriptions/v0.8/subscriptions",
+      "json": {
+       "protocol": "HTTP",
+       "sink": "https://sink.test/hooks/fixture-line-a",
+       "types": [
+        "org.camaraproject.device-reachability-status-subscriptions.v0.reachability-disconnected"
+       ],
+       "config": {
+        "subscriptionDetail": {
+         "device": {
+          "phoneNumber": "+16135550199"
+         }
+        },
+        "subscriptionExpireTime": "2026-10-06T14:00:00Z"
+       }
+      }
+     },
+     "response": {
+      "status": 201,
+      "json": {
+       "id": "550e8400-e29b-41d4-a716-446655440000",
+       "sink": "https://endpoint.example.com/sink",
+       "protocol": "HTTP",
+       "types": [
+        "org.camaraproject.device-reachability-status-subscriptions.v0.reachability-data"
+       ],
+       "config": {
+        "subscriptionDetail": {},
+        "subscriptionExpireTime": "2024-07-17T13:18:23.682Z",
+        "subscriptionMaxEvents": 5,
+        "initialEvent": true
+       },
+       "startsAt": "2024-07-03T21:12:02.871Z",
+       "expiresAt": "2024-07-03T21:12:02.871Z",
+       "status": "ACTIVE"
+      }
+     }
+    }
+   ]
+  },
+  {
+   "case": "201 Active Subscription With Device Disambiguation",
+   "source": "spec",
+   "call": {
+    "method": "subscribe",
+    "args": {
+     "kind": "reachability-disconnected",
+     "line": {
+      "line_id": "line-fixture-a",
+      "e164": "+16135550199"
+     },
+     "ttl_h": 24,
+     "now": "2026-10-05T14:00:00Z",
+     "sink_url": "https://sink.test/hooks/fixture-line-a"
+    }
+   },
+   "exchanges": [
+    {
+     "request": {
+      "method": "POST",
+      "path": "/device-reachability-status-subscriptions/v0.8/subscriptions",
+      "json": {
+       "protocol": "HTTP",
+       "sink": "https://sink.test/hooks/fixture-line-a",
+       "types": [
+        "org.camaraproject.device-reachability-status-subscriptions.v0.reachability-disconnected"
+       ],
+       "config": {
+        "subscriptionDetail": {
+         "device": {
+          "phoneNumber": "+16135550199"
+         }
+        },
+        "subscriptionExpireTime": "2026-10-06T14:00:00Z"
+       }
+      }
+     },
+     "response": {
+      "status": 201,
+      "json": {
+       "id": "550e8400-e29b-41d4-a716-446655440000",
+       "sink": "https://endpoint.example.com/sink",
+       "protocol": "HTTP",
+       "types": [
+        "org.camaraproject.device-reachability-status-subscriptions.v0.reachability-data"
+       ],
+       "config": {
+        "subscriptionDetail": {
+         "device": {
+          "phoneNumber": "+123456789"
+         }
+        },
+        "subscriptionExpireTime": "2024-07-17T13:18:23.682Z",
+        "subscriptionMaxEvents": 5,
+        "initialEvent": true
+       },
+       "startsAt": "2024-07-03T21:12:02.871Z",
+       "expiresAt": "2024-07-03T21:12:02.871Z",
+       "status": "ACTIVE"
+      }
+     }
+    }
+   ]
+  },
+  {
+   "case": "202 async",
+   "source": "derived",
+   "call": {
+    "method": "subscribe",
+    "args": {
+     "kind": "reachability-disconnected",
+     "line": {
+      "line_id": "line-fixture-a",
+      "e164": "+16135550199"
+     },
+     "ttl_h": 24,
+     "now": "2026-10-05T14:00:00Z",
+     "sink_url": "https://sink.test/hooks/fixture-line-a"
+    }
+   },
+   "exchanges": [
+    {
+     "request": {
+      "method": "POST",
+      "path": "/device-reachability-status-subscriptions/v0.8/subscriptions",
+      "json": {
+       "protocol": "HTTP",
+       "sink": "https://sink.test/hooks/fixture-line-a",
+       "types": [
+        "org.camaraproject.device-reachability-status-subscriptions.v0.reachability-disconnected"
+       ],
+       "config": {
+        "subscriptionDetail": {
+         "device": {
+          "phoneNumber": "+16135550199"
+         }
+        },
+        "subscriptionExpireTime": "2026-10-06T14:00:00Z"
+       }
+      }
+     },
+     "response": {
+      "status": 202,
+      "json": {
+       "id": "qs15-h556-rt89-1298"
+      }
+     }
+    }
+   ]
+  },
+  {
+   "case": "400 INVALID_ARGUMENT",
+   "source": "spec",
+   "call": {
+    "method": "subscribe",
+    "args": {
+     "kind": "reachability-disconnected",
+     "line": {
+      "line_id": "line-fixture-a",
+      "e164": "+16135550199"
+     },
+     "ttl_h": 24,
+     "now": "2026-10-05T14:00:00Z",
+     "sink_url": "https://sink.test/hooks/fixture-line-a"
+    }
+   },
+   "exchanges": [
+    {
+     "request": {
+      "method": "POST",
+      "path": "/device-reachability-status-subscriptions/v0.8/subscriptions",
+      "json": {
+       "protocol": "HTTP",
+       "sink": "https://sink.test/hooks/fixture-line-a",
+       "types": [
+        "org.camaraproject.device-reachability-status-subscriptions.v0.reachability-disconnected"
+       ],
+       "config": {
+        "subscriptionDetail": {
+         "device": {
+          "phoneNumber": "+16135550199"
+         }
+        },
+        "subscriptionExpireTime": "2026-10-06T14:00:00Z"
+       }
+      }
+     },
+     "response": {
+      "status": 400,
+      "json": {
+       "status": 400,
+       "code": "INVALID_ARGUMENT",
+       "message": "Client specified an invalid argument, request body or query param."
+      }
+     }
+    }
+   ]
+  },
+  {
+   "case": "400 OUT_OF_RANGE",
+   "source": "spec",
+   "call": {
+    "method": "subscribe",
+    "args": {
+     "kind": "reachability-disconnected",
+     "line": {
+      "line_id": "line-fixture-a",
+      "e164": "+16135550199"
+     },
+     "ttl_h": 24,
+     "now": "2026-10-05T14:00:00Z",
+     "sink_url": "https://sink.test/hooks/fixture-line-a"
+    }
+   },
+   "exchanges": [
+    {
+     "request": {
+      "method": "POST",
+      "path": "/device-reachability-status-subscriptions/v0.8/subscriptions",
+      "json": {
+       "protocol": "HTTP",
+       "sink": "https://sink.test/hooks/fixture-line-a",
+       "types": [
+        "org.camaraproject.device-reachability-status-subscriptions.v0.reachability-disconnected"
+       ],
+       "config": {
+        "subscriptionDetail": {
+         "device": {
+          "phoneNumber": "+16135550199"
+         }
+        },
+        "subscriptionExpireTime": "2026-10-06T14:00:00Z"
+       }
+      }
+     },
+     "response": {
+      "status": 400,
+      "json": {
+       "status": 400,
+       "code": "OUT_OF_RANGE",
+       "message": "Client specified an invalid range."
+      }
+     }
+    }
+   ]
+  },
+  {
+   "case": "400 INVALID_PROTOCOL",
+   "source": "spec",
+   "call": {
+    "method": "subscribe",
+    "args": {
+     "kind": "reachability-disconnected",
+     "line": {
+      "line_id": "line-fixture-a",
+      "e164": "+16135550199"
+     },
+     "ttl_h": 24,
+     "now": "2026-10-05T14:00:00Z",
+     "sink_url": "https://sink.test/hooks/fixture-line-a"
+    }
+   },
+   "exchanges": [
+    {
+     "request": {
+      "method": "POST",
+      "path": "/device-reachability-status-subscriptions/v0.8/subscriptions",
+      "json": {
+       "protocol": "HTTP",
+       "sink": "https://sink.test/hooks/fixture-line-a",
+       "types": [
+        "org.camaraproject.device-reachability-status-subscriptions.v0.reachability-disconnected"
+       ],
+       "config": {
+        "subscriptionDetail": {
+         "device": {
+          "phoneNumber": "+16135550199"
+         }
+        },
+        "subscriptionExpireTime": "2026-10-06T14:00:00Z"
+       }
+      }
+     },
+     "response": {
+      "status": 400,
+      "json": {
+       "status": 400,
+       "code": "INVALID_PROTOCOL",
+       "message": "Only HTTP is supported"
+      }
+     }
+    }
+   ]
+  },
+  {
+   "case": "400 INVALID_CREDENTIAL",
+   "source": "spec",
+   "call": {
+    "method": "subscribe",
+    "args": {
+     "kind": "reachability-disconnected",
+     "line": {
+      "line_id": "line-fixture-a",
+      "e164": "+16135550199"
+     },
+     "ttl_h": 24,
+     "now": "2026-10-05T14:00:00Z",
+     "sink_url": "https://sink.test/hooks/fixture-line-a"
+    }
+   },
+   "exchanges": [
+    {
+     "request": {
+      "method": "POST",
+      "path": "/device-reachability-status-subscriptions/v0.8/subscriptions",
+      "json": {
+       "protocol": "HTTP",
+       "sink": "https://sink.test/hooks/fixture-line-a",
+       "types": [
+        "org.camaraproject.device-reachability-status-subscriptions.v0.reachability-disconnected"
+       ],
+       "config": {
+        "subscriptionDetail": {
+         "device": {
+          "phoneNumber": "+16135550199"
+         }
+        },
+        "subscriptionExpireTime": "2026-10-06T14:00:00Z"
+       }
+      }
+     },
+     "response": {
+      "status": 400,
+      "json": {
+       "status": 400,
+       "code": "INVALID_CREDENTIAL",
+       "message": "Only Access token is supported"
+      }
+     }
+    }
+   ]
+  },
+  {
+   "case": "400 INVALID_TOKEN",
+   "source": "spec",
+   "call": {
+    "method": "subscribe",
+    "args": {
+     "kind": "reachability-disconnected",
+     "line": {
+      "line_id": "line-fixture-a",
+      "e164": "+16135550199"
+     },
+     "ttl_h": 24,
+     "now": "2026-10-05T14:00:00Z",
+     "sink_url": "https://sink.test/hooks/fixture-line-a"
+    }
+   },
+   "exchanges": [
+    {
+     "request": {
+      "method": "POST",
+      "path": "/device-reachability-status-subscriptions/v0.8/subscriptions",
+      "json": {
+       "protocol": "HTTP",
+       "sink": "https://sink.test/hooks/fixture-line-a",
+       "types": [
+        "org.camaraproject.device-reachability-status-subscriptions.v0.reachability-disconnected"
+       ],
+       "config": {
+        "subscriptionDetail": {
+         "device": {
+          "phoneNumber": "+16135550199"
+         }
+        },
+        "subscriptionExpireTime": "2026-10-06T14:00:00Z"
+       }
+      }
+     },
+     "response": {
+      "status": 400,
+      "json": {
+       "status": 400,
+       "code": "INVALID_TOKEN",
+       "message": "Only bearer token is supported"
+      }
+     }
+    }
+   ]
+  },
+  {
+   "case": "400 INVALID_SINK",
+   "source": "spec",
+   "call": {
+    "method": "subscribe",
+    "args": {
+     "kind": "reachability-disconnected",
+     "line": {
+      "line_id": "line-fixture-a",
+      "e164": "+16135550199"
+     },
+     "ttl_h": 24,
+     "now": "2026-10-05T14:00:00Z",
+     "sink_url": "https://sink.test/hooks/fixture-line-a"
+    }
+   },
+   "exchanges": [
+    {
+     "request": {
+      "method": "POST",
+      "path": "/device-reachability-status-subscriptions/v0.8/subscriptions",
+      "json": {
+       "protocol": "HTTP",
+       "sink": "https://sink.test/hooks/fixture-line-a",
+       "types": [
+        "org.camaraproject.device-reachability-status-subscriptions.v0.reachability-disconnected"
+       ],
+       "config": {
+        "subscriptionDetail": {
+         "device": {
+          "phoneNumber": "+16135550199"
+         }
+        },
+        "subscriptionExpireTime": "2026-10-06T14:00:00Z"
+       }
+      }
+     },
+     "response": {
+      "status": 400,
+      "json": {
+       "status": 400,
+       "code": "INVALID_SINK",
+       "message": "sink not valid for the specified protocol"
+      }
+     }
+    }
+   ]
+  },
+  {
+   "case": "401 UNAUTHENTICATED",
+   "source": "spec",
+   "call": {
+    "method": "subscribe",
+    "args": {
+     "kind": "reachability-disconnected",
+     "line": {
+      "line_id": "line-fixture-a",
+      "e164": "+16135550199"
+     },
+     "ttl_h": 24,
+     "now": "2026-10-05T14:00:00Z",
+     "sink_url": "https://sink.test/hooks/fixture-line-a"
+    }
+   },
+   "exchanges": [
+    {
+     "request": {
+      "method": "POST",
+      "path": "/device-reachability-status-subscriptions/v0.8/subscriptions",
+      "json": {
+       "protocol": "HTTP",
+       "sink": "https://sink.test/hooks/fixture-line-a",
+       "types": [
+        "org.camaraproject.device-reachability-status-subscriptions.v0.reachability-disconnected"
+       ],
+       "config": {
+        "subscriptionDetail": {
+         "device": {
+          "phoneNumber": "+16135550199"
+         }
+        },
+        "subscriptionExpireTime": "2026-10-06T14:00:00Z"
+       }
+      }
+     },
+     "response": {
+      "status": 401,
+      "json": {
+       "status": 401,
+       "code": "UNAUTHENTICATED",
+       "message": "Request not authenticated due to missing, invalid, or expired credentials. A new authentication is required."
+      }
+     }
+    }
+   ]
+  },
+  {
+   "case": "403 PERMISSION_DENIED",
+   "source": "spec",
+   "call": {
+    "method": "subscribe",
+    "args": {
+     "kind": "reachability-disconnected",
+     "line": {
+      "line_id": "line-fixture-a",
+      "e164": "+16135550199"
+     },
+     "ttl_h": 24,
+     "now": "2026-10-05T14:00:00Z",
+     "sink_url": "https://sink.test/hooks/fixture-line-a"
+    }
+   },
+   "exchanges": [
+    {
+     "request": {
+      "method": "POST",
+      "path": "/device-reachability-status-subscriptions/v0.8/subscriptions",
+      "json": {
+       "protocol": "HTTP",
+       "sink": "https://sink.test/hooks/fixture-line-a",
+       "types": [
+        "org.camaraproject.device-reachability-status-subscriptions.v0.reachability-disconnected"
+       ],
+       "config": {
+        "subscriptionDetail": {
+         "device": {
+          "phoneNumber": "+16135550199"
+         }
+        },
+        "subscriptionExpireTime": "2026-10-06T14:00:00Z"
+       }
+      }
+     },
+     "response": {
+      "status": 403,
+      "json": {
+       "status": 403,
+       "code": "PERMISSION_DENIED",
+       "message": "Client does not have sufficient permissions to perform this action."
+      }
+     }
+    }
+   ]
+  },
+  {
+   "case": "403 SUBSCRIPTION_MISMATCH",
+   "source": "spec",
+   "call": {
+    "method": "subscribe",
+    "args": {
+     "kind": "reachability-disconnected",
+     "line": {
+      "line_id": "line-fixture-a",
+      "e164": "+16135550199"
+     },
+     "ttl_h": 24,
+     "now": "2026-10-05T14:00:00Z",
+     "sink_url": "https://sink.test/hooks/fixture-line-a"
+    }
+   },
+   "exchanges": [
+    {
+     "request": {
+      "method": "POST",
+      "path": "/device-reachability-status-subscriptions/v0.8/subscriptions",
+      "json": {
+       "protocol": "HTTP",
+       "sink": "https://sink.test/hooks/fixture-line-a",
+       "types": [
+        "org.camaraproject.device-reachability-status-subscriptions.v0.reachability-disconnected"
+       ],
+       "config": {
+        "subscriptionDetail": {
+         "device": {
+          "phoneNumber": "+16135550199"
+         }
+        },
+        "subscriptionExpireTime": "2026-10-06T14:00:00Z"
+       }
+      }
+     },
+     "response": {
+      "status": 403,
+      "json": {
+       "status": 403,
+       "code": "SUBSCRIPTION_MISMATCH",
+       "message": "Inconsistent access token for requested events subscription"
+      }
+     }
+    }
+   ]
+  },
+  {
+   "case": "409 ABORTED",
+   "source": "spec",
+   "call": {
+    "method": "subscribe",
+    "args": {
+     "kind": "reachability-disconnected",
+     "line": {
+      "line_id": "line-fixture-a",
+      "e164": "+16135550199"
+     },
+     "ttl_h": 24,
+     "now": "2026-10-05T14:00:00Z",
+     "sink_url": "https://sink.test/hooks/fixture-line-a"
+    }
+   },
+   "exchanges": [
+    {
+     "request": {
+      "method": "POST",
+      "path": "/device-reachability-status-subscriptions/v0.8/subscriptions",
+      "json": {
+       "protocol": "HTTP",
+       "sink": "https://sink.test/hooks/fixture-line-a",
+       "types": [
+        "org.camaraproject.device-reachability-status-subscriptions.v0.reachability-disconnected"
+       ],
+       "config": {
+        "subscriptionDetail": {
+         "device": {
+          "phoneNumber": "+16135550199"
+         }
+        },
+        "subscriptionExpireTime": "2026-10-06T14:00:00Z"
+       }
+      }
+     },
+     "response": {
+      "status": 409,
+      "json": {
+       "status": 409,
+       "code": "ABORTED",
+       "message": "Concurrency conflict."
+      }
+     }
+    }
+   ]
+  },
+  {
+   "case": "409 ALREADY_EXISTS",
+   "source": "spec",
+   "call": {
+    "method": "subscribe",
+    "args": {
+     "kind": "reachability-disconnected",
+     "line": {
+      "line_id": "line-fixture-a",
+      "e164": "+16135550199"
+     },
+     "ttl_h": 24,
+     "now": "2026-10-05T14:00:00Z",
+     "sink_url": "https://sink.test/hooks/fixture-line-a"
+    }
+   },
+   "exchanges": [
+    {
+     "request": {
+      "method": "POST",
+      "path": "/device-reachability-status-subscriptions/v0.8/subscriptions",
+      "json": {
+       "protocol": "HTTP",
+       "sink": "https://sink.test/hooks/fixture-line-a",
+       "types": [
+        "org.camaraproject.device-reachability-status-subscriptions.v0.reachability-disconnected"
+       ],
+       "config": {
+        "subscriptionDetail": {
+         "device": {
+          "phoneNumber": "+16135550199"
+         }
+        },
+        "subscriptionExpireTime": "2026-10-06T14:00:00Z"
+       }
+      }
+     },
+     "response": {
+      "status": 409,
+      "json": {
+       "status": 409,
+       "code": "ALREADY_EXISTS",
+       "message": "The resource that a client tried to create already exists."
+      }
+     }
+    }
+   ]
+  },
+  {
+   "case": "422 SERVICE_NOT_APPLICABLE",
+   "source": "spec",
+   "call": {
+    "method": "subscribe",
+    "args": {
+     "kind": "reachability-disconnected",
+     "line": {
+      "line_id": "line-fixture-a",
+      "e164": "+16135550199"
+     },
+     "ttl_h": 24,
+     "now": "2026-10-05T14:00:00Z",
+     "sink_url": "https://sink.test/hooks/fixture-line-a"
+    }
+   },
+   "exchanges": [
+    {
+     "request": {
+      "method": "POST",
+      "path": "/device-reachability-status-subscriptions/v0.8/subscriptions",
+      "json": {
+       "protocol": "HTTP",
+       "sink": "https://sink.test/hooks/fixture-line-a",
+       "types": [
+        "org.camaraproject.device-reachability-status-subscriptions.v0.reachability-disconnected"
+       ],
+       "config": {
+        "subscriptionDetail": {
+         "device": {
+          "phoneNumber": "+16135550199"
+         }
+        },
+        "subscriptionExpireTime": "2026-10-06T14:00:00Z"
+       }
+      }
+     },
+     "response": {
+      "status": 422,
+      "json": {
+       "status": 422,
+       "code": "SERVICE_NOT_APPLICABLE",
+       "message": "The service is not available for the provided identifier."
+      }
+     }
+    }
+   ]
+  },
+  {
+   "case": "422 MISSING_IDENTIFIER",
+   "source": "spec",
+   "call": {
+    "method": "subscribe",
+    "args": {
+     "kind": "reachability-disconnected",
+     "line": {
+      "line_id": "line-fixture-a",
+      "e164": "+16135550199"
+     },
+     "ttl_h": 24,
+     "now": "2026-10-05T14:00:00Z",
+     "sink_url": "https://sink.test/hooks/fixture-line-a"
+    }
+   },
+   "exchanges": [
+    {
+     "request": {
+      "method": "POST",
+      "path": "/device-reachability-status-subscriptions/v0.8/subscriptions",
+      "json": {
+       "protocol": "HTTP",
+       "sink": "https://sink.test/hooks/fixture-line-a",
+       "types": [
+        "org.camaraproject.device-reachability-status-subscriptions.v0.reachability-disconnected"
+       ],
+       "config": {
+        "subscriptionDetail": {
+         "device": {
+          "phoneNumber": "+16135550199"
+         }
+        },
+        "subscriptionExpireTime": "2026-10-06T14:00:00Z"
+       }
+      }
+     },
+     "response": {
+      "status": 422,
+      "json": {
+       "status": 422,
+       "code": "MISSING_IDENTIFIER",
+       "message": "The device cannot be identified."
+      }
+     }
+    }
+   ]
+  },
+  {
+   "case": "422 UNSUPPORTED_IDENTIFIER",
+   "source": "spec",
+   "call": {
+    "method": "subscribe",
+    "args": {
+     "kind": "reachability-disconnected",
+     "line": {
+      "line_id": "line-fixture-a",
+      "e164": "+16135550199"
+     },
+     "ttl_h": 24,
+     "now": "2026-10-05T14:00:00Z",
+     "sink_url": "https://sink.test/hooks/fixture-line-a"
+    }
+   },
+   "exchanges": [
+    {
+     "request": {
+      "method": "POST",
+      "path": "/device-reachability-status-subscriptions/v0.8/subscriptions",
+      "json": {
+       "protocol": "HTTP",
+       "sink": "https://sink.test/hooks/fixture-line-a",
+       "types": [
+        "org.camaraproject.device-reachability-status-subscriptions.v0.reachability-disconnected"
+       ],
+       "config": {
+        "subscriptionDetail": {
+         "device": {
+          "phoneNumber": "+16135550199"
+         }
+        },
+        "subscriptionExpireTime": "2026-10-06T14:00:00Z"
+       }
+      }
+     },
+     "response": {
+      "status": 422,
+      "json": {
+       "status": 422,
+       "code": "UNSUPPORTED_IDENTIFIER",
+       "message": "The identifier provided is not supported."
+      }
+     }
+    }
+   ]
+  },
+  {
+   "case": "422 UNNECESSARY_IDENTIFIER",
+   "source": "spec",
+   "call": {
+    "method": "subscribe",
+    "args": {
+     "kind": "reachability-disconnected",
+     "line": {
+      "line_id": "line-fixture-a",
+      "e164": "+16135550199"
+     },
+     "ttl_h": 24,
+     "now": "2026-10-05T14:00:00Z",
+     "sink_url": "https://sink.test/hooks/fixture-line-a"
+    }
+   },
+   "exchanges": [
+    {
+     "request": {
+      "method": "POST",
+      "path": "/device-reachability-status-subscriptions/v0.8/subscriptions",
+      "json": {
+       "protocol": "HTTP",
+       "sink": "https://sink.test/hooks/fixture-line-a",
+       "types": [
+        "org.camaraproject.device-reachability-status-subscriptions.v0.reachability-disconnected"
+       ],
+       "config": {
+        "subscriptionDetail": {
+         "device": {
+          "phoneNumber": "+16135550199"
+         }
+        },
+        "subscriptionExpireTime": "2026-10-06T14:00:00Z"
+       }
+      }
+     },
+     "response": {
+      "status": 422,
+      "json": {
+       "status": 422,
+       "code": "UNNECESSARY_IDENTIFIER",
+       "message": "The device is already identified by the access token."
+      }
+     }
+    }
+   ]
+  },
+  {
+   "case": "422 MULTIEVENT_SUBSCRIPTION_NOT_SUPPORTED",
+   "source": "spec",
+   "call": {
+    "method": "subscribe",
+    "args": {
+     "kind": "reachability-disconnected",
+     "line": {
+      "line_id": "line-fixture-a",
+      "e164": "+16135550199"
+     },
+     "ttl_h": 24,
+     "now": "2026-10-05T14:00:00Z",
+     "sink_url": "https://sink.test/hooks/fixture-line-a"
+    }
+   },
+   "exchanges": [
+    {
+     "request": {
+      "method": "POST",
+      "path": "/device-reachability-status-subscriptions/v0.8/subscriptions",
+      "json": {
+       "protocol": "HTTP",
+       "sink": "https://sink.test/hooks/fixture-line-a",
+       "types": [
+        "org.camaraproject.device-reachability-status-subscriptions.v0.reachability-disconnected"
+       ],
+       "config": {
+        "subscriptionDetail": {
+         "device": {
+          "phoneNumber": "+16135550199"
+         }
+        },
+        "subscriptionExpireTime": "2026-10-06T14:00:00Z"
+       }
+      }
+     },
+     "response": {
+      "status": 422,
+      "json": {
+       "status": 422,
+       "code": "MULTIEVENT_SUBSCRIPTION_NOT_SUPPORTED",
+       "message": "Multi event types subscription not managed"
+      }
+     }
+    }
+   ]
+  },
+  {
+   "case": "429 QUOTA_EXCEEDED",
+   "source": "spec",
+   "call": {
+    "method": "subscribe",
+    "args": {
+     "kind": "reachability-disconnected",
+     "line": {
+      "line_id": "line-fixture-a",
+      "e164": "+16135550199"
+     },
+     "ttl_h": 24,
+     "now": "2026-10-05T14:00:00Z",
+     "sink_url": "https://sink.test/hooks/fixture-line-a"
+    }
+   },
+   "exchanges": [
+    {
+     "request": {
+      "method": "POST",
+      "path": "/device-reachability-status-subscriptions/v0.8/subscriptions",
+      "json": {
+       "protocol": "HTTP",
+       "sink": "https://sink.test/hooks/fixture-line-a",
+       "types": [
+        "org.camaraproject.device-reachability-status-subscriptions.v0.reachability-disconnected"
+       ],
+       "config": {
+        "subscriptionDetail": {
+         "device": {
+          "phoneNumber": "+16135550199"
+         }
+        },
+        "subscriptionExpireTime": "2026-10-06T14:00:00Z"
+       }
+      }
+     },
+     "response": {
+      "status": 429,
+      "json": {
+       "status": 429,
+       "code": "QUOTA_EXCEEDED",
+       "message": "Out of resource quota."
+      }
+     }
+    }
+   ]
+  },
+  {
+   "case": "429 TOO_MANY_REQUESTS",
+   "source": "spec",
+   "call": {
+    "method": "subscribe",
+    "args": {
+     "kind": "reachability-disconnected",
+     "line": {
+      "line_id": "line-fixture-a",
+      "e164": "+16135550199"
+     },
+     "ttl_h": 24,
+     "now": "2026-10-05T14:00:00Z",
+     "sink_url": "https://sink.test/hooks/fixture-line-a"
+    }
+   },
+   "exchanges": [
+    {
+     "request": {
+      "method": "POST",
+      "path": "/device-reachability-status-subscriptions/v0.8/subscriptions",
+      "json": {
+       "protocol": "HTTP",
+       "sink": "https://sink.test/hooks/fixture-line-a",
+       "types": [
+        "org.camaraproject.device-reachability-status-subscriptions.v0.reachability-disconnected"
+       ],
+       "config": {
+        "subscriptionDetail": {
+         "device": {
+          "phoneNumber": "+16135550199"
+         }
+        },
+        "subscriptionExpireTime": "2026-10-06T14:00:00Z"
+       }
+      }
+     },
+     "response": {
+      "status": 429,
+      "json": {
+       "status": 429,
+       "code": "TOO_MANY_REQUESTS",
+       "message": "Rate limit reached."
+      }
+     }
+    }
+   ]
+  },
+  {
+   "case": "500 INTERNAL",
+   "source": "synthetic",
+   "call": {
+    "method": "subscribe",
+    "args": {
+     "kind": "reachability-disconnected",
+     "line": {
+      "line_id": "line-fixture-a",
+      "e164": "+16135550199"
+     },
+     "ttl_h": 24,
+     "now": "2026-10-05T14:00:00Z",
+     "sink_url": "https://sink.test/hooks/fixture-line-a"
+    }
+   },
+   "exchanges": [
+    {
+     "request": {
+      "method": "POST",
+      "path": "/device-reachability-status-subscriptions/v0.8/subscriptions",
+      "json": {
+       "protocol": "HTTP",
+       "sink": "https://sink.test/hooks/fixture-line-a",
+       "types": [
+        "org.camaraproject.device-reachability-status-subscriptions.v0.reachability-disconnected"
+       ],
+       "config": {
+        "subscriptionDetail": {
+         "device": {
+          "phoneNumber": "+16135550199"
+         }
+        },
+        "subscriptionExpireTime": "2026-10-06T14:00:00Z"
+       }
+      }
+     },
+     "response": {
+      "status": 500,
+      "json": {
+       "status": 500,
+       "code": "INTERNAL",
+       "message": "Synthetic fixture: internal error."
+      }
+     }
+    }
+   ]
+  },
+  {
+   "case": "400 SOMETHING_NEW",
+   "source": "synthetic",
+   "call": {
+    "method": "subscribe",
+    "args": {
+     "kind": "reachability-disconnected",
+     "line": {
+      "line_id": "line-fixture-a",
+      "e164": "+16135550199"
+     },
+     "ttl_h": 24,
+     "now": "2026-10-05T14:00:00Z",
+     "sink_url": "https://sink.test/hooks/fixture-line-a"
+    }
+   },
+   "exchanges": [
+    {
+     "request": {
+      "method": "POST",
+      "path": "/device-reachability-status-subscriptions/v0.8/subscriptions",
+      "json": {
+       "protocol": "HTTP",
+       "sink": "https://sink.test/hooks/fixture-line-a",
+       "types": [
+        "org.camaraproject.device-reachability-status-subscriptions.v0.reachability-disconnected"
+       ],
+       "config": {
+        "subscriptionDetail": {
+         "device": {
+          "phoneNumber": "+16135550199"
+         }
+        },
+        "subscriptionExpireTime": "2026-10-06T14:00:00Z"
+       }
+      }
+     },
+     "response": {
+      "status": 400,
+      "json": {
+       "status": 400,
+       "code": "SOMETHING_NEW",
+       "message": "Synthetic fixture: a code no spec declares."
+      }
+     }
+    }
+   ]
+  },
+  {
+   "case": "502 non-JSON body",
+   "source": "synthetic",
+   "call": {
+    "method": "subscribe",
+    "args": {
+     "kind": "reachability-disconnected",
+     "line": {
+      "line_id": "line-fixture-a",
+      "e164": "+16135550199"
+     },
+     "ttl_h": 24,
+     "now": "2026-10-05T14:00:00Z",
+     "sink_url": "https://sink.test/hooks/fixture-line-a"
+    }
+   },
+   "exchanges": [
+    {
+     "request": {
+      "method": "POST",
+      "path": "/device-reachability-status-subscriptions/v0.8/subscriptions",
+      "json": {
+       "protocol": "HTTP",
+       "sink": "https://sink.test/hooks/fixture-line-a",
+       "types": [
+        "org.camaraproject.device-reachability-status-subscriptions.v0.reachability-disconnected"
+       ],
+       "config": {
+        "subscriptionDetail": {
+         "device": {
+          "phoneNumber": "+16135550199"
+         }
+        },
+        "subscriptionExpireTime": "2026-10-06T14:00:00Z"
+       }
+      }
+     },
+     "response": {
+      "status": 502,
+      "text": "<html>Bad Gateway</html>"
+     }
+    }
+   ]
+  }
+ ]
+}

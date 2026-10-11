@@ -1,0 +1,93 @@
+# binding-page — `python -m binding_page`, port 8081 (services/binding-page/README.md).
+image:
+  registry: ""
+  repository: ask-the-tower/binding-page
+  tag: ""
+  pullPolicy: ""
+
+replicaCount: 1
+port: 8081
+useStoreEnv: true
+
+env:
+  PORT: "8081"
+  BASE_URL: http://localhost:8081                       # public URL (links, QR code)
+  BIND_REDIRECT_URI: http://localhost:8081/bind/callback
+  SESSION_TTL_S: "1800"
+  BIND_ADMIN: "0"          # 1 serves /_admin/* — honoured only when TOWER_ENV=local (kind)
+  CARRIER_CLIENT: direct
+  CARRIER_BACKEND: mock
+  CARRIER_BASE_URL: http://mock-carrier:8443
+  CARRIER_AUTHORIZE_URL: ""
+  CARRIER_TOKEN_URL: ""
+  CARRIER_CLIENT_ID: binding-page
+  CARRIER_SCOPES: number-verification
+  CARRIER_PROFILE: proactive
+  CARRIER_SECRET_REF: env:CARRIER_CLIENT_SECRET
+  ALERTS_INTERNAL_URL: http://alerts:8082                # 04 §9.2: re-subscribe after a watch-settings save
+secretEnv:
+  SESSION_SECRET: {name: "", key: SESSION_SECRET}
+  CARRIER_CLIENT_SECRET: {name: "", key: BINDING_CARRIER_CLIENT_SECRET}
+  ALERTS_INTERNAL_BEARER: {name: "", key: INTERNAL_BEARER}
+
+service:
+  type: ClusterIP
+  port: 8081
+
+serviceAccount:
+  create: true
+  name: ""
+  annotations: {}
+
+# Public ingress (EKS: the AWS Load Balancer Controller's ALB, ACM TLS; values-eks.yaml in the umbrella).
+ingress:
+  enabled: false
+  className: ""
+  host: ""
+  paths: [/]
+  annotations: {}
+  tls: []
+
+pdb:
+  enabled: false
+  maxUnavailable: 1
+
+networkPolicy:
+  enabled: true
+  from:
+    allowAll: true     # public page (the phone, over mobile data)
+
+resources:
+  requests: {cpu: 50m, memory: 160Mi}
+  limits: {cpu: 500m, memory: 384Mi}
+
+# Set by the umbrella chart (deploy/helm/umbrella); these defaults make the chart render on its own.
+global:
+  imageRegistry: ""
+  imageTag: ""
+  imagePullPolicy: ""
+  secretName: att-secrets
+  storeEnv: {}
+  storeSecretEnv: {}
+  nodeSelector: {}
+
+nameOverride: ""
+fullnameOverride: ""
+
+podAnnotations: {}
+podSecurityContext:
+  runAsNonRoot: true
+  runAsUser: 10001
+  runAsGroup: 10001
+  fsGroup: 10001
+  seccompProfile:
+    type: RuntimeDefault
+securityContext:
+  allowPrivilegeEscalation: false
+  readOnlyRootFilesystem: true
+  capabilities:
+    drop: [ALL]
+
+nodeSelector: {}
+tolerations: []
+affinity: {}

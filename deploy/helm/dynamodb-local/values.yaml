@@ -1,0 +1,60 @@
+# dynamodb-local — kind only (umbrella values-eks.yaml disables it). In memory: every restart is a fresh store;
+# the umbrella's seed Job recreates the tables and the demo state.
+image:
+  registry: "docker.io"
+  repository: amazon/dynamodb-local
+  tag: "2.5.2"
+  pullPolicy: IfNotPresent
+
+replicaCount: 1
+port: 8000
+useStoreEnv: false
+env: {}
+secretEnv: {}
+args: [-jar, DynamoDBLocal.jar, -inMemory, -sharedDb]
+
+service:
+  type: ClusterIP
+  port: 8000
+
+networkPolicy:
+  enabled: true
+  from:
+    allowAll: false
+    names: [tower-mcp, binding-page, alerts, alerts-job, seed, demo-ui]   # demo-ui reads the audit (kind only)
+    cidrs: []
+
+resources:
+  requests: {cpu: 100m, memory: 256Mi}
+  limits: {cpu: "1", memory: 768Mi}
+
+# Set by the umbrella chart (deploy/helm/umbrella); these defaults make the chart render on its own.
+global:
+  imageRegistry: ""
+  imageTag: ""
+  imagePullPolicy: ""
+  secretName: att-secrets
+  storeEnv: {}
+  storeSecretEnv: {}
+  nodeSelector: {}
+
+nameOverride: ""
+fullnameOverride: ""
+
+podAnnotations: {}
+podSecurityContext:
+  runAsNonRoot: true
+  runAsUser: 1000
+  runAsGroup: 1000
+  fsGroup: 1000
+  seccompProfile:
+    type: RuntimeDefault
+securityContext:
+  allowPrivilegeEscalation: false
+  readOnlyRootFilesystem: true
+  capabilities:
+    drop: [ALL]
+
+nodeSelector: {}
+tolerations: []
+affinity: {}

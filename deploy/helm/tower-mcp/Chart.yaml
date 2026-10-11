@@ -1,0 +1,7 @@
+apiVersion: v2
+name: tower-mcp
+description: "Tower MCP server (02): three tools over stateless Streamable HTTP at /mcp."
+type: application
+version: 0.1.0
+appVersion: "0.1.0"
+keywords: [ask-the-tower, camara]

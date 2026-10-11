@@ -1,0 +1,27 @@
+{
+  "GOLDEN": "hand-written",
+  "source": "docs/architecture/components/09-reference-client.md §6.6 + bind-and-alert-flows.md Flow 1 (steps 1-15)",
+  "asserts": "tool calls (name + args) and reason codes per utterance; wording is never compared",
+  "story": "web-chat",
+  "user": "user-asish",
+  "steps": [
+    {
+      "control": "web chat sign-in stub as Asish; Asish's line not connected yet; mock clock 14:00Z, demo scenario"
+    },
+    {
+      "utterance": "Is my line OK?",
+      "tool_calls": [{"name": "line_is_ok", "args": {"line": "self"}}],
+      "reason_codes": ["NOT_BOUND"],
+      "why": "not bound → NOT_BOUND; next_step bind_line under BINDING_BASE_URL/bind/, shown by the page"
+    },
+    {
+      "control": "the bind link opened on Asish's phone over mobile data (simulated phone-asish) → Verify → Line connected"
+    },
+    {
+      "utterance": "Is my line OK?",
+      "tool_calls": [{"name": "line_is_ok", "args": {"line": "self"}}],
+      "reason_codes": ["OK"],
+      "why": "bound · owner · sim_swapped=true (outside: last change 2026-09-01) · none · fresh → ok · OK"
+    }
+  ]
+}

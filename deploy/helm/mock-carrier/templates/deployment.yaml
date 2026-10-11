@@ -1,0 +1,91 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "mock-carrier.fullname" . }}
+  labels:
+    {{- include "mock-carrier.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      {{- include "mock-carrier.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "mock-carrier.labels" . | nindent 8 }}
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    spec:
+      automountServiceAccountToken: false
+      securityContext:
+        {{- include "mock-carrier.podSecurityContext" . | nindent 8 }}
+      {{- include "mock-carrier.scheduling" . | nindent 6 }}
+      containers:
+        - name: mock-carrier
+          image: {{ include "mock-carrier.image" . | quote }}
+          imagePullPolicy: {{ include "mock-carrier.pullPolicy" . }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.port }}
+              protocol: TCP
+          env:
+            {{- include "mock-carrier.env" . | nindent 12 }}
+            {{- if .Values.scenarios.files }}
+            - name: MOCK_SCENARIOS_DIR
+              value: /app/scenarios-override
+            {{- end }}
+            {{- if .Values.trustCA.configMap }}
+            - name: SSL_CERT_FILE
+              value: /trust/ca.crt
+            {{- end }}
+          securityContext:
+            {{- include "mock-carrier.securityContext" . | nindent 12 }}
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: http
+            periodSeconds: 5
+            timeoutSeconds: 3
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: http
+            periodSeconds: 20
+            timeoutSeconds: 3
+            failureThreshold: 3
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+            {{- if .Values.scenarios.files }}
+            - name: scenarios
+              mountPath: /app/scenarios-override
+              readOnly: true
+            {{- end }}
+            {{- if .Values.trustCA.configMap }}
+            - name: trust
+              mountPath: /trust
+              readOnly: true
+            {{- end }}
+      volumes:
+        - name: tmp
+          emptyDir:
+            sizeLimit: 64Mi
+        {{- if .Values.scenarios.files }}
+        - name: scenarios
+          configMap:
+            name: {{ include "mock-carrier.fullname" . }}-scenarios
+        {{- end }}
+        {{- if .Values.trustCA.configMap }}
+        - name: trust
+          configMap:
+            name: {{ tpl .Values.trustCA.configMap . }}
+            items:
+              - key: {{ .Values.trustCA.key }}
+                path: ca.crt
+        {{- end }}

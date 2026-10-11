@@ -1,0 +1,117 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "alerts.fullname" . }}
+  labels:
+    {{- include "alerts.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "alerts.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "alerts.labels" . | nindent 8 }}
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    spec:
+      serviceAccountName: {{ include "alerts.serviceAccountName" . }}
+      automountServiceAccountToken: false   # no app talks to the API server; IRSA projects its own token
+      securityContext:
+        {{- include "alerts.podSecurityContext" . | nindent 8 }}
+      {{- include "alerts.scheduling" . | nindent 6 }}
+      containers:
+        - name: alerts
+          image: {{ include "alerts.image" . | quote }}
+          imagePullPolicy: {{ include "alerts.pullPolicy" . }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.port }}
+              protocol: TCP
+          env:
+            {{- include "alerts.env" . | nindent 12 }}
+          securityContext:
+            {{- include "alerts.securityContext" . | nindent 12 }}
+          startupProbe:
+            httpGet:
+              path: /healthz
+              port: http
+            periodSeconds: 2
+            failureThreshold: {{ .Values.startupFailureThreshold | default 90 }}
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: http
+            periodSeconds: 5
+            timeoutSeconds: 3
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: http
+            periodSeconds: 20
+            timeoutSeconds: 3
+            failureThreshold: 3
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+        {{- if .Values.tls.enabled }}
+        - name: tls
+          image: {{ .Values.tls.image | quote }}
+          imagePullPolicy: IfNotPresent
+          # Caddy's first lines are JSON with epoch-second timestamps ("ts":1791…), which the privacy grep of pod
+          # logs reads as phone-number-shaped; drop them as compose's alerts-tls/run.sh does.
+          command: [/bin/sh, -c]
+          args:
+            - set -o pipefail; caddy run --config /etc/caddy/Caddyfile --adapter caddyfile 2>&1
+              | awk '{ gsub(/"ts":[0-9.]+,?/, ""); print; fflush() }'
+          env:
+            - name: XDG_DATA_HOME
+              value: /tmp/data
+            - name: XDG_CONFIG_HOME
+              value: /tmp/config
+            - name: GOMEMLIMIT
+              value: 64MiB
+          ports:
+            - name: hooks
+              containerPort: {{ .Values.tls.port }}
+              protocol: TCP
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: [ALL]
+              add: [NET_BIND_SERVICE]   # the caddy binary carries this file capability; exec fails without it
+          readinessProbe:
+            tcpSocket:
+              port: hooks
+            periodSeconds: 5
+          resources:
+            requests: {cpu: 10m, memory: 32Mi}
+            limits: {cpu: 200m, memory: 96Mi}
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+            - name: caddyfile
+              mountPath: /etc/caddy
+              readOnly: true
+            - name: tls
+              mountPath: /tls
+              readOnly: true
+        {{- end }}
+      volumes:
+        - name: tmp
+          emptyDir:
+            sizeLimit: 64Mi
+        {{- if .Values.tls.enabled }}
+        - name: caddyfile
+          configMap:
+            name: {{ include "alerts.fullname" . }}-caddy
+        - name: tls
+          secret:
+            secretName: {{ tpl .Values.tls.secretName . }}
+        {{- end }}

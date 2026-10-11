@@ -1,0 +1,244 @@
+{
+ "operation": "device-reachability-status-subscriptions/deleteDeviceReachabilityStatusSubscription",
+ "inputs": {
+  "line_id": "line-fixture-a",
+  "e164": "+16135550199",
+  "now": "2026-10-05T14:00:00Z",
+  "auth_code": "fixture-auth-code"
+ },
+ "cases": [
+  {
+   "case": "202 async",
+   "source": "derived",
+   "call": {
+    "method": "unsubscribe",
+    "args": {
+     "subscription_id": "device-reachability-status-subscriptions/sub-fixture-1"
+    }
+   },
+   "exchanges": [
+    {
+     "request": {
+      "method": "DELETE",
+      "path": "/device-reachability-status-subscriptions/v0.8/subscriptions/sub-fixture-1",
+      "json": null
+     },
+     "response": {
+      "status": 202,
+      "json": {
+       "id": "qs15-h556-rt89-1298"
+      }
+     }
+    }
+   ]
+  },
+  {
+   "case": "204",
+   "source": "spec",
+   "call": {
+    "method": "unsubscribe",
+    "args": {
+     "subscription_id": "device-reachability-status-subscriptions/sub-fixture-1"
+    }
+   },
+   "exchanges": [
+    {
+     "request": {
+      "method": "DELETE",
+      "path": "/device-reachability-status-subscriptions/v0.8/subscriptions/sub-fixture-1",
+      "json": null
+     },
+     "response": {
+      "status": 204,
+      "json": null
+     }
+    }
+   ]
+  },
+  {
+   "case": "400 INVALID_ARGUMENT",
+   "source": "spec",
+   "call": {
+    "method": "unsubscribe",
+    "args": {
+     "subscription_id": "device-reachability-status-subscriptions/sub-fixture-1"
+    }
+   },
+   "exchanges": [
+    {
+     "request": {
+      "method": "DELETE",
+      "path": "/device-reachability-status-subscriptions/v0.8/subscriptions/sub-fixture-1",
+      "json": null
+     },
+     "response": {
+      "status": 400,
+      "json": {
+       "status": 400,
+       "code": "INVALID_ARGUMENT",
+       "message": "Expected property is missing: subscriptionId"
+      }
+     }
+    }
+   ]
+  },
+  {
+   "case": "401 UNAUTHENTICATED",
+   "source": "spec",
+   "call": {
+    "method": "unsubscribe",
+    "args": {
+     "subscription_id": "device-reachability-status-subscriptions/sub-fixture-1"
+    }
+   },
+   "exchanges": [
+    {
+     "request": {
+      "method": "DELETE",
+      "path": "/device-reachability-status-subscriptions/v0.8/subscriptions/sub-fixture-1",
+      "json": null
+     },
+     "response": {
+      "status": 401,
+      "json": {
+       "status": 401,
+       "code": "UNAUTHENTICATED",
+       "message": "Request not authenticated due to missing, invalid, or expired credentials. A new authentication is required."
+      }
+     }
+    }
+   ]
+  },
+  {
+   "case": "403 PERMISSION_DENIED",
+   "source": "spec",
+   "call": {
+    "method": "unsubscribe",
+    "args": {
+     "subscription_id": "device-reachability-status-subscriptions/sub-fixture-1"
+    }
+   },
+   "exchanges": [
+    {
+     "request": {
+      "method": "DELETE",
+      "path": "/device-reachability-status-subscriptions/v0.8/subscriptions/sub-fixture-1",
+      "json": null
+     },
+     "response": {
+      "status": 403,
+      "json": {
+       "status": 403,
+       "code": "PERMISSION_DENIED",
+       "message": "Client does not have sufficient permissions to perform this action."
+      }
+     }
+    }
+   ]
+  },
+  {
+   "case": "404 NOT_FOUND",
+   "source": "spec",
+   "call": {
+    "method": "unsubscribe",
+    "args": {
+     "subscription_id": "device-reachability-status-subscriptions/sub-fixture-1"
+    }
+   },
+   "exchanges": [
+    {
+     "request": {
+      "method": "DELETE",
+      "path": "/device-reachability-status-subscriptions/v0.8/subscriptions/sub-fixture-1",
+      "json": null
+     },
+     "response": {
+      "status": 404,
+      "json": {
+       "status": 404,
+       "code": "NOT_FOUND",
+       "message": "The specified resource is not found."
+      }
+     }
+    }
+   ]
+  },
+  {
+   "case": "500 INTERNAL",
+   "source": "synthetic",
+   "call": {
+    "method": "unsubscribe",
+    "args": {
+     "subscription_id": "device-reachability-status-subscriptions/sub-fixture-1"
+    }
+   },
+   "exchanges": [
+    {
+     "request": {
+      "method": "DELETE",
+      "path": "/device-reachability-status-subscriptions/v0.8/subscriptions/sub-fixture-1",
+      "json": null
+     },
+     "response": {
+      "status": 500,
+      "json": {
+       "status": 500,
+       "code": "INTERNAL",
+       "message": "Synthetic fixture: internal error."
+      }
+     }
+    }
+   ]
+  },
+  {
+   "case": "400 SOMETHING_NEW",
+   "source": "synthetic",
+   "call": {
+    "method": "unsubscribe",
+    "args": {
+     "subscription_id": "device-reachability-status-subscriptions/sub-fixture-1"
+    }
+   },
+   "exchanges": [
+    {
+     "request": {
+      "method": "DELETE",
+      "path": "/device-reachability-status-subscriptions/v0.8/subscriptions/sub-fixture-1",
+      "json": null
+     },
+     "response": {
+      "status": 400,
+      "json": {
+       "status": 400,
+       "code": "SOMETHING_NEW",
+       "message": "Synthetic fixture: a code no spec declares."
+      }
+     }
+    }
+   ]
+  },
+  {
+   "case": "502 non-JSON body",
+   "source": "synthetic",
+   "call": {
+    "method": "unsubscribe",
+    "args": {
+     "subscription_id": "device-reachability-status-subscriptions/sub-fixture-1"
+    }
+   },
+   "exchanges": [
+    {
+     "request": {
+      "method": "DELETE",
+      "path": "/device-reachability-status-subscriptions/v0.8/subscriptions/sub-fixture-1",
+      "json": null
+     },
+     "response": {
+      "status": 502,
+      "text": "<html>Bad Gateway</html>"
+     }
+    }
+   ]
+  }
+ ]
+}

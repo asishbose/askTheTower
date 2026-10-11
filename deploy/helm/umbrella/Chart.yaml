@@ -1,0 +1,35 @@
+apiVersion: v2
+name: ask-the-tower
+description: "Ask the Tower: the five services (+ DynamoDB Local on kind) as one release. Same images and env names as compose and AgentCore."
+type: application
+version: 0.1.0
+appVersion: "0.1.0"
+dependencies:
+  - name: mock-carrier
+    version: 0.1.0
+    repository: file://../mock-carrier
+    condition: mock-carrier.enabled
+  - name: tower-mcp
+    version: 0.1.0
+    repository: file://../tower-mcp
+    condition: tower-mcp.enabled
+  - name: binding-page
+    version: 0.1.0
+    repository: file://../binding-page
+    condition: binding-page.enabled
+  - name: alerts
+    version: 0.1.0
+    repository: file://../alerts
+    condition: alerts.enabled
+  - name: ref-client
+    version: 0.1.0
+    repository: file://../ref-client
+    condition: ref-client.enabled
+  - name: demo-ui              # laptop tooling: kind only (values-kind.yaml); off in values.yaml and values-eks.yaml
+    version: 0.1.0
+    repository: file://../demo-ui
+    condition: demo-ui.enabled
+  - name: dynamodb-local
+    version: 0.1.0
+    repository: file://../dynamodb-local
+    condition: dynamodb-local.enabled

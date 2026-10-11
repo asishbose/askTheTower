@@ -1,0 +1,92 @@
+suite: alerts
+templates:
+  - templates/deployment.yaml
+  - templates/cronjobs.yaml
+  - templates/service.yaml
+  - templates/ingress.yaml
+  - templates/networkpolicy.yaml
+  - templates/configmap-caddy.yaml
+tests:
+  - it: runs ALERTS_MODE=k8s (no in-process scheduler)
+    template: templates/deployment.yaml
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content: {name: ALERTS_MODE, value: k8s}
+      - lengthEqual: {path: spec.template.spec.containers, count: 1}
+  - it: renders the 10 §3 schedules as CronJobs (reconcile off by default)
+    template: templates/cronjobs.yaml
+    asserts:
+      - hasDocuments: {count: 5}
+      - isKind: {of: CronJob}
+  - it: maps each schedule to its EventBridge payload
+    template: templates/cronjobs.yaml
+    documentSelector: {path: metadata.name, value: alerts-poll-transplant}
+    asserts:
+      - equal: {path: spec.schedule, value: "*/5 * * * *"}
+      - equal: {path: "spec.jobTemplate.spec.template.spec.containers[0].command", value: [python, -m, alerts.job]}
+      - equal: {path: "spec.jobTemplate.spec.template.spec.containers[0].args", value: [poll, transplant]}
+      - equal: {path: spec.concurrencyPolicy, value: Forbid}
+      - equal: {path: spec.jobTemplate.spec.template.spec.securityContext.runAsNonRoot, value: true}
+  - it: runs the daily polls at 08:00 local and the tick every 5 minutes
+    template: templates/cronjobs.yaml
+    asserts:
+      - equal: {path: spec.schedule, value: "0 8 * * *"}
+        documentSelector: {path: metadata.name, value: alerts-daily-self}
+      - equal: {path: spec.timeZone, value: America/Toronto}
+        documentSelector: {path: metadata.name, value: alerts-daily-care}
+      - equal: {path: "spec.jobTemplate.spec.template.spec.containers[0].args", value: [tick]}
+        documentSelector: {path: metadata.name, value: alerts-escalation-tick}
+      - equal: {path: spec.schedule, value: "*/30 * * * *"}
+        documentSelector: {path: metadata.name, value: alerts-poll-care}
+  - it: can shorten a schedule (the e2e "CronJob fires once" check) and enable reconcile
+    template: templates/cronjobs.yaml
+    set:
+      cronJobs.jobs.poll-transplant.schedule: "* * * * *"
+      cronJobs.jobs.reconcile.enabled: true
+    asserts:
+      - hasDocuments: {count: 6}
+      - equal: {path: spec.schedule, value: "* * * * *"}
+        documentSelector: {path: metadata.name, value: alerts-poll-transplant}
+  - it: no CronJobs when disabled (kind keeps the in-process scheduler)
+    template: templates/cronjobs.yaml
+    set:
+      cronJobs.enabled: false
+    asserts:
+      - hasDocuments: {count: 0}
+  - it: adds the https sidecar for /hooks with the local certificate (kind)
+    set:
+      tls.enabled: true
+    asserts:
+      - template: templates/deployment.yaml
+        equal: {path: "spec.template.spec.containers[1].name", value: tls}
+      - template: templates/deployment.yaml
+        equal: {path: "spec.template.spec.volumes[2].secret.secretName", value: alerts-tls}
+      - template: templates/service.yaml
+        contains:
+          path: spec.ports
+          content: {name: hooks, port: 8443, targetPort: hooks, protocol: TCP}
+      - template: templates/configmap-caddy.yaml
+        matchRegex: {path: "data.Caddyfile", pattern: "handle /hooks/\\*"}
+      - template: templates/networkpolicy.yaml
+        contains:
+          path: spec.ingress[1].from
+          content: {podSelector: {matchLabels: {app.kubernetes.io/name: mock-carrier}}}
+  - it: exposes only /hooks publicly
+    template: templates/ingress.yaml
+    set:
+      ingress.enabled: true
+    asserts:
+      - equal: {path: "spec.rules[0].http.paths[0].path", value: /hooks}
+      - lengthEqual: {path: "spec.rules[0].http.paths", count: 1}
+  - it: lets only Tower (and the ALB's CIDR when set) reach :8082
+    template: templates/networkpolicy.yaml
+    set:
+      networkPolicy.from.cidrs: [10.40.0.0/16]
+    asserts:
+      - contains:
+          path: spec.ingress[0].from
+          content: {podSelector: {matchLabels: {app.kubernetes.io/name: tower-mcp}}}
+      - contains:
+          path: spec.ingress[0].from
+          content: {ipBlock: {cidr: 10.40.0.0/16}}

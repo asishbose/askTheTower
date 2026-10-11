@@ -1,0 +1,7 @@
+apiVersion: v2
+name: ref-client
+description: "Reference client (09): ref-client demo as a Job; optional toolbox Deployment."
+type: application
+version: 0.1.0
+appVersion: "0.1.0"
+keywords: [ask-the-tower, camara]

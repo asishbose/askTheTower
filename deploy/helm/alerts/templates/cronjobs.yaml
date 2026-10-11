@@ -1,0 +1,60 @@
+{{- if .Values.cronJobs.enabled }}
+{{- range $name, $job := .Values.cronJobs.jobs }}
+{{- if ne (toString (dig "enabled" true $job)) "false" }}
+---
+# 10 §3 schedule `{{ $name }}` — the EventBridge Scheduler payload, run by `python -m alerts.job`.
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ include "alerts.fullname" $ }}-{{ $name }}
+  labels:
+    {{- include "alerts.labels" $ | nindent 4 }}
+    app.kubernetes.io/component: {{ $name }}
+spec:
+  schedule: {{ $job.schedule | quote }}
+  {{- with $.Values.cronJobs.timeZone }}
+  timeZone: {{ . }}
+  {{- end }}
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: {{ $.Values.cronJobs.successfulJobsHistoryLimit }}
+  failedJobsHistoryLimit: {{ $.Values.cronJobs.failedJobsHistoryLimit }}
+  jobTemplate:
+    spec:
+      backoffLimit: 0
+      activeDeadlineSeconds: {{ $.Values.cronJobs.activeDeadlineSeconds }}
+      template:
+        metadata:
+          labels:
+            app.kubernetes.io/name: alerts-job
+            app.kubernetes.io/instance: {{ $.Release.Name }}
+            app.kubernetes.io/part-of: ask-the-tower
+            app.kubernetes.io/component: {{ $name }}
+        spec:
+          restartPolicy: Never
+          serviceAccountName: {{ include "alerts.serviceAccountName" $ }}
+          automountServiceAccountToken: false
+          securityContext:
+            {{- include "alerts.podSecurityContext" $ | nindent 12 }}
+          {{- include "alerts.scheduling" $ | nindent 10 }}
+          containers:
+            - name: job
+              image: {{ include "alerts.image" $ | quote }}
+              imagePullPolicy: {{ include "alerts.pullPolicy" $ }}
+              command: [python, -m, alerts.job]
+              args: {{ toJson $job.args }}
+              env:
+                {{- include "alerts.env" $ | nindent 16 }}
+              securityContext:
+                {{- include "alerts.securityContext" $ | nindent 16 }}
+              resources:
+                {{- toYaml $.Values.jobResources | nindent 16 }}
+              volumeMounts:
+                - name: tmp
+                  mountPath: /tmp
+          volumes:
+            - name: tmp
+              emptyDir:
+                sizeLimit: 64Mi
+{{- end }}
+{{- end }}
+{{- end }}

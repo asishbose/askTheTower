@@ -1,0 +1,127 @@
+# alerts — port 8082: /healthz, /hooks/* (CAMARA sinks, must be https://), /internal/watch (Tower, bearer).
+# ALERTS_MODE=k8s: the app without the in-process scheduler; the 10 §3 schedules are the CronJobs below
+# (`python -m alerts.job ...`, the EventBridge payloads). kind keeps compose's `local` mode (scheduler in-process,
+# ALERTS_CLOCK_SCALE) so the demo behaves exactly as on compose.
+image:
+  registry: ""
+  repository: ask-the-tower/alerts
+  tag: ""
+  pullPolicy: ""
+
+replicaCount: 1
+port: 8082
+useStoreEnv: true
+startupFailureThreshold: 60
+
+env:
+  ALERTS_MODE: k8s
+  ALERTS_PORT: "8082"
+  HOOKS_BASE_URL: https://alerts:8443      # public https base of /hooks (EKS: the ALB host)
+  ALERTS_SENDER: ""                        # default: sns in k8s mode; kind: log
+  SNS_TOPIC_ARN: ""
+  SMS_GATEWAY_URL: ""
+  ALERTS_CLOCK: mock
+  ALERTS_CLOCK_SCALE: "1"
+  ALERTS_DEFAULT_TZ: America/Toronto
+  CARRIER_CLIENT: direct
+  CARRIER_BACKEND: mock
+  CARRIER_BASE_URL: http://mock-carrier:8443
+  CARRIER_CLIENT_ID: alerts
+  CARRIER_PROFILE: proactive
+  CARRIER_SECRET_REF: env:CARRIER_CLIENT_SECRET
+secretEnv:
+  INTERNAL_BEARER: {name: "", key: INTERNAL_BEARER}
+  CARRIER_CLIENT_SECRET: {name: "", key: ALERTS_CARRIER_CLIENT_SECRET}
+
+service:
+  type: ClusterIP
+  port: 8082
+
+# https for /hooks inside the cluster (kind): a Caddy sidecar on :8443 with a certificate from the umbrella's
+# local CA (the compose `alerts-tls` container, in the pod). EKS: off — the ALB terminates TLS with ACM.
+tls:
+  enabled: false
+  secretName: alerts-tls
+  port: 8443
+  image: caddy:2.10-alpine
+
+# IRSA on EKS: DynamoDB (all seven tables), both KMS keys, sns:Publish.
+serviceAccount:
+  create: true
+  name: ""
+  annotations: {}
+
+# Public ingress (EKS: the AWS Load Balancer Controller's ALB, ACM TLS; values-eks.yaml in the umbrella).
+ingress:
+  enabled: false
+  className: ""
+  host: ""
+  paths: [/hooks]
+  annotations: {}
+  tls: []
+
+# 10 §3 as CronJobs. `timeZone` needs Kubernetes >= 1.27. Shorten a schedule in values to see one fire.
+cronJobs:
+  enabled: true
+  timeZone: America/Toronto
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 3
+  activeDeadlineSeconds: 240
+  jobs:
+    poll-transplant: {schedule: "*/5 * * * *", args: [poll, transplant]}
+    poll-care: {schedule: "*/30 * * * *", args: [poll, care]}
+    daily-self: {schedule: "0 8 * * *", args: [poll, self]}
+    daily-care: {schedule: "0 8 * * *", args: [poll, care]}
+    escalation-tick: {schedule: "*/5 * * * *", args: [tick]}
+    # Audit trim + reconciliation over Tower's spans in CloudWatch (aws/spans). Off: Tower on EKS does not
+    # export spans unless it runs under ADOT; the AgentCore stack's nightly Lambda reconciles the same tables.
+    reconcile: {schedule: "0 3 * * *", args: [reconcile], enabled: false}
+
+networkPolicy:
+  enabled: true
+  from:            # :8082 — /internal/watch from Tower and the binding page (04 §9.2); on EKS also the ALB (VPC CIDR) for /hooks
+    allowAll: false
+    names: [tower-mcp, binding-page, demo-ui]   # demo-ui: GET /internal/sent, kind only (doc 11 G3)
+    cidrs: []
+  hooksFrom:       # :8443 (tls sidecar) — the mock carrier's webhook sender
+    allowAll: false
+    names: [mock-carrier]
+    cidrs: []
+
+resources:
+  requests: {cpu: 50m, memory: 192Mi}
+  limits: {cpu: 500m, memory: 384Mi}
+jobResources:
+  requests: {cpu: 50m, memory: 160Mi}
+  limits: {cpu: 500m, memory: 320Mi}
+
+# Set by the umbrella chart (deploy/helm/umbrella); these defaults make the chart render on its own.
+global:
+  imageRegistry: ""
+  imageTag: ""
+  imagePullPolicy: ""
+  secretName: att-secrets
+  storeEnv: {}
+  storeSecretEnv: {}
+  nodeSelector: {}
+
+nameOverride: ""
+fullnameOverride: ""
+
+podAnnotations: {}
+podSecurityContext:
+  runAsNonRoot: true
+  runAsUser: 10001
+  runAsGroup: 10001
+  fsGroup: 10001
+  seccompProfile:
+    type: RuntimeDefault
+securityContext:
+  allowPrivilegeEscalation: false
+  readOnlyRootFilesystem: true
+  capabilities:
+    drop: [ALL]
+
+nodeSelector: {}
+tolerations: []
+affinity: {}

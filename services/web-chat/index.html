@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="referrer" content="no-referrer">
+  <title>Ask the Tower — web chat</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header>
+    <h1>Ask the Tower</h1>
+    <p class="muted">Ask your carrier about your own line. A stand-in for Alexa+: same agent, same tools.</p>
+    <div id="who" class="who" hidden>
+      <span id="who-name"></span>
+      <button id="sign-out" type="button" class="link">Sign out</button>
+    </div>
+  </header>
+
+  <main>
+    <section id="sign-in" class="card" hidden>
+      <h2>Sign in</h2>
+      <div id="sign-in-cognito" hidden>
+        <p>You sign in with your Ask the Tower account. Your carrier never sees your password.</p>
+        <button id="sign-in-button" type="button">Sign in</button>
+      </div>
+      <div id="sign-in-stub" hidden>
+        <p class="muted">Local stack: pick who you are (no password; this exists only on 127.0.0.1).</p>
+        <button type="button" data-user="user-asish">Asish</button>
+        <button type="button" data-user="user-mom">Mom</button>
+      </div>
+    </section>
+
+    <section id="chat" hidden>
+      <ol id="messages" class="messages" aria-live="polite"></ol>
+      <form id="ask" class="ask" autocomplete="off">
+        <label for="question" class="visually-hidden">Your question</label>
+        <input id="question" name="question" maxlength="500" placeholder="Is my line OK?" required>
+        <button type="submit">Ask</button>
+      </form>
+      <p class="muted small">Try: "Is my line OK?", "Is anything forwarding my calls?", "Is Mom's line OK?"</p>
+    </section>
+
+    <template id="bind-card">
+      <div class="bind">
+        <strong>Your line isn't connected yet.</strong>
+        <p>Open this link on your phone, with Wi-Fi off, and tap Verify:</p>
+        <p class="bind-link"><a target="_blank" rel="noopener noreferrer"></a></p>
+        <button type="button" class="copy">Copy link</button>
+        <p class="muted small">Tap it on your phone, then ask again.</p>
+      </div>
+    </template>
+  </main>
+
+  <script src="config.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

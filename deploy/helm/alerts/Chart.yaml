@@ -1,0 +1,7 @@
+apiVersion: v2
+name: alerts
+description: "Alerts (06): CAMARA webhook sinks, internal watch API, polls as CronJobs, SNS SMS."
+type: application
+version: 0.1.0
+appVersion: "0.1.0"
+keywords: [ask-the-tower, camara]

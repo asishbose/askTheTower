@@ -1,0 +1,64 @@
+{
+  "GOLDEN": "hand-written",
+  "source": "artifacts/policy-table.md (reason codes) + docs/architecture/testing-and-showcase.md §4 (order)",
+  "asserts": "tool calls (name + args) and reason codes per utterance; wording is never compared",
+  "story": "transplant",
+  "user": "user-asish",
+  "steps": [
+    {
+      "control": "binding page: Asish saves watch settings — must stay reachable; text the partner, then the neighbour (06 §11.4)"
+    },
+    {
+      "utterance": "Turn on alerts for my line.",
+      "tool_calls": [
+        {
+          "name": "watch_line",
+          "args": {
+            "line": "self",
+            "enable": true
+          }
+        }
+      ],
+      "reason_codes": [
+        "OK"
+      ],
+      "why": "watch_line on the user's own bound line → OK"
+    },
+    {
+      "control": "mock: Asish's phone unreachable; clock +20 min → Alerts texts the partner"
+    },
+    {
+      "utterance": "Is my phone on?",
+      "tool_calls": [
+        {
+          "name": "is_reachable",
+          "args": {
+            "line": "self"
+          }
+        }
+      ],
+      "reason_codes": [
+        "UNREACHABLE"
+      ],
+      "why": "bound · owner · reachable=false · fresh → changed · UNREACHABLE"
+    },
+    {
+      "control": "clock +15 min, no ack → second contact; then the phone is reachable again"
+    },
+    {
+      "utterance": "Is my phone reachable now?",
+      "tool_calls": [
+        {
+          "name": "is_reachable",
+          "args": {
+            "line": "self"
+          }
+        }
+      ],
+      "reason_codes": [
+        "OK"
+      ],
+      "why": "bound · owner · reachable=true · fresh → ok · OK"
+    }
+  ]
+}

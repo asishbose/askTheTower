@@ -1,0 +1,12 @@
+<article class="step step-say free">
+  <header data-kind="say" data-who="{{ who }}" data-codes="{{ turn.codes | join(' ') }}"><span class="sid">{{ who }}</span> <span class="tag">free text</span></header>
+  <div class="bubble user"><span class="avatar" aria-hidden="true">{{ who[:1] | upper }}</span><p class="you">“{{ turn.utterance }}”</p></div>
+  <div class="bubble tower"><span class="avatar tower" aria-hidden="true"><svg class="i"><use href="/static/img/icons.svg#tower"></use></svg></span>
+    <div class="reply">
+      <p class="calls">→ {{ turn.calls | join(", ") or "no tool" }}</p>
+      <p class="chips">{% for c in turn.codes %}<span class="rc rc-{{ c }}"><span class="chip">{{ c }}</span></span>{% endfor %}</p>
+      <p class="spoken">{{ agent }}: {{ turn.spoken }}</p>
+      {% if turn.next_step %}<p class="next">next_step: {{ turn.next_step }}</p>{% endif %}
+    </div>
+  </div>
+</article>

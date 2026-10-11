@@ -1,0 +1,233 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="720" viewBox="0 0 1600 720" font-family="Segoe UI, Helvetica, Arial, sans-serif" xmlns:c2pa="http://c2pa.org/manifest"><metadata><c2pa:manifest>AAAWgmp1bWIAAAAeanVtZGMycGEAEQAQgAAAqgA4m3EDYzJwYQAAABZcanVtYgAAAEdqdW1kYzJtYQARABCAAACqADibcQN1cm46YzJwYTpkZDM2OTM5ZS02MjUwLTQ1MmQtODJjMy00ZGYwZWQ3YjM4ZjYAAAADl2p1bWIAAAApanVtZGMyYXMAEQAQgAAAqgA4m3EDYzJwYS5hc3NlcnRpb25zAAAAALxqdW1iAAAARGp1bWRjYm9yABEAEIAAAKoAOJtxE2MycGEuaW5ncmVkaWVudC52MwAAAAAYYzJzaNedSxLfug1qhR88VWNyUqkAAABwY2JvcqNpZGM6Zm9ybWF0bWltYWdlL3N2Zyt4bWxqaW5zdGFuY2VJRHgseG1wOmlpZDpiMTVjNDc0MC1lZGM5LTQ3MzQtYmEwYy03YjI5OGFjMTYxN2FscmVsYXRpb25zaGlwaHBhcmVudE9mAAAB4mp1bWIAAABBanVtZGNib3IAEQAQgAAAqgA4m3ETYzJwYS5hY3Rpb25zLnYyAAAAABhjMnNoO/zyASEk/H0RoY7JBfUn0AAAAZljYm9yomdhY3Rpb25zgqJmYWN0aW9ua2MycGEub3BlbmVkanBhcmFtZXRlcnOha2luZ3JlZGllbnRzgaJjdXJseC1zZWxmI2p1bWJmPWMycGEuYXNzZXJ0aW9ucy9jMnBhLmluZ3JlZGllbnQudjNkaGFzaFggSNt6fFe/AjoMz7ieJiB5kVqDDRjNvlhfvw4C7UTRU7GkZmFjdGlvbngdY29tLmFudGhyb3BpYy5jbGF1ZGUucHJvdmlkZWRqcGFyYW1ldGVyc6F4H2NvbS5hbnRocm9waWMub3JpZ2luLWNvbmZpZGVuY2VndW5rbm93bmtkZXNjcmlwdGlvbnhmQ2xhdWRlIHByb3ZpZGVkIHRoaXMgZmlsZSBhdCB0aGUgcmVxdWVzdCBvZiBhIHVzZXIgYW5kIG1heSBoYXZlIGNyZWF0ZWQgb3IgbW9kaWZpZWQgdGhlIGZpbGUgY29udGVudHMubXNvZnR3YXJlQWdlbnShZG5hbWVmQ2xhdWRlcmFsbEFjdGlvbnNJbmNsdWRlZPUAAADIanVtYgAAAEBqdW1kY2JvcgARABCAAACqADibcRNjMnBhLmhhc2guZGF0YQAAAAAYYzJzaLZuxQHyo20P0T2nF/5uu6EAAACAY2JvcqVjYWxnZnNoYTI1NmNwYWRNAAAAAAAAAAAAAAAAAGRoYXNoWCDfItAP4pt1vENPBlSVj2EjPoaPlPYLj1oOMD+Z2eHjP2RuYW1lbmp1bWJmIG1hbmlmZXN0amV4Y2x1c2lvbnOBomVzdGFydBjNZmxlbmd0aBkeBAAAAj5qdW1iAAAAJ2p1bWRjMmNsABEAEIAAAKoAOJtxA2MycGEuY2xhaW0udjIAAAACD2Nib3KlY2FsZ2ZzaGEyNTZpc2lnbmF0dXJleE1zZWxmI2p1bWJmPS9jMnBhL3VybjpjMnBhOmRkMzY5MzllLTYyNTAtNDUyZC04MmMzLTRkZjBlZDdiMzhmNi9jMnBhLnNpZ25hdHVyZWppbnN0YW5jZUlEeCx4bXA6aWlkOjEwOWM1MjUwLWU2NmEtNGE3YS1hZDlmLWQzMjdlYTRiYzAyOXJjcmVhdGVkX2Fzc2VydGlvbnODomN1cmx4LXNlbGYjanVtYmY9YzJwYS5hc3NlcnRpb25zL2MycGEuaW5ncmVkaWVudC52M2RoYXNoWCBI23p8V78COgzPuJ4mIHmRWoMNGM2+WF+/DgLtRNFTsaJjdXJseCpzZWxmI2p1bWJmPWMycGEuYXNzZXJ0aW9ucy9jMnBhLmFjdGlvbnMudjJkaGFzaFggyDhrJwEIcVKmKsXvB+FVmzr6BVmjWFJVnuUTofAcg3GiY3VybHgpc2VsZiNqdW1iZj1jMnBhLmFzc2VydGlvbnMvYzJwYS5oYXNoLmRhdGFkaGFzaFggsZyZZB+IjBZ8ohYRC3zlQJBd83myN7dfbfIsSDY8WW90Y2xhaW1fZ2VuZXJhdG9yX2luZm+jZG5hbWVvQW50aHJvcGljIEZpbGVzZ3ZlcnNpb25lMS4wLjBrc3BlY1ZlcnNpb25lMi40LjAAABA4anVtYgAAAChqdW1kYzJjcwARABCAAACqADibcQNjMnBhLnNpZ25hdHVyZQAAABAIY2JvctKEWQISogEmGCFZAgowggIGMIIBjaADAgECAhRA5aAK7sI50L64g/oGQgU9Z1UTADAKBggqhkjOPQQDAzBJMRcwFQYDVQQKEw5BbnRocm9waWMsIFBCQzEuMCwGA1UEAxMlQW50aHJvcGljIENvbnRlbnQgQ3JlZGVudGlhbHMgUm9vdCBDQTAeFw0yNjA4MDcxODQzNTZaFw0yODA4MDYxOTQzNTZaMEQxFzAVBgNVBAoTDkFudGhyb3BpYywgUEJDMSkwJwYDVQQDEyBBbnRocm9waWMgQ2xhdWRlIENvbnRlbnQgU2lnbmluZzBZMBMGByqGSM49AgEGCCqGSM49AwEHA0IABJh6CmvLUBgFFNU0vUKlOVtE6djd17L5SuwX0LemFisBM3dkd/3cyjxFA3Qo5S46fX0/ihY0VZ7mfb9KF703t5OjWDBWMA4GA1UdDwEB/wQEAwIHgDAVBgNVHSUEDjAMBgorBgEEAYPoXgIBMAwGA1UdEwEB/wQCMAAwHwYDVR0jBBgwFoAUzlHiBIFOZFsj+OPEz5o+nMHXXMIwCgYIKoZIzj0EAwMDZwAwZAIwMXMdFJ4BetLLVY7ORuE9noqbbAZOZn/aArXyTwFAZfKrPzxF2vPoJNf1+UCdg1XGAjBwX1zd9WGqYkqmL5SFqw1QySjr1zJfpJM9+1rdDwSPLMOPOjKuiXjoU/pUUeG9RwmhY3BhZFkNngAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPZYQKy64CXF9/HIdSQoIvggaJhl7L8VL8zAHp0HmIoJzOqGNOaRtP2hnKorLa1Kg0tsdSCIdyeDKcP22H/M313Jnps=</c2pa:manifest></metadata>
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#070b1f"/>
+      <stop offset="0.55" stop-color="#101a44"/>
+      <stop offset="1" stop-color="#1d2b63"/>
+    </linearGradient>
+    <linearGradient id="hill1" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#1b2a55"/><stop offset="1" stop-color="#0d1736"/>
+    </linearGradient>
+    <linearGradient id="hill2" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#22366b"/><stop offset="1" stop-color="#131f49"/>
+    </linearGradient>
+    <linearGradient id="ground" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#1a2b5a"/><stop offset="1" stop-color="#0a1230"/>
+    </linearGradient>
+    <radialGradient id="moon" cx="0.4" cy="0.4" r="0.7">
+      <stop offset="0" stop-color="#fff7d6"/><stop offset="1" stop-color="#e9d9a6"/>
+    </radialGradient>
+    <radialGradient id="glowWarm" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#ffcf6b" stop-opacity="0.9"/><stop offset="1" stop-color="#ffcf6b" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="glowCyan" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#4fe3ff" stop-opacity="0.75"/><stop offset="1" stop-color="#4fe3ff" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="glowRed" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#ff5a5a" stop-opacity="0.9"/><stop offset="1" stop-color="#ff5a5a" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="card" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#1c2b5e" stop-opacity="0.95"/><stop offset="1" stop-color="#0f1a40" stop-opacity="0.95"/>
+    </linearGradient>
+    <linearGradient id="beam" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#4fe3ff" stop-opacity="0"/><stop offset="0.5" stop-color="#4fe3ff" stop-opacity="0.55"/><stop offset="1" stop-color="#4fe3ff" stop-opacity="0"/>
+    </linearGradient>
+    <filter id="blur8"><feGaussianBlur stdDeviation="8"/></filter>
+    <filter id="blur3"><feGaussianBlur stdDeviation="3"/></filter>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="130%">
+      <feDropShadow dx="0" dy="6" stdDeviation="8" flood-color="#000" flood-opacity="0.45"/>
+    </filter>
+    <clipPath id="frame"><rect width="1600" height="720" rx="24"/></clipPath>
+  </defs>
+
+  <g clip-path="url(#frame)">
+  <!-- sky -->
+  <rect width="1600" height="720" fill="url(#sky)"/>
+  <!-- stars -->
+  <g fill="#ffffff">
+    <circle cx="90" cy="60" r="1.6" opacity="0.8"/><circle cx="210" cy="130" r="1.2" opacity="0.6"/><circle cx="330" cy="45" r="1.8" opacity="0.9"/>
+    <circle cx="470" cy="110" r="1.1" opacity="0.5"/><circle cx="560" cy="70" r="1.5" opacity="0.7"/><circle cx="700" cy="40" r="1.2" opacity="0.6"/>
+    <circle cx="860" cy="95" r="1.6" opacity="0.8"/><circle cx="960" cy="55" r="1.1" opacity="0.5"/><circle cx="1090" cy="120" r="1.4" opacity="0.7"/>
+    <circle cx="1180" cy="40" r="1.7" opacity="0.9"/><circle cx="1290" cy="150" r="1.2" opacity="0.6"/><circle cx="1400" cy="70" r="1.5" opacity="0.8"/>
+    <circle cx="1500" cy="130" r="1.1" opacity="0.5"/><circle cx="1550" cy="40" r="1.3" opacity="0.7"/><circle cx="150" cy="210" r="1.0" opacity="0.5"/>
+    <circle cx="640" cy="170" r="1.0" opacity="0.5"/><circle cx="1020" cy="200" r="1.0" opacity="0.5"/><circle cx="1460" cy="220" r="1.0" opacity="0.5"/>
+  </g>
+  <!-- moon -->
+  <circle cx="1380" cy="110" r="60" fill="url(#moon)" filter="url(#blur3)" opacity="0.35"/>
+  <circle cx="1380" cy="110" r="42" fill="url(#moon)"/>
+  <circle cx="1400" cy="94" r="34" fill="#0a1030"/>
+
+  <!-- far hills -->
+  <path d="M0 470 C 200 400, 380 430, 560 410 S 900 360, 1120 420 S 1420 390, 1600 450 L1600 720 L0 720 Z" fill="url(#hill1)"/>
+  <!-- near hills -->
+  <path d="M0 540 C 180 500, 330 560, 520 520 S 820 470, 1000 530 S 1300 560, 1600 500 L1600 720 L0 720 Z" fill="url(#hill2)"/>
+  <!-- ground -->
+  <path d="M0 610 C 300 580, 600 630, 900 600 S 1400 590, 1600 615 L1600 720 L0 720 Z" fill="url(#ground)"/>
+
+  <!-- ===== THE TOWER (centre) ===== -->
+  <g transform="translate(800,0)">
+    <!-- wave rings -->
+    <g fill="none" stroke="#4fe3ff" stroke-width="2">
+      <circle cx="0" cy="175" r="60" opacity="0.55"/>
+      <circle cx="0" cy="175" r="110" opacity="0.35"/>
+      <circle cx="0" cy="175" r="165" opacity="0.2"/>
+      <circle cx="0" cy="175" r="225" opacity="0.1"/>
+    </g>
+    <!-- glow -->
+    <circle cx="0" cy="175" r="90" fill="url(#glowCyan)" filter="url(#blur8)"/>
+    <!-- mast -->
+    <g stroke="#8fa3d9" stroke-width="3" fill="none" stroke-linecap="round">
+      <path d="M-30 520 L-12 180 M30 520 L12 180"/>
+      <path d="M-28 480 L28 480 M-26 440 L26 440 M-24 400 L24 400 M-22 360 L22 360 M-20 320 L20 320 M-18 280 L18 280 M-16 240 L16 240 M-14 200 L14 200"/>
+      <path d="M-28 480 L26 440 M28 480 L-26 440 M-24 400 L22 360 M24 400 L-22 360 M-20 320 L18 280 M20 320 L-18 280 M-16 240 L14 200 M16 240 L-14 200"/>
+      <path d="M0 180 L0 140"/>
+    </g>
+    <!-- antenna panels -->
+    <g fill="#cfd9f7" stroke="#8fa3d9" stroke-width="2">
+      <rect x="-40" y="190" width="14" height="48" rx="3"/>
+      <rect x="26" y="190" width="14" height="48" rx="3"/>
+      <rect x="-7" y="205" width="14" height="48" rx="3"/>
+    </g>
+    <!-- beacon -->
+    <circle cx="0" cy="140" r="14" fill="url(#glowRed)" filter="url(#blur3)"/>
+    <circle cx="0" cy="140" r="5" fill="#ff6b6b"/>
+    <!-- base -->
+    <path d="M-60 530 L60 530 L40 520 L-40 520 Z" fill="#0d1736"/>
+  </g>
+
+  <!-- ===== YOUR HOUSE (left) ===== -->
+  <g transform="translate(150,295)">
+    <circle cx="150" cy="200" r="160" fill="url(#glowWarm)" filter="url(#blur8)" opacity="0.5"/>
+    <!-- house body -->
+    <path d="M30 150 L30 290 L270 290 L270 150 L150 50 Z" fill="#2a3a74" stroke="#5a6fb3" stroke-width="3" stroke-linejoin="round"/>
+    <path d="M10 160 L150 40 L290 160" fill="none" stroke="#8fa3d9" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+    <!-- chimney -->
+    <rect x="210" y="70" width="26" height="60" fill="#2a3a74" stroke="#5a6fb3" stroke-width="3"/>
+    <!-- big window (cutaway) -->
+    <rect x="60" y="165" width="180" height="100" rx="8" fill="#ffd27a" opacity="0.95"/>
+    <rect x="60" y="165" width="180" height="100" rx="8" fill="none" stroke="#5a6fb3" stroke-width="3"/>
+    <!-- person silhouette in window -->
+    <circle cx="105" cy="200" r="13" fill="#2a3a74"/>
+    <path d="M85 265 L85 230 Q105 212 125 230 L125 265 Z" fill="#2a3a74"/>
+    <!-- smart speaker: cylinder with light ring -->
+    <g transform="translate(190,215)">
+      <ellipse cx="0" cy="40" rx="18" ry="6" fill="#1a2550"/>
+      <rect x="-18" y="0" width="36" height="40" rx="6" fill="#283a7a"/>
+      <ellipse cx="0" cy="0" rx="18" ry="6" fill="#4fe3ff"/>
+      <ellipse cx="0" cy="0" rx="12" ry="4" fill="#283a7a"/>
+      <ellipse cx="0" cy="0" rx="30" ry="12" fill="none" stroke="#4fe3ff" stroke-width="2" opacity="0.5"/>
+    </g>
+    <!-- door -->
+    <rect x="120" y="230" width="0" height="0"/>
+    <!-- speech bubble -->
+    <g transform="translate(-20,0)">
+      <path d="M40 110 L250 110 Q266 110 266 94 L266 48 Q266 32 250 32 L56 32 Q40 32 40 48 L40 94 Q40 110 56 110 Z M60 110 L50 130 L84 110" fill="#ffffff" stroke="#5a6fb3" stroke-width="2" stroke-linejoin="round" filter="url(#shadow)"/>
+      <text x="153" y="58" text-anchor="middle" font-size="16" fill="#1a2550" font-weight="600">“Alexa, my phone just died —</text>
+      <text x="153" y="84" text-anchor="middle" font-size="16" fill="#1a2550" font-weight="600">is my line OK?”</text>
+    </g>
+    <!-- label -->
+    <text x="150" y="325" text-anchor="middle" font-size="15" fill="#aab8e6" letter-spacing="1">YOU, AT HOME</text>
+  </g>
+
+  <!-- beam house -> tower -->
+  <g opacity="0.9">
+    <path d="M420 520 Q 600 330 785 180" fill="none" stroke="#4fe3ff" stroke-width="3" stroke-dasharray="2 14" stroke-linecap="round" opacity="0.8"/>
+    <path d="M420 520 Q 600 330 785 180" fill="none" stroke="#4fe3ff" stroke-width="12" opacity="0.12" filter="url(#blur3)"/>
+  </g>
+  <!-- beam tower -> mom -->
+  <g opacity="0.9">
+    <path d="M815 180 Q 1000 330 1190 520" fill="none" stroke="#ffcf6b" stroke-width="3" stroke-dasharray="2 14" stroke-linecap="round" opacity="0.8"/>
+    <path d="M815 180 Q 1000 330 1190 520" fill="none" stroke="#ffcf6b" stroke-width="12" opacity="0.12" filter="url(#blur3)"/>
+  </g>
+
+  <!-- ===== THE THREE QUESTIONS (floating cards around the tower) ===== -->
+  <g font-size="15" fill="#e6ecff">
+    <!-- SIM moved? -->
+    <g transform="translate(470,250)" filter="url(#shadow)">
+      <rect width="200" height="64" rx="12" fill="url(#card)" stroke="#4fe3ff" stroke-opacity="0.5"/>
+      <g transform="translate(16,14)">
+        <rect width="30" height="38" rx="5" fill="#ffd27a"/>
+        <path d="M0 10 L10 0" stroke="#1a2550" stroke-width="2"/>
+        <rect x="8" y="12" width="14" height="16" rx="2" fill="none" stroke="#1a2550" stroke-width="2"/>
+        <path d="M8 18 L22 18 M8 22 L22 22 M15 12 L15 28" stroke="#1a2550" stroke-width="1.5"/>
+      </g>
+      <text x="62" y="28" font-weight="700">Was my SIM moved?</text>
+      <text x="62" y="49" font-size="12" fill="#aab8e6">CAMARA SIM Swap</text>
+    </g>
+    <!-- Calls forwarded? -->
+    <g transform="translate(930,250)" filter="url(#shadow)">
+      <rect width="220" height="64" rx="12" fill="url(#card)" stroke="#4fe3ff" stroke-opacity="0.5"/>
+      <g transform="translate(16,16)" fill="none" stroke="#ffd27a" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M4 26 C 4 10, 16 4, 28 4"/>
+        <path d="M22 0 L30 4 L22 10"/>
+        <path d="M2 30 a4 4 0 1 0 0.1 0" fill="#ffd27a"/>
+      </g>
+      <text x="62" y="28" font-weight="700">Are my calls forwarded?</text>
+      <text x="62" y="49" font-size="12" fill="#aab8e6">CAMARA Call Forwarding Signal</text>
+    </g>
+    <!-- On the network? -->
+    <g transform="translate(700,395)" filter="url(#shadow)">
+      <rect width="200" height="64" rx="12" fill="url(#card)" stroke="#4fe3ff" stroke-opacity="0.5"/>
+      <g transform="translate(18,20)" fill="#ffd27a">
+        <rect x="0" y="22" width="6" height="10" rx="1"/><rect x="9" y="15" width="6" height="17" rx="1"/>
+        <rect x="18" y="8" width="6" height="24" rx="1"/><rect x="27" y="0" width="6" height="32" rx="1" opacity="0.35"/>
+      </g>
+      <text x="62" y="28" font-weight="700">Is it on the network?</text>
+      <text x="62" y="49" font-size="12" fill="#aab8e6">CAMARA Device Reachability</text>
+    </g>
+  </g>
+
+  <!-- ===== MOM'S HOUSE + PHONE (right) ===== -->
+  <g transform="translate(1180,345)">
+    <circle cx="110" cy="170" r="130" fill="url(#glowWarm)" filter="url(#blur8)" opacity="0.35"/>
+    <path d="M30 140 L30 240 L200 240 L200 140 L115 70 Z" fill="#2a3a74" stroke="#5a6fb3" stroke-width="3" stroke-linejoin="round"/>
+    <path d="M15 150 L115 62 L215 150" fill="none" stroke="#8fa3d9" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+    <rect x="55" y="160" width="50" height="40" rx="5" fill="#ffd27a" opacity="0.9"/>
+    <rect x="125" y="160" width="50" height="40" rx="5" fill="#ffd27a" opacity="0.6"/>
+    <text x="115" y="270" text-anchor="middle" font-size="15" fill="#aab8e6" letter-spacing="1">MOM, ACROSS TOWN</text>
+    <!-- consent shield -->
+    <g transform="translate(-30,30)">
+      <path d="M0 -22 L22 -14 L22 6 Q22 24 0 32 Q-22 24 -22 6 L-22 -14 Z" fill="#1c2b5e" stroke="#7CF2B4" stroke-width="2.5"/>
+      <path d="M-9 4 L-3 10 L10 -6" fill="none" stroke="#7CF2B4" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+      <text x="0" y="52" text-anchor="middle" font-size="11" fill="#7CF2B4" letter-spacing="1">CONSENTED</text>
+    </g>
+  </g>
+
+  <!-- phone with the alert, bottom right of the tower side -->
+  <g transform="translate(990,455)" filter="url(#shadow)">
+    <rect width="78" height="150" rx="14" fill="#0b1230" stroke="#8fa3d9" stroke-width="3"/>
+    <rect x="7" y="14" width="64" height="118" rx="8" fill="#15204a"/>
+    <rect x="26" y="7" width="26" height="4" rx="2" fill="#8fa3d9"/>
+    <!-- sms bubble -->
+    <rect x="12" y="30" width="54" height="52" rx="8" fill="#ffd27a"/>
+    <text x="39" y="48" text-anchor="middle" font-size="9" fill="#1a2550" font-weight="700">Mom's line</text>
+    <text x="39" y="60" text-anchor="middle" font-size="9" fill="#1a2550" font-weight="700">changed</text>
+    <text x="39" y="73" text-anchor="middle" font-size="8" fill="#1a2550">SIM moved 2:14</text>
+    <!-- buzz lines -->
+    <g stroke="#ffd27a" stroke-width="2.5" stroke-linecap="round" opacity="0.9">
+      <path d="M-10 40 L-18 34 M-10 60 L-20 60 M-10 80 L-18 86"/>
+      <path d="M88 40 L96 34 M88 60 L98 60 M88 80 L96 86"/>
+    </g>
+  </g>
+  <text x="1029" y="632" text-anchor="middle" font-size="13" fill="#aab8e6">a text, not a voice — Alexa never speaks first</text>
+
+  <!-- audit ledger, bottom left of the tower -->
+  <g transform="translate(560,505)" filter="url(#shadow)">
+    <rect width="150" height="78" rx="10" fill="url(#card)" stroke="#8fa3d9" stroke-opacity="0.5"/>
+    <g fill="#8fa3d9">
+      <rect x="14" y="16" width="70" height="5" rx="2"/><rect x="14" y="30" width="110" height="5" rx="2"/>
+      <rect x="14" y="44" width="90" height="5" rx="2"/><rect x="14" y="58" width="120" height="5" rx="2"/>
+    </g>
+    <g transform="translate(118,14)" fill="none" stroke="#7CF2B4" stroke-width="2.5" stroke-linecap="round">
+      <path d="M0 6 a6 6 0 1 1 12 0 a6 6 0 1 1 -12 0" /><path d="M10 6 a6 6 0 1 1 12 0 a6 6 0 1 1 -12 0" />
+    </g>
+    <text x="75" y="96" text-anchor="middle" font-size="11" fill="#aab8e6" letter-spacing="1">AUDIT, CHAINED, BEFORE EVERY ANSWER</text>
+  </g>
+
+  <!-- ===== TITLE BAND ===== -->
+  <rect x="0" y="650" width="1600" height="70" fill="#060a1c" opacity="0.75"/>
+  <text x="40" y="693" font-size="30" font-weight="800" fill="#ffffff" letter-spacing="0.5">Ask the Tower</text>
+  <text x="270" y="693" font-size="18" fill="#aab8e6">Your own agent asks the carrier about your line — from the one device that still works after your phone goes dead.</text>
+  <text x="1560" y="693" text-anchor="end" font-size="14" fill="#6f7fb8">Alexa+ · MCP · CAMARA · consent first</text>
+  </g>
+</svg>

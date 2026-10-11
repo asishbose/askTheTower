@@ -1,0 +1,103 @@
+# tower-mcp — `python -m tower_mcp`, port 8000, /mcp and /healthz (services/tower-mcp/README.md).
+image:
+  registry: ""
+  repository: ask-the-tower/tower-mcp
+  tag: ""
+  pullPolicy: ""
+
+replicaCount: 1
+port: 8000
+useStoreEnv: true
+startupFailureThreshold: 90   # fastmcp's import is slow on small nodes
+
+env:
+  TOWER_PORT: "8000"
+  TOWER_TZ: America/Toronto
+  TOWER_CLOCK_URL: http://mock-carrier:8443/_admin/clock   # demo: follow the mock's clock ("" = system clock)
+  TOWER_JWKS_URL: ""            # outside TOWER_ENV=local: the inbound JWT's JWKS (RUN-ALL Decisions)
+  TOWER_JWT_ISSUER: ""
+  TOWER_JWT_AUDIENCE: ""          # comma-separated list accepted
+  TOWER_JWT_CLIENT_IDS: ""        # Cognito access tokens carry client_id, not aud (prompt 15)
+  CARRIER_CLIENT: direct
+  CARRIER_BACKEND: mock
+  CARRIER_BASE_URL: http://mock-carrier:8443
+  CARRIER_CLIENT_ID: tower
+  CARRIER_SECRET_REF: env:CARRIER_CLIENT_SECRET
+  CARRIER_GATEWAY_URL: ""
+  CARRIER_GATEWAY_TOOLS: ""
+  BINDING_BASE_URL: http://localhost:8081   # the public binding page (links in next_step)
+  CARRIER_SUPPORT_NUMBER: "611"
+  ALERTS_INTERNAL_URL: http://alerts:8082
+secretEnv:
+  TOWER_BEARER: {name: "", key: TOWER_BEARER}
+  ALERTS_INTERNAL_BEARER: {name: "", key: INTERNAL_BEARER}
+  CARRIER_CLIENT_SECRET: {name: "", key: TOWER_CARRIER_CLIENT_SECRET}
+
+service:
+  type: ClusterIP
+  port: 8000
+
+# IRSA on EKS: eks.amazonaws.com/role-arn (DynamoDB tables, both KMS keys) from terraform output irsa_role_arns
+serviceAccount:
+  create: true
+  name: ""
+  annotations: {}
+
+# Public ingress (EKS: the AWS Load Balancer Controller's ALB, ACM TLS; values-eks.yaml in the umbrella).
+ingress:
+  enabled: false
+  className: ""
+  host: ""
+  paths: [/]
+  annotations: {}
+  tls: []
+
+autoscaling:
+  enabled: false
+  minReplicas: 2
+  maxReplicas: 4
+  targetCPUUtilizationPercentage: 70
+
+pdb:
+  enabled: false
+  maxUnavailable: 1
+
+networkPolicy:
+  enabled: true
+  from:
+    allowAll: true     # the public MCP endpoint (bearer/JWT-authenticated); ingress or port-forward reaches it
+
+resources:
+  requests: {cpu: 100m, memory: 192Mi}
+  limits: {cpu: "1", memory: 512Mi}
+
+# Set by the umbrella chart (deploy/helm/umbrella); these defaults make the chart render on its own.
+global:
+  imageRegistry: ""
+  imageTag: ""
+  imagePullPolicy: ""
+  secretName: att-secrets
+  storeEnv: {}
+  storeSecretEnv: {}
+  nodeSelector: {}
+
+nameOverride: ""
+fullnameOverride: ""
+
+podAnnotations: {}
+podSecurityContext:
+  runAsNonRoot: true
+  runAsUser: 10001
+  runAsGroup: 10001
+  fsGroup: 10001
+  seccompProfile:
+    type: RuntimeDefault
+securityContext:
+  allowPrivilegeEscalation: false
+  readOnlyRootFilesystem: true
+  capabilities:
+    drop: [ALL]
+
+nodeSelector: {}
+tolerations: []
+affinity: {}

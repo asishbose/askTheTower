@@ -1,0 +1,67 @@
+suite: mock-carrier
+templates:
+  - templates/deployment.yaml
+  - templates/configmap-scenarios.yaml
+  - templates/networkpolicy.yaml
+  - templates/ingress.yaml
+  - templates/service.yaml
+tests:
+  - it: runs one non-root, read-only replica (state is in memory)
+    template: templates/deployment.yaml
+    asserts:
+      - equal: {path: spec.replicas, value: 1}
+      - equal: {path: spec.strategy.type, value: Recreate}
+      - equal: {path: spec.template.spec.securityContext.runAsNonRoot, value: true}
+      - equal: {path: "spec.template.spec.containers[0].securityContext.readOnlyRootFilesystem", value: true}
+      - equal: {path: "spec.template.spec.containers[0].securityContext.allowPrivilegeEscalation", value: false}
+      - equal: {path: "spec.template.spec.containers[0].ports[0].containerPort", value: 8443}
+      - equal: {path: "spec.template.spec.containers[0].readinessProbe.httpGet.path", value: /healthz}
+      - isNotNullOrEmpty: {path: "spec.template.spec.containers[0].resources.limits.memory"}
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content: {name: MOCK_ADMIN, value: "1"}
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content: {name: MOCK_JWT_SECRET, valueFrom: {secretKeyRef: {name: att-secrets, key: MOCK_JWT_SECRET}}}
+  - it: serves scenario files from a ConfigMap when given
+    set:
+      scenarios.files:
+        demo.yaml: "clock: x"
+    asserts:
+      - template: templates/configmap-scenarios.yaml
+        hasDocuments: {count: 1}
+      - template: templates/deployment.yaml
+        contains:
+          path: spec.template.spec.containers[0].env
+          content: {name: MOCK_SCENARIOS_DIR, value: /app/scenarios-override}
+  - it: trusts the local CA for https webhook sinks (kind)
+    template: templates/deployment.yaml
+    set:
+      trustCA.configMap: att-local-ca
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content: {name: SSL_CERT_FILE, value: /trust/ca.crt}
+  - it: no scenario ConfigMap and no ingress by default
+    asserts:
+      - template: templates/configmap-scenarios.yaml
+        hasDocuments: {count: 0}
+      - template: templates/ingress.yaml
+        hasDocuments: {count: 0}
+  - it: is reachable only from the services that call it
+    template: templates/networkpolicy.yaml
+    asserts:
+      - contains:
+          path: spec.ingress[0].from
+          content: {podSelector: {matchLabels: {app.kubernetes.io/name: tower-mcp}}}
+      - contains:
+          path: spec.ingress[0].from
+          content: {podSelector: {matchLabels: {app.kubernetes.io/name: alerts}}}
+      - notContains:
+          path: spec.ingress[0].from
+          content: {podSelector: {matchLabels: {app.kubernetes.io/name: dynamodb-local}}}
+  - it: is a ClusterIP service named like the compose host
+    template: templates/service.yaml
+    asserts:
+      - equal: {path: metadata.name, value: mock-carrier}
+      - equal: {path: spec.type, value: ClusterIP}

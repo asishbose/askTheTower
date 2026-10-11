@@ -1,0 +1,6 @@
+apiVersion: v2
+name: demo-ui
+description: "Ask the Tower demo control room (docs/architecture/components/11-demo-ui.md). kind only: laptop tooling, never deployed to a cloud cluster."
+type: application
+version: 0.1.0
+appVersion: "0.1.0"

@@ -1,0 +1,67 @@
+suite: tower-mcp
+templates:
+  - templates/deployment.yaml
+  - templates/hpa.yaml
+  - templates/pdb.yaml
+  - templates/serviceaccount.yaml
+  - templates/ingress.yaml
+tests:
+  - it: serves /mcp on 8000 with /healthz readiness, non-root, read-only
+    template: templates/deployment.yaml
+    asserts:
+      - equal: {path: "spec.template.spec.containers[0].ports[0].containerPort", value: 8000}
+      - equal: {path: "spec.template.spec.containers[0].readinessProbe.httpGet.path", value: /healthz}
+      - equal: {path: "spec.template.spec.containers[0].securityContext.readOnlyRootFilesystem", value: true}
+      - equal: {path: spec.template.spec.securityContext.runAsUser, value: 10001}
+      - equal: {path: spec.template.spec.automountServiceAccountToken, value: false}
+  - it: takes the bearer from the Secret, never from values
+    template: templates/deployment.yaml
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content: {name: TOWER_BEARER, valueFrom: {secretKeyRef: {name: att-secrets, key: TOWER_BEARER}}}
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content: {name: ALERTS_INTERNAL_BEARER, valueFrom: {secretKeyRef: {name: att-secrets, key: INTERNAL_BEARER}}}
+  - it: gets the shared store env from global and drops empty values
+    template: templates/deployment.yaml
+    set:
+      global.storeEnv: {TOWER_ENV: aws, DYNAMO_ENDPOINT: "", TOWER_KMS_KEY_ID: arn:aws:kms:r:a:key/k}
+    asserts:
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content: {name: TOWER_ENV, value: aws}
+      - contains:
+          path: spec.template.spec.containers[0].env
+          content: {name: TOWER_KMS_KEY_ID, value: "arn:aws:kms:r:a:key/k"}
+      - notContains:
+          path: spec.template.spec.containers[0].env
+          content: {name: DYNAMO_ENDPOINT, value: ""}
+  - it: lets the HPA own replicas when autoscaling
+    set:
+      autoscaling.enabled: true
+      pdb.enabled: true
+    asserts:
+      - template: templates/hpa.yaml
+        equal: {path: spec.scaleTargetRef.name, value: tower-mcp}
+      - template: templates/deployment.yaml
+        notExists: {path: spec.replicas}
+      - template: templates/pdb.yaml
+        equal: {path: spec.maxUnavailable, value: 1}
+  - it: annotates the service account for IRSA
+    template: templates/serviceaccount.yaml
+    set:
+      serviceAccount.annotations:
+        eks.amazonaws.com/role-arn: arn:aws:iam::ACCOUNT:role/att-tower-mcp
+    asserts:
+      - equal:
+          path: metadata.annotations["eks.amazonaws.com/role-arn"]
+          value: arn:aws:iam::ACCOUNT:role/att-tower-mcp
+  - it: renders an ALB ingress for the public MCP path
+    template: templates/ingress.yaml
+    set:
+      ingress: {enabled: true, className: alb, host: tower.example.org, paths: [/mcp], annotations: {alb.ingress.kubernetes.io/scheme: internet-facing}}
+    asserts:
+      - equal: {path: spec.ingressClassName, value: alb}
+      - equal: {path: "spec.rules[0].host", value: tower.example.org}
+      - equal: {path: "spec.rules[0].http.paths[0].path", value: /mcp}

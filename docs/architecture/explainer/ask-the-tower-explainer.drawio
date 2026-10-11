@@ -1,0 +1,825 @@
+<mxfile host="app.diagrams.net" agent="Ask the Tower design generator (explainer)" type="device">
+  <diagram id="explainer_p1" name="1 What it is">
+    <mxGraphModel dx="1422" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1654" pageHeight="1080" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="hdr_n" value="1/10" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;fontSize=14;fontColor=#6B7A90;fontStyle=1;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="40" y="18" width="60" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="hdr_t" value="Your Echo can ask your carrier whether your line is safe — and only with the line-holder's consent" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;fontSize=24;fontColor=#1B2B45;fontStyle=1;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="100" y="14" width="1514" height="39.28" as="geometry" />
+        </mxCell>
+        <mxCell id="hdr_s" value="For everyone — judge, partner, executive, new engineer. Start here; no technical background needed." style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;fontSize=14;fontColor=#6B7A90;fontStyle=0;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="100" y="53.28" width="1514" height="27.08" as="geometry" />
+        </mxCell>
+        <mxCell id="hdr_l" value="&lt;font color=&quot;#2BB3A0&quot;&gt;■&lt;/font&gt; a question and its answer&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;font color=&quot;#E8A33D&quot;&gt;■&lt;/font&gt; a text to someone you trust&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;font color=&quot;#6B7583&quot;&gt;■&lt;/font&gt; people and phones" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;fontSize=12;fontColor=#1B2B45;fontStyle=0;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="100" y="80.36" width="1514" height="24.64" as="geometry" />
+        </mxCell>
+        <mxCell id="p1_one" value="&lt;i&gt;“Your own agent on Alexa+ asking the carrier about your line — from the one device that still works after your phone goes dead. Consent first.”&lt;/i&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;fontSize=18;fontColor=#1B2B45;fontStyle=0;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="100" y="115" width="1454" height="31.96" as="geometry" />
+        </mxCell>
+        <mxCell id="you" value="&lt;b&gt;You, at home&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:14px&quot;&gt;Your phone just went dead.&lt;br&gt;You don't know why.&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#6B7583;fontSize=16;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="60" y="191" width="250" height="150" as="geometry" />
+        </mxCell>
+        <mxCell id="phone" value="&lt;b&gt;Your phone&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:14px&quot;&gt;No signal. Calls and texts&lt;br&gt;have stopped.&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F3F5F8;strokeColor=#6B7583;fontSize=16;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="60" y="441" width="250" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="echo" value="&lt;b&gt;Echo with Alexa+&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:14px&quot;&gt;On home Wi-Fi, so it still&lt;br&gt;works when the phone doesn't.&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DDF3EF;strokeColor=#2BB3A0;fontSize=16;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="390" y="191" width="270" height="150" as="geometry" />
+        </mxCell>
+        <mxCell id="tower" value="&lt;b&gt;Tower&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:14px&quot;&gt;Checks that you may ask about&lt;br&gt;this line, asks the carrier, and&lt;br&gt;returns plain yes / no facts&lt;br&gt;for Alexa+ to say.&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DDF3EF;strokeColor=#2BB3A0;fontSize=18;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;strokeWidth=3;" vertex="1" parent="1">
+          <mxGeometry x="740" y="171" width="330" height="190" as="geometry" />
+        </mxCell>
+        <mxCell id="carrier" value="&lt;b&gt;Your carrier — standard network APIs&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:14px&quot;&gt;SIM Swap · Call Forwarding Signal&lt;br&gt;Device Reachability · Number Verification&lt;br&gt;(the same CAMARA APIs banks already use)&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#6B7583;fontSize=16;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="1150" y="171" width="444" height="190" as="geometry" />
+        </mxCell>
+        <mxCell id="trusted" value="&lt;b&gt;Someone you trust&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:14px&quot;&gt;Gets a text message if a line they&lt;br&gt;watch, with consent, changes.&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FBEFD9;strokeColor=#E8A33D;fontSize=16;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="1150" y="441" width="444" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="e_ask" value="you ask" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2BB3A0;strokeWidth=2;fontSize=11;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=1.0000;exitY=0.5000;exitDx=0;exitDy=0;entryX=0.0000;entryY=0.5000;entryDx=0;entryDy=0;" edge="1" parent="1" source="you" target="echo">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="0" y="-12" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_mcp" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2BB3A0;strokeWidth=2;fontSize=11;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=1.0000;exitY=0.5000;exitDx=0;exitDy=0;entryX=0.0000;entryY=0.5000;entryDx=0;entryDy=0;" edge="1" parent="1" source="echo" target="tower">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_car" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2BB3A0;strokeWidth=2;fontSize=11;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=1.0000;exitY=0.5000;exitDx=0;exitDy=0;entryX=0.0000;entryY=0.5000;entryDx=0;entryDy=0;" edge="1" parent="1" source="tower" target="carrier">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_dead" value="went dead" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#6B7583;strokeWidth=1;fontSize=12;fontColor=#3C4858;dashed=1;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=0.5000;exitY=0.0000;exitDx=0;exitDy=0;entryX=0.5000;entryY=1.0000;entryDx=0;entryDy=0;" edge="1" parent="1" source="phone" target="you">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="55" y="0" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_sms" value="a text, when something changes" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#E8A33D;strokeWidth=2;fontSize=12;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=0.5000;exitY=1.0000;exitDx=0;exitDy=0;entryX=0.0000;entryY=0.5000;entryDx=0;entryDy=0;" edge="1" parent="1" source="tower" target="trusted">
+          <mxGeometry relative="1" as="geometry" x="0.3671">
+            <Array as="points">
+              <mxPoint x="905" y="511" />
+            </Array>
+            <mxPoint x="0" y="-14" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="qs" value="&lt;b&gt;Three questions you can ask&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:15px&quot;&gt;1.  “Alexa, is my line OK?” — was my SIM moved to another&lt;br&gt;     device? are my calls being forwarded?&lt;br&gt;2.  “Is Mom's phone on the network?” — only if Mom shared it.&lt;br&gt;3.  “Watch Mom's line for me.” — you get a text if her SIM is&lt;br&gt;     moved or her calls are forwarded.&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#6B7583;fontSize=18;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="60" y="641" width="780" height="200" as="geometry" />
+        </mxCell>
+        <mxCell id="rule" value="&lt;b&gt;The one rule: consent first&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:15px&quot;&gt;A line is checked only after its holder has bound it with&lt;br&gt;one tap on their own phone, and only for the questions they&lt;br&gt;granted to you. They can take it back any time, and every&lt;br&gt;check is written to a log they can ask about.&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FBEFD9;strokeColor=#E8A33D;fontSize=18;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;strokeWidth=3;" vertex="1" parent="1">
+          <mxGeometry x="880" y="641" width="714" height="200" as="geometry" />
+        </mxCell>
+        <mxCell id="c1" value="&lt;b&gt;&lt;font color=&quot;#2BB3A0&quot;&gt;①&lt;/font&gt;&lt;/b&gt; When a SIM is swapped, the phone goes quiet. The Echo on home Wi-Fi is the one device left that can still ask the question." style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;fontSize=14;fontColor=#1B2B45;fontStyle=0;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="60" y="871" width="491.333" height="61.24" as="geometry" />
+        </mxCell>
+        <mxCell id="c2" value="&lt;b&gt;&lt;font color=&quot;#2BB3A0&quot;&gt;②&lt;/font&gt;&lt;/b&gt; Tower never guesses and never looks anything up about a person: it asks the carrier yes/no questions and passes back the answers." style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;fontSize=14;fontColor=#1B2B45;fontStyle=0;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="571.333" y="871" width="491.333" height="61.24" as="geometry" />
+        </mxCell>
+        <mxCell id="c3" value="&lt;b&gt;&lt;font color=&quot;#E8A33D&quot;&gt;③&lt;/font&gt;&lt;/b&gt; Alexa+ cannot start a conversation, so when something changes the warning goes out as a text message to someone you chose." style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;fontSize=14;fontColor=#1B2B45;fontStyle=0;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="1082.67" y="871" width="491.333" height="61.24" as="geometry" />
+        </mxCell>
+        <mxCell id="ftr" value="&lt;b&gt;Read next →&lt;/b&gt; 2 · Why the Echo&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;font color=&quot;#6B7A90&quot;&gt;· true as of 9 October 2026&lt;/font&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;fontSize=13;fontColor=#1B2B45;fontStyle=0;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="40" y="1030" width="1574" height="32" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="explainer_p2" name="2 Why the Echo">
+    <mxGraphModel dx="1422" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1654" pageHeight="1080" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="hdr_n" value="2/10" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;fontSize=14;fontColor=#6B7A90;fontStyle=1;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="40" y="18" width="60" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="hdr_t" value="A SIM swap silences your phone first — the Echo on Wi-Fi is the one device still able to ask" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;fontSize=24;fontColor=#1B2B45;fontStyle=1;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="100" y="14" width="1514" height="39.28" as="geometry" />
+        </mxCell>
+        <mxCell id="hdr_s" value="For judges, executives and partners: the moment this product exists for." style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;fontSize=14;fontColor=#6B7A90;fontStyle=0;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="100" y="53.28" width="1514" height="27.08" as="geometry" />
+        </mxCell>
+        <mxCell id="hdr_l" value="&lt;font color=&quot;#6B7583&quot;&gt;■&lt;/font&gt; what happens to you&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;font color=&quot;#E8A33D&quot;&gt;■&lt;/font&gt; what the attacker gains&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;font color=&quot;#2BB3A0&quot;&gt;■&lt;/font&gt; what Tower adds" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;fontSize=12;fontColor=#1B2B45;fontStyle=0;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="100" y="80.36" width="1514" height="24.64" as="geometry" />
+        </mxCell>
+        <mxCell id="tl_lbl" value="&lt;b&gt;The SIM-swap moment&lt;/b&gt;, left to right" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;fontSize=16;fontColor=#1B2B45;fontStyle=0;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="60" y="131" width="600" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="t1" value="&lt;b&gt;① Your number moves&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:15px&quot;&gt;Someone convinces the carrier to&lt;br&gt;move your number to their SIM.&lt;br&gt;The network logs it the moment&lt;br&gt;it happens.&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F3F5F8;strokeColor=#6B7583;fontSize=18;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="60" y="171" width="345" height="190" as="geometry" />
+        </mxCell>
+        <mxCell id="t2" value="&lt;b&gt;② Your phone goes quiet&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:15px&quot;&gt;No signal. It looks exactly like&lt;br&gt;bad coverage for the first hour,&lt;br&gt;so you wait. Nobody tells you.&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F3F5F8;strokeColor=#6B7583;fontSize=18;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="455" y="171" width="345" height="190" as="geometry" />
+        </mxCell>
+        <mxCell id="t3" value="&lt;b&gt;③ The codes go to them&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:15px&quot;&gt;Bank one-time codes and password&lt;br&gt;resets now arrive on the&lt;br&gt;attacker's SIM, not yours.&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FBEFD9;strokeColor=#E8A33D;fontSize=18;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="850" y="171" width="345" height="190" as="geometry" />
+        </mxCell>
+        <mxCell id="t4" value="&lt;b&gt;④ Accounts are taken over&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:15px&quot;&gt;Money and accounts go while you&lt;br&gt;still think it is bad signal. You&lt;br&gt;find out from your bank.&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FBEFD9;strokeColor=#E8A33D;fontSize=18;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="1245" y="171" width="345" height="190" as="geometry" />
+        </mxCell>
+        <mxCell id="te0" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#6B7583;strokeWidth=1;fontSize=11;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=1.0000;exitY=0.5000;exitDx=0;exitDy=0;entryX=0.0000;entryY=0.5000;entryDx=0;entryDy=0;" edge="1" parent="1" source="t1" target="t2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="te1" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#6B7583;strokeWidth=1;fontSize=11;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=1.0000;exitY=0.5000;exitDx=0;exitDy=0;entryX=0.0000;entryY=0.5000;entryDx=0;entryDy=0;" edge="1" parent="1" source="t2" target="t3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="te2" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#6B7583;strokeWidth=1;fontSize=11;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=1.0000;exitY=0.5000;exitDx=0;exitDy=0;entryX=0.0000;entryY=0.5000;entryDx=0;entryDy=0;" edge="1" parent="1" source="t3" target="t4">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="echo" value="&lt;b&gt;Meanwhile: the Echo still works&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:16px&quot;&gt;It is on home Wi-Fi, not on the phone's SIM. So during step ②, you can ask:&lt;br&gt;&lt;b&gt;You:&lt;/b&gt; “My phone just lost signal. Alexa, is my line OK?”&lt;br&gt;&lt;b&gt;Alexa:&lt;/b&gt; “Your SIM was moved to another device at 10:12 today.&lt;br&gt;If that wasn't you, call your carrier now.”&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DDF3EF;strokeColor=#2BB3A0;fontSize=18;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;strokeWidth=3;" vertex="1" parent="1">
+          <mxGeometry x="455" y="441" width="740" height="220" as="geometry" />
+        </mxCell>
+        <mxCell id="e_echo" value="ask here, before ③" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2BB3A0;strokeWidth=2;fontSize=13;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=0.5000;exitY=1.0000;exitDx=0;exitDy=0;entryX=0.2331;entryY=0.0000;entryDx=0;entryDy=0;" edge="1" parent="1" source="t2" target="echo">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="80" y="0" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="c1" value="&lt;b&gt;&lt;font color=&quot;#2BB3A0&quot;&gt;①&lt;/font&gt;&lt;/b&gt; The network logs step ① at once: “was this SIM changed in the last 72 hours?” is a standard question. Banks ask it today; the person whose line it is cannot." style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;fontSize=14;fontColor=#1B2B45;fontStyle=0;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="60" y="691" width="491.333" height="61.24" as="geometry" />
+        </mxCell>
+        <mxCell id="c2" value="&lt;b&gt;&lt;font color=&quot;#2BB3A0&quot;&gt;②&lt;/font&gt;&lt;/b&gt; During step ② the Echo is the one device that can still ask. The teal answer is the real sentence the running demo speaks; the time comes from the mock carrier's clock." style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;fontSize=14;fontColor=#1B2B45;fontStyle=0;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="571.333" y="691" width="491.333" height="61.24" as="geometry" />
+        </mxCell>
+        <mxCell id="c3" value="&lt;b&gt;&lt;font color=&quot;#E8A33D&quot;&gt;④&lt;/font&gt;&lt;/b&gt; Tower cannot undo step ④; it shortens the time to notice. Carrier SIM locks and PINs try to prevent step ①. Tower detects it and tells someone: a complement, not a replacement." style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;fontSize=14;fontColor=#1B2B45;fontStyle=0;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="1082.67" y="691" width="491.333" height="78.32" as="geometry" />
+        </mxCell>
+        <mxCell id="src" value="&lt;b&gt;Numbers (reported cases, a floor):&lt;/b&gt; 971 SIM-swap complaints to the FBI in 2025, $17.4 million in reported losses (FBI IC3 2025 Internet Crime Report). 205 of the 2024 complaints, $6.3 million, from people aged 60 and over (FBI IC3 2024). Nearly 3,000 unauthorised SIM swaps filed to the UK National Fraud Database in 2024, up 1,055 % (Cifas, 7 May 2025). US complaints fell from 2023 to 2025 while UK cases rose. Checked 2026-10-06; sources in docs/prior-art.md “Numbers” (the deck has no numbers slide)." style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;fontSize=13;fontColor=#6B7A90;fontStyle=0;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="60" y="809.32" width="1534" height="57.58" as="geometry" />
+        </mxCell>
+        <mxCell id="ftr" value="&lt;b&gt;Read next →&lt;/b&gt; 3 · The three moments&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;font color=&quot;#6B7A90&quot;&gt;· true as of 9 October 2026&lt;/font&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;fontSize=13;fontColor=#1B2B45;fontStyle=0;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="40" y="1030" width="1574" height="32" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="explainer_p3" name="3 The three moments">
+    <mxGraphModel dx="1422" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1654" pageHeight="1080" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="hdr_n" value="3/10" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;fontSize=14;fontColor=#6B7A90;fontStyle=1;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="40" y="18" width="60" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="hdr_t" value="Three moments, one pattern: you ask, Tower asks the carrier, Alexa+ answers, a phone tells the rest" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;fontSize=24;fontColor=#1B2B45;fontStyle=1;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="100" y="14" width="1514" height="39.28" as="geometry" />
+        </mxCell>
+        <mxCell id="hdr_s" value="For judges and executives: the demo, frame by frame. Read each column top to bottom." style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;fontSize=14;fontColor=#6B7A90;fontStyle=0;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="100" y="53.28" width="1514" height="27.08" as="geometry" />
+        </mxCell>
+        <mxCell id="hdr_l" value="&lt;font color=&quot;#2BB3A0&quot;&gt;■&lt;/font&gt; asked and answered by voice&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;font color=&quot;#E8A33D&quot;&gt;■&lt;/font&gt; a text message&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;font color=&quot;#6B7583&quot;&gt;■&lt;/font&gt; what the person says / sees" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;fontSize=12;fontColor=#1B2B45;fontStyle=0;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="100" y="80.36" width="1514" height="24.64" as="geometry" />
+        </mxCell>
+        <mxCell id="h0" value="1 · My line — the dead phone" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;fontSize=16;fontColor=#1B2B45;fontStyle=1;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="200" y="111" width="460" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="h1" value="2 · My calls are being forwarded" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;fontSize=16;fontColor=#1B2B45;fontStyle=1;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="682" y="111" width="460" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="h2" value="3 · Mom's line, with her consent" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;fontSize=16;fontColor=#1B2B45;fontStyle=1;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="1164" y="111" width="460" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="rl0" value="&lt;b&gt;What the person says&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;fontSize=13;fontColor=#6B7A90;fontStyle=0;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="40" y="151" width="150" height="130" as="geometry" />
+        </mxCell>
+        <mxCell id="rl1" value="&lt;b&gt;What Tower checks&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;fontSize=13;fontColor=#6B7A90;fontStyle=0;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="40" y="307" width="150" height="150" as="geometry" />
+        </mxCell>
+        <mxCell id="rl2" value="&lt;b&gt;What Alexa+ answers&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;fontSize=13;fontColor=#6B7A90;fontStyle=0;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="40" y="483" width="150" height="190" as="geometry" />
+        </mxCell>
+        <mxCell id="rl3" value="&lt;b&gt;What happens on the phone&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;fontSize=13;fontColor=#6B7A90;fontStyle=0;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="40" y="699" width="150" height="200" as="geometry" />
+        </mxCell>
+        <mxCell id="f00" value="&lt;b&gt;“My phone just lost signal. Alexa, is my line OK?”&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#6B7583;fontSize=15;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="200" y="151" width="460" height="130" as="geometry" />
+        </mxCell>
+        <mxCell id="f01" value="&lt;b&gt;Your line is bound to you.&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:14px&quot;&gt;Tower asks the carrier: was the SIM changed&lt;br&gt;in the last 72 hours? Are calls forwarded?&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DDF3EF;strokeColor=#2BB3A0;fontSize=14;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="200" y="307" width="460" height="150" as="geometry" />
+        </mxCell>
+        <mxCell id="f02" value="&lt;b&gt;“Your SIM was moved to another device at 10:12 today. If that wasn't you, call your carrier now.”&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DDF3EF;strokeColor=#2BB3A0;fontSize=15;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="200" y="483" width="460" height="190" as="geometry" />
+        </mxCell>
+        <mxCell id="f03" value="&lt;b&gt;Nothing arrives — the phone has no service.&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:14px&quot;&gt;The Echo was the only way to find out&lt;br&gt;in time. Next step: call the carrier.&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F3F5F8;strokeColor=#6B7583;fontSize=14;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="200" y="699" width="460" height="200" as="geometry" />
+        </mxCell>
+        <mxCell id="fe00" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2BB3A0;strokeWidth=2;fontSize=11;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=0.5000;exitY=1.0000;exitDx=0;exitDy=0;entryX=0.5000;entryY=0.0000;entryDx=0;entryDy=0;" edge="1" parent="1" source="f00" target="f01">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="fe01" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2BB3A0;strokeWidth=2;fontSize=11;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=0.5000;exitY=1.0000;exitDx=0;exitDy=0;entryX=0.5000;entryY=0.0000;entryDx=0;entryDy=0;" edge="1" parent="1" source="f01" target="f02">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="fe02" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2BB3A0;strokeWidth=2;fontSize=11;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=0.5000;exitY=1.0000;exitDx=0;exitDy=0;entryX=0.5000;entryY=0.0000;entryDx=0;entryDy=0;" edge="1" parent="1" source="f02" target="f03">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="chip0" value="SIM_SWAPPED_RECENT" style="text;html=1;rounded=1;arcSize=40;fillColor=#DDF3EF;strokeColor=#2BB3A0;align=center;verticalAlign=middle;whiteSpace=wrap;fontSize=11;fontStyle=1;fontColor=#1B2B45;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="210" y="643" width="144.76" height="22" as="geometry" />
+        </mxCell>
+        <mxCell id="f10" value="&lt;b&gt;“Is anything forwarding my calls?”&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#6B7583;fontSize=15;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="682" y="151" width="460" height="130" as="geometry" />
+        </mxCell>
+        <mxCell id="f11" value="&lt;b&gt;Same line, same consent.&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:14px&quot;&gt;Tower asks the carrier whether&lt;br&gt;unconditional forwarding is set.&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DDF3EF;strokeColor=#2BB3A0;fontSize=14;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="682" y="307" width="460" height="150" as="geometry" />
+        </mxCell>
+        <mxCell id="f12" value="&lt;b&gt;“All your calls have been forwarding since 10:20 today. If you didn't set that, call your carrier.”&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:14px&quot;&gt;(In the demo it first repeats moment 1's SIM warning.)&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DDF3EF;strokeColor=#2BB3A0;fontSize=15;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="682" y="483" width="460" height="190" as="geometry" />
+        </mxCell>
+        <mxCell id="f13" value="&lt;b&gt;Calls to your number ring another phone.&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:14px&quot;&gt;Unconditional forwarding is a classic&lt;br&gt;takeover move. Now you know why it is silent.&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F3F5F8;strokeColor=#6B7583;fontSize=14;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="682" y="699" width="460" height="200" as="geometry" />
+        </mxCell>
+        <mxCell id="fe10" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2BB3A0;strokeWidth=2;fontSize=11;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=0.5000;exitY=1.0000;exitDx=0;exitDy=0;entryX=0.5000;entryY=0.0000;entryDx=0;entryDy=0;" edge="1" parent="1" source="f10" target="f11">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="fe11" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2BB3A0;strokeWidth=2;fontSize=11;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=0.5000;exitY=1.0000;exitDx=0;exitDy=0;entryX=0.5000;entryY=0.0000;entryDx=0;entryDy=0;" edge="1" parent="1" source="f11" target="f12">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="fe12" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2BB3A0;strokeWidth=2;fontSize=11;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=0.5000;exitY=1.0000;exitDx=0;exitDy=0;entryX=0.5000;entryY=0.0000;entryDx=0;entryDy=0;" edge="1" parent="1" source="f12" target="f13">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="chip1" value="CALL_FORWARDING_SET" style="text;html=1;rounded=1;arcSize=40;fillColor=#DDF3EF;strokeColor=#2BB3A0;align=center;verticalAlign=middle;whiteSpace=wrap;fontSize=11;fontStyle=1;fontColor=#1B2B45;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="692" y="643" width="151.58" height="22" as="geometry" />
+        </mxCell>
+        <mxCell id="f20" value="&lt;b&gt;“Is Mom's line OK?” … “Watch Mom's line for me.”&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#6B7583;fontSize=15;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="1164" y="151" width="460" height="130" as="geometry" />
+        </mxCell>
+        <mxCell id="f21" value="&lt;b&gt;Mom bound her line once and granted you “watch”.&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:14px&quot;&gt;Same two carrier questions, on her line.&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DDF3EF;strokeColor=#2BB3A0;fontSize=14;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="1164" y="307" width="460" height="150" as="geometry" />
+        </mxCell>
+        <mxCell id="f22" value="&lt;b&gt;“Your line is as it was.” · “Alerts are on for that line. You'll get a text if it's SIM-swapped or forwarded.”&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:14px&quot;&gt;(Known issue: the sentence says “your” for Mom.)&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DDF3EF;strokeColor=#2BB3A0;fontSize=15;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="1164" y="483" width="460" height="190" as="geometry" />
+        </mxCell>
+        <mxCell id="f23" value="&lt;b&gt;Mom's SIM moves → your phone gets a text:&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:14px&quot;&gt;“SIM moved to another device at &amp;lt;time&amp;gt; today.&lt;br&gt;Not you? Call your carrier now.” If Mom has&lt;br&gt;revoked, nothing is sent and the log says why.&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FBEFD9;strokeColor=#E8A33D;fontSize=14;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="1164" y="699" width="460" height="200" as="geometry" />
+        </mxCell>
+        <mxCell id="fe20" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2BB3A0;strokeWidth=2;fontSize=11;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=0.5000;exitY=1.0000;exitDx=0;exitDy=0;entryX=0.5000;entryY=0.0000;entryDx=0;entryDy=0;" edge="1" parent="1" source="f20" target="f21">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="fe21" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2BB3A0;strokeWidth=2;fontSize=11;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=0.5000;exitY=1.0000;exitDx=0;exitDy=0;entryX=0.5000;entryY=0.0000;entryDx=0;entryDy=0;" edge="1" parent="1" source="f21" target="f22">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="fe22" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#E8A33D;strokeWidth=2;fontSize=11;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=0.5000;exitY=1.0000;exitDx=0;exitDy=0;entryX=0.5000;entryY=0.0000;entryDx=0;entryDy=0;" edge="1" parent="1" source="f22" target="f23">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="chip2" value="OK · then SUPPRESSED_REVOKED" style="text;html=1;rounded=1;arcSize=40;fillColor=#FBEFD9;strokeColor=#E8A33D;align=center;verticalAlign=middle;whiteSpace=wrap;fontSize=11;fontStyle=1;fontColor=#1B2B45;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="1174" y="643" width="212.96" height="22" as="geometry" />
+        </mxCell>
+        <mxCell id="cap" value="&lt;b&gt;&lt;font color=&quot;#2BB3A0&quot;&gt;①&lt;/font&gt;&lt;/b&gt; The small chip is the reason code the rule table produced; the sentence is a fixed template for that code, never written by a model.&amp;nbsp;&amp;nbsp;&lt;b&gt;&lt;font color=&quot;#2BB3A0&quot;&gt;②&lt;/font&gt;&lt;/b&gt; Moment 3 is the product: a second person is told, because Alexa+ cannot speak first." style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;fontSize=13;fontColor=#1B2B45;fontStyle=0;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="200" y="917" width="1414" height="41.72" as="geometry" />
+        </mxCell>
+        <mxCell id="ftr" value="&lt;b&gt;Read next →&lt;/b&gt; 4 · How a question travels&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;font color=&quot;#6B7A90&quot;&gt;detail: artifacts/transcripts/moment-1..3.json&lt;/font&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;font color=&quot;#6B7A90&quot;&gt;· true as of 9 October 2026&lt;/font&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;fontSize=13;fontColor=#1B2B45;fontStyle=0;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="40" y="1030" width="1574" height="32" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="explainer_p4" name="4 How a question travels">
+    <mxGraphModel dx="1422" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1654" pageHeight="1080" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="hdr_n" value="4/10" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;fontSize=14;fontColor=#6B7A90;fontStyle=1;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="40" y="18" width="60" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="hdr_t" value="A question becomes one database read, two carrier calls and a rule — no model decides anything" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;fontSize=24;fontColor=#1B2B45;fontStyle=1;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="100" y="14" width="1514" height="39.28" as="geometry" />
+        </mxCell>
+        <mxCell id="hdr_s" value="For judges and engineers: the request path, hop by hop, with what each step is for." style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;fontSize=14;fontColor=#6B7A90;fontStyle=0;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="100" y="53.28" width="1514" height="27.08" as="geometry" />
+        </mxCell>
+        <mxCell id="hdr_l" value="&lt;font color=&quot;#2BB3A0&quot;&gt;■&lt;/font&gt; request path&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;font color=&quot;#6B7583&quot;&gt;■&lt;/font&gt; time budget&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;font color=&quot;#E8A33D&quot;&gt;■&lt;/font&gt; the one guarantee" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;fontSize=12;fontColor=#1B2B45;fontStyle=0;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="100" y="80.36" width="1514" height="24.64" as="geometry" />
+        </mxCell>
+        <mxCell id="h0" value="&lt;b&gt;① Alexa+&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:14px&quot;&gt;hears the question,&lt;br&gt;picks Tower's tool&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DDF3EF;strokeColor=#2BB3A0;fontSize=17;fontColor=#1B2B45;align=center;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="50" y="131" width="190" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="h1" value="&lt;b&gt;② Tower&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:14px&quot;&gt;who is asking?&lt;br&gt;(linked account)&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DDF3EF;strokeColor=#2BB3A0;fontSize=17;fontColor=#1B2B45;align=center;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="272" y="131" width="190" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="h2" value="&lt;b&gt;③ Consent check&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:14px&quot;&gt;bound? granted?&lt;br&gt;one database read&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DDF3EF;strokeColor=#2BB3A0;fontSize=17;fontColor=#1B2B45;align=center;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="494" y="131" width="190" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="h3" value="&lt;b&gt;④ Carrier&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:14px&quot;&gt;SIM changed?&lt;br&gt;calls forwarded?&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DDF3EF;strokeColor=#2BB3A0;fontSize=17;fontColor=#1B2B45;align=center;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="716" y="131" width="190" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="h4" value="&lt;b&gt;⑤ Policy&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:14px&quot;&gt;rules in code:&lt;br&gt;ok · changed · refuse&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DDF3EF;strokeColor=#2BB3A0;fontSize=17;fontColor=#1B2B45;align=center;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;strokeWidth=3;" vertex="1" parent="1">
+          <mxGeometry x="938" y="131" width="190" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="h5" value="&lt;b&gt;⑥ Audit&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:14px&quot;&gt;written before&lt;br&gt;the answer leaves&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DDF3EF;strokeColor=#2BB3A0;fontSize=17;fontColor=#1B2B45;align=center;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="1160" y="131" width="190" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="h6" value="&lt;b&gt;⑦ Answer&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:14px&quot;&gt;a fixed sentence +&lt;br&gt;yes/no facts&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DDF3EF;strokeColor=#2BB3A0;fontSize=17;fontColor=#1B2B45;align=center;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="1382" y="131" width="190" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="he0" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2BB3A0;strokeWidth=2;fontSize=11;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=1.0000;exitY=0.5000;exitDx=0;exitDy=0;entryX=0.0000;entryY=0.5000;entryDx=0;entryDy=0;" edge="1" parent="1" source="h0" target="h1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="he1" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2BB3A0;strokeWidth=2;fontSize=11;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=1.0000;exitY=0.5000;exitDx=0;exitDy=0;entryX=0.0000;entryY=0.5000;entryDx=0;entryDy=0;" edge="1" parent="1" source="h1" target="h2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="he2" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2BB3A0;strokeWidth=2;fontSize=11;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=1.0000;exitY=0.5000;exitDx=0;exitDy=0;entryX=0.0000;entryY=0.5000;entryDx=0;entryDy=0;" edge="1" parent="1" source="h2" target="h3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="he3" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2BB3A0;strokeWidth=2;fontSize=11;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=1.0000;exitY=0.5000;exitDx=0;exitDy=0;entryX=0.0000;entryY=0.5000;entryDx=0;entryDy=0;" edge="1" parent="1" source="h3" target="h4">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="he4" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2BB3A0;strokeWidth=2;fontSize=11;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=1.0000;exitY=0.5000;exitDx=0;exitDy=0;entryX=0.0000;entryY=0.5000;entryDx=0;entryDy=0;" edge="1" parent="1" source="h4" target="h5">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="he5" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2BB3A0;strokeWidth=2;fontSize=11;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=1.0000;exitY=0.5000;exitDx=0;exitDy=0;entryX=0.0000;entryY=0.5000;entryDx=0;entryDy=0;" edge="1" parent="1" source="h5" target="h6">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="cap0" value="Alexa+ picks Tower's tool from its description and sends who is asking and which line (“mine”, “Mom”) — never a phone number." style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;fontSize=13;fontColor=#1B2B45;fontStyle=0;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="50" y="256" width="190" height="105.16" as="geometry" />
+        </mxCell>
+        <mxCell id="cap1" value="Tower identifies the person from the account they linked. No linked account, no answer." style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;fontSize=13;fontColor=#1B2B45;fontStyle=0;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="272" y="256" width="190" height="73.44" as="geometry" />
+        </mxCell>
+        <mxCell id="cap2" value="Is the line bound, and did its holder grant this question to this person? If not, Tower refuses here, before the carrier is asked anything." style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;fontSize=13;fontColor=#1B2B45;fontStyle=0;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="494" y="256" width="190" height="121.02" as="geometry" />
+        </mxCell>
+        <mxCell id="cap3" value="Two standard carrier calls in parallel, 300 ms limit each. Skipped if a watched line was checked in the last 10 minutes." style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;fontSize=13;fontColor=#1B2B45;fontStyle=0;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="716" y="256" width="190" height="105.16" as="geometry" />
+        </mxCell>
+        <mxCell id="cap4" value="Deterministic rules turn the yes/no facts into one outcome and a reason code. Every possible decision is listed in a table." style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;fontSize=13;fontColor=#1B2B45;fontStyle=0;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="938" y="256" width="190" height="105.16" as="geometry" />
+        </mxCell>
+        <mxCell id="cap5" value="The check is added to the line-holder's tamper-evident log. If the log cannot be written, there is no answer." style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;fontSize=13;fontColor=#1B2B45;fontStyle=0;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="1160" y="256" width="190" height="105.16" as="geometry" />
+        </mxCell>
+        <mxCell id="cap6" value="Tower returns a template sentence plus the facts. Alexa+ speaks it, or says it in its own words." style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;fontSize=13;fontColor=#1B2B45;fontStyle=0;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="1382" y="256" width="190" height="89.3" as="geometry" />
+        </mxCell>
+        <mxCell id="refuse" value="&lt;b&gt;When the answer is “no” at ③&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:14px&quot;&gt;“I need to connect your line first — I'll send you a link.”  (not bound)&lt;br&gt;“Mom hasn't shared that with you.”  (no grant, or revoked)&lt;br&gt;The carrier is never called, and the refusal is logged too.&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#6B7583;fontSize=17;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="50" y="402.02" width="760" height="150" as="geometry" />
+        </mxCell>
+        <mxCell id="nomodel" value="&lt;b&gt;No model decides anything here&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:14px&quot;&gt;Alexa+ only picks the tool and speaks the result.&lt;br&gt;Between ② and ⑦ there is only code: a lookup, two API calls,&lt;br&gt;a rule table and a log write. No second AI model.&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FBEFD9;strokeColor=#E8A33D;fontSize=17;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;strokeWidth=3;" vertex="1" parent="1">
+          <mxGeometry x="850" y="402.02" width="754" height="150" as="geometry" />
+        </mxCell>
+        <mxCell id="rl_t" value="&lt;b&gt;The time budget&lt;/b&gt; — about 300 ms at the 95th percentile against the mock (design target)" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;fontSize=16;fontColor=#1B2B45;fontStyle=0;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="50" y="587.02" width="1200" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="rs0" value="&lt;b&gt;20 ms&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:12px&quot;&gt;consent read&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#6B7583;fontSize=14;fontColor=#1B2B45;align=center;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="50" y="627.02" width="92" height="64" as="geometry" />
+        </mxCell>
+        <mxCell id="rs1" value="&lt;b&gt;250 ms&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:12px&quot;&gt;two carrier calls, in parallel&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F3F5F8;strokeColor=#6B7583;fontSize=14;fontColor=#1B2B45;align=center;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="146" y="627.02" width="1150" height="64" as="geometry" />
+        </mxCell>
+        <mxCell id="rs2" value="&lt;b&gt;15 ms&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:12px&quot;&gt;audit&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#6B7583;fontSize=14;fontColor=#1B2B45;align=center;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="1300" y="627.02" width="69" height="64" as="geometry" />
+        </mxCell>
+        <mxCell id="rs_pol" value="+ policy &amp;lt; 1 ms&lt;br&gt;= &lt;b&gt;≈ 300 ms&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;fontSize=15;fontColor=#1B2B45;fontStyle=0;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="1379" y="627.02" width="220" height="64" as="geometry" />
+        </mxCell>
+        <mxCell id="rl_m" value="&lt;b&gt;Measured on a laptop&lt;/b&gt; (all containers, local network): 95th percentile 236.7 ms for “is my line OK?” and 311.7 ms for “is Mom's phone on the network?”; the automated gate fails above 400 ms. &lt;b&gt;On AWS:&lt;/b&gt; — (not measured yet; it runs after the first deploy, prompt 13)." style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;fontSize=14;fontColor=#1B2B45;fontStyle=0;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="50" y="707.02" width="1554" height="44.16" as="geometry" />
+        </mxCell>
+        <mxCell id="never" value="&lt;b&gt;Never on this path:&lt;/b&gt; a second AI model, a phone number sent toward Alexa+, a location, an answer that was not logged first." style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;fontSize=14;fontColor=#1B2B45;fontStyle=0;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="50" y="970" width="1554" height="27.08" as="geometry" />
+        </mxCell>
+        <mxCell id="ftr" value="&lt;b&gt;Read next →&lt;/b&gt; 5 · How an alert travels&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;font color=&quot;#6B7A90&quot;&gt;detail: 02-request-path.drawio&lt;/font&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;font color=&quot;#6B7A90&quot;&gt;· true as of 9 October 2026&lt;/font&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;fontSize=13;fontColor=#1B2B45;fontStyle=0;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="40" y="1030" width="1574" height="32" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="explainer_p5" name="5 How an alert travels">
+    <mxGraphModel dx="1422" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1654" pageHeight="1080" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="hdr_n" value="5/10" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;fontSize=14;fontColor=#6B7A90;fontStyle=1;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="40" y="18" width="60" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="hdr_t" value="Alexa+ can't speak first, so alerts are texts — same rules, and consent is asked again first" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;fontSize=24;fontColor=#1B2B45;fontStyle=1;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="100" y="14" width="1514" height="39.28" as="geometry" />
+        </mxCell>
+        <mxCell id="hdr_s" value="For judges and engineers: the proactive path, from a change at the carrier to a phone that buzzes." style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;fontSize=14;fontColor=#6B7A90;fontStyle=0;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="100" y="53.28" width="1514" height="27.08" as="geometry" />
+        </mxCell>
+        <mxCell id="hdr_l" value="&lt;font color=&quot;#E8A33D&quot;&gt;■&lt;/font&gt; proactive path&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;font color=&quot;#6B7583&quot;&gt;■&lt;/font&gt; not on this path&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;font color=&quot;#2BB3A0&quot;&gt;■&lt;/font&gt; shared with the request path" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;fontSize=12;fontColor=#1B2B45;fontStyle=0;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="100" y="80.36" width="1514" height="24.64" as="geometry" />
+        </mxCell>
+        <mxCell id="ev" value="&lt;b&gt;① Carrier event&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:14px&quot;&gt;“This SIM changed” — pushed&lt;br&gt;by the carrier in seconds&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FBEFD9;strokeColor=#E8A33D;fontSize=16;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="50" y="141" width="250" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="poll" value="&lt;b&gt;② Or a scheduled check&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:14px&quot;&gt;where the carrier has no&lt;br&gt;event feed for that line&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FBEFD9;strokeColor=#E8A33D;fontSize=16;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="50" y="291" width="250" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="alerts" value="&lt;b&gt;③ Alerts&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:14px&quot;&gt;fetches the current facts&lt;br&gt;from the carrier; compares&lt;br&gt;with the last known state&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FBEFD9;strokeColor=#E8A33D;fontSize=16;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="380" y="201" width="240" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="policy" value="&lt;b&gt;④ Same policy&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:14px&quot;&gt;the very rules Tower&lt;br&gt;uses — the two paths&lt;br&gt;cannot disagree&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DDF3EF;strokeColor=#2BB3A0;fontSize=16;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;strokeWidth=3;" vertex="1" parent="1">
+          <mxGeometry x="700" y="201" width="240" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="consent" value="&lt;b&gt;⑤ Consent, again&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:14px&quot;&gt;still granted? If revoked:&lt;br&gt;nothing is sent, the log&lt;br&gt;says “suppressed”&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FBEFD9;strokeColor=#E8A33D;fontSize=16;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="1020" y="201" width="240" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="sms" value="&lt;b&gt;⑥ Text message&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:14px&quot;&gt;to the consented second&lt;br&gt;person (and the holder's&lt;br&gt;backup phone); logged first&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FBEFD9;strokeColor=#E8A33D;fontSize=16;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="1340" y="201" width="260" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="e1" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#E8A33D;strokeWidth=2;fontSize=9;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=1.0000;exitY=0.5000;exitDx=0;exitDy=0;entryX=0.0000;entryY=0.2857;entryDx=0;entryDy=0;" edge="1" parent="1" source="ev" target="alerts">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="340" y="196" />
+              <mxPoint x="340" y="241" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e2" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#E8A33D;strokeWidth=2;fontSize=9;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=1.0000;exitY=0.5000;exitDx=0;exitDy=0;entryX=0.0000;entryY=0.7143;entryDx=0;entryDy=0;" edge="1" parent="1" source="poll" target="alerts">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="340" y="346" />
+              <mxPoint x="340" y="301" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e3" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#E8A33D;strokeWidth=2;fontSize=11;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=1.0000;exitY=0.5000;exitDx=0;exitDy=0;entryX=0.0000;entryY=0.5000;entryDx=0;entryDy=0;" edge="1" parent="1" source="alerts" target="policy">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e4" value="changed?" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#E8A33D;strokeWidth=2;fontSize=11;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=1.0000;exitY=0.5000;exitDx=0;exitDy=0;entryX=0.0000;entryY=0.5000;entryDx=0;entryDy=0;" edge="1" parent="1" source="policy" target="consent">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="0" y="-12" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e5" value="yes" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#E8A33D;strokeWidth=2;fontSize=11;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=1.0000;exitY=0.5000;exitDx=0;exitDy=0;entryX=0.0000;entryY=0.5000;entryDx=0;entryDy=0;" edge="1" parent="1" source="consent" target="sms">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="0" y="-12" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="alexa" value="&lt;b&gt;Alexa+ can never speak first — that's why this is an SMS&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:14px&quot;&gt;An Alexa+ add-on only answers when asked. Alexa+ is not on this path&lt;br&gt;at all. If Mom later asks her Echo, the request path runs and gives&lt;br&gt;the same answer from the same rules.&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F3F5F8;strokeColor=#6B7583;fontSize=16;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=1;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="380" y="471" width="560" height="150" as="geometry" />
+        </mxCell>
+        <mxCell id="swapped" value="&lt;b&gt;Never texted to the line that was just swapped&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:14px&quot;&gt;After a SIM swap the attacker holds that number. The text goes to&lt;br&gt;the second person, and replies from the swapped line are ignored&lt;br&gt;for 24 hours.&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F3F5F8;strokeColor=#6B7583;fontSize=16;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=1;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="1020" y="471" width="580" height="150" as="geometry" />
+        </mxCell>
+        <mxCell id="c1" value="&lt;b&gt;&lt;font color=&quot;#E8A33D&quot;&gt;①&lt;/font&gt;&lt;/b&gt; Events first: the carrier's standard subscription pushes a SIM-swap event to Tower's Alerts service within seconds of the change." style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;fontSize=14;fontColor=#1B2B45;fontStyle=0;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="50" y="661" width="484.667" height="61.24" as="geometry" />
+        </mxCell>
+        <mxCell id="c2" value="&lt;b&gt;&lt;font color=&quot;#E8A33D&quot;&gt;②&lt;/font&gt;&lt;/b&gt; Scheduled checks are the fallback: a daily 8 am check for fraud; every 30 or 5 minutes for the care profiles on the roadmap slides." style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;fontSize=14;fontColor=#1B2B45;fontStyle=0;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="564.667" y="661" width="484.667" height="61.24" as="geometry" />
+        </mxCell>
+        <mxCell id="c3" value="&lt;b&gt;&lt;font color=&quot;#E8A33D&quot;&gt;⑥&lt;/font&gt;&lt;/b&gt; Only a change sends a text, and the same alert is not repeated within 6 hours. Where a reply is required, no reply in 15 minutes texts the next person." style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;fontSize=14;fontColor=#1B2B45;fontStyle=0;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="1079.33" y="661" width="484.667" height="61.24" as="geometry" />
+        </mxCell>
+        <mxCell id="dem" value="&lt;b&gt;In the demo:&lt;/b&gt; the carrier is the mock and the text goes to a log on the laptop. A real text needs AWS SMS — deferred until the first AWS deploy." style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;fontSize=14;fontColor=#6B7A90;fontStyle=0;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="50" y="752.24" width="1554" height="27.08" as="geometry" />
+        </mxCell>
+        <mxCell id="ftr" value="&lt;b&gt;Read next →&lt;/b&gt; 6 · Consent, binding and privacy&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;font color=&quot;#6B7A90&quot;&gt;detail: 03-proactive-path.drawio&lt;/font&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;font color=&quot;#6B7A90&quot;&gt;· true as of 9 October 2026&lt;/font&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;fontSize=13;fontColor=#1B2B45;fontStyle=0;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="40" y="1030" width="1574" height="32" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="explainer_p6" name="6 Consent, binding and privacy">
+    <mxGraphModel dx="1422" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1654" pageHeight="1080" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="hdr_n" value="6/10" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;fontSize=14;fontColor=#6B7A90;fontStyle=1;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="40" y="18" width="60" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="hdr_t" value="Nothing is checked until the line-holder taps once on their own phone — and they can take it back" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;fontSize=24;fontColor=#1B2B45;fontStyle=1;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="100" y="14" width="1514" height="39.28" as="geometry" />
+        </mxCell>
+        <mxCell id="hdr_s" value="For partners, judges and anyone asking “is this safe?”: how consent works and what Tower never does." style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;fontSize=14;fontColor=#6B7A90;fontStyle=0;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="100" y="53.28" width="1514" height="27.08" as="geometry" />
+        </mxCell>
+        <mxCell id="hdr_l" value="&lt;font color=&quot;#6B7583&quot;&gt;■&lt;/font&gt; binding and consent&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;font color=&quot;#2BB3A0&quot;&gt;■&lt;/font&gt; what flows&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;font color=&quot;#E8A33D&quot;&gt;■&lt;/font&gt; never" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;fontSize=12;fontColor=#1B2B45;fontStyle=0;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="100" y="80.36" width="1514" height="24.64" as="geometry" />
+        </mxCell>
+        <mxCell id="ph" value="&lt;b&gt;① The phone, Wi-Fi off&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:14px&quot;&gt;Alexa+ texts a link. The holder&lt;br&gt;opens it on their phone over&lt;br&gt;mobile data and taps once.&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F3F5F8;strokeColor=#6B7583;fontSize=16;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="50" y="131" width="280" height="150" as="geometry" />
+        </mxCell>
+        <mxCell id="nv" value="&lt;b&gt;② The carrier vouches&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:14px&quot;&gt;Number Verification: the carrier&lt;br&gt;recognises the phone's data&lt;br&gt;session. Nothing is typed.&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F3F5F8;strokeColor=#6B7583;fontSize=16;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="410" y="131" width="300" height="150" as="geometry" />
+        </mxCell>
+        <mxCell id="gr" value="&lt;b&gt;③ Grants: per line, per question&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:14px&quot;&gt;Mom's line → Asish: “watch” ✓&lt;br&gt;Mom's line → Asish: “reachable?” ✗&lt;br&gt;Each grant names a person and an alias.&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F3F5F8;strokeColor=#6B7583;fontSize=16;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="790" y="131" width="380" height="150" as="geometry" />
+        </mxCell>
+        <mxCell id="rv" value="&lt;b&gt;④ Revoke on the page&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:14px&quot;&gt;One tap on the same page.&lt;br&gt;Not by voice, on purpose — never&lt;br&gt;a misheard sentence.&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F3F5F8;strokeColor=#6B7583;fontSize=16;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="1250" y="131" width="350" height="150" as="geometry" />
+        </mxCell>
+        <mxCell id="e1" value="one tap" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#6B7583;strokeWidth=1;fontSize=11;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=1.0000;exitY=0.5000;exitDx=0;exitDy=0;entryX=0.0000;entryY=0.5000;entryDx=0;entryDy=0;" edge="1" parent="1" source="ph" target="nv">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="0" y="-12" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e2" value="bound" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#6B7583;strokeWidth=1;fontSize=11;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=1.0000;exitY=0.5000;exitDx=0;exitDy=0;entryX=0.0000;entryY=0.5000;entryDx=0;entryDy=0;" edge="1" parent="1" source="nv" target="gr">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="0" y="-12" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e3" value="any time" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#6B7583;strokeWidth=1;fontSize=11;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=1.0000;exitY=0.5000;exitDx=0;exitDy=0;entryX=0.0000;entryY=0.5000;entryDx=0;entryDy=0;" edge="1" parent="1" source="gr" target="rv">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="0" y="-12" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="au" value="&lt;b&gt;⑤ An audit the holder can hear&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:14px&quot;&gt;Every check, allowed or refused, is logged on the line:&lt;br&gt;who asked, which question, the outcome and why.&lt;br&gt;“Alexa, who checked my line this week?”&lt;br&gt;The log is hash-chained, so a changed row is detectable.&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F3F5F8;strokeColor=#6B7583;fontSize=16;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="50" y="331" width="520" height="200" as="geometry" />
+        </mxCell>
+        <mxCell id="bio" value="&lt;b&gt;⑥ Verification, not retrieval — booleans in, booleans out&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:14px&quot;&gt;&lt;b&gt;In from the carrier:&lt;/b&gt;  SIM changed recently? yes/no + time  ·  calls forwarded? yes/no  ·  phone on the network? yes/no&lt;br&gt;&lt;b&gt;Out to Alexa+:&lt;/b&gt;  ok / changed / refused, a reason code, a fixed sentence, the same yes/no facts&lt;br&gt;&lt;b&gt;Never:&lt;/b&gt;  a phone number, a location, call or message content, a carrier error message&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DDF3EF;strokeColor=#2BB3A0;fontSize=16;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="620" y="331" width="980" height="200" as="geometry" />
+        </mxCell>
+        <mxCell id="never" value="&lt;b&gt;What Tower never does&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:15px&quot;&gt;✗ Location of any kind — not requested, not returned, not stored.    ✗ Call or message content.&lt;br&gt;✗ Any question about a line its holder has not bound.    ✗ Anything a model can override — the rules are code.&lt;br&gt;✗ Speaking unprompted — Alexa+ only answers; alerts are text messages.    ✗ Texting the number that was just swapped.&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FBEFD9;strokeColor=#E8A33D;fontSize=18;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;strokeWidth=3;" vertex="1" parent="1">
+          <mxGeometry x="50" y="571" width="1550" height="170" as="geometry" />
+        </mxCell>
+        <mxCell id="c1" value="&lt;b&gt;&lt;font color=&quot;#0E1726&quot;&gt;①&lt;/font&gt;&lt;/b&gt; Binding needs the phone on mobile data: the Echo is on Wi-Fi and cannot prove a number, so the one tap happens on the phone, once." style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;fontSize=14;fontColor=#1B2B45;fontStyle=0;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="50" y="761" width="760" height="44.16" as="geometry" />
+        </mxCell>
+        <mxCell id="c2" value="&lt;b&gt;&lt;font color=&quot;#0E1726&quot;&gt;②&lt;/font&gt;&lt;/b&gt; In the demo the carrier is a mock; a stand-in signal plays the part of the mobile-data session. On a real carrier the network does it." style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;fontSize=14;fontColor=#1B2B45;fontStyle=0;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="850" y="761" width="750" height="44.16" as="geometry" />
+        </mxCell>
+        <mxCell id="ftr" value="&lt;b&gt;Read next →&lt;/b&gt; 7 · The stack&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;font color=&quot;#6B7A90&quot;&gt;detail: 04-binding-flow.drawio&lt;/font&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;font color=&quot;#6B7A90&quot;&gt;· true as of 9 October 2026&lt;/font&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;fontSize=13;fontColor=#1B2B45;fontStyle=0;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="40" y="1030" width="1574" height="32" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="explainer_p7" name="7 The stack">
+    <mxGraphModel dx="1422" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1654" pageHeight="1080" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="hdr_n" value="7/10" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;fontSize=14;fontColor=#6B7A90;fontStyle=1;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="40" y="18" width="60" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="hdr_t" value="Alexa+ talks, Tower decides in code, AgentCore hosts it — Bedrock is only the test client" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;fontSize=24;fontColor=#1B2B45;fontStyle=1;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="100" y="14" width="1514" height="39.28" as="geometry" />
+        </mxCell>
+        <mxCell id="hdr_s" value="For engineers and the AWS / Alexa+ track judges: the layers, what each is, and what it is built with." style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;fontSize=14;fontColor=#6B7A90;fontStyle=0;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="100" y="53.28" width="1514" height="27.08" as="geometry" />
+        </mxCell>
+        <mxCell id="hdr_l" value="&lt;font color=&quot;#2BB3A0&quot;&gt;■&lt;/font&gt; request path&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;font color=&quot;#E8A33D&quot;&gt;■&lt;/font&gt; proactive path&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;font color=&quot;#6B7583&quot;&gt;■&lt;/font&gt; carrier, state, test client&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;font color=&quot;#0E1726&quot;&gt;■&lt;/font&gt; thick border = Amazon Bedrock AgentCore (the track's ask)" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;fontSize=12;fontColor=#1B2B45;fontStyle=0;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="100" y="80.36" width="1514" height="24.64" as="geometry" />
+        </mxCell>
+        <mxCell id="l_Surfaces" value="&lt;b&gt;Surfaces&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;fontSize=16;fontColor=#1B2B45;fontStyle=0;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="50" y="121" width="170" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="l_Tower" value="&lt;b&gt;Tower&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;fontSize=16;fontColor=#1B2B45;fontStyle=0;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="50" y="261" width="170" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="l_Carrier gateway" value="&lt;b&gt;Carrier gateway&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;fontSize=16;fontColor=#1B2B45;fontStyle=0;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="50" y="401" width="170" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="l_Carrier" value="&lt;b&gt;Carrier&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;fontSize=16;fontColor=#1B2B45;fontStyle=0;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="50" y="531" width="170" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="l_Proactive" value="&lt;b&gt;Proactive&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;fontSize=16;fontColor=#1B2B45;fontStyle=0;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="50" y="651" width="170" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="l_State" value="&lt;b&gt;State&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;fontSize=16;fontColor=#1B2B45;fontStyle=0;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="50" y="781" width="170" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="alexa" value="&lt;b&gt;Alexa+ (Alexa+ MCP Toolkit)&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:14px&quot;&gt;The voice client: picks a tool, speaks the result, never speaks first.&lt;br&gt;Registration and simulator run: deferred.&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DDF3EF;strokeColor=#2BB3A0;fontSize=16;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=1;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="240" y="121" width="560" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="bind" value="&lt;b&gt;Binding page (FastAPI)&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:14px&quot;&gt;The one tap on the phone; grants and revoke.&lt;br&gt;Local container ✓ · AWS Lambda + API Gateway: deferred.&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F3F5F8;strokeColor=#6B7583;fontSize=16;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="830" y="121" width="520" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="tower" value="&lt;b&gt;Tower MCP server — AgentCore Runtime&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:14px&quot;&gt;FastMCP over Streamable HTTP, Python 3.12. Three tools. Policy, consent and audit are libraries inside it, so there is no extra&lt;br&gt;network hop. Local container ✓ · on AgentCore Runtime: written, deferred.&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DDF3EF;strokeColor=#2BB3A0;fontSize=16;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;strokeWidth=3;" vertex="1" parent="1">
+          <mxGeometry x="240" y="261" width="1110" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="gw" value="&lt;b&gt;AgentCore Gateway + Identity&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:14px&quot;&gt;CAMARA OpenAPI files become MCP tools; Identity holds the carrier OAuth credentials.&lt;br&gt;Locally a direct HTTPS client does the same job ✓ · Gateway path: deferred.&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DDF3EF;strokeColor=#2BB3A0;fontSize=16;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=1;arcSize=10;absoluteArcSize=1;strokeWidth=3;" vertex="1" parent="1">
+          <mxGeometry x="240" y="401" width="800" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="obs" value="&lt;b&gt;AgentCore Observability&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:14px&quot;&gt;traces per tool call&lt;br&gt;deferred&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DDF3EF;strokeColor=#2BB3A0;fontSize=16;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=1;arcSize=10;absoluteArcSize=1;strokeWidth=3;" vertex="1" parent="1">
+          <mxGeometry x="1070" y="401" width="280" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="mock" value="&lt;b&gt;Mock carrier — CAMARA-conformant (FastAPI), the demo default&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:14px&quot;&gt;Scenario engine and clock. A carrier sandbox is one setting away (no sandbox access yet).&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F3F5F8;strokeColor=#6B7583;fontSize=16;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="240" y="531" width="1110" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="alerts" value="&lt;b&gt;Alerts — Lambda + EventBridge Scheduler + SNS&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:14px&quot;&gt;Carrier events and scheduled checks → the same policy → SMS. Local: in-process scheduler, SMS to a log ✓ · AWS: deferred.&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FBEFD9;strokeColor=#E8A33D;fontSize=16;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="240" y="651" width="1110" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="state" value="&lt;b&gt;State — DynamoDB + KMS&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:14px&quot;&gt;Users, lines, grants, watches, audit. Lines are keyed by a keyed hash, never the number; the number is stored encrypted.&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F3F5F8;strokeColor=#6B7583;fontSize=16;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="240" y="781" width="1110" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="bedrock" value="&lt;b&gt;Amazon Bedrock&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:14px&quot;&gt;reference client only&lt;br&gt;&lt;br&gt;A Strands agent: the&lt;br&gt;test harness, and the&lt;br&gt;demo client if Alexa+&lt;br&gt;access slips.&lt;br&gt;&lt;br&gt;Not on the request or&lt;br&gt;proactive path.&lt;br&gt;Model runs: deferred.&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F3F5F8;strokeColor=#6B7583;fontSize=16;fontColor=#1B2B45;align=center;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=1;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="1400" y="121" width="200" height="750" as="geometry" />
+        </mxCell>
+        <mxCell id="e_at" value="MCP" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2BB3A0;strokeWidth=2;fontSize=11;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=0.3571;exitY=1.0000;exitDx=0;exitDy=0;entryX=0.1802;entryY=0.0000;entryDx=0;entryDy=0;" edge="1" parent="1" source="alexa" target="tower">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="16" y="0" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_tg" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2BB3A0;strokeWidth=2;fontSize=11;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=0.1802;exitY=1.0000;exitDx=0;exitDy=0;entryX=0.2500;entryY=0.0000;entryDx=0;entryDy=0;" edge="1" parent="1" source="tower" target="gw">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_gm" value="CAMARA, OAuth" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2BB3A0;strokeWidth=2;fontSize=11;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=0.2500;exitY=1.0000;exitDx=0;exitDy=0;entryX=0.1802;entryY=0.0000;entryDx=0;entryDy=0;" edge="1" parent="1" source="gw" target="mock">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="48" y="0" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_ma" value="events" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#E8A33D;strokeWidth=2;fontSize=11;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=0.8108;exitY=1.0000;exitDx=0;exitDy=0;entryX=0.8108;entryY=0.0000;entryDx=0;entryDy=0;" edge="1" parent="1" source="mock" target="alerts">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="25" y="0" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="note" value="&lt;b&gt;Not used, on purpose:&lt;/b&gt; AgentCore Memory, Knowledge Bases, fine-tuning, a model for phrasing. &lt;b&gt;Status:&lt;/b&gt; every layer runs locally and is tested; every AWS hosting line is written and statically validated, not yet deployed (page 10)." style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;fontSize=14;fontColor=#1B2B45;fontStyle=0;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="50" y="901" width="1554" height="44.16" as="geometry" />
+        </mxCell>
+        <mxCell id="ftr" value="&lt;b&gt;Read next →&lt;/b&gt; 8 · Where it runs&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;font color=&quot;#6B7A90&quot;&gt;detail: 01-component-map.drawio&lt;/font&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;font color=&quot;#6B7A90&quot;&gt;· true as of 9 October 2026&lt;/font&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;fontSize=13;fontColor=#1B2B45;fontStyle=0;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="40" y="1030" width="1574" height="32" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="explainer_p8" name="8 Where it runs">
+    <mxGraphModel dx="1422" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1654" pageHeight="1080" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="hdr_n" value="8/10" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;fontSize=14;fontColor=#6B7A90;fontStyle=1;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="40" y="18" width="60" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="hdr_t" value="Same five containers, three places to run them — only the hosting changes" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;fontSize=24;fontColor=#1B2B45;fontStyle=1;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="100" y="14" width="1514" height="39.28" as="geometry" />
+        </mxCell>
+        <mxCell id="hdr_s" value="For engineers and platform teams: one code base on a laptop, on AWS with AgentCore, and on Kubernetes." style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;fontSize=14;fontColor=#6B7A90;fontStyle=0;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="100" y="53.28" width="1514" height="27.08" as="geometry" />
+        </mxCell>
+        <mxCell id="hdr_l" value="&lt;font color=&quot;#2BB3A0&quot;&gt;■&lt;/font&gt; proven (ran, transcripts match)&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;font color=&quot;#6B7583&quot;&gt;■&lt;/font&gt; deferred — written, not yet run (dashed)&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;font color=&quot;#E8A33D&quot;&gt;■&lt;/font&gt; shared prerequisite" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;fontSize=12;fontColor=#1B2B45;fontStyle=0;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="100" y="80.36" width="1514" height="24.64" as="geometry" />
+        </mxCell>
+        <mxCell id="imgs" value="&lt;b&gt;Five images, built once from the same code&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:15px&quot;&gt;tower-mcp · mock-carrier · binding-page · alerts · ref-client  —  Python 3.12, non-root, arm64-ready&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#6B7583;fontSize=17;fontColor=#1B2B45;align=center;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="50" y="121" width="1550" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="z0" value="Laptop — Docker Compose (the demo default)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#EAF7F4;strokeColor=#2BB3A0;verticalAlign=top;align=left;spacingLeft=10;spacingTop=4;spacing=2;fontStyle=1;fontSize=15;fontColor=#1B2B45;dashed=0;arcSize=12;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="50" y="241" width="500" height="560" as="geometry" />
+        </mxCell>
+        <mxCell id="z1" value="AWS — AgentCore + serverless" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#EEF0F5;strokeColor=#9AA7B5;verticalAlign=top;align=left;spacingLeft=10;spacingTop=4;spacing=2;fontStyle=1;fontSize=15;fontColor=#1B2B45;dashed=1;arcSize=12;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="575" y="241" width="500" height="560" as="geometry" />
+        </mxCell>
+        <mxCell id="z2" value="Kubernetes — kind ✓, EKS deferred" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#EEF0F5;strokeColor=#9AA7B5;verticalAlign=top;align=left;spacingLeft=10;spacingTop=4;spacing=2;fontStyle=1;fontSize=15;fontColor=#1B2B45;dashed=1;arcSize=12;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="1100" y="241" width="500" height="560" as="geometry" />
+        </mxCell>
+        <mxCell id="ei0" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#6B7583;strokeWidth=1;fontSize=9;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=0.2839;exitY=1.0000;exitDx=0;exitDy=0;entryX=0.8800;entryY=0.0000;entryDx=0;entryDy=0;" edge="1" parent="1" source="imgs" target="z0">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ei1" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#6B7583;strokeWidth=1;fontSize=9;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=0.6226;exitY=1.0000;exitDx=0;exitDy=0;entryX=0.8800;entryY=0.0000;entryDx=0;entryDy=0;" edge="1" parent="1" source="imgs" target="z1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ei2" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#6B7583;strokeWidth=1;fontSize=9;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=0.9613;exitY=1.0000;exitDx=0;exitDy=0;entryX=0.8800;entryY=0.0000;entryDx=0;entryDy=0;" edge="1" parent="1" source="imgs" target="z2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="host0" value="&lt;b&gt;Same code, different hosting&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:15px&quot;&gt;Tower: container&lt;br&gt;Carrier calls: direct client → mock&lt;br&gt;Mock carrier: container&lt;br&gt;Binding page: container&lt;br&gt;Alerts: container; SMS → log&lt;br&gt;Store: DynamoDB Local&lt;br&gt;&lt;b&gt;Ran ✓&lt;/b&gt; — transcripts match golden 4/4&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DDF3EF;strokeColor=#2BB3A0;fontSize=17;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="70" y="286" width="460" height="250" as="geometry" />
+        </mxCell>
+        <mxCell id="cmd0" value="&lt;b&gt;Make commands&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:15px&quot;&gt;make up&lt;br&gt;make seed&lt;br&gt;make demo&lt;br&gt;make down&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#6B7583;fontSize=17;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="70" y="571" width="460" height="205" as="geometry" />
+        </mxCell>
+        <mxCell id="ec0" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#6B7583;strokeWidth=1;fontSize=11;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=0.5000;exitY=1.0000;exitDx=0;exitDy=0;entryX=0.5000;entryY=0.0000;entryDx=0;entryDy=0;" edge="1" parent="1" source="host0" target="cmd0">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="host1" value="&lt;b&gt;Same code, different hosting&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:15px&quot;&gt;Tower: AgentCore Runtime&lt;br&gt;Carrier calls: Gateway + Identity&lt;br&gt;Mock carrier: Fargate&lt;br&gt;Binding page: Lambda + API Gateway&lt;br&gt;Alerts: Lambda + Scheduler + SNS&lt;br&gt;Store: DynamoDB + KMS&lt;br&gt;&lt;b&gt;Deferred&lt;/b&gt; — terraform validate passes; never planned or applied&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F3F5F8;strokeColor=#6B7583;fontSize=17;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=1;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="595" y="286" width="460" height="250" as="geometry" />
+        </mxCell>
+        <mxCell id="cmd1" value="&lt;b&gt;Make commands&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:15px&quot;&gt;make ecr-up  (once)&lt;br&gt;make push ENV=aws&lt;br&gt;make plan → make deploy&lt;br&gt;make demo ENV=aws&lt;br&gt;make down ENV=aws  (keeps ECR)&lt;br&gt;make down-all  (after judging)&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#6B7583;fontSize=17;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=1;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="595" y="571" width="460" height="205" as="geometry" />
+        </mxCell>
+        <mxCell id="ec1" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#6B7583;strokeWidth=1;fontSize=11;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=0.5000;exitY=1.0000;exitDx=0;exitDy=0;entryX=0.5000;entryY=0.0000;entryDx=0;entryDy=0;" edge="1" parent="1" source="host1" target="cmd1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="host2" value="&lt;b&gt;Same code, different hosting&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:15px&quot;&gt;Tower: Deployment + Ingress&lt;br&gt;Carrier calls: direct client → mock pod&lt;br&gt;Mock carrier: Deployment&lt;br&gt;Binding page: Deployment + Ingress&lt;br&gt;Alerts: Deployment + CronJobs + SNS&lt;br&gt;Store: DynamoDB + KMS (EKS)&lt;br&gt;&lt;b&gt;kind ✓ 4/4&lt;/b&gt; · EKS: not run, deferred&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F3F5F8;strokeColor=#6B7583;fontSize=17;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=1;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="1120" y="286" width="460" height="250" as="geometry" />
+        </mxCell>
+        <mxCell id="cmd2" value="&lt;b&gt;Make commands&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:15px&quot;&gt;make helm-kind  (kind ✓)&lt;br&gt;make deploy-eks&lt;br&gt;make demo ENV=eks&lt;br&gt;make down-eks&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#6B7583;fontSize=17;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=1;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="1120" y="571" width="460" height="205" as="geometry" />
+        </mxCell>
+        <mxCell id="ec2" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#6B7583;strokeWidth=1;fontSize=11;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=0.5000;exitY=1.0000;exitDx=0;exitDy=0;entryX=0.5000;entryY=0.0000;entryDx=0;entryDy=0;" edge="1" parent="1" source="host2" target="cmd2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ecr" value="&lt;b&gt;ECR registry — shared prerequisite for AWS and EKS&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:15px&quot;&gt;Its own Terraform root: make ecr-up once. Survives make down ENV=aws — the images are kept;&lt;br&gt;only make down-all deletes it. Not created yet — deferred.&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FBEFD9;strokeColor=#E8A33D;fontSize=17;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=1;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="575" y="851" width="1025" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="er1" value="images" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#E8A33D;strokeWidth=2;fontSize=12;fontColor=#3C4858;dashed=1;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=0.2439;exitY=0.0000;exitDx=0;exitDy=0;entryX=0.5000;entryY=1.0000;entryDx=0;entryDy=0;" edge="1" parent="1" source="ecr" target="z1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="34" y="0" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="er2" value="images" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#E8A33D;strokeWidth=2;fontSize=12;fontColor=#3C4858;dashed=1;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=0.7561;exitY=0.0000;exitDx=0;exitDy=0;entryX=0.5000;entryY=1.0000;entryDx=0;entryDy=0;" edge="1" parent="1" source="ecr" target="z2">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="34" y="0" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="c1" value="&lt;b&gt;&lt;font color=&quot;#2BB3A0&quot;&gt;①&lt;/font&gt;&lt;/b&gt; The claim: &lt;b&gt;make demo ENV=local|eks|aws&lt;/b&gt; prints the same transcripts. Local and kind already do; AWS and EKS are the deferred half of the proof." style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;fontSize=14;fontColor=#1B2B45;fontStyle=0;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="50" y="851" width="500" height="61.24" as="geometry" />
+        </mxCell>
+        <mxCell id="ftr" value="&lt;b&gt;Read next →&lt;/b&gt; 9 · How we know it works&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;font color=&quot;#6B7A90&quot;&gt;detail: 08-agentcore-deployment.drawio · deployment-agentcore.md&lt;/font&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;font color=&quot;#6B7A90&quot;&gt;· true as of 9 October 2026&lt;/font&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;fontSize=13;fontColor=#1B2B45;fontStyle=0;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="40" y="1030" width="1574" height="32" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="explainer_p9" name="9 How we know it works">
+    <mxGraphModel dx="1422" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1654" pageHeight="1080" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="hdr_n" value="9/10" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;fontSize=14;fontColor=#6B7A90;fontStyle=1;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="40" y="18" width="60" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="hdr_t" value="1,218 tests pass on a laptop and the mock matches the CAMARA specs; cloud numbers come next" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;fontSize=24;fontColor=#1B2B45;fontStyle=1;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="100" y="14" width="1514" height="39.28" as="geometry" />
+        </mxCell>
+        <mxCell id="hdr_s" value="For judges and engineers: the evidence, with the real counts from artifacts/test-report.md (run 2026-10-07)." style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;fontSize=14;fontColor=#6B7A90;fontStyle=0;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="100" y="53.28" width="1514" height="27.08" as="geometry" />
+        </mxCell>
+        <mxCell id="hdr_l" value="&lt;font color=&quot;#2BB3A0&quot;&gt;■&lt;/font&gt; passed&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;font color=&quot;#6B7583&quot;&gt;■&lt;/font&gt; deferred / not measured (dashed)&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;font color=&quot;#E8A33D&quot;&gt;■&lt;/font&gt; gates that fail the build" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;fontSize=12;fontColor=#1B2B45;fontStyle=0;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="100" y="80.36" width="1514" height="24.64" as="geometry" />
+        </mxCell>
+        <mxCell id="e2e" value="&lt;b&gt;End to end — 26 passed&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:14px&quot;&gt;0 failed · 3 skipped (EKS only)&lt;br&gt;the three moments + chaos&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DDF3EF;strokeColor=#2BB3A0;fontSize=16;fontColor=#1B2B45;align=center;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="270" y="131" width="300" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="int" value="&lt;b&gt;Integration — 825 passed&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:14px&quot;&gt;0 failed · 1 skipped (AWS latency)&lt;br&gt;contract, conformance, privacy, latency; DynamoDB Local&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DDF3EF;strokeColor=#2BB3A0;fontSize=16;fontColor=#1B2B45;align=center;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="170" y="256" width="500" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="unit" value="&lt;b&gt;Unit — 367 passed&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:14px&quot;&gt;0 failed · 0 skipped&lt;br&gt;coverage, unit + integration: libraries 94.8 % · services 90.6 %&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DDF3EF;strokeColor=#2BB3A0;fontSize=16;fontColor=#1B2B45;align=center;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="70" y="391" width="700" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="conf" value="&lt;b&gt;Conformance: mock vs CAMARA specs ✓&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:14px&quot;&gt;15 operations, 1,036 generated cases (schemathesis), 0 failing.&lt;br&gt;The mock is spec-conformant; it does not claim real-carrier timing.&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DDF3EF;strokeColor=#2BB3A0;fontSize=16;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="860" y="131" width="740" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="priv" value="&lt;b&gt;Privacy greps ✓  (19 tests, zero hits)&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:14px&quot;&gt;No phone-number-shaped string and no health word in any log, transcript,&lt;br&gt;answer or SMS; never an alert to the swapped line. make privacy-grep re-runs it.&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FBEFD9;strokeColor=#E8A33D;fontSize=16;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="860" y="256" width="740" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="lat" value="&lt;b&gt;Latency gate: 95th percentile &amp;lt; 400 ms&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:14px&quot;&gt;Laptop compose: is my line OK? 236.7 ms · is Mom reachable? 311.7 ms ✓&lt;br&gt;AWS: — (measured in prompt 13, make latency-aws; deferred)&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FBEFD9;strokeColor=#E8A33D;fontSize=16;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="860" y="391" width="740" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="same" value="&lt;b&gt;Same transcripts everywhere&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:14px&quot;&gt;Local compose 4/4 ✓ · kind 4/4 ✓ · EKS — deferred · AWS — deferred · Alexa+ tool-choice corpus on Bedrock — not measured yet&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F3F5F8;strokeColor=#6B7583;fontSize=16;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=1;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="50" y="551" width="1550" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="show" value="&lt;b&gt;The showcase, in nine steps (the video and the live run)&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:14px&quot;&gt;① Mock carrier and its clock  →  ② Policy table: every decision  →  ③ Binding: the one tap  →  ④ Moment 1: the dead phone&lt;br&gt;→  ⑤ Moment 2: forwarding  →  ⑥ Moment 3: Mom's line, the text, revoke  →  ⑦ Transplant story: 20 minutes dark&lt;br&gt;→  ⑧ Audit: Mom's view, chain verified  →  ⑨ make demo: the same transcripts from a terminal&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#6B7583;fontSize=16;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="50" y="661" width="1550" height="150" as="geometry" />
+        </mxCell>
+        <mxCell id="cl" value="&lt;b&gt;&lt;font color=&quot;#E8A33D&quot;&gt;Gates.&lt;/font&gt;&lt;/b&gt; Every gate fails the build: 100 % pass per layer, coverage ≥ 90 % / ≥ 80 %, 0 failing conformance operations, zero privacy hits, p95 under 400 ms. &lt;br&gt;&lt;b&gt;Not claimed.&lt;/b&gt; What the tests deliberately do not claim: real-carrier timing, that Alexa+ always picks the right tool, that “reachable” means the phone will ring." style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;fontSize=13;fontColor=#1B2B45;fontStyle=0;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="50" y="831" width="1550" height="41.72" as="geometry" />
+        </mxCell>
+        <mxCell id="ftr" value="&lt;b&gt;Read next →&lt;/b&gt; 10 · What is real, what is mock, what is next&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;font color=&quot;#6B7A90&quot;&gt;detail: 06-test-topology.drawio · artifacts/test-report.md&lt;/font&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;font color=&quot;#6B7A90&quot;&gt;· true as of 9 October 2026&lt;/font&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;fontSize=13;fontColor=#1B2B45;fontStyle=0;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="40" y="1030" width="1574" height="32" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="explainer_p10" name="10 Real, mock, next">
+    <mxGraphModel dx="1422" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1654" pageHeight="1080" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="hdr_n" value="10/10" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;fontSize=14;fontColor=#6B7A90;fontStyle=1;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="40" y="18" width="60" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="hdr_t" value="What is real, what is mock, and what is next — as of 9 October 2026" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;fontSize=24;fontColor=#1B2B45;fontStyle=1;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="100" y="14" width="1514" height="39.28" as="geometry" />
+        </mxCell>
+        <mxCell id="hdr_s" value="For everyone, last: an honest status. Dashed = not executed yet. Source: docs/submission/build-log.md." style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;fontSize=14;fontColor=#6B7A90;fontStyle=0;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="100" y="53.28" width="1514" height="27.08" as="geometry" />
+        </mxCell>
+        <mxCell id="hdr_l" value="&lt;font color=&quot;#2BB3A0&quot;&gt;■&lt;/font&gt; real — built and run&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;font color=&quot;#6B7583&quot;&gt;■&lt;/font&gt; mock — stands in for a carrier or a cloud service&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;font color=&quot;#0E1726&quot;&gt;■&lt;/font&gt; next — dashed, deferred" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;fontSize=12;fontColor=#1B2B45;fontStyle=0;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="100" y="80.36" width="1514" height="24.64" as="geometry" />
+        </mxCell>
+        <mxCell id="zr" value="Real" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#EAF7F4;strokeColor=#2BB3A0;verticalAlign=top;align=left;spacingLeft=10;spacingTop=4;spacing=2;fontStyle=1;fontSize=16;fontColor=#1B2B45;dashed=0;arcSize=12;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="50" y="121" width="505" height="830" as="geometry" />
+        </mxCell>
+        <mxCell id="zm" value="Mock" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#EEF0F5;strokeColor=#9AA7B5;verticalAlign=top;align=left;spacingLeft=10;spacingTop=4;spacing=2;fontStyle=1;fontSize=16;fontColor=#1B2B45;dashed=0;arcSize=12;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="572" y="121" width="505" height="830" as="geometry" />
+        </mxCell>
+        <mxCell id="zn" value="Next" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#0E1726;verticalAlign=top;align=left;spacingLeft=10;spacingTop=4;spacing=2;fontStyle=1;fontSize=16;fontColor=#1B2B45;dashed=1;arcSize=12;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="1094" y="121" width="505" height="830" as="geometry" />
+        </mxCell>
+        <mxCell id="b00" value="&lt;b&gt;The code&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:15px&quot;&gt;Five services, four libraries, three tools.&lt;br&gt;Deterministic policy; consent, binding,&lt;br&gt;hash-chained audit; alerts with escalation.&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DDF3EF;strokeColor=#2BB3A0;fontSize=18;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="65" y="166" width="475" height="175" as="geometry" />
+        </mxCell>
+        <mxCell id="b01" value="&lt;b&gt;The tests&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:15px&quot;&gt;1,218 passing: 367 unit · 825 integration ·&lt;br&gt;26 end to end. Conformance 1,036 cases,&lt;br&gt;0 failing. Coverage 94.8 % / 90.6 %.&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DDF3EF;strokeColor=#2BB3A0;fontSize=18;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="65" y="355" width="475" height="175" as="geometry" />
+        </mxCell>
+        <mxCell id="b02" value="&lt;b&gt;Runs end to end&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:15px&quot;&gt;Laptop compose and kind (Kubernetes):&lt;br&gt;the three moments + transplant story,&lt;br&gt;transcripts match golden 4/4.&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DDF3EF;strokeColor=#2BB3A0;fontSize=18;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="65" y="544" width="475" height="175" as="geometry" />
+        </mxCell>
+        <mxCell id="b03" value="&lt;b&gt;The AgentCore deployment path&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:15px&quot;&gt;Terraform (main + its own ECR root),&lt;br&gt;image push, make targets, runbooks.&lt;br&gt;Written and validated offline — not yet&lt;br&gt;applied: deferred.&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DDF3EF;strokeColor=#2BB3A0;fontSize=18;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=1;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="65" y="733" width="475" height="175" as="geometry" />
+        </mxCell>
+        <mxCell id="b10" value="&lt;b&gt;The carrier&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:15px&quot;&gt;A CAMARA-conformant mock with a scenario&lt;br&gt;clock. Every network fact in the demo&lt;br&gt;comes from it, and the demo says “mock”.&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F3F5F8;strokeColor=#6B7583;fontSize=18;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="587" y="166" width="475" height="150" as="geometry" />
+        </mxCell>
+        <mxCell id="b11" value="&lt;b&gt;Mobile data&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:15px&quot;&gt;The mock recognises the phone by a stand-in&lt;br&gt;header; a real carrier recognises the&lt;br&gt;phone's data session. Needs a real carrier.&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F3F5F8;strokeColor=#6B7583;fontSize=18;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="587" y="330" width="475" height="150" as="geometry" />
+        </mxCell>
+        <mxCell id="b12" value="&lt;b&gt;SMS, locally&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:15px&quot;&gt;Alerts write the text to a log on the laptop.&lt;br&gt;A real text needs AWS SMS (sandbox, verified&lt;br&gt;numbers) — deferred with the AWS deploy.&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F3F5F8;strokeColor=#6B7583;fontSize=18;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="587" y="494" width="475" height="150" as="geometry" />
+        </mxCell>
+        <mxCell id="b20" value="&lt;b&gt;Carrier sandbox&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:15px&quot;&gt;No sandbox credentials yet (the deck's ask).&lt;br&gt;Swapping it in is one setting; real event&lt;br&gt;timing and the real one-tap bind need it.&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#6B7583;fontSize=18;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=1;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="1109" y="166" width="475" height="175" as="geometry" />
+        </mxCell>
+        <mxCell id="b21" value="&lt;b&gt;Alexa+&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:15px&quot;&gt;Registration, account linking (Cognito pool)&lt;br&gt;and the simulator run: not done. Toolkit is&lt;br&gt;US-only; the team is in Canada.&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#6B7583;fontSize=18;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=1;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="1109" y="355" width="475" height="175" as="geometry" />
+        </mxCell>
+        <mxCell id="b22" value="&lt;b&gt;AWS, EKS, video&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:15px&quot;&gt;ECR → push → plan → deploy, AWS latency,&lt;br&gt;SMS sandbox, cost; the EKS window; the&lt;br&gt;demo video and screenshots. All TODO(human).&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#6B7583;fontSize=18;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=1;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="1109" y="544" width="475" height="175" as="geometry" />
+        </mxCell>
+        <mxCell id="b23" value="&lt;b&gt;Roadmap (deck slide 10)&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:15px&quot;&gt;Device-swap guard · recycled-number check ·&lt;br&gt;passwordless login. Open: spoken sentences&lt;br&gt;say “your” for Mom (fixed-person template).&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#6B7583;fontSize=18;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=1;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="1109" y="733" width="475" height="175" as="geometry" />
+        </mxCell>
+        <mxCell id="ftr" value="&lt;b&gt;Read next →&lt;/b&gt; 1 · back to the start&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;font color=&quot;#6B7A90&quot;&gt;detail: docs/submission/build-log.md · README “Status and limits”&lt;/font&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;font color=&quot;#6B7A90&quot;&gt;· true as of 9 October 2026&lt;/font&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;fontSize=13;fontColor=#1B2B45;fontStyle=0;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="40" y="1030" width="1574" height="32" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

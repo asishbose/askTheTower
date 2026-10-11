@@ -1,0 +1,3 @@
+# EKS: never. The demo UI is laptop-only tooling (doc 11 §8.7): it is not deployed to a cloud cluster, has no
+# ECR repository and no Terraform. Keep this false; tests/aws checks it.
+enabled: false

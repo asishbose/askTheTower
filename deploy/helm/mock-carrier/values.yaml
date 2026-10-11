@@ -1,0 +1,89 @@
+# mock-carrier — same image, env names and port as deploy/compose (services/mock-carrier/README.md).
+image:
+  registry: ""
+  repository: ask-the-tower/mock-carrier
+  tag: ""
+  pullPolicy: ""
+
+replicaCount: 1   # state (lines, clock, subscriptions) is in memory: never more than one
+port: 8443
+useStoreEnv: false
+
+env:
+  MOCK_ADMIN: "1"          # /_admin/* (scenario load, clock); ClusterIP only, never on an ingress
+  MOCK_ADMIN_TOKEN: ""     # G1 (08 §3): empty on kind/EKS — the ClusterIP and the NetworkPolicy keep /_admin private
+  MOCK_CIBA: "0"
+  MOCK_JITTER_MS: "0"
+  MOCK_PORT: "8443"
+  MOCK_SCENARIO: demo
+  MOCK_BASE_URL: http://mock-carrier:8443
+  PYTHONUNBUFFERED: "1"
+  HOME: /tmp
+secretEnv:
+  MOCK_JWT_SECRET: {name: "", key: MOCK_JWT_SECRET}
+
+# Scenario files to serve instead of the image's scenarios/ (ConfigMap mounted at /app/scenarios-override):
+#   --set-file 'mock-carrier.scenarios.files.demo\.yaml=scenarios/demo.yaml'
+scenarios:
+  files: {}
+
+# A CA bundle the mock's webhook sender trusts (SSL_CERT_FILE). kind: the umbrella's local CA for alerts' https
+# sinks (the compose alerts-tls equivalent). EKS: empty — sinks are the public ALB with an ACM certificate.
+trustCA:
+  configMap: ""
+  key: ca.crt
+
+service:
+  type: ClusterIP
+  port: 8443
+
+# Public ingress (EKS: the AWS Load Balancer Controller's ALB, ACM TLS; values-eks.yaml in the umbrella).
+ingress:
+  enabled: false
+  className: ""
+  host: ""
+  paths: [/]
+  annotations: {}
+  tls: []
+
+networkPolicy:
+  enabled: true
+  from:
+    allowAll: false
+    names: [tower-mcp, alerts, alerts-job, binding-page, ref-client, seed, demo-ui]   # demo-ui: /_admin only (kind)
+    cidrs: []
+
+resources:
+  requests: {cpu: 50m, memory: 96Mi}
+  limits: {cpu: 500m, memory: 256Mi}
+
+# Set by the umbrella chart (deploy/helm/umbrella); these defaults make the chart render on its own.
+global:
+  imageRegistry: ""
+  imageTag: ""
+  imagePullPolicy: ""
+  secretName: att-secrets
+  storeEnv: {}
+  storeSecretEnv: {}
+  nodeSelector: {}
+
+nameOverride: ""
+fullnameOverride: ""
+
+podAnnotations: {}
+podSecurityContext:
+  runAsNonRoot: true
+  runAsUser: 10001
+  runAsGroup: 10001
+  fsGroup: 10001
+  seccompProfile:
+    type: RuntimeDefault
+securityContext:
+  allowPrivilegeEscalation: false
+  readOnlyRootFilesystem: true
+  capabilities:
+    drop: [ALL]
+
+nodeSelector: {}
+tolerations: []
+affinity: {}

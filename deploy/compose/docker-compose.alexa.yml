@@ -1,0 +1,15 @@
+# Overlay for the Alexa+ simulator run (prompt 15; docs/architecture/alexa/registration.md). Not used by `make up`.
+# Adds to tower-mcp only: the account-linking JWT verification (Alexa+ presents the identity provider's access
+# token; user_id = `sub`) and the Tower-side call log that `make showcase-alexa` turns into transcripts.
+# Values come from deploy/compose/.env (keys in .env.example); empty = off.
+#
+#   make up                                   # the normal stack, seeded
+#   docker compose -f deploy/compose/docker-compose.yml -f deploy/compose/docker-compose.alexa.yml up -d tower-mcp
+services:
+  tower-mcp:
+    environment:
+      TOWER_JWKS_URL: ${TOWER_JWKS_URL:-}
+      TOWER_JWT_ISSUER: ${TOWER_JWT_ISSUER:-}
+      TOWER_JWT_AUDIENCE: ${TOWER_JWT_AUDIENCE:-}
+      TOWER_JWT_CLIENT_IDS: ${TOWER_JWT_CLIENT_IDS:-}
+      TOWER_CALL_LOG: ${TOWER_CALL_LOG:-1}

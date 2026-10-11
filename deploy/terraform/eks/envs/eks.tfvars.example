@@ -1,0 +1,20 @@
+# Copy to envs/eks.tfvars (gitignored) and fill in. Everything shared with 13's stack is read from its state.
+
+region           = "us-east-1"
+aws_state_bucket = "REPLACE-ME-ask-the-tower-tfstate"
+aws_state_key    = "ask-the-tower/aws/terraform.tfstate"
+
+# Public names for the ALB ingresses (Route 53 / your DNS: CNAME to the ALB the controller creates) and an ACM
+# certificate in the same region covering them. Empty = no ingress; use kubectl port-forward.
+tower_host      = ""
+binding_host    = ""
+hooks_host      = ""
+certificate_arn = ""
+
+# Defaults: 2 x t4g.medium on-demand, Kubernetes 1.31, public subnets (no NAT).
+# cluster_version       = "1.31"
+# capacity_type         = "ON_DEMAND"
+# use_private_subnets   = false   # true needs enable_nat_gateway = true in 13's tfvars
+# enable_container_logs = false
+# admin_principal_arns  = ["arn:aws:iam::<account>:role/<your-admin-role>"]
+# bedrock_model_id      = "amazon.nova-micro-v1:0"

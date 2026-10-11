@@ -1,0 +1,30 @@
+[project]
+name = "binding-page"
+version = "0.1.0"
+description = "Binding page: one tap over mobile data, grants, revocation, audit view."
+requires-python = ">=3.12"
+dependencies = [
+  "pydantic>=2.8",
+  "fastapi>=0.115",
+  "jinja2>=3.1",
+  "python-multipart>=0.0.9",
+  "mangum>=0.19",
+  "uvicorn>=0.30",
+  "httpx>=0.27",
+  "boto3>=1.35",
+  "awslambdaric>=3.0",  # Lambda container entry point (prompt 13: python -m awslambdaric <handler>)
+  "tower-policy",
+  "tower-consent",
+  "tower-audit",
+  "camara-client",
+]
+
+[project.scripts]
+binding-page = "binding_page.__main__:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/binding_page"]

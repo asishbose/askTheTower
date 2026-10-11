@@ -1,0 +1,249 @@
+{
+ "$comment": "Generated from specs/camara/sim-swap-subscriptions.yaml by services/alerts/scripts/vendor_schemas.py",
+ "$defs": {
+  "CloudEvent": {
+   "description": "The notification callback",
+   "properties": {
+    "data": {
+     "description": "Event details payload described in each CAMARA API and referenced by its type",
+     "type": "object"
+    },
+    "datacontenttype": {
+     "description": "media-type that describes the event payload encoding, must be \"application/json\" for CAMARA APIs",
+     "enum": [
+      "application/json"
+     ],
+     "type": "string"
+    },
+    "id": {
+     "description": "identifier of this event, that must be unique in the source context.",
+     "type": "string"
+    },
+    "source": {
+     "$ref": "#/$defs/Source"
+    },
+    "specversion": {
+     "description": "Version of the specification to which this event conforms (must be 1.0 if it conforms to cloudevents 1.0.2 version)",
+     "enum": [
+      "1.0"
+     ],
+     "type": "string"
+    },
+    "time": {
+     "$ref": "#/$defs/DateTime"
+    },
+    "type": {
+     "$ref": "#/$defs/SimSwapNotificationEventType"
+    }
+   },
+   "required": [
+    "id",
+    "source",
+    "specversion",
+    "type",
+    "time"
+   ]
+  },
+  "DateTime": {
+   "description": "Timestamp of when the occurrence happened. It must follow [RFC 3339](https://datatracker.ietf.org/doc/html/rfc3339#section-5.6) and must have time zone.",
+   "format": "date-time",
+   "type": "string"
+  },
+  "EventSimSwap": {
+   "allOf": [
+    {
+     "$ref": "#/$defs/CloudEvent"
+    },
+    {
+     "properties": {
+      "data": {
+       "$ref": "#/$defs/Swapped"
+      }
+     },
+     "type": "object"
+    }
+   ],
+   "description": "event structure for event sim swapped"
+  },
+  "EventSubscriptionEnded": {
+   "allOf": [
+    {
+     "$ref": "#/$defs/CloudEvent"
+    },
+    {
+     "properties": {
+      "data": {
+       "$ref": "#/$defs/SubscriptionEnded"
+      }
+     },
+     "type": "object"
+    }
+   ],
+   "description": "event structure for event subscription ended"
+  },
+  "EventSubscriptionStarted": {
+   "allOf": [
+    {
+     "$ref": "#/$defs/CloudEvent"
+    },
+    {
+     "properties": {
+      "data": {
+       "$ref": "#/$defs/SubscriptionStarted"
+      }
+     },
+     "type": "object"
+    }
+   ],
+   "description": "event structure for event subscription started"
+  },
+  "EventSubscriptionUpdated": {
+   "allOf": [
+    {
+     "$ref": "#/$defs/CloudEvent"
+    },
+    {
+     "properties": {
+      "data": {
+       "$ref": "#/$defs/SubscriptionUpdated"
+      }
+     },
+     "type": "object"
+    }
+   ],
+   "description": "event structure for event subscription updated"
+  },
+  "InitiationReason": {
+   "description": "- SUBSCRIPTION_CREATED - Subscription created by API Server\n",
+   "enum": [
+    "SUBSCRIPTION_CREATED"
+   ],
+   "type": "string"
+  },
+  "PhoneNumber": {
+   "description": "A public identifier addressing a telephone subscription. In mobile networks it corresponds to the MSISDN (Mobile Station International Subscriber Directory Number). In order to be globally unique it has to be formatted in international format, according to E.164 standard, prefixed with '+'.",
+   "pattern": "^\\+[1-9][0-9]{4,14}$",
+   "type": "string"
+  },
+  "SimSwapNotificationEventType": {
+   "description": "swapped - Event triggered when a sim swap was performed for this phone number\n\n- subscription-started: Event triggered when the subscription starts\n- subscription-updated: Event triggered when the subscription is updated\n- subscription-ended: Event triggered when the subscription ends\n",
+   "enum": [
+    "org.camaraproject.sim-swap-subscriptions.v0.swapped",
+    "org.camaraproject.api-name.v0.subscription-started",
+    "org.camaraproject.api-name.v0.subscription-updated",
+    "org.camaraproject.sim-swap-subscriptions.v0.subscription-ended"
+   ],
+   "type": "string"
+  },
+  "Source": {
+   "description": "Identifies the context in which an event happened, as a non-empty `URI-reference` like:\n- URI with a DNS authority:\n  * https://github.com/cloudevents\n  * mailto:cncf-wg-serverless@lists.cncf.io\n- Universally-unique URN with a UUID:\n  * urn:uuid:6e8bc430-9c3a-11d9-9669-0800200c9a66\n- Application-specific identifier:\n  * /cloudevents/spec/pull/123\n  * 1-555-123-4567\n",
+   "format": "uri-reference",
+   "minLength": 1,
+   "type": "string"
+  },
+  "SubscriptionEnded": {
+   "description": "Event detail structure for subscription ended event",
+   "properties": {
+    "subscriptionId": {
+     "$ref": "#/$defs/SubscriptionId"
+    },
+    "terminationDescription": {
+     "description": "Explanation why a subscription ended or had to end.",
+     "type": "string"
+    },
+    "terminationReason": {
+     "$ref": "#/$defs/TerminationReason"
+    }
+   },
+   "required": [
+    "terminationReason",
+    "subscriptionId"
+   ],
+   "type": "object"
+  },
+  "SubscriptionId": {
+   "description": "The unique identifier of the subscription in the scope of the subscription manager. When this information is contained within an event notification, this concept SHALL be referred as subscriptionId as per Commonalities Event Notification Model.",
+   "type": "string"
+  },
+  "SubscriptionStarted": {
+   "description": "Event detail structure for subscription started event",
+   "properties": {
+    "initiationDescription": {
+     "type": "string"
+    },
+    "initiationReason": {
+     "$ref": "#/$defs/InitiationReason"
+    },
+    "subscriptionId": {
+     "$ref": "#/$defs/SubscriptionId"
+    }
+   },
+   "required": [
+    "initiationReason",
+    "subscriptionId"
+   ],
+   "type": "object"
+  },
+  "SubscriptionUpdated": {
+   "description": "Event detail structure for subscription updated event",
+   "properties": {
+    "subscriptionId": {
+     "$ref": "#/$defs/SubscriptionId"
+    },
+    "updateDescription": {
+     "type": "string"
+    },
+    "updateReason": {
+     "$ref": "#/$defs/UpdateReason"
+    }
+   },
+   "required": [
+    "updateReason",
+    "subscriptionId"
+   ],
+   "type": "object"
+  },
+  "Swapped": {
+   "description": "Event detail structure for ROAMING_ON & ROAMING_OFF event",
+   "properties": {
+    "phoneNumber": {
+     "$ref": "#/$defs/PhoneNumber"
+    },
+    "subscriptionId": {
+     "$ref": "#/$defs/SubscriptionId"
+    }
+   },
+   "required": [
+    "subscriptionId"
+   ],
+   "type": "object"
+  },
+  "TerminationReason": {
+   "description": "- NETWORK_TERMINATED - API server stopped sending notification\n- SUBSCRIPTION_EXPIRED - Subscription expire time (optionally set by the requester) has been reached\n- MAX_EVENTS_REACHED - Maximum number of events (optionally set by the requester) has been reached\n- ACCESS_TOKEN_EXPIRED - Access Token sinkCredential (optionally set by the requester) expiration time has been reached\n- SUBSCRIPTION_DELETED - Subscription was deleted by the requester\n",
+   "enum": [
+    "MAX_EVENTS_REACHED",
+    "NETWORK_TERMINATED",
+    "SUBSCRIPTION_EXPIRED",
+    "ACCESS_TOKEN_EXPIRED",
+    "SUBSCRIPTION_DELETED"
+   ],
+   "type": "string"
+  },
+  "UpdateReason": {
+   "description": "- SUBSCRIPTION_ACTIVE - API server transitioned susbcription status to `ACTIVE`\n- SUBSCRIPTION_INACTIVE - API server transitioned susbcription status to `INACTIVE`\n",
+   "enum": [
+    "SUBSCRIPTION_ACTIVE",
+    "SUBSCRIPTION_INACTIVE"
+   ],
+   "type": "string"
+  }
+ },
+ "api": "sim-swap-subscriptions",
+ "info_version": "0.3.0",
+ "mapping": {
+  "org.camaraproject.sim-swap-subscriptions.v0.subscription-ended": "EventSubscriptionEnded",
+  "org.camaraproject.sim-swap-subscriptions.v0.subscription-started": "EventSubscriptionStarted",
+  "org.camaraproject.sim-swap-subscriptions.v0.subscription-updated": "EventSubscriptionUpdated",
+  "org.camaraproject.sim-swap-subscriptions.v0.swapped": "EventSimSwap"
+ }
+}

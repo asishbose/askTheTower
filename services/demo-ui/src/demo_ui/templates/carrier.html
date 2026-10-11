@@ -1,0 +1,22 @@
+<div class="carrier-state">
+  <div class="clock-widget" title="the mock's clock, redrawn on each frame">
+    <span class="dial" aria-hidden="true"><i class="hand h"></i><i class="hand m"></i></span>
+    <div><span class="label">mock clock</span><time class="clock" datetime="{{ clock }}">{{ clock }}</time></div>
+    {% if faults %}<span class="faults-pending"><svg class="i" aria-hidden="true"><use href="/static/img/icons.svg#bolt"></use></svg>pending faults: {{ faults | join(", ") }}</span>{% endif %}
+  </div>
+  <div class="lines">{% for l in lines %}
+    <article class="line-card" data-ref="{{ l.ref }}" data-sim="{{ l.sim_change_at }}" data-cf="{{ l.call_forwarding }}" data-reach="{{ l.reachable }}" data-conn="{{ l.connectivity }}">
+      <header><span class="avatar" aria-hidden="true">{{ l.holder[:1] }}</span><b class="holder">{{ l.holder }}</b><code class="ref">{{ l.ref }}</code></header>
+      <ul class="state" aria-label="{{ l.holder }}'s line, as the mock holds it">
+        <li class="st"><svg class="i" aria-hidden="true"><use href="/static/img/icons.svg#sim"></use></svg><span class="k">SIM change</span> <span class="v">{{ l.sim_change_at if l.sim_change_at is not none else "—" }}</span></li>
+        <li class="st"><svg class="i" aria-hidden="true"><use href="/static/img/icons.svg#forward"></use></svg><span class="k">forwarding</span> <span class="v">{{ l.call_forwarding }}</span></li>
+        <li class="st"><svg class="i" aria-hidden="true"><use href="/static/img/icons.svg#online"></use></svg><span class="k">reachable</span> <span class="v">{{ l.reachable }}</span></li>
+        <li class="st"><svg class="i" aria-hidden="true"><use href="/static/img/icons.svg#signal"></use></svg><span class="k">connectivity</span> <span class="v">{{ l.connectivity or "—" }}</span></li>
+      </ul>
+    </article>{% endfor %}
+  </div>
+  {% if subscriptions %}
+  <table class="subs"><caption>subscriptions</caption><thead><tr><th>subscription</th><th>api</th><th>line</th><th>status</th><th>events</th></tr></thead>
+  <tbody>{% for s in subscriptions %}<tr class="sub" data-events="{{ s.events }}"><td>{{ s.id }}</td><td>{{ s.api }}</td><td class="ref">{{ s.line }}</td><td>{{ s.status }}</td><td>{{ s.events }}</td></tr>{% endfor %}</tbody></table>
+  {% else %}<p class="empty">no subscriptions</p>{% endif %}
+</div>

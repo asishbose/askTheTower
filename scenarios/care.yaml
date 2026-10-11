@@ -1,0 +1,36 @@
+# `care` profile: Mom's line goes unreachable for 4 h inside the daytime window
+# (08:00–22:00 line-holder local; Ottawa is UTC-4 in October, so 13:00Z is 09:00 local).
+# Alerts' rule (06 §2): `reachable: false` continuously for UNREACHABLE_ALERT = 4 h → alert.
+# Variant `recovered`: back after 3 h 59 min — one minute short, so no alert.
+clock: "2026-10-05T13:00:00Z"
+lines:
+  "+16135550101":                # Asish (the watcher)
+    sim_change_at: "2026-09-01T10:00:00Z"
+    call_forwarding: none
+    reachable: true
+    connectivity: DATA
+    mobile_data_client_ids: [phone-asish]
+  "+16135550102":                # Mom (the watched line)
+    sim_change_at: "2026-08-12T09:30:00Z"
+    call_forwarding: none
+    reachable: true
+    connectivity: DATA
+    mobile_data_client_ids: [phone-mom]
+timeline:
+  - at: "+00:30:00"              # 09:30 local: dark
+    line: "+16135550102"
+    event: unreachable
+  - at: "+04:30:00"              # 13:30 local: back, after exactly 4 h
+    line: "+16135550102"
+    event: reachable
+    connectivity: [DATA]
+variants:
+  recovered:
+    timeline:
+      - at: "+00:30:00"
+        line: "+16135550102"
+        event: unreachable
+      - at: "+04:29:00"          # 3 h 59 min dark
+        line: "+16135550102"
+        event: reachable
+        connectivity: [DATA]

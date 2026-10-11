@@ -1,0 +1,65 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "binding-page.fullname" . }}
+  labels:
+    {{- include "binding-page.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "binding-page.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "binding-page.labels" . | nindent 8 }}
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    spec:
+      serviceAccountName: {{ include "binding-page.serviceAccountName" . }}
+      automountServiceAccountToken: false   # no app talks to the API server; IRSA projects its own token
+      securityContext:
+        {{- include "binding-page.podSecurityContext" . | nindent 8 }}
+      {{- include "binding-page.scheduling" . | nindent 6 }}
+      containers:
+        - name: binding-page
+          image: {{ include "binding-page.image" . | quote }}
+          imagePullPolicy: {{ include "binding-page.pullPolicy" . }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.port }}
+              protocol: TCP
+          env:
+            {{- include "binding-page.env" . | nindent 12 }}
+          securityContext:
+            {{- include "binding-page.securityContext" . | nindent 12 }}
+          startupProbe:
+            httpGet:
+              path: /healthz
+              port: http
+            periodSeconds: 2
+            failureThreshold: {{ .Values.startupFailureThreshold | default 90 }}
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: http
+            periodSeconds: 5
+            timeoutSeconds: 3
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: http
+            periodSeconds: 20
+            timeoutSeconds: 3
+            failureThreshold: 3
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+      volumes:
+        - name: tmp
+          emptyDir:
+            sizeLimit: 64Mi

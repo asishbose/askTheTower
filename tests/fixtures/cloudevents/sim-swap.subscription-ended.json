@@ -1,0 +1,9 @@
+{
+  "id": "evt-0002",
+  "source": "https://mock-carrier.local/sim-swap-subscriptions/v0.2/subscriptions/sub-0001",
+  "type": "org.camaraproject.sim-swap-subscriptions.v0.subscription-ended",
+  "specversion": "1.0",
+  "datacontenttype": "application/json",
+  "time": "2026-10-05T14:12:00Z",
+  "data": { "subscriptionId": "sub-0001", "terminationReason": "SUBSCRIPTION_EXPIRED" }
+}

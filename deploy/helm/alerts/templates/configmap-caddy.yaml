@@ -1,0 +1,32 @@
+{{- if .Values.tls.enabled }}
+# The compose alerts-tls Caddyfile, in the pod: only /hooks/* over https, proxied to the app on localhost.
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "alerts.fullname" . }}-caddy
+  labels:
+    {{- include "alerts.labels" . | nindent 4 }}
+data:
+  Caddyfile: |
+    {
+    	admin off
+    	auto_https disable_redirects
+    	persist_config off
+    	log default {
+    		output stdout
+    		format console {
+    			time_format iso8601
+    		}
+    	}
+    }
+
+    :{{ .Values.tls.port }} {
+    	tls /tls/tls.crt /tls/tls.key
+    	handle /hooks/* {
+    		reverse_proxy 127.0.0.1:{{ .Values.port }}
+    	}
+    	handle {
+    		respond 404
+    	}
+    }
+{{- end }}

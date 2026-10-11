@@ -1,0 +1,77 @@
+/* Dark theme in the demo UI's palette (services/demo-ui/.../demo-ui.css): ink, muted, line, teal, amber, red. */
+:root {
+  --ink: #0f172a;
+  --panel: #1e293b;
+  --text: #e2e8f0;
+  --muted: #94a3b8;
+  --line: #334155;
+  --teal: #0d9488;
+  --amber: #d97706;
+  --red: #dc2626;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0 auto;
+  max-width: 44rem;
+  padding: 1.5rem 1rem 3rem;
+  background: var(--ink);
+  color: var(--text);
+  font: 16px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+
+h1 { margin: 0; font-size: 1.6rem; color: var(--teal); }
+h2 { margin-top: 0; font-size: 1.2rem; }
+.muted { color: var(--muted); }
+.small { font-size: 0.85rem; }
+
+header { margin-bottom: 1.5rem; }
+.who { display: flex; gap: 1rem; align-items: center; color: var(--muted); }
+
+.card {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+}
+
+button {
+  background: var(--teal);
+  color: #fff;
+  border: 0;
+  border-radius: 0.5rem;
+  padding: 0.55rem 1.1rem;
+  font: inherit;
+  cursor: pointer;
+  margin-right: 0.5rem;
+}
+button.link { background: none; color: var(--muted); text-decoration: underline; padding: 0; }
+
+.messages { list-style: none; padding: 0; margin: 0 0 1rem; display: flex; flex-direction: column; gap: 0.75rem; }
+.messages li { max-width: 85%; padding: 0.6rem 0.9rem; border-radius: 0.75rem; }
+.messages li p { margin: 0; white-space: pre-wrap; }
+.messages li.me { align-self: flex-end; background: var(--teal); color: #fff; }
+.messages li.tower { align-self: flex-start; background: var(--panel); border: 1px solid var(--line); }
+
+.bind {
+  margin-top: 0.75rem;
+  padding: 0.75rem;
+  border-left: 3px solid var(--amber);
+  background: rgba(217, 119, 6, 0.08);
+}
+.bind p { margin: 0.4rem 0; }
+.bind-link a { color: var(--amber); word-break: break-all; }
+
+.ask { display: flex; gap: 0.5rem; }
+.ask input {
+  flex: 1;
+  background: var(--panel);
+  color: var(--text);
+  border: 1px solid var(--line);
+  border-radius: 0.5rem;
+  padding: 0.55rem 0.75rem;
+  font: inherit;
+}
+
+.visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
