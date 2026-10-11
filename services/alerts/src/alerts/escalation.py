@@ -9,6 +9,10 @@
 - `tick` (every poll, and the local scheduler's minute tick) moves a parked chain on once `ESCALATE_NEXT`
   (15 min) has passed without an acknowledgement — re-resolving the grant first, walking the parked snapshot
   (06 §11.3), auditing the release before the first send.
+- **Single owner (06 §5).** Several consumers touch one `esc#` row: ticks (the scheduler's, every poll's, two
+  Lambdas), a new alert's `start_chain` and `handle_reply`. Each step is claimed by a conditional write on the
+  version the consumer read *before* it is texted or audited; ack, revoke and "Watch gone" delete only the
+  version they read; the row is deleted by its owner only after the last step. The loser does nothing.
 - `handle_reply` takes an SMS reply ("OK" or "CANCEL", from the SNS inbound topic or the local gateway). The
   replying number is hashed to a line id at once; the number itself goes no further than a SIM-swap check.
   A reply from a line within `ACK_DISTRUST` (24 h) of its own SIM swap is **ignored**, audited
@@ -104,25 +108,100 @@ def step_audience(alert: ChainAlert, user_id: str, step: int, r: Recipient) -> s
     return f"{base} backup" if r.role == "backup" else base
 
 
+class EscalationContended(RuntimeError):
+    """A new chain could not take the Watch's `esc#` row: it changed under every read (06 §5). Not expected."""
+
+
+TAKEOVER_ATTEMPTS = 3
+
+
+def claim_step(
+    svc: AlertsService,
+    alert: ChainAlert,
+    now: datetime,
+    *,
+    held: S.Escalation | None,
+    chain_id: str,
+    step: int,
+    rest: Sequence[tuple[str, bool]],
+) -> S.Escalation | None:
+    """Take step `step` of the chain: the row records it as texted at `now`, with `rest` after it, if it is still
+    `held`. The returned row is this caller's ticket; None → another consumer owns the chain (06 §5)."""
+    return S.save_escalation(
+        svc.store,
+        S.Escalation(
+            line_id=alert.line_id,
+            watcher_user_id=alert.watcher_user_id,
+            codes=list(alert.codes),
+            facts=alert.facts,
+            alias=alert.alias,
+            tz=alert.tz,
+            step=step,
+            sent_at=now,
+            remaining=[EscalationStep(user_id=u, requires_ack=a) for u, a in rest],
+            chain_id=chain_id,
+        ),
+        wall=svc.wall(),
+        held=held,
+    )
+
+
+def take_over(
+    svc: AlertsService, alert: ChainAlert, steps: Sequence[tuple[str, bool]], now: datetime
+) -> S.Escalation:
+    """A new alert's chain claims step 0, superseding whatever chain the Watch has parked (as before 06 §5's
+    single-owner rule), but only the version it read: if another consumer wrote in between, read again."""
+    chain_id = S.new_chain_id()
+    for _ in range(TAKEOVER_ATTEMPTS):
+        held = S.get_escalation(svc.store, alert.line_id, alert.watcher_user_id)
+        mine = claim_step(svc, alert, now, held=held, chain_id=chain_id, step=0, rest=steps[1:])
+        if mine is not None:
+            return mine
+    raise EscalationContended(
+        f"esc row for line={alert.line_id[:12]} changed under {TAKEOVER_ATTEMPTS} reads"
+    )
+
+
 async def start_chain(
+    svc: AlertsService, alert: ChainAlert, steps: Sequence[tuple[str, bool]], now: datetime
+) -> list[str]:
+    """A new alert walks the Watch's chain from step 0 (`deliver`). Returns the labels texted."""
+    if not steps:
+        return []
+    mine = take_over(svc, alert, steps, now)
+    return await walk(svc, alert, steps, now, mine, first_step=0)
+
+
+async def walk(
     svc: AlertsService,
     alert: ChainAlert,
     steps: Sequence[tuple[str, bool]],
     now: datetime,
+    mine: S.Escalation,
     *,
-    first_step: int = 0,
+    first_step: int,
     note: str | None = None,
     release_audit: bool = False,
 ) -> list[str]:
-    """Walk `steps` in order; returns the labels texted. Parks (with the `remaining` snapshot) or clears.
+    """Walk `steps` in order, `steps[0]` already claimed by `mine`. Returns the labels texted.
 
-    A step without consent is audited `SUPPRESSED_REVOKED` and the next one is tried at once (06 §11.2.1).
-    `release_audit` writes the `changed` row just before the first send (tick's release; `deliver` has
-    already written it). `note` is appended to the first message delivered. `first_step` is the absolute
-    index of `steps[0]` in the Watch's chain, kept on the parked row for the record.
+    Each later step is claimed (a conditional write on the version this walk holds) *before* anything is sent or
+    audited for it; a lost claim ends the walk with nothing more done (06 §5). A step without consent is audited
+    `SUPPRESSED_REVOKED` and the next one is claimed at once (06 §11.2.1). A delivered step with `requires_ack`
+    leaves the row as its claim wrote it (parked, with the `remaining` snapshot); otherwise the walk deletes the
+    row it holds, once the last step is done. `release_audit` writes the `changed` row just before the first send
+    (tick's release; `deliver` has already written it). `note` rides on the first message delivered.
     """
     labels: list[str] = []
     for i, (user_id, requires_ack) in enumerate(steps):
+        if i > 0:
+            ticket = claim_step(
+                svc, alert, now, held=mine, chain_id=mine.chain_id, step=first_step + i, rest=steps[i + 1 :]
+            )
+            if ticket is None:
+                svc.count("escalation_lost")
+                return labels
+            mine = ticket
         allowed, alias = step_consent(svc, alert, user_id)
         if not allowed:
             audit(
@@ -159,38 +238,12 @@ async def start_chain(
         labels.append(r.label)
         note = None
         if requires_ack:
-            park(svc, alert, now, step=first_step + i, rest=steps[i + 1 :], phone_line_id=r.phone_line_id)
+            S.remember_ack_route(svc.store, r.phone_line_id, alert.line_id, alert.watcher_user_id, svc.wall())
             return labels
         break
-    S.clear_escalation(svc.store, alert.line_id, alert.watcher_user_id)
+    if not S.clear_escalation(svc.store, mine):
+        svc.count("escalation_lost")
     return labels
-
-
-def park(
-    svc: AlertsService,
-    alert: ChainAlert,
-    now: datetime,
-    *,
-    step: int,
-    rest: Sequence[tuple[str, bool]],
-    phone_line_id: str,
-) -> None:
-    S.save_escalation(
-        svc.store,
-        S.Escalation(
-            line_id=alert.line_id,
-            watcher_user_id=alert.watcher_user_id,
-            codes=list(alert.codes),
-            facts=alert.facts,
-            alias=alert.alias,
-            tz=alert.tz,
-            step=step,
-            sent_at=now,
-            remaining=[EscalationStep(user_id=u, requires_ack=a) for u, a in rest],
-        ),
-        wall=svc.wall(),
-    )
-    S.remember_ack_route(svc.store, phone_line_id, alert.line_id, alert.watcher_user_id, svc.wall())
 
 
 def steps_after(esc: S.Escalation, watch: Watch) -> tuple[list[tuple[str, bool]], int]:
@@ -201,57 +254,88 @@ def steps_after(esc: S.Escalation, watch: Watch) -> tuple[list[tuple[str, bool]]
     return [(s.user_id, s.requires_ack) for s in rest], esc.step + 1
 
 
+def end_chain(svc: AlertsService, esc: S.Escalation) -> bool:
+    """A terminal path (ack, revoke, Watch gone, nothing left) deletes the row it read; False → it lost."""
+    if S.clear_escalation(svc.store, esc):
+        return True
+    svc.count("escalation_lost")
+    return False
+
+
 async def tick(svc: AlertsService, now: datetime) -> list[str]:
-    """Move every parked chain whose ack window has passed. Returns the labels texted."""
+    """Move every parked chain whose ack window has passed. Returns the labels texted.
+
+    Every branch first wins a conditional write on the version it read (06 §5): a tick racing another tick, a
+    new alert or a reply on the same row either owns the next step or does nothing.
+    """
     texted: list[str] = []
     for esc in S.list_escalations(svc.store):
         if esc.acked:
-            S.clear_escalation(svc.store, esc.line_id, esc.watcher_user_id)
+            end_chain(svc, esc)
             continue
         if now - esc.sent_at < svc.thresholds.ESCALATE_NEXT:
             continue
         watch = get_watch(svc.store, esc.line_id, esc.watcher_user_id)
         if watch is None or not watch.enabled:
-            S.clear_escalation(svc.store, esc.line_id, esc.watcher_user_id)
+            end_chain(svc, esc)
             continue
         consent = watch_consent(svc, esc.line_id, esc.watcher_user_id)
         if consent.refused:
-            audit(
-                svc,
-                esc.line_id,
-                now,
-                trigger="poll",
-                outcome="suppressed",
-                codes=[ReasonCode.SUPPRESSED_REVOKED],
-            )
-            S.clear_escalation(svc.store, esc.line_id, esc.watcher_user_id)
+            if end_chain(svc, esc):
+                audit(
+                    svc,
+                    esc.line_id,
+                    now,
+                    trigger="poll",
+                    outcome="suppressed",
+                    codes=[ReasonCode.SUPPRESSED_REVOKED],
+                )
             continue
-        codes = tuple(esc.codes)
-        alert = ChainAlert(
-            line_id=esc.line_id,
-            watcher_user_id=esc.watcher_user_id,
-            codes=codes,
-            facts=esc.facts,
-            alias=esc.alias,
-            tz=esc.tz,
-            trigger="poll",
-            swapped=line_swapped_state(svc, codes, esc.facts, now),
-            owner_chain=consent.view.grant == "owner",
-        )
-        steps, first = steps_after(esc, watch)
-        note: str | None = None
-        release_audit = True
-        if esc.ack_ignored and not esc.note_sent:
-            if alert.owner_chain:
-                # The watcher's number is the swapped line: the note rides on the next step (06 §11.3).
-                note = ACK_IGNORED_NOTE
-            else:
-                texted += await note_to_watcher(svc, alert, now)
-                release_audit = False
-        log.info("escalate line=%s from step %d", esc.line_id[:12], esc.step)
-        svc.count("escalations")
-        texted += await start_chain(
-            svc, alert, steps, now, first_step=first, note=note, release_audit=release_audit
+        texted += await advance(svc, esc, watch, consent.view.grant == "owner", now)
+    return texted
+
+
+async def advance(
+    svc: AlertsService, esc: S.Escalation, watch: Watch, owner_chain: bool, now: datetime
+) -> list[str]:
+    """Release a parked chain past its ack window: claim the next step, then the note, then the walk."""
+    codes = tuple(esc.codes)
+    alert = ChainAlert(
+        line_id=esc.line_id,
+        watcher_user_id=esc.watcher_user_id,
+        codes=codes,
+        facts=esc.facts,
+        alias=esc.alias,
+        tz=esc.tz,
+        trigger="poll",
+        swapped=line_swapped_state(svc, codes, esc.facts, now),
+        owner_chain=owner_chain,
+    )
+    steps, first = steps_after(esc, watch)
+    mine: S.Escalation | None = None
+    if steps:
+        chain_id = esc.chain_id or S.new_chain_id()
+        mine = claim_step(svc, alert, now, held=esc, chain_id=chain_id, step=first, rest=steps[1:])
+        if mine is None:
+            svc.count("escalation_lost")
+            return []
+    elif not end_chain(svc, esc):
+        return []
+    texted: list[str] = []
+    note: str | None = None
+    release_audit = True
+    if esc.ack_ignored and not esc.note_sent:
+        if alert.owner_chain:
+            # The watcher's number is the swapped line: the note rides on the next step (06 §11.3).
+            note = ACK_IGNORED_NOTE
+        else:
+            texted += await note_to_watcher(svc, alert, now)
+            release_audit = False
+    log.info("escalate line=%s from step %d", esc.line_id[:12], esc.step)
+    svc.count("escalations")
+    if mine is not None:
+        texted += await walk(
+            svc, alert, steps, now, mine, first_step=first, note=note, release_audit=release_audit
         )
     return texted
 
@@ -310,7 +394,12 @@ async def handle_reply(svc: AlertsService, from_e164: str, text: str, now: datet
     distrusted = await phone_recently_swapped(svc, phone_line_id, from_e164, now)
     results: list[str] = []
     for esc in pending:
+        # Claim first (06 §5): a reply that loses to a tick refers to a step that is no longer current.
         if distrusted:
+            ignored = esc.model_copy(update={"ack_ignored": True})
+            if S.save_escalation(svc.store, ignored, wall=svc.wall(), held=esc) is None:
+                svc.count("escalation_lost")
+                continue
             audit(
                 svc,
                 esc.line_id,
@@ -319,12 +408,12 @@ async def handle_reply(svc: AlertsService, from_e164: str, text: str, now: datet
                 outcome="suppressed",
                 codes=[ReasonCode.ACK_IGNORED_SWAPPED_LINE],
             )
-            S.save_escalation(svc.store, esc.model_copy(update={"ack_ignored": True}), wall=svc.wall())
             svc.count("ack_ignored_swapped_line")
             results.append("ignored")
         else:
+            if not end_chain(svc, esc):
+                continue
             audit(svc, esc.line_id, now, trigger="event", outcome="ok", codes=[ReasonCode.OK])
-            S.clear_escalation(svc.store, esc.line_id, esc.watcher_user_id)
             svc.count("ack_accepted")
             results.append("accepted")
     return results

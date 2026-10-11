@@ -10,7 +10,7 @@ bookkeeping that must not bump `at` lives here instead, one item per purpose:
 | `line#<line_id>` | `sink_token`, `subscription_ids`, `kinds`, `subs_at`, `last_event_at`, `misses` | never |
 | `evt#<digest>` | webhook dedupe: SHA-256(token, source, id) claimed with a conditional put | 7 days |
 | `rl#<line_id>#<watcher>#<code>` | rate-limit claim: one alert per (line, watcher, reason) per `RATE_LIMIT` | `RATE_LIMIT` |
-| `esc#<line_id>#<watcher>` | escalation in flight (06 §3): step, sent_at, codes, facts, acked, ack_ignored, `remaining` (the steps after the one texted, 06 §11.3) | 2 days |
+| `esc#<line_id>#<watcher>` | escalation in flight (06 §3): `chain_id`, `version`, step, sent_at, codes, facts, acked, ack_ignored, `remaining` (the steps after the one texted, 06 §11.3) | 2 days |
 | `ack#<phone line_id>` | which escalation a reply from that phone acknowledges | 2 days |
 
 No key or value is a phone number: line ids are HMACs, digests are re-lettered `a`–`p`, tokens are letters.
@@ -19,6 +19,12 @@ No key or value is a phone number: line ids are HMACs, digests are re-lettered `
 the write (`wall`, from `AlertsService.wall`) plus the horizon, because DynamoDB deletes by the wall clock and the
 mock's scenario clock may be days behind. The windows themselves compare against the service clock: the rate
 limit's `sent_at <= :cut` and `Watches.last_state.last_alert_at`, an escalation's `sent_at` + `ESCALATE_NEXT`.
+
+**Single owner of an escalation (06 §5).** Every write to an `esc#` row is conditional on the `(chain_id,
+version)` the writer read (`attribute_not_exists(pk)` for a new row), and bumps `version`; deleting is conditional
+the same way. `save_escalation` returns the row it wrote or None, `clear_escalation` True or False: the winner owns
+the row (it alone texts, audits, parks or deletes), the loser does nothing. `chain_id` is new per chain, so a row
+deleted and re-created never matches a stale reader (no ABA).
 """
 
 from __future__ import annotations
@@ -259,18 +265,48 @@ class Escalation(BaseModel):
     ack_ignored: bool = False
     note_sent: bool = False
     remaining: list[EscalationStep] | None = None
+    chain_id: str = ""  # new per chain; "" on rows parked before the single-owner rule (2026-10-11)
+    version: int = 0  # bumped by every write; 0 on rows parked before the single-owner rule
 
 
 def _esc_pk(line_id: str, watcher: str) -> str:
     return f"esc#{line_id}#{watcher}"
 
 
-def save_escalation(store: Store, esc: Escalation, *, wall: datetime) -> None:
-    """Park (or re-save) an escalation. `ESCALATE_NEXT` runs from `esc.sent_at` (service clock); the row's TTL
-    is `wall + ESC_TTL`, real time."""
-    item = esc.model_dump(mode="json")
+def new_chain_id() -> str:
+    return new_token()
+
+
+def _held_condition(held: Escalation | None) -> tuple[str, dict[str, Any]]:
+    """The condition that the row is still exactly what `held` read (absent, when nothing was read)."""
+    if held is None:
+        return "attribute_not_exists(pk)", {}
+    if held.version == 0:  # parked before rows carried a version: whoever writes first takes it
+        return "attribute_exists(pk) AND attribute_not_exists(version)", {}
+    return "chain_id = :c AND version = :v", {":c": held.chain_id, ":v": held.version}
+
+
+def save_escalation(
+    store: Store, esc: Escalation, *, wall: datetime, held: Escalation | None = None
+) -> Escalation | None:
+    """Write `esc` if the row is still `held` (or absent when `held` is None). Returns the row written, with
+    `version` = held's + 1 (a new chain id when `esc` has none), or None when another writer got there first.
+
+    `ESCALATE_NEXT` runs from `esc.sent_at` (service clock); the row's TTL is `wall + ESC_TTL`, real time."""
+    written = esc.model_copy(
+        update={
+            "version": (held.version if held is not None else 0) + 1,
+            "chain_id": esc.chain_id or new_chain_id(),
+        }
+    )
+    item = written.model_dump(mode="json")
     item.update(pk=_esc_pk(esc.line_id, esc.watcher_user_id), expires_at=_epoch(wall + ESC_TTL))
-    store.put(ALERTS_STATE, item)
+    condition, values = _held_condition(held)
+    try:
+        store.put(ALERTS_STATE, item, condition=condition, values=values)
+    except ConditionFailed:
+        return None
+    return written
 
 
 def get_escalation(store: Store, line_id: str, watcher: str) -> Escalation | None:
@@ -278,8 +314,19 @@ def get_escalation(store: Store, line_id: str, watcher: str) -> Escalation | Non
     return Escalation.model_validate(item) if item else None
 
 
-def clear_escalation(store: Store, line_id: str, watcher: str) -> None:
-    store.delete(ALERTS_STATE, {"pk": _esc_pk(line_id, watcher)})
+def clear_escalation(store: Store, held: Escalation) -> bool:
+    """Delete the row if it is still `held`. True → deleted by this call; False → another writer moved it."""
+    condition, values = _held_condition(held)
+    try:
+        store.delete(
+            ALERTS_STATE,
+            {"pk": _esc_pk(held.line_id, held.watcher_user_id)},
+            condition=condition,
+            values=values,
+        )
+    except ConditionFailed:
+        return False
+    return True
 
 
 def list_escalations(store: Store) -> list[Escalation]:

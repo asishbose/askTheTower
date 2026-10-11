@@ -67,7 +67,7 @@ one small Alerts-owned table, **`AlertsState`** (PK `pk`, TTL `expires_at`; defi
 | `line#<line_id>` | sink token, subscription ids, `subs_at`, `last_event_at`, `misses` |
 | `evt#<digest>` | webhook dedupe (7-day TTL) |
 | `rl#<line>#<watcher>#<code>` | rate-limit claim (6-h TTL) |
-| `esc#<line>#<watcher>` | escalation in flight |
+| `esc#<line>#<watcher>` | escalation in flight; every write conditional on the `chain_id` + `version` read (single owner, 06 §5) |
 | `ack#<phone line_id>` | which escalation a reply from that phone acknowledges |
 
 **Sent SMS (06 §3.1, U1/U4).** `send.send_one` always calls `svc.sent_log.record(...)`; which `SentLog` it is

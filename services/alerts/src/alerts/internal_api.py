@@ -79,7 +79,10 @@ async def set_watch(svc: AlertsService, req: WatchRequest) -> dict[str, Any]:
                 Watch(line_id=req.line_id, watcher_user_id=req.watcher_user_id, profile=req.profile),
             )
     if not req.enable and req.watcher_user_id:
-        S.clear_escalation(svc.store, req.line_id, req.watcher_user_id)
+        held = S.get_escalation(svc.store, req.line_id, req.watcher_user_id)
+        # conditional (06 §5): if a tick moved the chain meanwhile, its next tick sees the Watch off and ends it
+        if held is not None:
+            S.clear_escalation(svc.store, held)
     kinds = kinds_for_line(svc, req.line_id)
     if not kinds:
         removed = await unsubscribe(svc, req.line_id)
