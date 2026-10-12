@@ -8,7 +8,16 @@ paths = [
   '''specs/camara/.*\.yaml$''',
   '''scenarios/.*\.yaml$''',
   '''docs/.*\.md$''',
+  # planted fixtures: the privacy-sweep and runner tests feed fake key ids and AWS's documentation example
+  # secret (wJalrXUtnFEMI/K7MDENG...) to the redactor and assert they never come out
+  '''services/demo-ui/tests/test_ops_privacy_sweep\.py$''',
+  '''services/demo-ui/tests/test_ops_runner\.py$''',
+  '''services/demo-ui/tests/test_ops_allowlist\.py$''',
+  '''services/demo-ui/tests/test_config_aws\.py$''',
+  '''services/ref-client/tests/test_http\.py$''',
 ]
 regexes = [
   '''(?i)(changeme|placeholder|example|dummy|local-dev-only)''',
+  '''wJalrXUtnFEMI/K7MDENG''',
+  '''AKIAIOSFODNN7EXAMPLE''',
 ]
