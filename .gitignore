@@ -74,3 +74,6 @@ services/demo-ui/tests/visual/baseline/
 test-results/
 playwright-report/
 *.junit.xml
+# logs — none belong in the repo, except the one showcase transcript the checklist links
+*.log
+!artifacts/transcripts/alerts-showcase.log

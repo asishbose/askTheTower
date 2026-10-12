@@ -103,6 +103,7 @@ make policy-table  # prints the decision table (artifacts/policy-table.md)
 make corpus        # tool-selection table from the reference client
 make showcase-<x>  # one component's standalone showcase: alexa tower binding gateway alerts audit mock ref infra ui
 make showcase-ui   # the demo control room (11) on the host at 127.0.0.1:8091 (SHOWCASE_UI_PORT; compose keeps 8090): Bedrock when credentials resolve, else scripted (needs make up)
+make ops-ui        # the demo UI on the host at 127.0.0.1:8091/#ops with the Ops tab's aws runner on (DEMO_UI_AWS_OPS=1; 11 §2 gate); the stack need not be up
 make showcase      # all of the above, in testing-and-showcase.md §4 order
 make ecr-up        # the five ECR repositories in their own Terraform root/state (once; idempotent) → artifacts/tf-outputs-ecr.json
 make ecr-outputs   # rewrite artifacts/tf-outputs-ecr.json from the ECR root (what `make push` reads before the first deploy)
@@ -112,6 +113,8 @@ make web-chat-sync # ENV=aws: render config.js from the outputs, upload services
 make web-chat-url  # ENV=aws: print the chat page URL (output web_chat_url)
 make web-chat      # local: open the chat page at http://127.0.0.1:8083/ (needs make up)
 make plan          # terraform plan only (main root; needs ecr-up)
+make admin-open    # demo admin path to your /32 (ADMIN_CIDR, else checkip.amazonaws.com): demo_admin_cidrs in envs/aws.tfvars, then plan → deploy (exit 3 if the plan destroys, unless FORCE=1)
+make admin-close   # demo admin path closed: demo_admin_cidrs = [] in envs/aws.tfvars, then plan → deploy (asks unless FORCE=1)
 make tf-check      # terraform fmt + validate of the main and ecr roots (init -backend=false; no AWS) + tables.auto.tfvars.json current
 make down          # ENV=aws: terraform destroy of the main root — the ECR repositories and their images are kept; compose down
 make down-all      # after judging: down-eks (if up) + down ENV=aws + destroy the ECR root — the only target that deletes images
@@ -138,7 +141,7 @@ Settings and secrets live in one gitignored file, the repo-root `.env` (template
 
 `make demo` is the reproducibility claim: a judge runs it and sees the same transcripts the video shows.
 
-**The demo UI's pane 5 (11 §2, prompt 22) adds no target.** It runs eleven of the targets above (`up`, `down`, `seed`, `demo`, `showcase-tower`, `showcase-alerts`, `showcase-binding`, `test-unit`, `test-integration`, `test-e2e`, `test-report`), always with `ENV=local`, and shows the AWS ones as commands to copy. Two existing targets gain an evidence file for its checklist: `seed-aws` → `artifacts/seed-aws.json`, `web-chat-sync` → `artifacts/web-chat-sync.json`; `outputs` writes the admin keys of §2.1 into `deploy/.env.aws` when the path is open.
+**The demo UI's Ops tab (11 §2; prompt 22, amended by prompt 23 on 2026-10-11).** Its local runner runs eleven of the targets above (`up`, `down`, `seed`, `demo`, `showcase-tower`, `showcase-alerts`, `showcase-binding`, `test-unit`, `test-integration`, `test-e2e`, `test-report`), always with `ENV=local`. Its aws runner, only behind the gate of 11 §2 (host run on `127.0.0.1`, `DEMO_UI_AWS_OPS=1`, `make config-check` passing), runs the runbook's targets with `ENV=aws`: `ecr-up`, `push`, `plan`, `deploy`, `outputs`, `cognito-users`, `seed-aws` (and `SEED_ARGS=--bind-asish`), `web-chat-sync`, `web-chat-url`, `demo`, `latency-aws`, `test-e2e`, `test-report`, `admin-open`, `admin-close`, `down`, `down-all`; `down`, `down-all`, `admin-close` and a destroying `deploy` need a typed word first, and only then get `FORCE=1`. The children read the root `.env` through `mk/vars.mk`, as in a terminal; the UI never reads it. Three targets are new for it: `ops-ui` (`mk/demo.mk`: like `showcase-ui` with `DEMO_UI_AWS_OPS=1`, no `require-env`, same port check, prints the `/#ops` URL) and `admin-open` / `admin-close` (`mk/aws.mk`, through `scripts/admin_cidr.py`, which edits the one `demo_admin_cidrs` line of `deploy/terraform/envs/aws.tfvars` with the marker comment `# managed by make admin-open / admin-close`, refuses a missing file or a multi-line list, and validates a public IPv4 `/32`). Evidence files: `seed-aws` → `artifacts/seed-aws.json`, `web-chat-sync` → `artifacts/web-chat-sync.json`, `plan` → `artifacts/terraform-plan.txt` (its summary line drives the destroy check); every aws job from the tab → `artifacts/ops-log/<date>-<name>.log` (redacted). `outputs` writes the admin keys of §2.1 into `deploy/.env.aws` when the path is open.
 
 ## 6. Helm and EKS
 

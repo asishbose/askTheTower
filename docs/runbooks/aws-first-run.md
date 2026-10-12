@@ -2,6 +2,8 @@
 
 A human runbook. Every step here spends money or touches the account, so none of it is automated; the agent only wrote the code. Run everything from the repo root in WSL with `AWS_PROFILE=att` (or the keys in the root `.env`). Expect a half day the first time, 20 minutes after that.
 
+**Tab or terminal (prompt 23).** Every `make` line below is also a button in the demo UI's Ops tab: `make ops-ui`, open `http://127.0.0.1:8091/#ops`. The tab runs the same command (`make <target> ENV=aws`) with the credentials from the root `.env`, streams the log, turns the step green from its evidence, highlights the next step, and appends a redacted transcript to `artifacts/ops-log/<date>-<name>.log` (paste that to the agent when an apply fails). The two are interchangeable: a step done in the terminal shows green in the tab. Its AWS buttons are enabled only when the UI runs on the host on `127.0.0.1` with `DEMO_UI_AWS_OPS=1` (what `make ops-ui` sets) and `make config-check` passes; `down`, `down-all`, closing the admin path and a deploy whose plan destroys anything need a typed word. The button for each line is in its `# tab:` comment.
+
 Source of truth for details: [`docs/architecture/deployment-agentcore.md`](../architecture/deployment-agentcore.md) (steps 1–13) and the prompt-20 build log (outside the repo).
 
 ## 0. One-time, days ahead (console / CLI, nothing deployed yet)
@@ -15,7 +17,7 @@ Source of truth for details: [`docs/architecture/deployment-agentcore.md`](../ar
 | 0.4 | **A hostname for the mock** | The Fargate mock sits behind an internal ALB that Gateway/Identity call over HTTPS, so it needs a certificate. Either a public Route 53 zone you own (`mock_domain_name` + `mock_route53_zone_id`, Terraform issues the ACM cert) **or** an existing ACM certificate in us-east-1 (`mock_certificate_arn`). | `make plan` fails without one. If you own no domain: register a cheap one in Route 53 (~$12/yr, propagates in minutes) — do it today |
 | 0.5 | Terraform state backend (by hand, once) | Follow the header of `deploy/terraform/backend.tf`: create a private, versioned, KMS-encrypted S3 bucket and a DynamoDB lock table; put their names in `backend.tf` (the `REPLACE-ME` values). | `make plan` / `make ecr-up` need it |
 | 0.6 | `deploy/terraform/envs/aws.tfvars` | `cp envs/aws.tfvars.example envs/aws.tfvars`; set region/profile, `mock_domain_name` + zone id (or cert arn), `sms_sandbox_numbers = ["<your E.164>"]`, leave `mock_assume_mobile_data = true` (simulation, documented), `demo_admin_cidrs = []` for now. Gitignored — never commit it. | — |
-| 0.7 | Root `.env` | `COGNITO_PASSWORD_ASISH`, `COGNITO_PASSWORD_MOM` (any strong value; never written to disk by the scripts). `make config-check` must pass. | step 6 |
+| 0.7 | Root `.env` | `COGNITO_PASSWORD_ASISH`, `COGNITO_PASSWORD_MOM` (any strong value; never written to disk by the scripts). `make config-check` must pass (it is also the Ops tab's gate). For the tab: `DEMO_UI_AWS_OPS=1` here, or start it with `make ops-ui`. | step 6 |
 | 0.8 | Toolchain in WSL | `terraform -version` (≥ 1.6), `docker buildx ls` shows an arm64-capable builder (`docker buildx create --use --platform linux/arm64` if not), `jq`, `aws`. Corporate proxy: the same `SSL_CERT_FILE` export you use for Node applies to Terraform's provider download. | steps 2–3 |
 
 ## 1. Local proof first (10 min)
@@ -32,22 +34,22 @@ Push only from a tree that passes this — the pushed `ref-client` image must be
 
 ```bash
 git status --short | head             # clean tree: `make push` tags images with `git rev-parse --short HEAD`
-make ecr-up                           # ECR root, own state; idempotent; writes artifacts/tf-outputs-ecr.json
-make push ENV=aws                     # five images, linux/arm64, provenance off; tags <sha> + latest; writes artifacts/image-tag
+make ecr-up                           # ECR root, own state; idempotent; writes artifacts/tf-outputs-ecr.json      # tab: 1 · ECR repositories
+make push ENV=aws                     # five images, linux/arm64, provenance off; tags <sha> + latest; writes artifacts/image-tag   # tab: 2 · Push
 aws ecr describe-images --repository-name att-dev/tower-mcp --region us-east-1 --query 'imageDetails[].imageTags' | head
 ```
 
 ## 3. Plan, deploy (30–45 min; AgentCore runtimes are the slow part)
 
 ```bash
-make plan                             # writes artifacts/terraform-plan.txt — READ IT
+make plan                             # writes artifacts/terraform-plan.txt — READ IT    # tab: 3 · terraform plan (chips: add / change / destroy)
 ```
 
 Expected in the plan: DynamoDB tables, KMS (two keys), `module.cognito` (pool, domain, client `web-chat`), `module.web_chat[0]` (S3 + OAC, CloudFront, proxy Lambda + function URL), two `agentcore_runtime` resources (Tower MCP, ref-client HTTP with the JWT authorizer), Gateway + Identity, the Fargate mock + internal ALB + ACM cert, Lambda alerts + EventBridge Scheduler, SNS. Check: no `*_password` / `*_secret` in clear; Cognito callback URL = the CloudFront `https://…/` URL.
 
 ```bash
-make deploy                           # checks the tag in ECR → apply → outputs → register-gateway → seed-aws (reloads the mock only, no users yet)
-make outputs                          # prints outputs, writes deploy/.env.aws (gitignored)
+make deploy                           # checks the tag in ECR → apply → outputs → register-gateway → seed-aws (reloads the mock only, no users yet)   # tab: 4 · Deploy (type deploy if the plan destroys)
+make outputs                          # prints outputs, writes deploy/.env.aws (gitignored)   # tab: 5 · Write deploy/.env.aws
 ```
 
 If `make deploy` stops, fix the one thing it names and run `make deploy` again — apply is idempotent. The four things only this first apply can confirm (and the symptom of each) are in the prompt-20 build log: Runtime session header (400), authorizer passing `Authorization` through (agent answers 401 to a valid sign-in), Lambda URL permission (403 from the function URL), provider lock platform. Paste the error to the VS Code agent with "fix against this apply output; no git".
@@ -55,10 +57,10 @@ If `make deploy` stops, fix the one thing it names and run `make deploy` again �
 ## 4. Users, seed, page (10 min)
 
 ```bash
-make cognito-users                    # creates asish + mom; writes artifacts/cognito-users.json ({name: sub}, gitignored)
-make seed-aws                         # Mom's line bound, Mom → Asish watch grant; Asish's line left UNBOUND for Flow 1
-make web-chat-sync                    # renders config.js from tf-outputs, uploads services/web-chat, invalidates CloudFront
-make web-chat-url                     # the page URL
+make cognito-users                    # creates asish + mom; writes artifacts/cognito-users.json ({name: sub}, gitignored)   # tab: 6 · Cognito users
+make seed-aws                         # Mom's line bound, Mom → Asish watch grant; Asish's line left UNBOUND for Flow 1      # tab: 7 · Seed
+make web-chat-sync                    # renders config.js from tf-outputs, uploads services/web-chat, invalidates CloudFront   # tab: 8 · Upload the web chat page
+make web-chat-url                     # the page URL                                                                          # tab: 9 · Web chat URL
 ```
 
 ## 5. Test on AWS
@@ -80,13 +82,14 @@ Open the page, sign in as `asish` → "Is my line OK?" → `NOT_BOUND` + a `/bin
 **5.3 The repeatable proof (10 min)**
 
 ```bash
-make seed-aws SEED_ARGS=--bind-asish  # the stories need Asish bound
-make demo ENV=aws                     # same four stories; transcripts must match local on tool calls + reason codes
-make latency-aws                      # 200 calls per tool → artifacts/latency-aws.md (p95 is the slide's number)
-make test-e2e ENV=aws                 # the e2e layer against the deployment
+make seed-aws SEED_ARGS=--bind-asish  # the stories need Asish bound                                                  # tab: 10 · Bind Asish
+make demo ENV=aws                     # same four stories; transcripts must match local on tool calls + reason codes  # tab: 11 · make demo on AWS
+make latency-aws                      # 200 calls per tool → artifacts/latency-aws.md (p95 is the slide's number)    # tab: 12 · Latency
+make test-e2e ENV=aws                 # the e2e layer against the deployment                                          # tab: 13 · End to end on AWS
+make test-report                      # artifacts/test-report.md with the ENV=aws row                                 # tab: 14 · test report
 ```
 
-**5.4 Control room against AWS (optional, after prompt 22)** — set `demo_admin_cidrs = ["<your public ip>/32"]` in `aws.tfvars`, `make deploy`, `make outputs`, then `make showcase-ui ENV=aws`: Moment 1–3 and Transplant run from the UI against the real deployment. Set the list back to `[]` and `make deploy` when done.
+**5.4 Control room against AWS (optional, after prompt 22)** — `make admin-open` (tab: Admin path → **Open**; the `/32` comes from `checkip.amazonaws.com`, or pass `ADMIN_CIDR=<ip>/32`): it writes `demo_admin_cidrs = ["<ip>/32"]` into `aws.tfvars` with a marker comment, plans, and deploys (which re-runs `make outputs`). Changing the list replaces the admin bearer and rolls the mock task, so the plan usually destroys something: then it stops with exit 3; read the plan and run `make deploy` (tab: **4 · Deploy**, type `deploy`). Then restart the UI as `make showcase-ui ENV=aws`: Moment 1–3 run from the UI against the real deployment (Transplant stays local). When done: `make admin-close` (tab: **Close**, type `close`).
 
 ## 6. Record, then tear down
 
@@ -94,12 +97,12 @@ make test-e2e ENV=aws                 # the e2e layer against the deployment
 # evidence for the submission
 ls artifacts/transcripts/ artifacts/latency-aws.md
 # cost: hours up × the rates in artifacts/cost.md; add the bill delta from Billing → Bills
-make down ENV=aws                     # destroys the main root; ECR repositories and images are KEPT
+make down ENV=aws                     # destroys the main root; ECR repositories and images are KEPT (also compose down -v)   # tab: Teardown → Down (type down)
 aws resourcegroupstaggingapi get-resources --tag-filters Key=project,Values=ask-the-tower --query 'ResourceTagMappingList[].ResourceARN'
 #   → only the five att-dev/* ECR repositories should remain
 ```
 
-Next morning: `make deploy` again is all it takes (images are still in ECR). After judging: `make down-all` (deletes ECR too), delete the sandbox phone numbers (`aws sns delete-sms-sandbox-phone-number`), and the state bucket + lock table last, by hand.
+Next morning: `make deploy` again is all it takes (images are still in ECR). After judging: `make down-all` (deletes ECR too; tab: Teardown → **Down all**, type `down-all`), delete the sandbox phone numbers (`aws sns delete-sms-sandbox-phone-number`), and the state bucket + lock table last, by hand.
 
 ## If something refuses
 
@@ -113,3 +116,6 @@ Next morning: `make deploy` again is all it takes (images are still in ECR). Aft
 | Bind page refuses the phone | `mock_assume_mobile_data` false, or phone on Wi-Fi | `aws.tfvars`, phone |
 | No SMS arrives | number not verified in the SNS sandbox | 0.3 |
 | `make demo ENV=aws`: Asish `NOT_BOUND` | seed without `--bind-asish` | 5.3 |
+| Ops tab: AWS buttons disabled | the gate: not `make ops-ui` (or not on `127.0.0.1`, or in the container), or `make config-check` fails; the reason is on every button | 0.7, `make ops-ui` |
+| Ops tab: "account unknown" | `aws` CLI missing, or no credentials in the root `.env` | 0.1, 0.8 |
+| `make admin-open` exits 3 | its plan destroys something (bearer rotation, mock task roll): expected | read the plan, then `make deploy` (tab: type `deploy`) |

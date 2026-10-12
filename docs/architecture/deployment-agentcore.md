@@ -9,6 +9,8 @@ differ, §2 says so.
 
 **Demo admin path (prompt 22, specified 2026-10-11; off by default, never applied).** With `demo_admin_cidrs` non-empty, `make deploy` adds CIDR-gated, bearer-protected routes on the existing public HTTP API so the laptop's demo UI can reach the mock's `/_admin`, Alerts' `/internal/sent` and `/internal/reset`, and the binding page's `/_admin` (bearer mode). Page 1 draws it dashed (A1). Names, status codes and teardown: [`components/10-scheduler-and-infra.md`](components/10-scheduler-and-infra.md) §2.1; the TODO(human) sequence: `docs/submission/build-log/22-ops.md`.
 
+**Ops tab (prompt 23, specified 2026-10-11).** Every step below that is a `make` target can also be run from the demo UI's Ops tab (`make ops-ui`, then `http://127.0.0.1:8091/#ops`), one button per command, behind the gate of [`components/11-demo-ui.md`](components/11-demo-ui.md) §2 (host run on `127.0.0.1`, `DEMO_UI_AWS_OPS=1`, `make config-check`). The tab runs the same argv as the terminal (`make <target> ENV=aws`), its children read the root `.env` through `mk/vars.mk`, destructive steps need a typed word, and each job's redacted transcript lands in `artifacts/ops-log/`. The tab and the terminal are interchangeable; each step names its button.
+
 **Status:** the AWS column has never been planned or applied. It is written, `terraform validate` passes and
 `tests/aws` passes offline, but every step after `make build` is unverified (see
 the prompt-13 build log, kept outside the repo). On page 2 those steps have dashed borders and
@@ -39,6 +41,7 @@ keys and any `TF_VAR_*`. `plan`, `deploy` and `down` add `-var-file=envs/aws.tfv
 the tag the last `make push` completed (`artifacts/image-tag`), else the git sha. `down` passes no `image_tag`.
 
 ### Step 1 — Credentials, state backend, tfvars · `TODO(human)` build-log/13 (state backend; tfvars)
+- **From the Ops tab (11 §2):** header only: profile or "key pair from .env", region and the account id (the `sts` probe); `make config-check` is gate G6 (11 §2). Nothing to run.
 - **Command:** `aws configure --profile att`, or put the keys in the root `.env`. Then `aws sts get-caller-identity`.
 - **Artefact:** `deploy/terraform/backend.tf` (bootstrap commands in its header), `deploy/terraform/envs/aws.tfvars.example`, `make config-check`.
 - **Preconditions:** an IAM user with admin rights for the hackathon window, and a public Route 53 zone you own for `mock_domain_name`, or an existing ACM certificate.
@@ -46,6 +49,7 @@ the tag the last `make push` completed (`artifacts/image-tag`), else the git sha
 - **Rollback:** delete the bucket and lock table by hand, last of all (§5).
 
 ### Step 2 — `make ecr-up` · `TODO(human)` build-log/13 (images)
+- **From the Ops tab (11 §2):** **1 · ECR repositories** (`aws-ecr-up`). Evidence: the five repository names (`ecr` probe + `artifacts/tf-outputs-ecr.json`).
 - **Command:** `make ecr-up` (once; idempotent — a re-run reports no changes).
 - **Artefact:** `deploy/terraform/ecr/`, a separate root with its own state key (`ask-the-tower/ecr/terraform.tfstate`): `aws_ecr_repository.service` ×5 plus `aws_ecr_lifecycle_policy.service` (keep the last 10, scan on push, AES256, `force_delete`). The main root reads the repositories with `data "aws_ecr_repository"` and never manages them.
 - **Preconditions:** step 1. `terraform init` has to succeed against the backend. If the repositories were already created with the old `-target` apply in the main state, move them first (`deploy/terraform/README.md`, "Migrating repositories").
@@ -53,12 +57,14 @@ the tag the last `make push` completed (`artifacts/image-tag`), else the git sha
 - **Rollback:** `make down-all` (after judging). `make down ENV=aws` keeps them.
 
 ### Step 3 — `make build`
+- **From the Ops tab (11 §2):** no button: `make build` is local and `push` rebuilds for arm64 (F3).
 - **Command:** `make build` (one image: `make build-tower-mcp`).
 - **Artefact:** `mk/build.mk`. It runs `docker build -f services/<svc>/Dockerfile -t ask-the-tower/<svc>:<sha>,latest .` for each of the five services.
 - **Result:** local host-architecture images. Nothing changes in AWS. `make push` rebuilds for arm64, so these images are not the ones AWS runs (finding F3). The step is still useful for `make sbom` and `make scan`.
 - **Rollback:** `docker image rm`.
 
 ### Step 4 — `make push ENV=aws` · `TODO(human)` build-log/13 (images; dry run only so far)
+- **From the Ops tab (11 §2):** **2 · Push the five images** (`aws-push`), after step 1. Evidence: the tag in `artifacts/image-tag`.
 - **Command:** `make push ENV=aws`.
 - **Artefact:** `scripts/push_images.py`. It runs `aws ecr get-login-password | docker login`, then for each service `docker buildx build --platform linux/arm64 --provenance=false --sbom=false -t <repo>:<sha> -t <repo>:latest --push .` On success `make push` writes the sha to `artifacts/image-tag`.
 - **Preconditions:** step 2's `artifacts/tf-outputs-ecr.json` (or a later `artifacts/tf-outputs.json`), `docker buildx`, QEMU binfmt for arm64 on an amd64 laptop, and a clean commit (the tag is `git rev-parse --short HEAD`).
@@ -66,11 +72,13 @@ the tag the last `make push` completed (`artifacts/image-tag`), else the git sha
 - **Rollback:** `aws ecr batch-delete-image`; `make down-all` removes the repositories.
 
 ### Step 5 — `make plan` · `TODO(human)` build-log/13
+- **From the Ops tab (11 §2):** **3 · terraform plan** (`aws-plan`), after step 2. Evidence: the add/change/destroy chips from `artifacts/terraform-plan.txt`; a plan older than `image-tag` or `aws.tfvars` is not current.
 - **Command:** `make plan`. It prints and uses the tag step 4 recorded, so a commit in between no longer matters (F6, resolved).
 - **Artefact:** `mk/aws.mk`. It runs `terraform init`, then `plan -out artifacts/tfplan`, then `show > artifacts/terraform-plan.txt`.
 - **Result:** nothing changes in AWS. Review the plan.
 
 ### Step 6 — `make deploy` · `TODO(human)` build-log/13
+- **From the Ops tab (11 §2):** **4 · Deploy** (`aws-deploy`), only on a current plan; type `deploy` when that plan destroys anything (T5). Evidence: stack in state (`tf` probe), `binding_url` answering `/healthz`; the cost banner appears.
 - **Command:** `make deploy`. It runs `apply -auto-approve`, then outputs → register-gateway → seed-aws → outputs, which are steps 7–9.
 - **Artefact:** `deploy/terraform/main.tf` and `modules/*`.
 - **Creation order** (Terraform's resource graph; module boundaries are not barriers):
@@ -87,11 +95,13 @@ the tag the last `make push` completed (`artifacts/image-tag`), else the git sha
 - **Rollback:** `make down ENV=aws`. A failed apply leaves partial state. Re-running `make deploy` converges, or `make down` clears it.
 
 ### Step 7 — `make register-gateway` (inside step 6) · `TODO(human)` build-log/13 (verify the Gateway contract)
+- **From the Ops tab (11 §2):** no button of its own (inside **4 · Deploy**); `register-gateway` is never in the allowlist.
 - **Artefact:** `scripts/register_gateway.py`. It **registers nothing**: Terraform created the targets in step 6. The script lists the deployed tools over MCP (signed with SigV4), maps them with `camara_client.resolve_tool_names` and writes `artifacts/gateway-tools.json`. `--check` diffs against the file.
 - **Result:** no AWS change. Services resolve the same names at warm-up (`CARRIER_GATEWAY_TOOLS=discover`).
 - **Rollback:** none needed.
 
 ### Step 8 — `make seed-aws` (inside step 6) · `TODO(human)` build-log/13
+- **From the Ops tab (11 §2):** inside **4 · Deploy**; alone: **7 · Seed the demo rows** (`aws-seed`) and **10 · Bind Asish for the stories** (`aws-seed-bind-asish`).
 - **Artefact:** `scripts/aws_seed.py`.
   1. `ecs list-tasks`, then `ecs execute-command` into the mock task, running `POST 127.0.0.1:8443/_admin/scenarios/load {"name":"demo"}`. The ALB never forwards `/_admin`.
   2. `aws_seed.seed_people` (`tower_consent` over boto3, with KMS `GenerateMac` and `Encrypt`). It writes the users, Mom's line and Mom → Asish `watch`, under the **Cognito `sub`s** (D-F): `--user asish=<sub> --user mom=<sub>`, or `artifacts/cognito-users.json` from `make cognito-users`. Without either it reloads the mock, skips the consent rows and prints "run `make cognito-users`, then `make seed-aws`" (exit 0, so the `make deploy` chain still finishes). It never writes the local names `user-asish` / `user-mom` on AWS (it refuses a `user-…` value). It binds **Mom's** line and the Mom → Asish grant and leaves **Asish's line unbound**, so Flow 1 of `bind-and-alert-flows.md` (NOT_BOUND → link → one tap → ask again) can be filmed; `make seed-aws SEED_ARGS=--bind-asish` binds it too, for `make demo ENV=aws`.
@@ -101,10 +111,12 @@ the tag the last `make push` completed (`artifacts/image-tag`), else the git sha
 - **Rollback:** re-run it (idempotent), or `make down`.
 
 ### Step 9 — `make outputs` (runs twice inside step 6)
+- **From the Ops tab (11 §2):** inside **4 · Deploy**; alone: **5 · Write deploy/.env.aws** (`aws-outputs`). Evidence: key count and admin on/off, never a value.
 - **Artefact:** `mk/aws.mk` runs `terraform output -json > artifacts/tf-outputs.json`. `scripts/render_env.py --env aws` then writes `deploy/.env.aws`. That file holds `TOWER_URL`, `BINDING_URL`, `ALERTS_URL`, `CARRIER_GATEWAY_URL`, `WEB_CHAT_URL`, the table prefix and the KMS ARNs. With the demo admin path closed (the default) it holds no secrets. Open, it also holds `MOCK_URL`, `BINDING_ADMIN_URL` and `DEMO_ADMIN_BEARER` (the one admin bearer, decision 1 of 2026-10-11; never the Alerts internal bearer), read from SSM by the script and never printed (10 §2.1); the outputs JSON holds only the parameter names. `mk/vars.mk` includes it for every `ENV=aws` target.
 - **Rollback:** delete the two files.
 
 ### Step 10 — Web chat users and page · `TODO(human)` build-log/20
+- **From the Ops tab (11 §2):** **6 · Cognito users** (`aws-cognito-users`; needs `COGNITO_PASSWORD_ASISH` and `COGNITO_PASSWORD_MOM` in the root `.env`: the job has no stdin for the prompt), **7 · Seed**, **8 · Upload the web chat page**, **9 · Web chat URL**.
 - **Command:** `make cognito-users` → `make seed-aws` → `make web-chat-sync` → `make web-chat-url`.
   1. `make cognito-users` runs `scripts/cognito_user.py create asish` and `create mom` (`admin_create_user` + `admin_set_user_password --permanent`). The password comes from `COGNITO_PASSWORD_ASISH` / `COGNITO_PASSWORD_MOM` in the root `.env`, or a prompt; it is never written to disk. It writes `artifacts/cognito-users.json` (`{name: sub}`, gitignored).
   2. `make seed-aws` writes those `sub`s into `Lines` and `Grants` (step 8).
@@ -116,6 +128,7 @@ the tag the last `make push` completed (`artifacts/image-tag`), else the git sha
 - **Rollback:** `uv run python scripts/cognito_user.py delete <name>`; `make down ENV=aws` removes the pool, users, bucket (force-destroy) and distribution.
 
 ### Step 11 — Alexa+ registration · `TODO(human)` [`alexa/registration.md`](alexa/registration.md) §2–§6 (build-log/15)
+- **From the Ops tab (11 §2):** nothing: Alexa+ registration stays a human runbook.
 - **Command:** none. Follow the runbook.
   1. The pool exists from step 6 (`modules/cognito`). Add the Alexa account-linking client to it by CLI (§2; it needs a secret and the toolkit's redirect URLs, so it stays out of Terraform).
   2. Append that client id to `tower_jwt_allowed_clients` in tfvars, then run `make deploy` again (§3). Tower and the Runtime authorizer accept the `web-chat` client and these.
@@ -125,6 +138,7 @@ the tag the last `make push` completed (`artifacts/image-tag`), else the git sha
 - **Rollback:** delete the `alexa-link` client by hand (`make down` removes the pool anyway) and remove the add-on in the toolkit.
 
 ### Step 12 — Smoke · `TODO(human)` build-log/13 (latency, test-e2e) and build-log/14 (ref-client JWT on `ENV=aws`)
+- **From the Ops tab (11 §2):** **11 · make demo on AWS**, **12 · Latency**, **13 · End to end on AWS**, **14 · Write artifacts/test-report.md**; checks 1, 2, 6 and 7 stay in a terminal or browser.
 - **Checks, in order:**
   1. `curl $BINDING_URL/healthz`.
   2. MCP Inspector against `TOWER_URL` with the bearer. Tower's `/healthz` is not exposed through the Runtime URL, which proxies `/invocations` to `/mcp` (unverified).
@@ -136,11 +150,13 @@ the tag the last `make push` completed (`artifacts/image-tag`), else the git sha
 - **Preconditions:** `deploy/.env.aws` (the `require-env` guard) and a bearer for the reference client. How `make demo ENV=aws` gets its JWT is still open (build-log/14).
 
 ### Step 12b — Demo admin path, open and close (optional) · `TODO(human)` build-log/22-ops
-- **Command:** in `deploy/terraform/envs/aws.tfvars` set `demo_admin_cidrs = ["<your public IP>/32"]`; `make plan && make deploy` (re-runs `make outputs`); `make showcase-ui ENV=aws`; Reset, Moment 1–3. Close: `demo_admin_cidrs = []`, `make deploy`.
+- **From the Ops tab (11 §2):** the **Admin path** box: **Open** (`aws-admin-open`, the `/32` from `checkip.amazonaws.com`, editable) runs `make admin-open`; if its plan destroys anything (the bearer rotation and the mock task roll usually do) it stops with exit 3 and step 4 asks for `deploy`. **Close** (`aws-admin-close`, type `close`). Restart the UI afterwards so the Control room reads the new `deploy/.env.aws`.
+- **Command:** `make admin-open` (sets `demo_admin_cidrs = ["<your public IP>/32"]` in `deploy/terraform/envs/aws.tfvars` from `ADMIN_CIDR` or `checkip.amazonaws.com`, with the marker comment, then `make plan` and, unless the plan destroys something, `make deploy`, which re-runs `make outputs`; on exit 3 read the plan, then `make deploy`); `make showcase-ui ENV=aws`; Reset, Moment 1–3. Close: `make admin-close` (`[]`, plan, deploy; asks unless `FORCE=1`). Editing the line by hand and running `make plan && make deploy` is the same thing.
 - **Result:** open — the four admin routes, the `admin_gate` authorizer (address **and** `DEMO_ADMIN_BEARER`), two ALB rules, `SentSms`, one SSM parameter, the admin env flags, and the mock task rolled onto the new admin token (press Reset once it is up: the new task loads at wall time, `MOCK_CLOCK=wall`); closed — none of them, and `deploy/.env.aws` without the bearer. Changing the address list replaces the bearer: re-run `make outputs`.
 - **Check:** `uv run pytest tests/aws/test_admin_gate.py -m nightly` (closed → 404; open → 401 without `Authorization`, 403 with a wrong bearer, 200 with `DEMO_ADMIN_BEARER`; via CloudFront → 403).
 
 ### Step 13 — `make down ENV=aws` · `TODO(human)` build-log/13 (confirm zero except ECR)
+- **From the Ops tab (11 §2):** the red **Teardown** section at the bottom: **Down** (`aws-down`, type `down`; also stops the local stack) and **Down all** (`aws-down-all`, type `down-all`). `FORCE=1` is added only after the word.
 - **Artefact:** `mk/aws.mk` asks for confirmation (`FORCE=1` skips it), runs `terraform init` and `terraform destroy -auto-approve` on the main root (with the tfvars file, without `image_tag`), then runs `compose down -v`. That last part removes the local stack too.
 - **Result and order:** see §5. The five ECR repositories and their images are kept; the next deploy starts at step 4 only if the code changed.
 - **After judging:** `make down-all` = `down-eks` (only if the EKS state has resources) → `down ENV=aws` → a second confirmation → `terraform destroy` of the ECR root. It is the only target that deletes images.
