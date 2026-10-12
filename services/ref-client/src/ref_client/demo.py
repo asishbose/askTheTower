@@ -11,6 +11,10 @@ Lines are addressed by who holds them and fired by the mock's opaque `ref` (G2):
 
 `run_demo(..., reset=True, on_step=None)` (G4, doc 11 §5): `on_step` gets one `StepReport` per step — what the demo
 UI shows as narration with a pass/fail badge; `reset=False` skips the scenario reload (the caller has reset).
+
+An `Advance` with `expect` waits until Alerts' sent list (`GET /internal/sent?after=<n>`, 06 §3.1) shows that text,
+read from the cursor at the start of the story (09 §4). Without a reachable sent list the wait is skipped and the
+report says so.
 """
 
 from __future__ import annotations
@@ -19,7 +23,7 @@ import asyncio
 import inspect
 import os
 import time
-from collections.abc import Awaitable, Callable, Mapping
+from collections.abc import Awaitable, Callable, Mapping, Sequence
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Literal, Protocol
@@ -37,6 +41,11 @@ DEFAULT_BINDING_URL = "http://localhost:8081"  # mk/vars.mk BINDING_URL
 # after a jump; two wakes plus the poll's carrier calls fit in 2.5 s. Elsewhere Alerts runs on its own schedule
 # (EventBridge, CronJobs), which no wait here can match.
 ALERTS_SETTLE_S_LOCAL = 2.5
+DEFAULT_ALERTS_URL = "http://localhost:8082"  # mk/vars.mk ALERTS_URL
+# The sent-list wait after an `Advance` with `expect` (09 §4, human decision 2026-10-11): poll every 0.2 s, give up
+# after 10 s. Locally Alerts acts on a jump at its next scheduler wake (≤ 1 s) plus the poll's carrier calls.
+SENT_POLL_S = 0.2
+SENT_WAIT_S = 10.0
 
 
 # --- the script -------------------------------------------------------------------------------------------
@@ -48,12 +57,24 @@ class Say:
 
 
 @dataclass(frozen=True)
+class ExpectSent:
+    """A text Alerts must have sent after the step: its sent-list `role` and recipient `user_id` (06 §3.1)."""
+
+    role: str
+    user_id: str
+
+    def label(self) -> str:
+        return f"{self.role} text to {self.user_id}"
+
+
+@dataclass(frozen=True)
 class Advance:
     minutes: int
     why: str
     alerts: bool = (
         False  # Alerts acts on this jump: give it time to see it before the next step changes the line
     )
+    expect: ExpectSent | None = None  # don't go on until Alerts' sent list shows this text (09 §4)
 
 
 @dataclass(frozen=True)
@@ -147,13 +168,23 @@ STORIES: tuple[Story, ...] = (
             ),
             Say("Turn on alerts for my line.", _c("watch_line", line="self", enable=True), ("OK",)),
             Fire("asish", "unreachable", "mock: Asish's phone drops off the network"),
-            Advance(20, "mock clock +20 min dark", alerts=True),
+            Advance(
+                20,
+                "mock clock +20 min dark",
+                alerts=True,
+                expect=ExpectSent("escalation[0]", "user-partner"),
+            ),
             Note(
                 "Alerts' transplant rule: 20 min dark → the partner's text (SMS log: to=chain:user-partner). "
                 "Asish's own copy is withheld: his line was SIM-swapped at +12 min."
             ),
             Say("Is my phone on?", _c("is_reachable", line="self"), ("UNREACHABLE",)),
-            Advance(15, "mock clock +15 min, no acknowledgement", alerts=True),
+            Advance(
+                15,
+                "mock clock +15 min, no acknowledgement",
+                alerts=True,
+                expect=ExpectSent("escalation[1]", "user-neighbour"),
+            ),
             Note("15 more minutes with no reply → the neighbour's text (SMS log: to=chain:user-neighbour)."),
             Fire("asish", "reachable", "mock: Asish's phone is back on the network"),
             Say("Is my phone reachable now?", _c("is_reachable", line="self"), ("OK",)),
@@ -172,6 +203,18 @@ class SettingsControl(Protocol):
     async def save_transplant(self) -> None: ...
 
     async def reset(self) -> None: ...
+
+
+class SentListUnavailable(RuntimeError):
+    """The sent list cannot be read here (off, no bearer, not reachable). The message never carries a value."""
+
+
+class SentList(Protocol):
+    """Alerts' sent list, `GET /internal/sent?after=<n>` (06 §3.1): entries with `n` above the cursor, ascending.
+    Raises `SentListUnavailable` when it cannot be read. Entries carry no number; only `n`, `role` and `user_id`
+    are read here."""
+
+    async def after(self, n: int) -> Sequence[Mapping[str, object]]: ...
 
 
 TRANSPLANT_SETTINGS: dict[str, Any] = {
@@ -236,6 +279,117 @@ class BindingAdminGrants:
         await self._http.aclose()
 
 
+class AlertsSentList:
+    """`GET {ALERTS_URL}/internal/sent?after=<n>` with Alerts' admin bearer (06 §3.1: `INTERNAL_BEARER` locally,
+    `DEMO_ADMIN_BEARER` on ENV=aws, decision 1). Any failure is `SentListUnavailable`: the wait is skipped."""
+
+    def __init__(
+        self, base_url: str, bearer: str, *, transport: httpx.AsyncBaseTransport | None = None
+    ) -> None:
+        self._http = httpx.AsyncClient(
+            base_url=base_url.rstrip("/"),
+            headers={"Authorization": f"Bearer {bearer}"},
+            transport=transport,
+            timeout=5.0,
+        )
+
+    async def after(self, n: int) -> list[dict[str, object]]:
+        try:
+            r = await self._http.get("/internal/sent", params={"after": n})
+        except httpx.HTTPError as e:
+            raise SentListUnavailable(f"Alerts' sent list not reachable ({type(e).__name__})") from None
+        if r.status_code == 404:
+            raise SentListUnavailable("Alerts' sent list is off here (404)")
+        if r.status_code >= 300:
+            raise SentListUnavailable(f"Alerts' sent list answered {r.status_code}")
+        body: dict[str, Any] = r.json()
+        return [dict(e) for e in body.get("sent", [])]
+
+    async def aclose(self) -> None:
+        await self._http.aclose()
+
+
+def alerts_sent_list(env: str, environ: Mapping[str, str]) -> AlertsSentList | None:
+    """`make demo`'s sent list: `ALERTS_URL` with `DEMO_ADMIN_BEARER` on ENV=aws, else `ALERTS_INTERNAL_BEARER`
+    (mk/vars.mk exports it locally from deploy/compose/.env). None without a bearer: the waits are skipped."""
+    bearer = environ.get("DEMO_ADMIN_BEARER" if env == "aws" else "ALERTS_INTERNAL_BEARER", "")
+    if not bearer:
+        return None
+    return AlertsSentList(environ.get("ALERTS_URL") or DEFAULT_ALERTS_URL, bearer)
+
+
+@dataclass(frozen=True)
+class SentCheck:
+    """One sent-list wait: `seen` (the text is there), `missing` (not within the ceiling) or `skipped` (no list)."""
+
+    status: Literal["seen", "missing", "skipped"]
+    text: str
+
+
+@dataclass
+class SentWatch:
+    """Alerts' sent list for one story, read only by `after=<cursor>` from the value at the story's start, so a
+    text from an earlier story never satisfies a wait. Each entry satisfies one wait."""
+
+    sent: SentList | None
+    sleep: Callable[[float], Awaitable[None]]
+    monotonic: Callable[[], float]
+    poll_s: float = SENT_POLL_S
+    ceiling_s: float = SENT_WAIT_S
+    cursor: int = 0
+    off: str = ""
+    _used: set[int] = field(default_factory=set)
+
+    async def start(self) -> None:
+        """The cursor: the highest `n` now in the list. Sets `off` when there is no list to read."""
+        if self.sent is None:
+            self.off = "no sent list here (ALERTS_URL and an admin bearer are needed)"
+            return
+        try:
+            while (batch := _entries(await self.sent.after(self.cursor))) and max(
+                e.n for e in batch
+            ) > self.cursor:
+                self.cursor = max(e.n for e in batch)  # the list pages at 200 entries
+        except SentListUnavailable as e:
+            self.off = str(e)
+
+    async def wait_for(self, want: ExpectSent) -> SentCheck:
+        """Poll every `poll_s` until a new entry matches `want`; `missing` after `ceiling_s`, never a hang."""
+        if self.off or self.sent is None:
+            return SentCheck("skipped", f"wait for the {want.label()} skipped: {self.off}")
+        started = self.monotonic()
+        while True:
+            try:
+                batch = _entries(await self.sent.after(self.cursor))
+            except SentListUnavailable as e:
+                return SentCheck("skipped", f"wait for the {want.label()} skipped: {e}")
+            hit = next((e for e in batch if e.matches(want) and e.n not in self._used), None)
+            waited = self.monotonic() - started
+            if hit is not None:
+                self._used.add(hit.n)
+                return SentCheck("seen", f"{want.label()} in Alerts' sent list after {waited:.1f} s")
+            if waited >= self.ceiling_s:
+                return SentCheck(
+                    "missing", f"no {want.label()} in Alerts' sent list within {self.ceiling_s:g} s"
+                )
+            await self.sleep(self.poll_s)
+
+
+@dataclass(frozen=True)
+class _Entry:
+    n: int
+    role: str
+    user_id: str
+
+    def matches(self, want: ExpectSent) -> bool:
+        return self.role == want.role and self.user_id == want.user_id
+
+
+def _entries(raw: Sequence[Mapping[str, object]]) -> list[_Entry]:
+    """Only `n`, `role` and `user_id` of each entry; the body is never kept."""
+    return [_Entry(int(str(e["n"])), str(e.get("role", "")), str(e.get("user_id", ""))) for e in raw]
+
+
 class DemoError(RuntimeError):
     pass
 
@@ -243,7 +397,8 @@ class DemoError(RuntimeError):
 @dataclass
 class Control:
     """Mock admin + grant and watch-settings control. `on_reset` / `on_advance` let an in-process run move Tower's clock with the
-    mock's (in compose Tower reads the mock clock itself via `TOWER_CLOCK_URL`)."""
+    mock's (in compose Tower reads the mock clock itself via `TOWER_CLOCK_URL`). `sent` is Alerts' sent list for
+    the `expect` waits (None: skipped); `sleep` and `monotonic` are injectable so tests never sleep."""
 
     mock: httpx.AsyncClient
     grants: GrantControl
@@ -252,7 +407,15 @@ class Control:
     on_advance: Callable[[float], Awaitable[None]] | None = None
     alerts_settle_s: float = 0.0
     sleep: Callable[[float], Awaitable[None]] = asyncio.sleep
+    sent: SentList | None = None
+    monotonic: Callable[[], float] = time.monotonic
     _lines: dict[str, str] = field(default_factory=dict)
+
+    async def watch_sent(self) -> SentWatch:
+        """A `SentWatch` with its cursor at the sent list's current end (09 §4)."""
+        watch = SentWatch(self.sent, self.sleep, self.monotonic)
+        await watch.start()
+        return watch
 
     async def reset(self) -> None:
         r = await self.mock.post("/_admin/scenarios/load", json={"name": "demo"})
@@ -306,7 +469,11 @@ def alerts_settle_s(env: str, environ: Mapping[str, str]) -> float:
 
 
 def http_control(
-    mock_url: str | None = None, binding_url: str | None = None, *, alerts_settle_s: float = 0.0
+    mock_url: str | None = None,
+    binding_url: str | None = None,
+    *,
+    alerts_settle_s: float = 0.0,
+    sent: SentList | None = None,
 ) -> Control:
     mock = httpx.AsyncClient(
         base_url=mock_url or os.environ.get("MOCK_URL") or DEFAULT_MOCK_URL,
@@ -319,6 +486,7 @@ def http_control(
         grants=BindingAdminGrants(binding),
         settings=BindingAdminSettings(binding),
         alerts_settle_s=alerts_settle_s,
+        sent=sent,
     )
 
 
@@ -334,8 +502,9 @@ StepKind = Literal["say", "advance", "fire", "grant", "settings", "note"]
 
 @dataclass(frozen=True)
 class StepReport:
-    """One step as it ran (G4). `expected`/`actual`/`ok` are set for a `say` only; `ok` compares reason codes
-    with the story's, nothing else. `replay` marks a story run only to reach this one's timeline."""
+    """One step as it ran (G4). `expected`/`actual` are set for a `say` only, and `ok` compares its reason codes
+    with the story's. An `advance` with `expect` sets `ok` from the sent-list wait (False: the text never came;
+    None: skipped) and `sent` says which. `replay` marks a story run only to reach this one's timeline."""
 
     story: str
     step_id: str  # "<story>#<n>", n from 1
@@ -348,6 +517,7 @@ class StepReport:
     replay: bool = False
     fired: tuple[str, ...] = ()
     turn: Turn | None = None
+    sent: str = ""  # the sent-list wait's outcome, for an `advance` with `expect`
 
 
 OnStep = Callable[[StepReport], Awaitable[None] | None]
@@ -388,9 +558,10 @@ async def run_demo(
         agent = await agent_for(story.user)
         t = Transcript(story.name, story.title, story.user, agent.name, agent.model_id, env)
         echo(f"\n=== {story.title} ===")
+        watch = await control.watch_sent() if _expects(story) else None
         for n, step in enumerate(story.steps, start=1):
             started = time.perf_counter()
-            report = await _step(step, agent, control, t, run, echo)
+            report = await _step(step, agent, control, t, run, echo, watch)
             if on_step is not None:
                 elapsed = int((time.perf_counter() - started) * 1000)
                 done = on_step(
@@ -410,16 +581,48 @@ async def run_demo(
     return run
 
 
+def _expects(story: Story) -> bool:
+    return any(isinstance(s, Advance) and s.expect is not None for s in story.steps)
+
+
+async def _advance(
+    step: Advance, control: Control, t: Transcript, run: DemoRun, echo: Any, watch: SentWatch | None
+) -> dict[str, Any]:
+    """The clock jump, then (with `expect`) the sent-list wait. The wait is not a transcript step."""
+    fired = await control.advance(step.minutes, settle=step.alerts)
+    text = step.why + (f" (fired: {', '.join(fired)})" if fired else "")
+    t.control(text)
+    echo(f"  [mock] {text}")
+    report: dict[str, Any] = {"kind": "advance", "narration": text, "fired": tuple(fired)}
+    if step.expect is None or watch is None:
+        return report
+    check = await watch.wait_for(step.expect)
+    report["sent"] = check.text
+    if check.status == "seen":
+        echo(f"  [alerts] {check.text}")
+        report["ok"] = True
+    elif check.status == "skipped":
+        echo(f"  [alerts] {check.text}")
+    else:
+        echo(f"  [alerts] MISSING: {check.text}")
+        run.mismatches.append(f"{t.story}: {step.why!r} → {check.text}")
+        report["ok"] = False
+        report["narration"] = f"{text} — MISSING: {check.text}"
+    return report
+
+
 async def _step(
-    step: Step, agent: Agent, control: Control, t: Transcript, run: DemoRun, echo: Any
+    step: Step,
+    agent: Agent,
+    control: Control,
+    t: Transcript,
+    run: DemoRun,
+    echo: Any,
+    watch: SentWatch | None = None,
 ) -> dict[str, Any]:
     """Run one step; returns the `StepReport` fields that depend on the step."""
     if isinstance(step, Advance):
-        fired = await control.advance(step.minutes, settle=step.alerts)
-        text = step.why + (f" (fired: {', '.join(fired)})" if fired else "")
-        t.control(text)
-        echo(f"  [mock] {text}")
-        return {"kind": "advance", "narration": text, "fired": tuple(fired)}
+        return await _advance(step, control, t, run, echo, watch)
     if isinstance(step, Fire):
         await control.fire(step.who, step.event)
         t.control(step.why)

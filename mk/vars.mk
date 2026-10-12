@@ -53,6 +53,9 @@ export TOWER_BEARER
 # The mock's admin bearer (G1, 08 §3) for host-side tools: make demo, the e2e helpers, showcase-ui.
 MOCK_ADMIN_TOKEN ?= $(shell sed -n 's/^MOCK_ADMIN_TOKEN=//p' $(COMPOSE_ENV_FILE) 2>/dev/null)
 export MOCK_ADMIN_TOKEN
+# Alerts' admin bearer for `make demo`'s sent-list wait (09 §4; 06 §3.1: locally the internal bearer).
+ALERTS_INTERNAL_BEARER ?= $(shell sed -n 's/^INTERNAL_BEARER=//p' $(COMPOSE_ENV_FILE) 2>/dev/null)
+export ALERTS_INTERNAL_BEARER
 else
 -include deploy/.env.$(ENV)
 endif

@@ -271,6 +271,9 @@ services:
       MOCK_URL: http://mock-carrier:8443
       MOCK_ADMIN_TOKEN: ${MOCK_ADMIN_TOKEN:-}
       BINDING_URL: http://binding-page:8081
+      # the transplant story's sent-list wait (09 §4): GET /internal/sent with Alerts' local admin bearer
+      ALERTS_URL: http://alerts:8082
+      ALERTS_INTERNAL_BEARER: ${INTERNAL_BEARER:-}
       REF_AGENT: ${REF_AGENT:-auto}
       REF_ARTIFACTS_DIR: /out
       BEDROCK_MODEL_ID: ${BEDROCK_MODEL_ID:-amazon.nova-micro-v1:0}

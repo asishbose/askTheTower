@@ -77,6 +77,30 @@ async def test_sms_fails_twice_alert_failed_then_next_recipient(world: World, ca
     ]
 
 
+async def test_a_failed_chain_step_is_logged_and_counted_once(
+    world: World, carrier, clock, sender, caplog: pytest.LogCaptureFixture
+) -> None:
+    """The step that moved on without a text is named in the log; send_one's ALERT_FAILED row stays the only one."""
+    from alerts.testing import ASISH, FakeLine
+
+    world.standard()
+    world.watch(MOM, "user-asish", "care", [("user-asish", False), ("user-neighbour", False)])
+    carrier.lines[MOM] = FakeLine(sim_change_at=T0 - timedelta(days=60))
+    carrier.lines[ASISH] = FakeLine()
+    line = world.lines[MOM]
+    await process_line(world.svc, line, "poll", T0)
+    sender.fail_next = 2
+    clock.set(T0 + M)
+    carrier.swap(MOM)
+    with caplog.at_level("WARNING", logger="alerts.escalation"):
+        await process_line(world.svc, line, "event", clock.at)
+    failed = [r.getMessage() for r in caplog.records if "chain step send failed" in r.getMessage()]
+    assert failed == [f"chain step send failed line={line[:12]} step=0 to=chain:user-asish"]
+    assert world.svc.metrics["chain_step_send_failed"] == 1
+    codes = [r[2] for r in row_summary(audit_rows(world.store, line))]
+    assert codes.count(("ALERT_FAILED",)) == 1
+
+
 async def test_expired_subscription_is_renewed_by_the_poller(world: World, mom: str, carrier, clock) -> None:
     from alerts.subscriptions import subscribe
 

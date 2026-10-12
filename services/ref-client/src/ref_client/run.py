@@ -24,7 +24,15 @@ from typing import Any
 from ref_client import voice
 from ref_client.agent import Agent, BedrockAgent, BedrockUnavailable, ScriptedAgent, has_aws_credentials
 from ref_client.corpus_runner import run_corpus
-from ref_client.demo import STORY_NAMES, DemoError, Story, alerts_settle_s, http_control, run_demo
+from ref_client.demo import (
+    STORY_NAMES,
+    DemoError,
+    Story,
+    alerts_sent_list,
+    alerts_settle_s,
+    http_control,
+    run_demo,
+)
 from ref_client.mcp_client import TowerClient, TowerConfig, TowerError, user_id_for
 from ref_client.transcript import redact
 
@@ -109,8 +117,11 @@ async def _demo(args: argparse.Namespace) -> int:
             tower = await stack.enter_async_context(TowerClient(TowerConfig.from_env(user_id=user_id)))
             return BedrockAgent(tower) if bedrock else ScriptedAgent(tower)
 
-        control = http_control(alerts_settle_s=alerts_settle_s(args.env, os.environ))
+        sent = alerts_sent_list(args.env, os.environ)
+        control = http_control(alerts_settle_s=alerts_settle_s(args.env, os.environ), sent=sent)
         stack.push_async_callback(control.mock.aclose)
+        if sent is not None:
+            stack.push_async_callback(sent.aclose)
         for admin in (control.grants, control.settings):
             close = getattr(admin, "aclose", None)
             if close is not None:

@@ -33,8 +33,11 @@ def test_example_is_clean_and_every_tf_var_exists() -> None:
     text = (ROOT / ".env.example").read_text("utf-8")
     rows, errors = cc.parse(text)
     assert not errors
-    assert all(v == "" or k in {"AWS_REGION"} for _, k, v in rows), (
-        "the template sets no values but the region"
+    # Non-secret defaults the template may set, each to exactly this value: the region, and the scripted agent
+    # for test runs (human decision 5, 2026-10-11; docs/runbooks/aws-first-run.md §0.2a). Nothing else.
+    defaults = {"REF_AGENT": "scripted"}
+    assert all(v == "" or k == "AWS_REGION" or defaults.get(k) == v for _, k, v in rows), (
+        "the template sets no values but the region and REF_AGENT=scripted"
     )
     tf_vars = (ROOT / "deploy/terraform/variables.tf").read_text() + (
         ROOT / "deploy/terraform/eks/variables.tf"

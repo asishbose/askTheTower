@@ -8,7 +8,10 @@ from their descriptions, and writes transcripts. Three jobs:
 1. **Fallback demo surface** — `ref-client demo` drives the three demo moments and the transplant story from a
    terminal, with the mock carrier's admin calls and clock advances between utterances. The transplant story
    starts with a Settings step: `POST {BINDING_URL}/_admin/watch-settings` saves Asish's `transplant` profile
-   with contacts `[user-partner, user-neighbour]` (06 §11.4); `Control.reset` deletes that Watch first.
+   with contacts `[user-partner, user-neighbour]` (06 §11.4); `Control.reset` deletes that Watch first. After
+   the +20 and +15 jumps the story waits (poll 0.2 s, at most 10 s) until Alerts' sent list shows the partner's
+   (`escalation[0]`) and then the neighbour's (`escalation[1]`) text; a missing one is a `DEMO MISMATCH`, no
+   sent list is a skipped wait, printed as `[alerts] … skipped: <why>` (09 §4).
 2. **Tool-selection regression** — `ref-client corpus` runs ~40 real phrasings (`corpus/phrasings.yaml`) and
    checks the model picked the expected tool and arguments. A miss is a description bug.
 3. **The one place a model sits** — `src/ref_client/agent.py` is the only language-model call in the repository
@@ -78,6 +81,8 @@ the mock's scenario reset, and Tower's stored-state path would answer from it.
 | `MOCK_URL` / `BINDING_URL` | `http://localhost:8443` / `http://localhost:8081` | demo controls (local) |
 | `MOCK_ADMIN_TOKEN` | — | bearer for the mock's mutating `/_admin` routes (08 §3); `make demo` reads it from `deploy/compose/.env`. The demo fires events by the line's `ref` (`/_admin/state?view=refs`), never by number |
 | `DEMO_ALERTS_SETTLE_S` | `2.5` on ENV=local, else `0` | `demo`: pause after the transplant story's clock jumps so Alerts' scheduler sees each one before the line changes again (06 §11.4) |
+| `ALERTS_URL` | `http://localhost:8082` | `demo`: Alerts' sent list (`GET /internal/sent?after=<n>`, 06 §3.1) for the transplant story's waits (09 §4) |
+| `ALERTS_INTERNAL_BEARER` / `DEMO_ADMIN_BEARER` | — | `demo`: the sent list's bearer, `ALERTS_INTERNAL_BEARER` except on ENV=aws, where it is `DEMO_ADMIN_BEARER` (decision 1). `make demo` exports the local one from `deploy/compose/.env` (`INTERNAL_BEARER`). Without it the waits are skipped and the run says so |
 | `BEDROCK_MODEL_ID` | `amazon.nova-micro-v1:0` | any Converse model with tool use |
 | `AWS_REGION` | `us-east-1` | Bedrock (and Polly) region |
 | `BEDROCK_ENDPOINT_URL` | — | override the Bedrock endpoint (tests point it at a closed port) |

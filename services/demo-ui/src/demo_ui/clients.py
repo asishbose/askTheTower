@@ -9,6 +9,7 @@ from __future__ import annotations
 from typing import Any, Literal
 
 import httpx
+from ref_client.demo import SentListUnavailable
 
 HOLDERS = {
     "phone-asish": "asish",
@@ -140,3 +141,17 @@ class AlertsSent:
     async def after(self, n: int) -> list[dict[str, Any]]:
         body = await _call(self.http, "GET", "/internal/sent", "alerts", params={"after": n})
         return list(body.get("sent", []))
+
+
+class AlertsSentControl:
+    """`ref_client.demo.SentList` over the feed's `AlertsSent`: the macros' sent-list wait (09 §4) reads the same
+    client and bearer as pane 3. `Unavailable` becomes `SentListUnavailable`, so the wait is skipped, not failed."""
+
+    def __init__(self, alerts: AlertsSent) -> None:
+        self.alerts = alerts
+
+    async def after(self, n: int) -> list[dict[str, Any]]:
+        try:
+            return await self.alerts.after(n)
+        except Unavailable as e:
+            raise SentListUnavailable(str(e)) from None

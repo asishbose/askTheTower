@@ -24,7 +24,7 @@ from ref_client.transcript import Turn
 from tower_consent import Store
 
 from demo_ui.aws_reset import AwsReset
-from demo_ui.clients import AlertsSent, BindingAdmin, MockAdmin, Unavailable, bearer
+from demo_ui.clients import AlertsSent, AlertsSentControl, BindingAdmin, MockAdmin, Unavailable, bearer
 from demo_ui.config import Settings
 from demo_ui.feed import AuditSource, CarrierSource, Feed, GrantsSource, SmsSource, Source
 from demo_ui.ops.aws_status import AwsStatus, Files
@@ -184,7 +184,7 @@ def build_deps(
     ]
     feed = Feed(sources, settings.feed_poll_s)
     the_mode = mode or agent_mode(settings)
-    control = build_control(settings, mock, binding, t, closers)
+    control = build_control(settings, mock, binding, t, closers, alerts)
 
     def get_control() -> Control:
         if control is None or not settings.macros_enabled:
@@ -246,17 +246,24 @@ def build_control(
     binding: BindingAdmin | None,
     t: dict[str, httpx.AsyncBaseTransport],
     closers: list[Callable[[], Awaitable[None]]],
+    alerts: AlertsSent | None = None,
 ) -> Control | None:
     """The macros' controls: locally ref_client's binding-admin controls; on AWS this UI's bearer-mode
-    `BindingAdmin` as the `GrantControl` and no Transplant settings (doc 11 §5), so `ref_client` is unchanged."""
+    `BindingAdmin` as the `GrantControl` and no Transplant settings (doc 11 §5), so `ref_client` is unchanged.
+    The sent-list wait (09 §4) reads the feed's `AlertsSent`; without it the wait is skipped."""
     if mock is None:
         return None
+    sent = AlertsSentControl(alerts) if alerts is not None else None
     if settings.local:
         grants = BindingAdminGrants(settings.binding_url, transport=t.get("binding"))
         watch_settings = BindingAdminSettings(settings.binding_url, transport=t.get("binding"))
         closers += [grants.aclose, watch_settings.aclose]
         return Control(
-            mock=mock.http, grants=grants, settings=watch_settings, alerts_settle_s=settings.alerts_settle_s
+            mock=mock.http,
+            grants=grants,
+            settings=watch_settings,
+            alerts_settle_s=settings.alerts_settle_s,
+            sent=sent,
         )
     if binding is None:
         return None
@@ -265,6 +272,7 @@ def build_control(
         grants=binding,
         settings=AwsSettingsControl(),
         alerts_settle_s=settings.alerts_settle_s,
+        sent=sent,
     )
 
 

@@ -66,7 +66,9 @@ def _logs_since(env: Targets, since: datetime) -> str:
 
 
 def _sms(text: str, to: str) -> list[str]:
-    return [ln for ln in text.splitlines() if "SMS to=" in ln and f"to={to}" in ln]
+    """Delivered SMS to `to` only: the log sender's `SMS to=<label> body=…` line. A `SMS to=<label> FAILED (…)`
+    line is a failed attempt, not a text."""
+    return [ln for ln in text.splitlines() if f"SMS to={to} body=" in ln]
 
 
 def _wait_for(env: Targets, since: datetime, done: Callable[[str], bool], what: str, timeout: float) -> str:

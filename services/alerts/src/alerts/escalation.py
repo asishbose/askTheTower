@@ -234,6 +234,11 @@ async def walk(
         if not await send_one(
             svc, r, body, line_id=alert.line_id, now=now, trigger=alert.trigger, ref=ref, audience=audience
         ):
+            # send_one has audited ALERT_FAILED; this names the chain step that moved on without a text.
+            log.warning(
+                "chain step send failed line=%s step=%d to=%s", alert.line_id[:12], first_step + i, r.label
+            )
+            svc.count("chain_step_send_failed")
             continue
         labels.append(r.label)
         note = None
