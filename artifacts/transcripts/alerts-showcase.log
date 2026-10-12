@@ -6,7 +6,7 @@
     [alerts.hooks] hook event line=ln_kjhihefjk type=swapped
     [alerts] audit line=ln_kjhihefjk trigger=event outcome=changed codes=SIM_SWAPPED_RECENT ref=SIM_SWAPPED_RECENT.sms
     [alerts.sms] SMS to=chain:user-asish body='SIM moved to another device at 10:00 today. Not you? Call your carrier now.'
-   alert logged 0.20 s after the carrier event (budget 5 s): ['chain:user-asish']
+   alert logged 0.18 s after the carrier event (budget 5 s): ['chain:user-asish']
    Mom's own number was not texted (it may now be the attacker's): True
 
 == 3. mock 14:10: sim_swap again within 6 h → audited, not sent

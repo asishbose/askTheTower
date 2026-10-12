@@ -62,7 +62,7 @@ def test_keys_outside_the_list_are_not_taken_from_the_file(tmp_path: Path) -> No
 def test_closed_path_or_no_file_means_admin_off(tmp_path: Path) -> None:
     s = Settings.from_env(files(tmp_path, CLOSED))
     assert not s.admin_on and not s.carrier_enabled and not s.sms_enabled and not s.binding_admin_enabled
-    assert s.admin_label == "admin off" and "admin path closed: see pane 5 step 6" in s.carrier_off_reason
+    assert s.admin_label == "admin off" and "admin path closed: see Ops → Admin path" in s.carrier_off_reason
     absent = Settings.from_env({"ENV": "aws", "DEMO_UI_AWS_ENV_FILE": str(tmp_path / "nope"), "MOCK_URL": ""})
     assert not absent.aws_env_loaded and not absent.admin_on
 

@@ -65,7 +65,9 @@ TRANSIENT = ", ".join(f"#stage #{i}.{c}" for i, cs in PULSES.items() for c in cs
 READY = """() => !!document.querySelector('#stage svg')
   && !!document.querySelector('#pill [data-env]')
   && document.querySelectorAll('.skeleton').length === 0
-  && [...document.querySelectorAll('[hx-get^="/fragment/"]')].every((d) => d.children.length > 0)"""
+  && [...document.querySelectorAll('[hx-get^="/fragment/"]')]
+    .filter((d) => !d.closest('#tab-ops'))  // the Ops tab's fragments load only when it is first shown (T1)
+    .every((d) => d.children.length > 0)"""
 QUIET = f"""() => !document.querySelector('{TRANSIENT}')
   && !document.querySelector('.stage-float *')
   && !document.body.classList.contains('running')"""
@@ -315,6 +317,78 @@ def test_the_five_states_match_their_baselines_and_stay_on_127_0_0_1(
             f"{WHY_WRITTEN}: wrote {', '.join(camera.written)} to {BASELINE.relative_to(ROOT)} "
             "(gitignored, local to this machine); look at them, then re-run to compare"
         )
+
+
+OPS_LOADED = """() => ['#ops-header .ops-head', '#ops-checklist .ops-headline', '#ops-teardown .td-what', '#ops-run .ops-bar']
+  .every((sel) => !!document.querySelector(sel))"""
+
+
+def _ops_rig(served: Served, root: Path, snapshot: Any) -> None:
+    """Deterministic Ops tab: no GET leaves the process (every one answers 200), the gate's config-check passes,
+    and the quiet probes answer `snapshot` (doc 11 §11: "fixture files and injected probes")."""
+    import httpx
+    from demo_ui.ops.probes import ProbeResult
+
+    quiet_http = httpx.AsyncClient(transport=httpx.MockTransport(lambda _: httpx.Response(200)))
+    served.deps.aws_status.http = quiet_http
+    served.deps.stack.http = quiet_http
+
+    async def passes() -> Any:
+        return ProbeResult(True)
+
+    async def snap(**_: Any) -> Any:
+        return snapshot
+
+    served.deps.gate.config_check = passes
+    served.deps.quiet.snapshot = snap  # type: ignore[method-assign]
+
+
+def _checkout(root: Path, *, dotenv: bool) -> Path:
+    (root / "mk").mkdir(parents=True, exist_ok=True)
+    (root / "Makefile").write_text("all:\n")
+    if dotenv:
+        (root / ".env").write_text("AWS_REGION=us-east-1\n")
+    return root
+
+
+@needs_browser
+def test_the_ops_tab_in_three_states(serve: Callable[..., Served], camera: Camera, tmp_path: Path) -> None:
+    """Doc 11 §11 (prompt 23): the Ops tab with the gate off, with nothing deployed, and deployed; `/#ops` opens it
+    directly and the Control room stays hidden; every request stays on 127.0.0.1."""
+    from demo_ui.ops.envload import Facts
+    from demo_ui.ops.probes import ProbeResult, ProbeSnapshot, TfState
+    from playwright.sync_api import expect
+
+    from .opsfix import BINDING, SERVICES, WEB_CHAT, everything
+
+    facts = ProbeResult(True, Facts("", "us-east-1", True, 2))
+    cases = [
+        ("ops-gate-off", _checkout(tmp_path / "off", dotenv=True), "", ProbeSnapshot()),
+        ("ops-nothing-deployed", _checkout(tmp_path / "fresh", dotenv=True), "1",
+         ProbeSnapshot(facts=facts, sts=ProbeResult(True, "123456789012"), ecr=ProbeResult(True, ()),
+                       tf=ProbeResult(True, TfState(False, {})))),
+        ("ops-deployed", _checkout(tmp_path / "deployed", dotenv=True), "1",
+         ProbeSnapshot(facts=facts, sts=ProbeResult(True, "123456789012"),
+                       ecr=ProbeResult(True, tuple(f"att-dev/{s}" for s in SERVICES)),
+                       tf=ProbeResult(True, TfState(True, {"binding_url": BINDING, "web_chat_url": WEB_CHAT})),
+                       checkip=ProbeResult(True, "8.8.8.8/32"))),
+    ]  # fmt: skip
+    everything(tmp_path / "deployed")
+    for name, root, flag, snapshot in cases:
+        served = serve(checkout=root, aws_ops=flag)
+        _ops_rig(served, root, snapshot)
+        page = camera.page()
+        page.goto(f"{served.url.rstrip('/')}/#ops")
+        page.wait_for_function(OPS_LOADED, timeout=20_000)
+        expect(page.locator("#panes")).to_be_hidden()
+        expect(page.locator('#tab-btn-ops[aria-selected="true"]')).to_have_count(1)
+        head = page.locator("#ops-header").inner_text()
+        assert ("AWS runs: on" in head) == (flag == "1"), head
+        camera.check(page, name)
+        page.context.close()
+    _assert_local_only(camera.requests)
+    if camera.written:
+        pytest.skip(f"{WHY_WRITTEN}: wrote {', '.join(camera.written)}; look at them, then re-run to compare")
 
 
 TRACK = """() => { window.__added = []; const svg = document.querySelector('#stage svg');

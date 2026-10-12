@@ -1,5 +1,5 @@
 """Routes (doc 11 §2): the page, `/healthz`, `/events` (SSE), `/say`, `/macro/{name}`, `/carrier/*`, `/binding/*`;
-pane 5's `/ops/*` and its two fragments are in `routes/ops.py`.
+the Ops tab's `/ops/*` and its four fragments are in `routes/ops.py`.
 
 Guards on every route but `/healthz`:
 - `DEMO_UI_TOKEN` when set (decision 7): `?token=` once (sets an HttpOnly, SameSite=Strict cookie) or a bearer.
@@ -119,7 +119,11 @@ def create_app(deps: Deps) -> FastAPI:
             },
             "macro_running": deps.runner.busy,
             "admin": "on" if s.admin_on else "off",
-            "ops": {"runner": deps.ops.off is None, "running": deps.ops.busy},
+            "ops": {
+                "runner": deps.ops.off is None,
+                "aws": "on" if await deps.gate.reason() is None else "off",  # never the reason's detail
+                "running": deps.ops.busy,
+            },
         }
 
     @app.get("/", response_class=HTMLResponse)

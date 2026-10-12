@@ -9,7 +9,11 @@ the compose `.env` re-read); only its targets are swapped for a `sh -c` script. 
 
 from __future__ import annotations
 
+import asyncio
+import json
 import logging
+import shlex
+import shutil
 from pathlib import Path
 
 import httpx
@@ -121,7 +125,9 @@ async def test_no_number_token_or_key_in_any_frame_fragment_reply_or_log(
         which=lambda _: "/usr/bin/make",
     )
     assert deps.ops.off is None
-    deps.ops.targets = by_name((OpsTarget("up", ("sh", "-c", script()), "stack", "Start", ("base",), False),))
+    deps.ops.targets = by_name(
+        (OpsTarget("up", ("sh", "-c", script()), "local", "stack", "Start", False, ("base",)),)
+    )
     q = deps.feed.subscribe()
     app = create_app(deps)
     try:
@@ -161,3 +167,180 @@ async def test_no_number_token_or_key_in_any_frame_fragment_reply_or_log(
     }
     for name, text in channels.items():
         assert hits(text) == [], name
+
+
+# --- The aws runner (prompt 23, doc 11 §11 "Privacy sweep (tester)") ---------------------------------------------
+# One `aws-ecr-up` job through a fake `make` first on `PATH` prints, on stdout and stderr, every credential shape the
+# redactor names (T7): `AKIA…`/`ASIA…` ids, the three shared-credentials names in any case with `=`/`:` and quotes,
+# three 40-character secret-shaped runs (one with `/`, one with `+`, one digits only), a session-token-length run,
+# E.164 numbers and bearers. The fake also answers the quiet probes, with planted secrets on stderr (discarded) and a
+# sensitive Terraform output (filtered). Nothing may reach an SSE frame, a fragment, a POST reply, the backlog, the
+# runner's view, the transcript files or a log line.
+AWS_SECRETS = (
+    "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY",
+    "je7MtGbClwBF+2Zp9Utkh3yCo8nvbEXAMPLEKEYa",
+    "Hq3kT9vLmP2xR7wZ5nB8cY4dF6gJ1sA0eU3iO9tK",
+)
+SESSION = "FwoGZXIvYXdzEXAMPLE" + "Zm9vYmFyU2Vzc2lvbg" * 8
+KEY_IDS = ("AKIAIOSFODNN7EXAMPLE", "ASIAQWERTYUIOPASDFGH", "AKIAZZZZEXAMPLE00001")
+AWS_NUMBERS = ("+16135550101", "+1 613 555 0102", "+44 7700 900123", "6135550104")
+ACCOUNT = "123456789012"
+
+
+def aws_lines() -> tuple[str, ...]:
+    s1, s2, s3 = AWS_SECRETS
+    k1, k2, k3 = KEY_IDS
+    return (
+        f"id {k1} and {k2}",
+        f"aws_access_key_id = {k3}",
+        f"aws_secret_access_key={s1}",
+        f"AWS_SECRET_ACCESS_KEY: '{s2}'",
+        f'"aws_secret_access_key": "{s3}"',
+        f"Aws_Session_Token = {SESSION}",
+        f'aws_session_token: "{SESSION}"',
+        f"export AWS_SESSION_TOKEN={SESSION}",
+        f"bare {s1} end",
+        f"[{s2}]",
+        f"'{s3}'",
+        SESSION,
+        f"aws configure set aws_secret_access_key {s1}",
+        *(f"call {n} now" for n in AWS_NUMBERS),
+        "Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.e30.EXAMPLEsignatureplanted",
+        f"COGNITO_PASSWORD_ASISH={s2}",
+        f"TF_VAR_demo_admin_bearer={s3}",
+    )
+
+
+def _echo_all(lines: tuple[str, ...], to: str = "") -> str:
+    return "; ".join("printf '%s\\n' " + shlex.quote(line) + to for line in lines)
+
+
+def aws_fake_make() -> str:
+    names = json.dumps(["att-dev/mock-carrier", "att-dev/tower-mcp", "att-dev/binding-page", "att-dev/alerts",
+                        "att-dev/ref-client"])  # fmt: skip
+    tf = json.dumps({
+        "region": {"value": "us-east-1", "sensitive": False},
+        "sms_sandbox_commands": {"value": f"{AWS_NUMBERS[0]} {AWS_SECRETS[0]}", "sensitive": True},
+        "access": {"value": KEY_IDS[0], "sensitive": False},
+    })  # fmt: skip
+    planted_err = _echo_all(aws_lines(), " >&2")
+    return f"""#!/bin/bash
+last="${{@: -1}}"
+if [ "$last" = "__ops_probe" ]; then
+  {planted_err}
+  case "$5" in
+    *COGNITO*) echo "profile= region=us-east-1 keys=1 cognito=11" ;;
+    *"sts get-caller-identity"*) echo {ACCOUNT} ;;
+    *"ecr describe-repositories"*) echo {shlex.quote(names)} ;;
+    *terraform*) echo {shlex.quote(tf)} ;;
+    *) echo __ops_missing__ ;;
+  esac
+  exit 0
+fi
+case " $* " in *" config-check "*) {planted_err}; exit 0 ;; esac
+echo "argv: $*"
+{_echo_all(aws_lines())}
+{planted_err}
+echo done
+exit 0
+"""
+
+
+def aws_forbidden() -> tuple[str, ...]:
+    return (
+        *KEY_IDS,
+        *(s[:12] for s in AWS_SECRETS),
+        *(s[-12:] for s in AWS_SECRETS),
+        SESSION[:20],
+        SESSION[-20:],
+        "EXAMPLEsignatureplanted",
+        "ui-EXAMPLE-parent-secret",
+        "5550101",
+        "555 0102",
+        "7700 900123",
+        "5550104",
+        ACCOUNT,
+    )
+
+
+def aws_hits(text: str) -> list[str]:
+    found = [*phone_hits(text), *E164_STRICT.findall(text)]
+    found += [m.group(0) for m in AWS_KEY_ID.finditer(text)] + BEARER.findall(text)
+    return found + [s for s in aws_forbidden() if s in text]
+
+
+@pytest.mark.skipif(not Path("/bin/bash").exists(), reason="needs /bin/bash for the fake make")
+async def test_aws_runner_no_key_secret_token_or_number_in_any_channel(
+    store: Store, tmp_path: Path, caplog: pytest.LogCaptureFixture
+) -> None:
+    caplog.set_level(logging.DEBUG)
+    root = tmp_path / "checkout"
+    (root / "mk").mkdir(parents=True)
+    (root / "Makefile").write_text("all:\n", encoding="utf-8")
+    (root / ".env").write_text("AWS_REGION=us-east-1\n", encoding="utf-8")
+    bin_dir = tmp_path / "bin"
+    bin_dir.mkdir()
+    fake = bin_dir / "make"
+    fake.write_text(aws_fake_make(), encoding="utf-8")
+    fake.chmod(0o755)
+    path = f"{bin_dir}:/usr/bin:/bin"
+    assert shutil.which("make", path=path) == str(fake)  # the fake, never the real one
+    rec = Recorder()
+    deps = build_deps(
+        Settings(checkout=root, aws_ops="1", **UI_SECRETS),
+        transports={
+            "mock": rec.mock(),
+            "binding": rec.binding(),
+            "alerts": rec.alerts(),
+            "ops": httpx.MockTransport(lambda _: httpx.Response(200)),
+        },
+        store=store,
+        reset=None,
+        mode="scripted",
+        environ={"PATH": path, "HOME": str(root), "AWS_SECRET_ACCESS_KEY": "ui-EXAMPLE-parent-secret"},
+        which=lambda name: shutil.which(name, path=path),
+    )
+    q = deps.feed.subscribe()
+    app = create_app(deps)
+    try:
+        cookie = {"demo_ui_token": UI_SECRETS["ui_token"]}
+        async with httpx.AsyncClient(
+            transport=httpx.ASGITransport(app=app), base_url="http://ui.test", cookies=cookie
+        ) as c:
+            header = (await c.get("/fragment/ops-header?fresh=1")).text
+            assert "AWS runs: on" in header and "1234-5678-9012" in header, header  # the probes ran
+            started = await c.post("/ops/run/aws-ecr-up", headers=HX)
+            assert started.status_code == 202, started.text
+            job = await asyncio.wait_for(deps.ops.task, 30)  # type: ignore[arg-type]
+            assert job.state == "pass", list(deps.ops.backlog)
+            replies = [header, started.text]
+            for frag in ("ops", "ops-header", "ops-checklist", "ops-teardown"):
+                replies.append((await c.get(f"/fragment/{frag}?fresh=1")).text)
+                replies.append((await c.get(f"/fragment/{frag}")).text)
+    finally:
+        await deps.aclose()
+
+    frames: list[Frame] = []
+    while not q.empty():
+        frames.append(q.get_nowait())
+    backlog = list(deps.ops.backlog)
+    assert backlog[-1] == "done" and len(backlog) >= 2 * len(aws_lines()) + 2, (
+        backlog
+    )  # stdout and stderr arrived
+    assert any(f.event == "ops" for f in frames) and any(f.event == "ops-status" for f in frames)
+    logs = sorted((root / "artifacts" / "ops-log").glob("*-aws-ecr-up.log"))
+    assert len(logs) == 1
+    transcript = logs[0].read_text(encoding="utf-8")
+    assert " start aws-ecr-up: make ecr-up ENV=aws" in transcript and " end pass exit 0 " in transcript
+    assert "aws_secret_access_key=••••" in transcript and "aws_session_token=••••" in transcript.lower()
+
+    channels = {
+        "sse": "\n".join(f.sse() for f in frames),
+        "fragments": "\n".join(replies),
+        "backlog": "\n".join(backlog),
+        "view": repr(deps.ops.view()),
+        "transcript": transcript,
+        "log": "\n".join(r.getMessage() for r in caplog.records) + caplog.text,
+    }
+    for name, text in channels.items():
+        assert aws_hits(text) == [], name

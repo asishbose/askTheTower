@@ -14,7 +14,7 @@ TF_VARS := $(if $(TFVARS_FILE),-var-file=$(TFVARS_FILE)) -var=image_tag=$(IMAGE_
 TF_DOWN_VARS := $(if $(TFVARS_FILE),-var-file=$(TFVARS_FILE))
 TFR_VARS := $(if $(TFVARS_FILE),-var-file=../$(TFVARS_FILE)) -compact-warnings
 .PHONY: ecr-up ecr-outputs plan deploy seed-aws outputs latency-aws register-gateway tf-check down-all \
-	cognito-users web-chat-sync web-chat-url
+	cognito-users web-chat-sync web-chat-url admin-open admin-close
 ecr-up: ## Create the five ECR repositories (own state; idempotent; survives `make down`) → artifacts/tf-outputs-ecr.json
 	$(TFR) init -input=false && $(TFR) apply -input=false -auto-approve $(TFR_VARS) && $(MAKE) --no-print-directory ecr-outputs
 ecr-outputs: ## Write the ECR root's outputs (repository URLs, registry, region) to artifacts/tf-outputs-ecr.json
@@ -58,3 +58,19 @@ tf-check: ## terraform fmt -check + validate of the main and ecr roots (init -ba
 	terraform -chdir=deploy/terraform fmt -check -recursive
 	$(TF) init -backend=false -input=false >/dev/null && $(TF) validate
 	$(TFR) init -backend=false -input=false >/dev/null && $(TFR) validate
+# The demo admin path (10 §2.1; doc 11 §2 "admin-open / admin-close"): scripts/admin_cidr.py edits the one
+# demo_admin_cidrs line of envs/aws.tfvars (refuses a missing file or a multi-line list), then plan, then deploy.
+# Changing the list replaces DEMO_ADMIN_BEARER and rolls the mock task, so the plan usually destroys something: then
+# the plan gate stops with exit 3 unless FORCE=1 (read the plan, then `make deploy`). The address is never printed.
+ADMIN_CIDR ?=
+admin-open: ## Open the demo admin path to your /32 (ADMIN_CIDR, else checkip.amazonaws.com): tfvars, plan, deploy (exit 3 if the plan destroys, unless FORCE=1)
+	$(PY) scripts/admin_cidr.py open --cidr "$(ADMIN_CIDR)"
+	$(MAKE) --no-print-directory plan ENV=aws
+	$(PY) scripts/admin_cidr.py plan-gate --name admin-open $(if $(filter 1,$(FORCE)),--force)
+	$(MAKE) --no-print-directory deploy ENV=aws
+admin-close: ## Close the demo admin path: demo_admin_cidrs = [] in envs/aws.tfvars, plan, deploy (asks unless FORCE=1)
+	@if [ "$(FORCE)" != "1" ]; then read -p "close the demo admin path (plan, then deploy)? [y/N] " a; [ "$$a" = "y" ] || exit 1; fi
+	$(PY) scripts/admin_cidr.py close
+	$(MAKE) --no-print-directory plan ENV=aws
+	$(PY) scripts/admin_cidr.py plan-gate --name admin-close $(if $(filter 1,$(FORCE)),--force)
+	$(MAKE) --no-print-directory deploy ENV=aws

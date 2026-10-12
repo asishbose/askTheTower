@@ -1,10 +1,33 @@
-<p class="ops-headline">{{ c.headline }}</p>
-<ol class="checklist">{% for s in c.steps %}
-  <li class="ck s-{{ s.state }}" data-step="{{ s.id }}" data-state="{{ s.state }}">
+<p class="ops-headline">{{ p.headline }}</p>
+<ol class="checklist aws-steps" aria-label="AWS pipeline steps">{% for r in rows %}{% set s = r.s %}
+  <li class="ck s-{{ s.state }}{% if r.next %} next{% endif %}" data-step="{{ s.n }}" data-state="{{ s.state }}" data-target="{{ s.target }}"{% if r.next %} aria-current="step"{% endif %}>
     <span class="dot" aria-hidden="true"></span>
     <div class="ck-body">
-      <p class="ck-head"><b>{{ s.id }}. {{ s.title }}</b> <span class="ck-state">{{ s.state }}</span>{% if s.detail %} <span class="ck-detail">{{ s.detail }}</span>{% endif %}</p>
-      <p class="ck-cmd"><code id="ck-cmd-{{ s.id }}">{{ s.command }}</code><button type="button" class="btn copy" data-copy="ck-cmd-{{ s.id }}" aria-label="copy the command of step {{ s.id }}">copy</button></p>
+      <p class="ck-head"><b>{{ s.title }}</b> <span class="ck-state">{{ s.state }}</span>{% if s.when %} <time class="ck-time">{{ s.when }}</time>{% endif %}</p>
+      {% if s.evidence %}<p class="ck-evidence">{{ s.evidence }}</p>{% endif %}
+      {% if s.chips %}<p class="pchips" data-plan="+{{ s.chips.add }} ~{{ s.chips.change }} -{{ s.chips.destroy }}" aria-label="plan summary"><span class="pchip add">+{{ s.chips.add }}</span><span class="pchip change">~{{ s.chips.change }}</span><span class="pchip destroy{% if s.chips.destroy %} hot{% endif %}">−{{ s.chips.destroy }}</span></p>{% endif %}
+      {% if s.detail %}<p class="ck-detail">{{ s.detail }}</p>{% endif %}
+      <form class="ck-run" hx-post="/ops/run/{{ r.name }}" hx-target="#ops-msg" hx-swap="innerHTML">
+        {% if r.word %}<input class="confirm" name="confirm" autocomplete="off" spellcheck="false" placeholder="type {{ r.word }}" aria-label="type {{ r.word }} to confirm" data-word="{{ r.word }}"{% if r.why %} disabled{% endif %}>{% endif %}
+        <button class="btn run" type="submit" data-run="{{ r.name }}"{% if r.word %} data-word="{{ r.word }}"{% endif %}{% if r.why %} data-why="{{ r.why }}"{% endif %}{% if r.why or r.word %} disabled{% endif %} title="{{ r.why or r.label }}">Run</button>
+        {% if r.why %}<span class="why">{{ r.why }}</span>{% endif %}
+      </form>
+      <p class="ck-cmd"><code id="ck-cmd-{{ s.n }}">{{ r.command }}</code><button type="button" class="btn copy" data-copy="ck-cmd-{{ s.n }}" aria-label="copy the command of step {{ s.n }}">copy</button></p>
     </div>
-  </li>{% endfor %}
+  </li>{% if s.n == 5 %}
+  <li class="ck admin-box s-{{ p.admin.state }}" data-admin data-state="{{ p.admin.state }}" data-tfvars="{{ p.admin.tfvars }}">
+    <span class="dot" aria-hidden="true"></span>
+    <div class="ck-body">
+      <p class="ck-head"><b>Admin path</b> <span class="ck-state">{{ p.admin.state }}</span> <span class="ck-detail">{{ p.admin.detail }}</span></p>
+      <p class="ck-detail">tfvars: {{ p.admin.tfvars }} · {{ restart }}</p>
+      {% for a in admin %}<form class="ck-run" hx-post="/ops/run/{{ a.name }}" hx-target="#ops-msg" hx-swap="innerHTML">
+        <span class="ck-label">{{ a.label }}</span>
+        {% if a.cidr %}<input class="cidr" name="cidr" autocomplete="off" spellcheck="false" inputmode="decimal" placeholder="your address/32" aria-label="your public IPv4 address as a /32" value="{{ p.admin.cidr }}"{% if a.why %} disabled{% endif %}>{% endif %}
+        {% if a.word %}<input class="confirm" name="confirm" autocomplete="off" spellcheck="false" placeholder="type {{ a.word }}" aria-label="type {{ a.word }} to confirm" data-word="{{ a.word }}"{% if a.why %} disabled{% endif %}>{% endif %}
+        <button class="btn run" type="submit" data-run="{{ a.name }}"{% if a.word %} data-word="{{ a.word }}"{% endif %}{% if a.why %} data-why="{{ a.why }}"{% endif %}{% if a.why or a.word %} disabled{% endif %} title="{{ a.why or a.label }}">{{ "Open" if a.cidr else "Close" }}</button>
+        {% if a.why %}<span class="why">{{ a.why }}</span>{% endif %}
+        <code class="ck-cmd-inline" id="ck-cmd-{{ a.name }}">{{ a.command }}</code><button type="button" class="btn copy" data-copy="ck-cmd-{{ a.name }}" aria-label="copy the command of {{ a.label }}">copy</button>
+      </form>{% endfor %}
+    </div>
+  </li>{% endif %}{% endfor %}
 </ol>

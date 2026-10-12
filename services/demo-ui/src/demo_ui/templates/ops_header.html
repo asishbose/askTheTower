@@ -1,0 +1,5 @@
+<div class="ops-head" data-gate="{{ 'on' if gate is none else 'off' }}">
+  {% if gate is none %}<span class="oh-cred">{{ credentials or "credentials unknown" }}</span><span class="oh-sep" aria-hidden="true">·</span><span class="oh-region">{{ region or "region unknown" }}</span><span class="oh-sep" aria-hidden="true">·</span><span class="oh-account">{{ account }}</span><span class="oh-sep" aria-hidden="true">·</span><span class="oh-gate on">AWS runs: on</span>{% if facts_reason %} <span class="muted">(.env facts: {{ facts_reason }})</span>{% endif %}
+  {% else %}<span class="oh-gate off">AWS runs: off: {{ gate }}</span>{% endif %}
+</div>
+{% if banner %}<p class="ops-banner" title="{{ banner.title }}"><svg class="i" aria-hidden="true"><use href="/static/img/icons.svg#bolt"></use></svg>{{ banner.text }}</p>{% endif %}

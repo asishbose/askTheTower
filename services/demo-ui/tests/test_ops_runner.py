@@ -33,7 +33,7 @@ PLANTED = (
 
 
 def sh(name: str, script: str) -> OpsTarget:
-    return OpsTarget(name, ("sh", "-c", script), "tests", name, ("base",), needs_stack=False)
+    return OpsTarget(name, ("sh", "-c", script), "local", "tests", name, False, ("base",))
 
 
 TARGETS = (
@@ -41,7 +41,7 @@ TARGETS = (
     sh("sleeper", "sleep 30 & echo grandchild=$!; echo 'Bearer tok-sleeping-1234'; sleep 30"),
     sh("exit3", "echo bye; exit 3"),
     sh("env", "env"),
-    OpsTarget("make-version", ("make", "--version"), "tests", "make", ("base",), needs_stack=False),
+    OpsTarget("make-version", ("make", "--version"), "local", "tests", "make", False, ("base",)),
 )
 
 
@@ -159,9 +159,7 @@ async def test_unknown_target_and_runner_off() -> None:
     with pytest.raises(KeyError):
         runner(feed).start("rm -rf /")
     with pytest.raises(RunnerOff, match="ENV=aws"):
-        runner(feed, off="ENV=aws: nothing runs here; use the commands on the right in a terminal").start(
-            "exit3"
-        )
+        runner(feed, off="ENV=aws: the local runner is off; the AWS pipeline is on the right").start("exit3")
 
 
 async def test_the_child_never_sees_the_parents_credentials() -> None:
@@ -193,7 +191,7 @@ def test_off_reasons_are_the_docs_words(tmp_path: Path) -> None:
     ok = {"env": "local", "container": False, "make_path": "/usr/bin/make", "checkout": root}
     assert off_reason(**ok) is None  # type: ignore[arg-type]
     assert off_reason(**{**ok, "env": "aws"}) == (  # type: ignore[arg-type]
-        "ENV=aws: nothing runs here; use the commands on the right in a terminal"
+        "ENV=aws: the local runner is off; the AWS pipeline is on the right"
     )
     assert off_reason(**{**ok, "container": True}) == "runs only in `make showcase-ui` on the host"  # type: ignore[arg-type]
     assert off_reason(**{**ok, "make_path": None}) == "make not found"  # type: ignore[arg-type]

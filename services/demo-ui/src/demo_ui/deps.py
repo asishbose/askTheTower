@@ -9,9 +9,11 @@ import importlib.util
 import logging
 import os
 import shutil
+import time
 from collections.abc import AsyncIterator, Awaitable, Callable, Mapping
 from contextlib import AsyncExitStack, asynccontextmanager
 from dataclasses import dataclass, field
+from datetime import UTC, datetime
 from pathlib import Path
 from types import ModuleType
 from typing import Any, Literal
@@ -27,9 +29,14 @@ from demo_ui.aws_reset import AwsReset
 from demo_ui.clients import AlertsSent, AlertsSentControl, BindingAdmin, MockAdmin, Unavailable, bearer
 from demo_ui.config import Settings
 from demo_ui.feed import AuditSource, CarrierSource, Feed, GrantsSource, SmsSource, Source
-from demo_ui.ops.aws_status import AwsStatus, Files
-from demo_ui.ops.runner import FileSecrets, OpsRunner, off_reason
+from demo_ui.ops import plan
+from demo_ui.ops.aws_status import COGNITO_NEEDED, AwsStatus, Files
+from demo_ui.ops.gate import Gate
+from demo_ui.ops.probes import Probes, QuietProbes
+from demo_ui.ops.runner import AwsContext, FileSecrets, OpsRunner, off_reason
 from demo_ui.ops.stack import StackProbe
+from demo_ui.ops.transcript import REL as OPS_LOG
+from demo_ui.ops.transcript import Transcripts
 from demo_ui.runner import Runner
 
 log = logging.getLogger("demo_ui.deps")
@@ -96,6 +103,8 @@ class Deps:
     ops: OpsRunner
     aws_status: AwsStatus
     stack: StackProbe
+    gate: Gate
+    quiet: QuietProbes
     mock: MockAdmin | None = None
     binding: BindingAdmin | None = None
     tower_factory: Callable[..., Any] | None = None  # httpx client factory for TowerClient (test seam)
@@ -191,12 +200,38 @@ def build_deps(
             raise ResetUnavailable(settings.macros_off_reason or settings.carrier_off_reason)
         return control
 
-    # Pane 5 (doc 11 §2): probes and the checklist use a client that carries no header at all (O3: no bearer).
+    # The Ops tab (doc 11 §2): GETs and the stepper use a client that carries no header at all (no bearer).
     probe_http = httpx.AsyncClient(timeout=2.0, transport=t.get("ops"), follow_redirects=False)
     closers.append(probe_http.aclose)
     checkout = settings.checkout
+    root = checkout or Path.cwd()
     parent = os.environ if environ is None else environ
     compose_secrets = FileSecrets(checkout / COMPOSE_ENV if checkout else None)
+    aws_secrets = FileSecrets(
+        settings.aws_env_file or (checkout / "deploy" / ".env.aws" if checkout else None)
+    )
+    probes = Probes(checkout, parent)
+    quiet = QuietProbes(probes, monotonic=time.monotonic)
+    gate = Gate(
+        published_loopback=settings.published_loopback,
+        host=settings.host,
+        flag=settings.aws_ops,
+        checkout=checkout,
+        which=which,
+        config_check=probes.config_check,
+    )
+    transcripts = Transcripts(root / OPS_LOG, wall=lambda: datetime.now(UTC))
+    files = Files.under(root, settings.aws_env_file)
+    aws_status = AwsStatus(files, probe_http, transcripts)
+
+    async def aws_context() -> AwsContext:
+        """The stepper's view for an aws POST (called only after the gate passed)."""
+        snap = await quiet.snapshot(gate_on=True)
+        pipeline = await aws_status.pipeline(snap)
+        facts = snap.facts.value if snap.facts is not None and snap.facts.ok else None
+        blocked = {} if facts is not None and facts.cognito == 2 else {"aws-cognito-users": COGNITO_NEEDED}
+        return AwsContext(pipeline.done_targets, blocked, plan.deploy_needs_word(files.plan))
+
     ops = OpsRunner(
         publish=feed.publish,
         cwd=checkout,
@@ -207,8 +242,11 @@ def build_deps(
             checkout=checkout,
         ),
         parent_env=parent,
-        secrets=lambda: (*settings.secrets(), *compose_secrets()),
+        secrets=lambda: (*settings.secrets(), *compose_secrets(), *aws_secrets()),
         other_busy=lambda: deps.runner.busy,
+        gate=gate.reason,
+        aws_context=aws_context,
+        transcripts=transcripts,
     )
     closers.append(ops.aclose)
     stack_urls = (
@@ -230,8 +268,10 @@ def build_deps(
             local=settings.local,
         ),
         ops=ops,
-        aws_status=AwsStatus(Files.under(checkout or Path.cwd(), settings.aws_env_file), probe_http),
+        aws_status=aws_status,
         stack=StackProbe(probe_http, stack_urls),
+        gate=gate,
+        quiet=quiet,
         mock=mock,
         binding=binding,
         tower_factory=tower_factory,

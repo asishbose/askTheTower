@@ -78,6 +78,12 @@ h1 small { font: 400 .8rem var(--ui); color: var(--ink-2); margin-left: .35rem; 
 .pill.mode-bedrock .pill-dot { background: var(--req); box-shadow: 0 0 8px var(--req); }
 .pill.mode-scripted .pill-dot { background: var(--sms); }
 .pill-note { color: var(--ink-2); font-size: .8rem; }
+/* 1440 and up the brand, tabs, pill and health strip share one row (Presentation layout; T1 keeps the Stage where it
+   was). With the tabs, the ENV=aws pill (`· admin on|off`) and its note pushed the health strip onto a second row, so
+   on that pill only the note gives way (ellipsis; the pill's title holds it in full). ENV=local is untouched. */
+@media (min-width: 1440px) {
+  #pill:has(.pill[data-admin]) .pill-note { max-width: 11rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+}
 
 .health { display: flex; gap: .35rem; list-style: none; margin: 0 0 0 auto; padding: 0; }
 .health li {
@@ -447,18 +453,26 @@ footer { padding: .25rem 1.25rem 1.25rem; color: var(--ink-2); font-size: .78rem
 .sms-phone .sms-text { margin: .2rem 1.6rem .1rem 0; border-radius: 4px 14px 14px 14px; }
 .sms-phone .tpl { display: block; font-size: .68rem; }
 
-/* ---------- 5 · Ops ---------- */
-details.ops { margin: 0 1.25rem 1rem; }
-details.ops > summary { display: flex; align-items: center; gap: .8rem; cursor: pointer; list-style: none; }
-details.ops > summary::-webkit-details-marker { display: none; }
-details.ops > summary h2 { margin: 0; }
-details.ops > summary h2::after { content: "▸"; color: var(--ink-2); margin-left: .3rem; }
-details.ops[open] > summary h2::after { content: "▾"; }
-details.ops[open] > summary { margin-bottom: .7rem; }
+/* ---------- tabs (T1): Control room · Ops; ops.js sets body[data-tab] from the hash ---------- */
+.tabs { display: flex; gap: .25rem; }
+.tabs a { padding: .2rem .7rem; border-radius: 999px; border: 1px solid var(--edge); color: var(--ink-2); font-size: .82rem; text-decoration: none; }
+.tabs a[aria-selected="true"] { color: var(--ink); border-color: var(--req); background: rgb(79 227 255 / 0.08); }
+.tabs a:focus-visible { outline: 2px solid var(--req); outline-offset: 2px; }
+body[data-tab="ops"] .stage, body[data-tab="ops"] #panes { display: none; }
+
+/* ---------- the Ops tab ---------- */
+.ops-tab { display: grid; gap: 1rem; padding: 1rem 1.25rem; }
+.ops-tab[hidden] { display: none; } /* `display: grid` would otherwise beat the hidden attribute */
+.ops-top h2 #ops-recheck { margin-left: auto; }
+.ops-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: .2rem .5rem; font-size: .88rem; }
+.oh-sep { color: var(--muted); }
+.oh-gate.on { color: var(--ok); }
+.oh-gate.off { color: var(--sms); }
+.ops-banner { display: flex; align-items: center; gap: .4rem; margin: .5rem 0 0; padding: .3rem .6rem; border-radius: 8px; border: 1px solid var(--sms); color: var(--sms); font-size: .82rem; }
 .ops-cols { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
 .ops-col h3 { justify-content: flex-start; }
 .ops-col h3 small { text-transform: none; letter-spacing: 0; font-weight: 400; color: var(--ink-2); }
-#ops-recheck { margin-left: auto; font-size: .75rem; padding: .15rem .55rem; text-transform: none; letter-spacing: 0; }
+#ops-recheck { font-size: .75rem; padding: .15rem .55rem; text-transform: none; letter-spacing: 0; }
 .ops-groups { display: grid; gap: .35rem; }
 .ops-group { display: flex; flex-wrap: wrap; align-items: center; gap: .35rem; }
 .ops-group-name { min-width: 3.6rem; font-size: .72rem; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-2); }
@@ -498,6 +512,24 @@ details.ops[open] > summary { margin-bottom: .7rem; }
 .ck-cmd { display: flex; gap: .4rem; align-items: center; margin-top: .2rem; }
 .ck-cmd code { flex: 1; min-width: 0; padding: .15rem .4rem; border-radius: 6px; background: rgb(7 11 31 / 0.6); font-size: .74rem; overflow-wrap: anywhere; }
 .ck-cmd .copy { font-size: .72rem; padding: .1rem .5rem; }
+.ck.next { border-color: var(--req); box-shadow: 0 0 0 1px var(--req) inset; font: inherit; color: inherit; overflow-wrap: normal; } /* `.next` alone is a turn's next_step (mono) */
+.ck-time { font: .7rem var(--mono); color: var(--ink-2); }
+.ck-evidence { font: .76rem var(--mono); color: var(--ink); overflow-wrap: anywhere; }
+.ck-run { display: flex; flex-wrap: wrap; align-items: center; gap: .35rem; margin-top: .25rem; }
+.ck-run .btn { font-size: .76rem; padding: .12rem .6rem; }
+.ck-run input { font: .76rem var(--mono); padding: .12rem .4rem; border-radius: 6px; border: 1px solid var(--edge-hi); background: rgb(7 11 31 / 0.6); color: var(--ink); width: 9rem; }
+.ck-run .why { font-size: .74rem; color: var(--ink-2); }
+.ck-label { font-size: .8rem; min-width: 10rem; }
+.ck-cmd-inline { font-size: .72rem; padding: .1rem .35rem; border-radius: 6px; background: rgb(7 11 31 / 0.6); }
+.admin-box { border-style: dashed; }
+.pchips { display: inline-flex; gap: .25rem; margin: .15rem 0; }
+.pchip { padding: 0 .45rem; border-radius: 999px; border: 1px solid var(--edge-hi); font: 600 .72rem var(--mono); color: var(--ink-2); }
+.pchip.add { color: var(--ok); border-color: var(--ok); }
+.pchip.change { color: var(--sms); border-color: var(--sms); }
+.pchip.destroy.hot { color: var(--on-solid); background: var(--alert); border-color: var(--alert); }
+.teardown { border: 2px solid var(--alert); }
+.teardown .td-row { margin-top: .45rem; }
+.btn.danger:not(:disabled) { border-color: var(--alert); color: var(--alert); }
 @media (max-width: 900px) { .ops-cols { grid-template-columns: 1fr; } }
 
 /* Reduced motion: no transitions or keyframes; the state classes (beacon, shield, health, phone) still apply. */

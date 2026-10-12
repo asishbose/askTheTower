@@ -1,6 +1,6 @@
 ##@ Demo and showcase
 SHOWCASES := mock policy-table binding tower gateway alerts audit ref alexa infra ui
-.PHONY: demo corpus policy-table showcase showcase-artifacts $(addprefix showcase-,$(SHOWCASES))
+.PHONY: demo corpus policy-table showcase showcase-artifacts ops-ui $(addprefix showcase-,$(SHOWCASES))
 # SHOWCASE_ARGS passes flags to one showcase script (e.g. --print-only, --fast); DEMO_ARGS to `ref-client demo`.
 # Local: the reference client runs on the host with uv when present, else in its container (Docker only).
 # Either way the mock admin/clock calls and the grant revoke come from the demo script itself.
@@ -46,6 +46,16 @@ showcase-ui: require-env ## Demo control room on the host at 127.0.0.1:8091 (nee
 	@echo "showcase-ui: http://127.0.0.1:$(SHOWCASE_UI_PORT) — the pill shows the agent mode and ENV=$(ENV); Ctrl-C to stop"
 	@ALERTS_INTERNAL_BEARER="$$(sed -n 's/^INTERNAL_BEARER=//p' $(COMPOSE_ENV_FILE) 2>/dev/null)" \
 	  REF_AGENT="$${REF_AGENT:-auto}" DEMO_UI_HOST=127.0.0.1 DEMO_UI_PORT=$(SHOWCASE_UI_PORT) \
+	  $(if $(filter local,$(ENV)),,DYNAMO_ENDPOINT= DEMO_UI_AWS_ENV_FILE=deploy/.env.$(ENV)) $(UV) run demo-ui
+# The Ops tab with its aws runner asked for (doc 11 §2, T4): the same host run as showcase-ui on the same port, plus
+# DEMO_UI_AWS_OPS=1. No require-env: the tab is how you bring the stack (and the AWS deployment) up. The aws runner is
+# on only when the whole gate holds (127.0.0.1, this flag, make and the checkout, the root .env, make config-check).
+ops-ui: ## The demo UI on the host at 127.0.0.1:8091/#ops with the Ops tab's aws runner on (DEMO_UI_AWS_OPS=1; the gate of doc 11 §2); the stack need not be up
+	@if (exec 3<>/dev/tcp/127.0.0.1/$(SHOWCASE_UI_PORT)) 2>/dev/null; then \
+	  echo "ops-ui: 127.0.0.1:$(SHOWCASE_UI_PORT) is already in use — stop that process (make showcase-ui?) or pass SHOWCASE_UI_PORT=<free port>"; exit 2; fi
+	@echo "ops-ui: http://127.0.0.1:$(SHOWCASE_UI_PORT)/#ops — AWS runs behind the gate (make config-check); Ctrl-C to stop"
+	@ALERTS_INTERNAL_BEARER="$$(sed -n 's/^INTERNAL_BEARER=//p' $(COMPOSE_ENV_FILE) 2>/dev/null)" \
+	  REF_AGENT="$${REF_AGENT:-auto}" DEMO_UI_HOST=127.0.0.1 DEMO_UI_PORT=$(SHOWCASE_UI_PORT) DEMO_UI_AWS_OPS=1 \
 	  $(if $(filter local,$(ENV)),,DYNAMO_ENDPOINT= DEMO_UI_AWS_ENV_FILE=deploy/.env.$(ENV)) $(UV) run demo-ui
 showcase-alexa: ## Alexa+ simulator script and Tower log tail
 	$(PY) services/tower-mcp/scripts/showcase_alexa.py $(SHOWCASE_ARGS)

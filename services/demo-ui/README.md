@@ -20,7 +20,7 @@ There is no `prompts/` folder: the UI has no agent role of its own.
 | 2 Carrier controls | Reset (= `make seed`), clock +1/+12/+20 min, line events by the mock's opaque `ref`, faults; state by holder |
 | 3 Live feed | SMS from Alerts' `GET /internal/sent` (role, template, body), shown on a mocked phone (U4), and the last 50 audit rows read as each line's owner |
 | 4 Binding | bind link as a QR code (drawn here with `segno`), grants, `resolve`, Mom's revoke / re-grant |
-| 5 Ops | closed by default: "Run here" runs an allowlist of local `make` targets with a streamed, redacted log; "AWS pipeline" is a read-only checklist with copyable commands (see "Ops pane" below) |
+| Ops tab | a second tab (`Control room · Ops`, `/#ops`): "Run here" runs an allowlist of local `make` targets; the AWS pipeline is a fourteen-step stepper whose Run buttons start the runbook's `make … ENV=aws` targets behind a gate; one streamed, redacted log; Teardown at the bottom (see "Ops tab" below) |
 
 ## Look
 
@@ -83,12 +83,13 @@ that wrote them (Chromium build and system fonts), which is why they stay local.
 ```bash
 make up              # the stack, including this UI in compose at http://127.0.0.1:8090 (scripted agent)
 make showcase-ui     # the judge-facing run: the UI on the host at http://127.0.0.1:8091, Bedrock when AWS credentials resolve
+make ops-ui          # the same host run with the Ops tab's aws runner asked for (DEMO_UI_AWS_OPS=1): http://127.0.0.1:8091/#ops
 ```
 
 On the host without make: set the variables below (see `.env.example`) and `uv run demo-ui`. On ENV=aws, run
 `make showcase-ui ENV=aws`: the UI reads `deploy/.env.aws` itself. With the demo admin path closed (the default)
 the conversation (Asish only) and the audit feed work; the carrier pane, Reset and the macros are off with
-"admin path closed: see pane 5 step 6"; pane 4 shows only the QR code from Tower's `next_step`; the pill reads
+"admin path closed: see Ops → Admin path"; pane 4 shows only the QR code from Tower's `next_step`; the pill reads
 `… · ENV=aws · admin off`. With the path open (`demo_admin_cidrs` = your /32, 10 §2.1) the pill reads
 `admin on`, and the carrier pane, the SMS lane (from `SentSms`), pane 4, Reset and Moment 1–3 work against the
 deployment; Transplant stays local, with its caption.
@@ -110,7 +111,8 @@ deployment; Transplant stays local, with its caption.
 | `FEED_POLL_S` | `2` (`5` off-local) | feed poll interval; the poller runs only while a page is open |
 | `DEMO_ALERTS_SETTLE_S` | `2.5` (`0` off-local) | macro pause after a clock jump Alerts acts on, so the Transplant macro shows both contacts' texts (06 §11.4) |
 | `DEMO_UI_SEED_PATH` | the checkout's `deploy/compose/seed/seed.py` | the `make seed` module Reset runs (copied into the image) |
-| `DEMO_UI_CHECKOUT` | found from the package location | the repo root (holds `Makefile` and `mk/`): the Ops runner's `cwd` and where the checklist reads `artifacts/` |
+| `DEMO_UI_CHECKOUT` | found from the package location | the repo root (holds `Makefile` and `mk/`): the Ops runner's `cwd` and where the stepper reads `artifacts/` and `deploy/` |
+| `DEMO_UI_AWS_OPS` | — | exactly `1` asks for the Ops tab's aws runner (`make ops-ui` sets it); on only when the whole gate holds (below) |
 | `DEMO_UI_AWS_ENV_FILE` | `<checkout>/deploy/.env.aws` | ENV=aws only: read at start; for its keys (`TOWER_URL`, `BINDING_URL`, `BINDING_ADMIN_URL`, `MOCK_URL`, `ALERTS_URL`, `WEB_CHAT_URL`, `DEMO_ADMIN_BEARER`, `TOWER_TABLE_PREFIX`, `AWS_REGION`) the file wins over the shell |
 | `DEMO_UI_COGNITO_USERS` | `<checkout>/artifacts/cognito-users.json` | ENV=aws only: Asish's and Mom's Cognito subs for Reset and the Grant step; missing → Reset and macros off with "run `make cognito-users ENV=aws`" |
 | `BINDING_ADMIN_URL`, `BIND_ADMIN_TOKEN` | `BINDING_URL`, — | where pane 4 and the AWS Reset call `/_admin/*`; on AWS the execute-api URL (required there). `BIND_ADMIN_TOKEN` is never used on ENV=aws |
@@ -121,54 +123,72 @@ names its files explicitly, so a developer's own `deploy/.env.aws` never leaks i
 
 Every POST needs the `HX-Request` header that HTMX sends, so another web page cannot drive the UI on 127.0.0.1.
 Logs are JSON lines with event names and counts; uvicorn's access log is off; every fragment and SSE frame passes
-the number filter (`redact.py`). `/healthz` reports the mode, `ENV` and which panes are live, never a setting.
+the number filter (`redact.py`). `/healthz` reports the mode, `ENV`, which panes are live and `ops: {runner, aws, running}`
+(`aws`: `on`/`off`, never the reason), never a setting.
 
-## Ops pane
+## Ops tab
 
-Pane 5 sits under the four panes, in a `<details>` closed by default (doc 11 §2 "Pane 5", prompt 22).
+A second tab, `Control room · Ops` in the top bar; `/#ops` opens it directly (doc 11 §2 "The Ops tab", prompts 22
+and 23, decision 14 = T1–T8). It works with the stack down. Its fragments load only when the tab is first shown, so
+presenting on Control room starts no probe and no AWS call. Layout: a header (credentials · region · account · the
+gate · the cost banner), "Run here" (local) above the one shared log viewer, the "AWS pipeline" stepper on the right
+with the admin path after step 5, and a red-bordered **Teardown** at the bottom.
 
-**What runs here.** Only the eleven targets in `src/demo_ui/ops/allowlist.py`, each as the fixed argv
-`make <name> ENV=local`: `up`, `down`, `seed` (stack); `demo`, `showcase-tower`, `showcase-alerts`,
-`showcase-binding` (demo); `test-unit`, `test-integration`, `test-e2e`, `test-report` (tests). They run on this
-laptop as the user who started `make showcase-ui`, one at a time and never beside a macro (409 "running: <name>"),
-in their own process group (Stop: SIGINT, SIGTERM after 1.5 s, SIGKILL at 2 s), with the checkout as `cwd`. The
-log streams on the existing `/events` stream (`ops` frames every 200 ms, `ops-status` at the end: `pass`, `fail`
-or `stopped` with exit code and duration). Every line passes `redact.mask_secrets` (bearers, `*_TOKEN=`-style
-assignments, `AKIA`/`ASIA` ids, the UI's own secrets and the secret values of `deploy/compose/.env`) and
-`redact.mask` (numbers); nothing is written to disk. With the stack down (mock, binding page or Alerts not
-answering `/healthz` in 2 s) the targets that need it are disabled and `up` is the call to action.
+**What runs.** Only the 29 entries of `src/demo_ui/ops/allowlist.py` (the table in doc 11 §2; `test_ops_allowlist.py`
+compares the two): eleven **local** targets as `make <name> ENV=local` (`up`, `down`, `seed`, `demo`, the three
+showcases, the four test targets), and eighteen **aws** targets as `make <target> ENV=aws` (`ecr-up`, `push`,
+`plan`, `deploy`, `outputs`, `cognito-users`, `seed-aws`, `web-chat-sync`, `web-chat-url`,
+`seed-aws SEED_ARGS=--bind-asish`, `demo`, `latency-aws`, `test-e2e`, `test-report`, `admin-open`, `admin-close`,
+`down`, `down-all`). No free text, no shell, no argv from the browser: the only inputs are a confirm word (compared,
+never passed) and, for `admin-open`, a `/32` (validated as a public IPv4 address, then appended as `ADMIN_CIDR=`).
+One job at a time across both, never beside a macro (409). Lines stream on `/events` (`ops` frames every 200 ms,
+`ops-status` at the end), each through `redact.mask_secrets` (bearers, `*_TOKEN=`-style assignments,
+`aws_secret_access_key`/`aws_session_token`/`aws_access_key_id`, `AKIA`/`ASIA` ids, 40-character secret-shaped runs,
+100+ character base64 runs, the UI's own secrets and the secret values of `deploy/compose/.env` and
+`deploy/.env.aws`) and `redact.mask` (numbers).
 
-**What never runs.** No free text, no shell, no target with `ENV=aws|eks`, no Terraform, no `aws` CLI: `ecr-up`,
-`push`, `plan`, `deploy`, `cognito-users`, `seed-aws`, `outputs`, `web-chat-sync` and the rest of doc 11 §2's
-"never" list are refused by name when `allowlist.py` is imported. The child's environment is an allow-list (PATH,
-HOME, locale, CA bundles, proxies, Docker and uv settings, plus `NO_COLOR=1 PYTHONUNBUFFERED=1 TERM=dumb`); no
-`AWS_*`, `TF_VAR_*`, `COGNITO_*`, `*_TOKEN`, `*_BEARER`, `*_SECRET`, `*_PASSWORD`, `*_KEY`, `VIRTUAL_ENV` or `ENV`
-from the UI's process reaches it. The child `make` still reads the repo's `.env` itself, exactly as in a terminal;
-`ENV=local` on the argv is what keeps it local. "Run here" is off, with the reason on screen, with `ENV=aws`
-("nothing runs here; use the commands on the right in a terminal"), in the compose and kind containers
-(`DEMO_UI_PUBLISHED_LOOPBACK=1`), without `make`, or without a checkout. Changing the allowlist means changing
-`allowlist.py` **and** the table in doc 11 §2 in the same change: `tests/test_ops_allowlist.py` compares them.
+**Credentials (T3).** The child gets an allow-listed environment (PATH, HOME, locale, CA bundles, proxies, Docker
+and uv settings); nothing matching `AWS_*`, `TF_VAR_*`, `COGNITO_*`, `*_TOKEN`, `*_BEARER`, `*_SECRET`,
+`*_PASSWORD`, `*_KEY`, `VIRTUAL_ENV` or `ENV` passes from the UI's process. The aws targets get their credentials
+(`AWS_PROFILE` or the key pair, `AWS_REGION`) from the root `.env`, which the child `make` loads itself through
+`mk/vars.mk`, exactly as in a terminal. The UI never opens `.env` (it only asks whether it exists) and never reads a
+key into Python: the header's facts come from a `make --eval` probe that prints `${VAR:+1}` instead of a value.
 
-**How the AWS checklist reads state.** Seven steps, read-only, re-checked every 15 s and on "re-check" (which
-skips the 5 s cache): ECR repositories (`artifacts/tf-outputs-ecr.json`), images pushed (`artifacts/image-tag`),
-deployed (`deploy/.env.aws` + `GET {BINDING_URL}/healthz`), users seeded (`artifacts/cognito-users.json` +
-`artifacts/seed-aws.json`), web chat live (`artifacts/web-chat-sync.json` + `GET {WEB_CHAT_URL}`), admin path
-(`GET {MOCK_URL}/_admin/clock`), AWS test report (the `End to end (ENV=aws)` row of `artifacts/test-report.md`).
-States `todo · done · warn · fail · off`; a malformed file is that step's `fail` with the reason. Probes are
-unauthenticated GETs with a 2 s timeout; no bearer is ever sent and no URL from `.env.aws` is shown. Each step
-shows the exact terminal command with a copy button; the UI never runs it (`ops/aws_status.py` imports no AWS SDK
-and starts no process).
+**The gate (T4).** The aws Run buttons, POSTs and probes are on only when all hold, checked in order; the first that
+fails is the reason, shown verbatim in the header, on every aws button and as the POST's 403:
+G1 the host run (not the compose/kind container), G2 `DEMO_UI_HOST` exactly `127.0.0.1`, G3 `DEMO_UI_AWS_OPS=1`,
+G4 `make` and the checkout, G5 the root `.env` exists, G6 `make config-check` passes (cached until `.env` changes or
+re-check). Copy buttons always work. `ENV` is not part of the gate; with `ENV=aws` only the *local* runner is off.
 
-**Admin on AWS.** Off by default. To open it for a demo window: `demo_admin_cidrs = ["<your public IP>/32"]` in
-`deploy/terraform/envs/aws.tfvars`, `make plan && make deploy` (re-runs `make outputs`, which writes the admin
-URLs and `DEMO_ADMIN_BEARER` into the gitignored `deploy/.env.aws`), then `make showcase-ui ENV=aws`: step 6 reads
-"admin on" (its headerless probe gets 401 from the open gate), the pill `admin on`; Reset (mock scenario load, which
-also puts the Fargate mock's clock at wall time → Alerts `POST /internal/reset` → Mom's re-grant through the
-binding page's bearer-mode admin, every call with `DEMO_ADMIN_BEARER`, stopping at the first non-2xx with its
-status), then Moment 1–3. Changing the address list replaces the bearer and rolls the mock task: re-run
-`make outputs ENV=aws`, restart the UI, press Reset. To close it: `demo_admin_cidrs = []`, `make deploy`; step 6
-reads `off` and the panes show the closed message again. From an address outside the list, or with a stale bearer,
-every admin call is 403 ("mock load: 403").
+**Confirm words (T5).** `down` (Down), `down-all` (Down all), `close` (admin Close), and `deploy` when the last plan
+destroys anything or its summary cannot be read. Run enables when the field holds the word; the server compares
+again (400 "type <word> to confirm", nothing runs). Only then is `FORCE=1` appended (to the three whose recipes
+ask; never to `deploy`). The plan summary (`Plan: A to add, C to change, D to destroy.`) becomes chips on step 3 and
+in the job badge. Deploy needs a *current* plan (newer than `artifacts/image-tag` and `envs/aws.tfvars`).
+`admin-open` stops with exit 3 after a destroying plan (changing `demo_admin_cidrs` rotates `DEMO_ADMIN_BEARER` and
+rolls the mock task): read the plan, then 4 · Deploy with `deploy`. Restart the UI after Open or Close so the Control
+room uses the new bearer.
+
+**Stop.** Local jobs: SIGINT, SIGTERM after 1.5 s, SIGKILL at 2 s. AWS jobs: SIGINT once ("stopping: terraform is
+saving state"), SIGTERM on a second press, never SIGKILL (a kill leaves the Terraform state lock held).
+
+**Transcripts (T7).** Every aws job is appended to `artifacts/ops-log/<YYYY-MM-DD>-<name>.log` (directory 0700, file
+0600, gitignored): a start line (with `ADMIN_CIDR=<cidr>`, never the address), every line exactly as the browser got
+it, `== plan +A ~C -D` when a summary was seen, and an end line. Paste it to the agent when an apply fails. Local
+jobs write nothing.
+
+**State first (T6).** The stepper is recomputed on tab open, after every job, on re-check and every 15 s (while the
+tab is shown) from the files `make` writes (`artifacts/tf-outputs-ecr.json`, `image-tag`, `terraform-plan.txt`,
+`tf-outputs.json`, `cognito-users.json`, `seed-aws.json`, `web-chat-sync.json`, `latency-aws.md`, `test-report.md`,
+the transcripts, `deploy/.env.aws`), from unauthenticated GETs (binding `/healthz`, the web chat page, the admin
+clock) and, with the gate on, from read-only probes (`aws sts get-caller-identity`, `aws ecr
+describe-repositories` names only, `terraform output -json` filtered to five non-sensitive keys, `curl
+checkip.amazonaws.com` for the `/32` default; 5 s each, never on the 15 s tick). The next step is highlighted;
+evidence never shows a key, a bearer, a sub, an admin URL or the `/32`. Without the `aws` CLI the header says
+"account unknown: aws CLI not found (runbook 0.8)" and the steps fall back to their files.
+
+**How to turn it off.** It is off unless asked for: `make showcase-ui` never sets `DEMO_UI_AWS_OPS`. Leave
+`DEMO_UI_AWS_OPS=` empty in the root `.env` and use `make showcase-ui`, or stop `make ops-ui`.
 
 ## How to showcase
 
@@ -179,10 +199,15 @@ partner's (`escalation[0]`) and the neighbour's (`escalation[1]`) texts. "QR: bi
 a phone on the same Wi-Fi can scan (the caption says nothing texts it yet: D1). What it proves: the same
 transcripts as `make demo`, live, in one view — nothing the other showcases don't already prove.
 
-Pane 5: with the stack down, open Ops: only the targets that need no stack are enabled and the AWS column shows
-what exists ("Nothing deployed yet" on a fresh checkout). Press `up`, watch the log stream and the badge turn
-green; then `seed`, `demo`, `test-unit`. On AWS, after the admin-open sequence above: step 6 "admin on"; Reset,
-Moment 1–3; the SMS phone fills from `SentSms`. Close the path afterwards.
+The Ops tab: with the stack down, open http://127.0.0.1:8091/#ops (from `make showcase-ui`): only the local targets
+that need no stack are enabled, the aws runner says "AWS runs are off: start the UI with make ops-ui …", and the
+stepper shows what exists from files ("Nothing deployed yet" on a fresh checkout). Press `up`, watch the log stream
+and the badge turn green; then `seed`, `demo`, `test-unit`. Then stop it and run `make ops-ui` (same port): the
+header shows the profile or "key pair from .env", the region and the account id (dashed), never a key; step 1 is
+highlighted; Run on `1 · ECR repositories` (idempotent, no cost) turns it green with the five repository names, and
+the transcript is in `artifacts/ops-log/`. The rest is the runbook (`docs/runbooks/aws-first-run.md`), one button per
+command; Teardown needs its word. With the admin path open (Open, then 4 · Deploy with `deploy`, then
+`make showcase-ui ENV=aws`): Reset, Moment 1–3; the SMS phone fills from `SentSms`. Close it afterwards.
 
 ## How to test
 
@@ -194,7 +219,7 @@ uv run pytest services/demo-ui/tests/test_visual.py -m nightly   # pixel baselin
 The fuller suite (privacy on the wire, macros vs golden over the in-process stack, import graph, never-on-AWS
 static test, Playwright smoke) is doc 11 §11. Presentation (prompt 21): `test_assets.py` (no external request
 target, `static/` ≤ 600 KB, a colour class per reason code, no number in any picture, the font licence),
-`test_fragment_privacy.py` (all sixteen fragments masked, attributes included; pane 5 added four) and `test_visual.py` (the five states
+`test_fragment_privacy.py` (all eighteen fragments masked, attributes included; the Ops tab added six) and `test_visual.py` (the five states
 against `tests/visual/baseline/`, 0.5 % pixel tolerance, reduced motion, no request off 127.0.0.1). `test_visual.py`
 is layer `nightly`, not `make test-integration`: its baselines are local (gitignored) and tied to this machine's
 renderer. With no baseline it writes one and skips saying so; re-run to compare. Each shot is taken under emulated
@@ -211,4 +236,13 @@ no parent credential in the child), `test_ops_aws_status.py` (unit: each step ab
 `test_ops_routes.py` (integration: guards, 404, ENV=aws and container mode off, frames on `/events`, the stack-down
 state, every checklist state), `test_config_aws.py`, `test_aws_reset.py`, `test_aws_macros.py` (ENV=aws with the
 admin path open: the file wins, the HTTP Reset order and bearers, Moment 1–3, Transplant off, `admin on`).
-No test runs a real target of the allowlist.
+Ops tab (prompt 23): `test_ops_allowlist.py` (29 rows vs the doc, all ten columns, confirm words, env modes, the
+never-lists, doctored copies refused), `test_ops_envload.py` (a real `make` over a temp checkout with a copy of
+`mk/vars.mk`: `.env` values reach the child, the UI's own never; `facts` prints names and booleans only; the three
+modules never read a file), `test_ops_gate.py` (G1–G6, the cache, flipped conditions), `test_ops_probes.py` (fake
+binaries: filters, missing binaries, timeout kills the group, the cap), `test_ops_status.py` and
+`test_ops_aws_status.py` (the fourteen steps, injected probes, next step, banner, admin box), `test_ops_runner_aws.py`
+(integration over ASGI with a fake `make` first on PATH: words, FORCE=1, plan chips, deploy's word, the `/32`,
+transcripts 0600/0700 and masked, Stop SIGINT→SIGTERM, gate off → 403), `tests/aws/test_admin_cidr.py` (the
+tfvars editor and the two recipes in a temp Makefile copy with fake terraform/uv/curl). No test runs a real target
+of the allowlist or touches AWS.

@@ -33,7 +33,7 @@ pytestmark = pytest.mark.integration
 
 HX = {"HX-Request": "true"}
 SAME = {**HX, "Origin": "http://ui.test"}
-U3 = "ENV=aws: nothing runs here; use the commands on the right in a terminal"
+U3 = "ENV=aws: the local runner is off; the AWS pipeline is on the right"
 
 
 def checkout(root: Path) -> Path:
@@ -87,13 +87,20 @@ def build(store: Store, root: Path, stack: Stack, **settings: Any) -> Deps:
                 OpsTarget(
                     "up",
                     ("sh", "-c", "echo up +16135550101 planted-secret-value"),
+                    "local",
                     "stack",
                     "Start",
-                    ("base",),
                     False,
+                    ("base",),
                 ),
                 OpsTarget(
-                    "seed", ("sh", "-c", "echo 'Bearer abc.def'; sleep 30"), "stack", "Seed", ("base",), True
+                    "seed",
+                    ("sh", "-c", "echo 'Bearer abc.def'; sleep 30"),
+                    "local",
+                    "stack",
+                    "Seed",
+                    True,
+                    ("base",),
                 ),
             ),
             batch_s=0.05,
@@ -223,11 +230,13 @@ async def test_the_checklist_renders_every_state(app_client: Any, tmp_path: Path
     (a / "tf-outputs-ecr.json").write_text(json.dumps({"ecr_repositories": {s: "r" for s in
         ("mock-carrier", "tower-mcp", "binding-page", "alerts", "ref-client")}}))  # fmt: skip
     (a / "image-tag").write_text("not a tag\n")  # fail
-    (a / "cognito-users.json").write_text(json.dumps({"asish": "s-1", "mom": "s-2"}))  # warn: no seed
+    (a / "terraform-plan.txt").write_text("NOT RUN\n")  # warn: summary not found
+    (a / "cognito-users.json").write_text(json.dumps({"asish": "s-1", "mom": "s-2"}))  # done
     html = (await c.get("/fragment/ops-checklist")).text
     for st in ("todo", "done", "warn", "fail", "off"):
         assert f'data-state="{st}"' in html, st
-    assert html.count('class="btn copy"') == 7 and "make ecr-up" in html
+    assert html.count('class="btn copy"') == 16 and "make ecr-up ENV=aws" in html  # 14 steps + open + close
+    assert 'aria-current="step"' in html and "AWS runs are off" in html  # the gate is off here (no flag)
     assert phone_hits(html) == []
     assert stack.requests == []  # no .env.aws: nothing to probe
     assert (await c.get("/fragment/ops-checklist", params={"fresh": "1"})).status_code == 200
@@ -245,7 +254,7 @@ async def test_env_aws_runs_nothing_and_the_checklist_still_renders(
         assert U3 in (await c.get("/fragment/ops")).text
         assert "Nothing deployed yet" in (await c.get("/fragment/ops-checklist")).text
         health = (await c.get("/healthz")).json()
-        assert health["ops"] == {"runner": False, "running": False} and health["admin"] == "off"
+        assert health["ops"] == {"runner": False, "aws": "off", "running": False} and health["admin"] == "off"
     assert deps.ops.task is None and stack.requests == []
 
     container = build(store, checkout(tmp_path), Stack(), published_loopback=True)
@@ -256,3 +265,79 @@ async def test_env_aws_runs_nothing_and_the_checklist_still_renders(
     )  # fmt: skip
     assert no_make.ops.off == "make not found"
     await no_make.aclose()
+
+
+CONTROL_IDS = ("pill", "run-status", "stage", "announcer", "panes", "pane-conversation", "stepper", "log",
+               "pane-carrier", "carrier", "pane-feed", "sms", "audit", "pane-binding", "qr", "grants",
+               "binding-status")  # fmt: skip
+
+
+async def test_the_page_has_two_tabs_and_the_control_room_keeps_its_ids(app_client: Any) -> None:
+    c, _, stack = app_client
+    page = (await c.get("/")).text
+    assert '<nav class="tabs"' in page and ">Control room</a>" in page and 'href="#ops"' in page
+    assert '<section id="tab-ops" class="ops-tab" hidden' in page and 'id="pane-ops"' not in page
+    for i in CONTROL_IDS:
+        assert page.count(f'id="{i}"') == 1, i
+    for frag in (
+        "/fragment/ops-header",
+        "/fragment/ops-checklist",
+        "/fragment/ops-teardown",
+        "/fragment/ops",
+    ):
+        assert f'hx-get="{frag}"' in page and frag in page
+    assert page.count("ops:open from:body") == 4  # nothing loads (no probe) until the Ops tab is shown
+    assert stack.requests == []
+
+
+async def test_header_and_teardown_with_the_gate_off_and_on(
+    store: Store, lines: dict[str, str], tmp_path: Path
+) -> None:
+    root = checkout(tmp_path)
+    off = build(store, root, Stack())
+    async with httpx.AsyncClient(
+        transport=httpx.ASGITransport(app=create_app(off)), base_url="http://ui.test"
+    ) as c:
+        header = (await c.get("/fragment/ops-header")).text
+        assert (
+            'data-gate="off"' in header
+            and "AWS runs: off: AWS runs are off: start the UI with make ops-ui" in header
+        )
+        teardown = (await c.get("/fragment/ops-teardown")).text
+        assert "stack: unknown · ECR: unknown" in teardown and teardown.count("disabled") >= 4
+        assert 'placeholder="type down"' in teardown and 'placeholder="type down-all"' in teardown
+    await off.aclose()
+
+    (root / ".env").write_text("A=1\n")
+    on = build(store, root, Stack(), aws_ops="1")
+
+    async def passes() -> Any:
+        from demo_ui.ops.probes import ProbeResult
+
+        return ProbeResult(True)
+
+    async def quiet(**_: Any) -> Any:
+        from demo_ui.ops.envload import Facts
+        from demo_ui.ops.probes import ProbeResult, ProbeSnapshot
+
+        return ProbeSnapshot(facts=ProbeResult(True, Facts("", "us-east-1", True, 2)),
+                             sts=ProbeResult(True, "123456789012"))  # fmt: skip
+
+    on.gate.config_check = passes
+    on.quiet.snapshot = quiet  # type: ignore[method-assign]
+    async with httpx.AsyncClient(
+        transport=httpx.ASGITransport(app=create_app(on)), base_url="http://ui.test"
+    ) as c:
+        header = (await c.get("/fragment/ops-header")).text
+        assert 'data-gate="on"' in header and "AWS runs: on" in header
+        assert "key pair from .env" in header and "us-east-1" in header and "account 1234-5678-9012" in header
+        assert phone_hits(header) == []
+        teardown = (await c.get("/fragment/ops-teardown")).text
+        assert "data-why" not in teardown and "AWS runs are off" not in teardown
+        html = (await c.get("/fragment/ops-checklist")).text
+        first = html[html.index('data-run="aws-ecr-up"') - 60 : html.index('data-run="aws-ecr-up"') + 200]
+        assert "data-why" not in first and "disabled" not in first  # step 1: enabled
+        assert 'data-why="after 1 · ECR repositories (idempotent)"' in html
+        close = html[html.index('data-run="aws-admin-close"') :].split(">", 1)[0]
+        assert "data-why" not in close  # no order: only its word
+    await on.aclose()

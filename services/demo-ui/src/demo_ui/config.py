@@ -20,6 +20,7 @@
 | `BINDING_ADMIN_URL`, `BIND_ADMIN_TOKEN` | `BINDING_URL`, — | the binding page's `/_admin/*`; `BIND_ADMIN_TOKEN` only off ENV=aws |
 | `DEMO_ADMIN_BEARER` | — | ENV=aws, from `deploy/.env.aws`: the one bearer of the demo admin path, sent on every call to the mock's, Alerts' and the binding page's admin routes (10 §2.1, decision 1 of 2026-10-11) |
 | `DEMO_UI_COGNITO_USERS` | `<checkout>/artifacts/cognito-users.json` | ENV=aws: Asish's and Mom's Cognito subs (U3) |
+| `DEMO_UI_AWS_OPS` | — | exactly `1` asks for the Ops tab's aws runner (T4); on only when the whole gate holds (`ops/gate.py`) |
 
 The two file defaults apply only when `from_env()` reads the process environment; a mapping passed in (tests) names
 its files explicitly, so a developer's own `deploy/.env.aws` never leaks into a test.
@@ -140,6 +141,7 @@ class Settings:
     aws_env_file: Path | None = None
     aws_env_loaded: bool = False
     aws_users: tuple[str, str] | None = field(default=None, repr=False)
+    aws_ops: str = ""  # DEMO_UI_AWS_OPS as given: the gate compares it with exactly "1" (G3)
 
     @classmethod
     def from_env(
@@ -205,6 +207,7 @@ class Settings:
             aws_env_file=aws_file,
             aws_env_loaded=aws_loaded,
             aws_users=read_cognito_users(users_file) if raw_env == "aws" else None,
+            aws_ops=e.get("DEMO_UI_AWS_OPS", ""),
         )
         settings.check()
         return settings
@@ -262,7 +265,7 @@ class Settings:
     def carrier_off_reason(self) -> str:
         if self.env == "aws":
             return (
-                "ENV=aws: admin path closed: see pane 5 step 6 (carrier controls, Reset and the macros are "
+                "ENV=aws: admin path closed: see Ops → Admin path (carrier controls, Reset and the macros are "
                 "local-only unless demo_admin_cidrs is open; doc 11 decision 2)"
             )
         if not self.local:

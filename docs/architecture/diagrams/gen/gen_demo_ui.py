@@ -4,7 +4,8 @@
 Page 1: ENV=local — the four panes and every endpoint each consumes on the compose stack.
 Page 2: ENV=aws — the same UI on the laptop, and what a laptop can reach in the account, with the demo admin path
         (prompt 22, U2: CIDR + bearer, off by default) drawn dashed.
-Page 3: pane 5 (Ops, prompt 22) — the local runner behind the allowlist boundary and the read-only AWS checklist.
+Page 3: the Ops tab (prompt 22, amended by prompt 23 T1–T8) — the local runner and, behind the gate, the aws runner
+        over the runbook's make targets; the make loader for .env; the quiet probes; teardown.
 
 Same palette and Page helpers as gen_deploy.py (08) and gen_flows.py (09, 10). The demo UI was built on 2026-10-09
 (step 2) with the gaps G1–G4 closed (components/11-demo-ui.md §10), so those boxes and edges are solid; G5 is closed
@@ -57,7 +58,7 @@ def page_local() -> Page:
     p.zone("z_laptop", 30, 100, 1410, 1010, "Presenter's laptop (ENV=local)", kind="grey")
     p.box("browser", 60, 140, 560, 84, "Browser: desktop or phone (mobile layout)", [
         "one static page, HTMX + SSE, no build step · 127.0.0.1:8090 · any other address needs DEMO_UI_TOKEN",
-        "top-bar pill: agent mode (scripted in compose, bedrock on the host) and ENV",
+        "top bar: tabs Control room · Ops (/#ops; page 3) · pill: agent mode (scripted in compose, bedrock on the host), ENV",
     ], kind="white")  # fmt: skip
     p.zone("z_ui", 60, 250, 560, 840, "services/demo-ui (FastAPI + HTMX)", kind="white")
 
@@ -171,7 +172,7 @@ def page_aws() -> Page:
         "The same container (or uv run) reading deploy/.env.aws. Nothing of the UI is created in AWS. Dashed = the "
         "demo admin path: only while demo_admin_cidrs is non-empty (prompt 22, U2), CIDR and bearer on every call.",
         "Solid = reachable from the laptop by default · dashed = only with the admin path open · no edge = no laptop "
-        "path. Asish only (decision 3). Pane 5 runs nothing with ENV=aws (U3).",
+        "path. Asish only (decision 3). Ops tab: the local runner is off with ENV=aws (U3); the aws runner is page 3.",
     )
 
     p.zone("z_laptop", 30, 100, 700, 900, "Presenter's laptop", kind="grey")
@@ -184,7 +185,7 @@ def page_aws() -> Page:
         "admin open: Moment 1–3 on; Transplant stays local (D-I, no partner/neighbour on AWS)",
     ], kind="teal")  # fmt: skip
     p.box("p2", P2_PX, 400, P2_PW, 180, "2 · Carrier controls, Reset: admin path only", [
-        "closed (default): off, \"admin path closed: see pane 5 step 6\"",
+        "closed (default): off, \"admin path closed: see Ops → Admin path\"",
         "open: MOCK_URL = https://<api>/carrier-admin + Bearer DEMO_ADMIN_BEARER",
         "state (view=refs forced by the gateway), clock, events by ref, faults",
         "Reset (U3, aws_reset.py): mock scenarios/load → Alerts /internal/reset",
@@ -285,94 +286,136 @@ def page_aws() -> Page:
 
 
 # =====================================================================================================================
-# Page 3 — pane 5 (Ops): the local runner and the AWS checklist
+# Page 3 — the Ops tab: local runner, aws runner behind the gate, stepper, probes, teardown
 # =====================================================================================================================
 
 
 def page_ops() -> Page:
-    p = Page("11_ops", "3 Pane 5 Ops", 1960, 1120)
+    p = Page("11_ops", "3 Ops tab", 1960, 1420)
     titles(
         p,
-        "11 · Pane 5 (Ops): run the local stack from the browser, watch the AWS pipeline, never touch AWS",
-        "Specified 2026-10-11 (prompt 22, O1–O7, U3). The runner starts only the eleven allowlisted local make "
-        "targets; the checklist reads files make wrote and probes URLs without a bearer.",
-        "Teal = the runner (local) · amber = the checklist (read only) · dashed zone = the allowlist boundary · "
-        "pale dashed = never from the UI (O2): the human runs those in a terminal.",
+        "11 · The Ops tab: the local stack and, behind a gate, the AWS pipeline from the browser",
+        "Prompt 22 (O1, O6, U3) amended by prompt 23 (T1–T8, 2026-10-11): Ops is a tab; the aws runner runs the "
+        "runbook's make targets with the credentials of the root .env, which only make reads.",
+        "Teal = the local runner · amber = the aws runner (dashed zone = only behind the gate) · grey = AWS · "
+        "ENV is fixed on every argv; the only run-time parts are FORCE=1 after a typed word and a validated /32.",
     )
 
-    p.zone("z_laptop", 30, 100, 1270, 820, "Presenter's laptop (make showcase-ui on the host)", kind="grey")
-    p.box("browser", 60, 140, 640, 70, "Browser: pane 5 inside <details>, closed by default", [
-        "POST /ops/run/{name} · POST /ops/stop (HX-Request + same Origin) · GET /fragment/ops, /fragment/ops-checklist",
+    p.zone("z_laptop", 30, 100, 1270, 1160, "Presenter's laptop (make ops-ui on the host, 127.0.0.1:8091/#ops)",
+           kind="grey")  # fmt: skip
+    p.box("browser", 60, 140, 640, 84, "Browser: top bar tabs Control room · Ops (T1)", [
+        "Control room = the Stage and panes 1–4, unchanged (page 1) · Ops loads on first show (ops:open)",
+        "POST /ops/run/{name} (confirm, cidr) · POST /ops/stop · HX-Request + same Origin + token rule",
     ], kind="white")  # fmt: skip
-    p.zone("z_ui", 60, 240, 640, 600, "services/demo-ui", kind="white")
-    p.box("run", 90, 290, 580, 230, "5a · Run here (ops/runner.py)", [
-        "on only with ENV=local, the host run (not the compose/kind container),",
-        "make on PATH and the checkout found; otherwise greyed with the reason",
-        "one job at a time, shared lock with the macros: a second run → 409",
-        "asyncio exec, shell=False, stdin closed, own process group, cwd = checkout",
-        "env built from an allow-list (base · docker · uv); AWS_*, TF_VAR_*, *_TOKEN,",
-        "*_BEARER, *_SECRET, *_PASSWORD, *_KEY, ENV can never pass",
-        "lines → redact.mask + mask_secrets → ops frames on GET /events (O6)",
-        "Stop: SIGINT → 1.5 s SIGTERM → 2 s SIGKILL · badge pass|fail|stopped, code, time",
+    p.zone("z_ui", 60, 250, 640, 830, "services/demo-ui · the Ops tab", kind="white")
+    p.box("hdr", 90, 300, 580, 110, "Header (ops_header.html)", [
+        "profile att | key pair from .env · region · account 1234-5678-9012 (sts probe)",
+        "AWS runs: on | off: <the gate's reason, verbatim>",
+        "cost banner: deployed since <tf-outputs.json mtime>, ≈ $0.06/h idle; down keeps ECR",
+        "admin path open: close it after the demo",
+    ], kind="white")  # fmt: skip
+    p.box("run", 90, 430, 580, 170, "Run here: local runner (ops/runner.py, prompt 22)", [
+        "on only with ENV=local, the host run, make on PATH, the checkout found (U3)",
+        "stack · demo · tests: eleven make <target> ENV=local, env mode scrubbed",
+        "one job at a time across both runners and the macros: a second run → 409",
+        "the shared log: lines → mask_secrets + mask → ops frames on GET /events (O6)",
+        "badge pass | fail | stopped, exit code, duration · plan chips for aws jobs",
+        "Stop: local SIGINT → SIGTERM → SIGKILL at 2 s; aws SIGINT, never SIGKILL",
     ], kind="teal")  # fmt: skip
-    p.box("chk", 90, 550, 580, 270, "5b · AWS pipeline (ops/aws_status.py), read only", [
-        "1 ECR repositories · 2 images pushed · 3 deployed (healthz)",
-        "4 users seeded · 5 web chat live · 6 admin path on|off · 7 AWS test report",
-        "states todo · done · warn · fail · off; \"Nothing deployed yet\" when all todo",
-        "each step: the exact terminal command + a copy button (ops.js)",
-        "re-check on load, every 15 s and on the button; probes 2 s, cached 5 s",
-        "no boto3, no subprocess, no aws, no terraform, no bearer; never raises",
-        "with ENV=aws: the only live column (U3)",
+    p.box("steps", 90, 620, 580, 220, "AWS pipeline: the stepper (ops/aws_status.py, no subprocess)", [
+        "1 ECR · 2 push · 3 plan (chips) · 4 deploy · 5 outputs · 6 Cognito users · 7 seed",
+        "8 web chat upload · 9 web chat URL · 10 bind Asish · 11 demo · 12 latency",
+        "13 end to end · 14 test report · each: Run, copy, state dot, evidence, time",
+        "evidence: files make wrote, transcripts, GET healthz, the three probes",
+        "next step = first not done whose after-steps are done (highlighted)",
+        "deploy only on a current plan; type deploy when that plan destroys (T5)",
+        "admin box: Open (/32 from checkip, editable) · Close (type close)",
     ], kind="amber")  # fmt: skip
+    p.box("gate", 90, 860, 580, 110, "Gate (ops/gate.py, T4): all must hold, else disabled with the reason", [
+        "G1 host run, not the container · G2 DEMO_UI_HOST exactly 127.0.0.1",
+        "G3 DEMO_UI_AWS_OPS=1 (make ops-ui) · G4 make and checkout · G5 root .env exists",
+        "G6 make config-check exits 0 (cached until .env changes) · ENV is not a condition",
+    ], kind="white")  # fmt: skip
+    p.box("tear", 90, 990, 580, 70, "Teardown (ops_teardown.html), red border, never in the stepper", [
+        "Down: type down (keeps ECR; also compose down -v) · Down all: type down-all · then FORCE=1",
+    ], kind="white")  # fmt: skip
 
-    p.zone("z_allow", 760, 240, 520, 300, "Allowlist boundary: ops/allowlist.py (frozen)", kind="teal",
-           dashed=True)  # fmt: skip
-    p.box("allow", 790, 290, 460, 220, "make <target> ENV=local (eleven targets)", [
+    p.zone("z_local", 760, 250, 520, 260, "Allowlist, local runner (ops/allowlist.py)", kind="teal", dashed=True)
+    p.box("allow_local", 790, 300, 460, 190, "make <target> ENV=local · scrubbed", [
         "stack: up · down · seed",
         "demo: demo · showcase-tower · showcase-alerts · showcase-binding",
         "tests: test-unit · test-integration · test-e2e · test-report",
-        "argv fixed in code; ENV=local beats ENV=aws in the root .env",
-        "changing it = allowlist.py + doc 11 §2 table (snapshot test)",
-        "the child make still reads the root .env itself, as in a terminal",
+        "env: allow-listed keys only; AWS_*, *_TOKEN, ENV … never pass",
+        "no aws target, never ENV=aws (O1 holds for this runner)",
     ], kind="teal")  # fmt: skip
-    p.box("files", 790, 570, 460, 250, "Files make wrote (gitignored), read only", [
-        "artifacts/tf-outputs-ecr.json (make ecr-up)",
-        "artifacts/image-tag (make push)",
-        "deploy/.env.aws (make outputs): URLs; DEMO_ADMIN_BEARER only when open",
-        "artifacts/cognito-users.json (make cognito-users)",
-        "artifacts/seed-aws.json (make seed-aws, new)",
-        "artifacts/web-chat-sync.json (make web-chat-sync, new)",
-        "artifacts/test-report.md (make test-report)",
+
+    p.zone("z_aws_allow", 760, 540, 520, 540, "Allowlist, aws runner: only behind the gate", kind="amber",
+           dashed=True)  # fmt: skip
+    p.box("allow_aws", 790, 590, 460, 230, "make <target> ENV=aws · dotenv (eighteen)", [
+        "pipeline: ecr-up · push · plan · deploy · outputs",
+        "cognito-users · seed-aws · web-chat-sync · web-chat-url",
+        "seed-aws SEED_ARGS=--bind-asish · demo · latency-aws",
+        "test-e2e · test-report",
+        "admin: admin-open ADMIN_CIDR=<validated /32> · admin-close",
+        "teardown: down · down-all",
+        "typed word first: down, down-all, close, deploy if destroy > 0",
+        "transcript: artifacts/ops-log/<date>-<name>.log (T7)",
+    ], kind="amber")  # fmt: skip
+    p.box("loader", 790, 840, 460, 110, "The make loader (envload.py, T3)", [
+        "mk/vars.mk reads the root .env and exports it to the recipe",
+        "the UI never sources or parses .env; probes: make --eval '__ops_probe: ; @…'",
+        "the shell's own AWS_* never reach a child; HOME passes (~/.aws)",
+    ], kind="amber")  # fmt: skip
+    p.box("probes", 790, 970, 460, 90, "Quiet probes (probes.py): 5 s, filtered, never raise", [
+        "facts (profile, region, keys=1) · sts Account · ecr names · tf output (public keys)",
+        "make config-check (gate, 20 s) · curl checkip.amazonaws.com (the /32)",
     ], kind="amber")  # fmt: skip
 
-    p.zone("z_aws", 1330, 240, 600, 600, "AWS account (the UI holds no credentials for Ops)", kind="slate")
-    p.box("never", 1360, 290, 540, 320, "Never from the UI (O2): the human, in a terminal", [
-        "make ecr-up · ecr-outputs · push ENV=aws · plan · deploy",
-        "make outputs · seed-aws · cognito-users · register-gateway",
-        "make web-chat-sync · web-chat-url · latency-aws · test-nightly",
-        "make down ENV=aws · down-eks · deploy-eks · down-all",
-        "anything that reads AWS_* or a profile, any ENV=aws|eks target",
-        "",
-        "the checklist shows these as copyable text only",
-    ], kind="ghost", dashed=True)  # fmt: skip
-    p.box("probes", 1360, 640, 540, 180, "Unauthenticated GETs (the only network reads)", [
-        "GET {BINDING_URL}/healthz (step 3)",
-        "GET {WEB_CHAT_URL} (step 5)",
-        "GET {MOCK_URL}/_admin/clock: an open read (step 6);",
-        "403 = your IP is not in demo_admin_cidrs",
-    ], kind="amber")  # fmt: skip
+    p.box("files", 760, 1110, 520, 130, "On the laptop, gitignored", [
+        "root .env: read only by make (AWS_PROFILE or the key pair, AWS_REGION, DEMO_UI_AWS_OPS)",
+        "artifacts/: tf-outputs-ecr.json · image-tag · terraform-plan.txt · tf-outputs.json",
+        "cognito-users.json · seed-aws.json · web-chat-sync.json · latency-aws.md · test-report.md",
+        "deploy/.env.aws (make outputs) · deploy/terraform/envs/aws.tfvars (admin-open/close)",
+    ], kind="white")  # fmt: skip
 
-    p.edge("e_br", "browser", "z_ui", [(380, 210), (380, 240)], lbl("HTMX + SSE"), at=(450, 225))
-    p.edge("e_run", "run", "allow", [(670, 400), (790, 400)], lbl("exec argv"), kind="teal", at=(730, 400))
-    p.edge("e_files", "chk", "files", [(670, 690), (790, 690)], lbl("read"), kind="amber", at=(730, 690))
-    p.edge("e_probe", "chk", "probes", [(380, 820), (380, 880), (1630, 880), (1630, 820)], lbl("GET, 2 s, no bearer"),
-           kind="amber", at=(1000, 880))  # fmt: skip
+    p.zone("z_aws", 1330, 250, 600, 830, "AWS account (the UI is not in it)", kind="slate")
+    p.box("a_ecr", 1360, 300, 540, 90, "ECR root: five repositories", [
+        "ecr-up creates (idempotent) · push fills · down keeps · down-all destroys",
+    ], kind="grey")  # fmt: skip
+    p.box("a_main", 1360, 410, 540, 200, "Main root (Terraform state in S3)", [
+        "Runtime ×2 · Gateway + Identity · Lambdas · HTTP API · CloudFront",
+        "Fargate mock + internal ALB · DynamoDB · KMS · Cognito · SNS",
+        "plan: artifacts/terraform-plan.txt (chips) · deploy: apply, outputs,",
+        "register-gateway, seed-aws · down: destroy (asks: the typed word, then FORCE=1)",
+        "≈ $0.06/h idle (deployment-agentcore §4)",
+    ], kind="grey")  # fmt: skip
+    p.box("a_admin", 1360, 630, 540, 150, "Demo admin path (page 2), off by default", [
+        "admin-open: demo_admin_cidrs = [your /32] in envs/aws.tfvars (marker comment)",
+        "→ plan → exit 3 if it destroys (bearer rotation, task roll) → deploy",
+        "admin-close: [] → plan → deploy (type close) · file missing → refuse",
+    ], kind="grey", dashed=True)  # fmt: skip
+    p.box("a_users", 1360, 800, 540, 80, "Cognito users, seed rows, web chat page", [
+        "cognito-users (passwords from .env) · seed-aws · web-chat-sync",
+    ], kind="grey")  # fmt: skip
+    p.box("a_read", 1360, 980, 540, 80, "Read by the probes only", [
+        "STS GetCallerIdentity · ECR DescribeRepositories · state outputs (S3)",
+    ], kind="grey")  # fmt: skip
 
-    p.box("never_ui", 30, 950, 1900, 110, "Never (doc 11 §8.10, §8.11)", [
-        "10 no shell, no request string in a command, no ENV=aws|eks target, no Terraform, no aws CLI; with ENV=aws "
-        "nothing runs · output reaches the browser only through redact.mask + mask_secrets",
-        "11 the checklist never mutates AWS: files and unauthenticated GETs only. AWS-side writes happen only through "
-        "panes 2/4 and Reset, on the CIDR-and-bearer admin path (page 2)",
+    p.edge("e_br", "browser", "z_ui", [(380, 224), (380, 250)], lbl("HTMX + SSE"), at=(450, 237))
+    p.edge("e_run", "run", "allow_local", [(670, 460), (790, 460)], lbl("exec argv"), kind="teal", at=(730, 460))
+    p.edge("e_aws", "steps", "allow_aws", [(670, 700), (790, 700)], lbl("gate on"), kind="amber", at=(730, 700))
+    p.edge("e_gate", "gate", "steps", [(380, 860), (380, 840)], "", kind="grey")
+    p.edge("e_load", "allow_aws", "loader", [(1020, 820), (1020, 840)], "", kind="amber")
+    p.edge("e_apply", "loader", "a_main", [(1250, 880), (1310, 880), (1310, 520), (1360, 520)], lbl("make + .env"),
+           kind="amber", at=(1310, 700))  # fmt: skip
+    p.edge("e_probe", "probes", "a_read", [(1250, 1020), (1360, 1020)], lbl("read only"), kind="amber",
+           at=(1305, 1020))  # fmt: skip
+
+    p.box("never_ui", 30, 1290, 1900, 110, "Never (doc 11 §8.10, §8.11)", [
+        "10 no shell, no argv from the browser (the word is compared, never passed; the /32 is validated), no ENV=eks, "
+        "no aws/terraform outside the allowlist and the read-only probes; the aws runner only behind G1–G6",
+        "11 no change to AWS on a click alone: down, down-all, close and a destroying deploy need their word; the UI's "
+        "code never reads an AWS key, never calls an AWS API to change anything, is never deployed",
     ], kind="white", body_size=10)  # fmt: skip
     return p
 

@@ -20,6 +20,7 @@ import time
 from collections.abc import AsyncIterator, Callable, Iterator
 from contextlib import asynccontextmanager
 from dataclasses import dataclass, field
+from pathlib import Path
 from typing import Any
 
 import httpx
@@ -241,3 +242,40 @@ def test_the_token_guards_the_sse_stream_over_http_and_the_log_is_clean(
     assert TOKEN not in text and "Bearer mt" not in text
     assert not [rec for rec in caplog.records if rec.name == "uvicorn.access"]  # access log off (§8.3)
     assert "GET /events" not in text and "/_admin/" not in text  # no request lines, no bodies
+
+
+@needs_browser
+def test_the_ops_tab_loads_only_when_shown(serve: Callable[..., Served], tmp_path: Path) -> None:
+    """Doc 11 §2 (T1): `/#ops` opens the Ops tab directly and its four fragments load (`ops:open`); on Control room
+    no Ops fragment is requested, so presenting starts no probe and no AWS call. Clicking the tab opens it too."""
+    import httpx
+    from playwright.sync_api import expect, sync_playwright
+
+    (tmp_path / "mk").mkdir()
+    (tmp_path / "Makefile").write_text("all:\n")
+    served = serve(checkout=tmp_path)  # gate off (no flag): no probe can run whatever the page asks
+    quiet_http = httpx.AsyncClient(transport=httpx.MockTransport(lambda _: httpx.Response(200)))
+    served.deps.aws_status.http = served.deps.stack.http = quiet_http
+    fragments = ("/fragment/ops", "/fragment/ops-header", "/fragment/ops-checklist", "/fragment/ops-teardown")
+    with sync_playwright() as p:
+        browser = p.chromium.launch()
+        page = browser.new_page(viewport={"width": 1280, "height": 900})
+        asked: list[str] = []
+        page.on("request", lambda r: asked.append(r.url))
+        page.goto(served.url)
+        expect(page.locator("#pill")).to_contain_text("scripted")
+        expect(page.locator("#tab-ops")).to_be_hidden()
+        page.wait_for_timeout(500)
+        assert not [u for u in asked if any(u.split("?")[0].endswith(f) for f in fragments)], asked
+        page.get_by_role("tab", name="Ops").click()
+        expect(page.locator("#ops-checklist .ops-headline")).to_have_text("Nothing deployed yet")
+        expect(page.locator("#panes")).to_be_hidden()
+        direct = browser.new_page()
+        direct.goto(f"{served.url}/#ops")
+        for sel in ("#ops-header .ops-head", "#ops-run .ops-bar", "#ops-teardown .td-what"):
+            expect(direct.locator(sel)).to_have_count(1)
+        expect(direct.locator("#ops-header")).to_contain_text("AWS runs: off: AWS runs are off")
+        expect(direct.locator('#tab-btn-ops[aria-selected="true"]')).to_have_count(1)
+        direct.goto(f"{served.url}/#")
+        expect(direct.locator("#panes")).to_be_visible()
+        browser.close()

@@ -6,7 +6,7 @@ Your own agent on Alexa+ asking the carrier about your line — from the one dev
 
 Tower is an MCP server for the **Alexa+ MCP Toolkit**. It asks a carrier three things over standard CAMARA network APIs: was my SIM moved, are my calls being forwarded, and is this phone on the network. It answers only for lines that are bound and consented. Team: Asish Bose and Badhrinath Padmanabhan, Canada. Licence: [Apache-2.0](LICENSE).
 
-> **Status, 2026-10-11.** Verified locally, every image rebuilt from today's code: unit 725/725, integration 1137/1137, end-to-end 30/30 (local), contract 897/897, conformance 215 operations with 0 failing, privacy 0 hits, p95 under 400 ms (`line_is_ok` 250 ms, `is_reachable` 173 ms), coverage 94.9 % packages / 91.6 % services; all gates met. Built and statically checked, not yet applied: the AWS deploy (Terraform, two AgentCore runtimes, Cognito, the web chat page) and EKS. Not yet done: Alexa+ registration and the video ([Status and limits](#status-and-limits)).
+> **Status, 2026-10-12.** Verified locally from a fresh `make up`, every image rebuilt from today's code: unit 991/991, integration 1236/1236, end-to-end 30/30 (local), contract and conformance with 0 failing operations, privacy 22 tests with 0 hits, p95 under 400 ms, coverage 94.9 % packages / 92.7 % services; all gates met. Built and statically checked, not yet applied: the AWS deploy (Terraform, two AgentCore runtimes, Cognito, the web chat page, the Ops tab's pipeline) and EKS. Not yet done: Alexa+ registration and the video ([Status and limits](#status-and-limits)).
 
 ## The problem, in three moments
 
@@ -118,6 +118,7 @@ Demo and showcase
   showcase-audit       Audit: Mom's view, chain verified, tamper detection
   showcase-ref         Reference client: three moments from the terminal, then the corpus
   showcase-ui          Demo control room on the host at 127.0.0.1:8091 (needs make up): Bedrock when credentials resolve, else scripted
+  ops-ui               The demo UI on the host at 127.0.0.1:8091/#ops with the Ops tab's aws runner on (DEMO_UI_AWS_OPS=1; the gate of doc 11 §2); the stack need not be up
   showcase-alexa       Alexa+ simulator script and Tower log tail
   showcase-infra       Clean-machine timing; terraform plan; teardown
   showcase             testing-and-showcase.md §4 steps 1–9 in order against the running stack, pausing (SHOWCASE_PAUSE=0: no pauses)
@@ -158,6 +159,8 @@ AWS (AgentCore)
   latency-aws          200 calls per tool against the AgentCore deployment → artifacts/latency-aws.md
   register-gateway     Register the vendored CAMARA specs with AgentCore Gateway; write gateway-tools.json
   tf-check             terraform fmt -check + validate of the main and ecr roots (init -backend=false; never touches AWS) + tables.auto.tfvars.json current
+  admin-open           Open the demo admin path to your /32 (ADMIN_CIDR, else checkip.amazonaws.com): tfvars, plan, deploy (exit 3 if the plan destroys, unless FORCE=1)
+  admin-close          Close the demo admin path: demo_admin_cidrs = [] in envs/aws.tfvars, plan, deploy (asks unless FORCE=1)
 
 EKS and Helm
   helm-lint            helm lint + helm-unittest + kubeconform (kind and eks values) for every chart and the umbrella

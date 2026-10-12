@@ -19,6 +19,10 @@
       <svg class="glyph" aria-hidden="true"><use href="/static/img/icons.svg#tower"></use></svg>
       <h1>Ask the Tower <small>control room</small></h1>
     </div>
+    <nav class="tabs" role="tablist" aria-label="screens">
+      <a href="#" role="tab" id="tab-btn-control" aria-controls="panes" aria-selected="true">Control room</a>
+      <a href="#ops" role="tab" id="tab-btn-ops" aria-controls="tab-ops" aria-selected="false">Ops</a>
+    </nav>
     <div id="pill" hx-get="/fragment/pill" hx-trigger="load"></div>
     <ul class="health" aria-label="stack health, read from the panes' own frames">
       <li data-svc="mock" title="mock carrier: waiting for the feed"><i aria-hidden="true"></i>mock</li>
@@ -93,20 +97,24 @@
     </section>
   </main>
 
-  <details class="ops-card ops" id="pane-ops" aria-labelledby="h-ops">
-    <summary><h2 id="h-ops"><svg class="i" aria-hidden="true"><use href="/static/img/icons.svg#bolt"></use></svg>Ops <small>local make targets from an allowlist · the AWS pipeline, read-only</small></h2><span id="ops-status" sse-swap="ops-status"></span></summary>
+  <section id="tab-ops" class="ops-tab" hidden aria-labelledby="tab-btn-ops">
+    <div class="ops-card ops-top">
+      <h2 id="h-ops"><svg class="i" aria-hidden="true"><use href="/static/img/icons.svg#bolt"></use></svg>Ops <small>allowlisted make targets on this laptop · the AWS pipeline behind its gate</small>
+        <button id="ops-recheck" class="btn" type="button"><svg class="i" aria-hidden="true"><use href="/static/img/icons.svg#reset"></use></svg>re-check</button></h2>
+      <div id="ops-header" hx-get="/fragment/ops-header" hx-trigger="ops:open from:body, sse:ops-status, click from:#ops-recheck"></div>
+    </div>
     <div class="ops-cols">
-      <section class="ops-col" aria-labelledby="h-ops-run">
-        <h3 id="h-ops-run">Run here <small>on this laptop, ENV=local, one job at a time</small></h3>
-        <div id="ops-run" hx-get="/fragment/ops" hx-trigger="load, sse:ops-status"></div>
+      <section class="ops-card ops-col" aria-labelledby="h-ops-run">
+        <h3 id="h-ops-run">Run here <small>ENV=local, one job at a time; the log below is shared with the AWS runs</small> <span id="ops-status" sse-swap="ops-status"></span></h3>
+        <div id="ops-run" hx-get="/fragment/ops" hx-trigger="ops:open from:body, sse:ops-status"></div>
       </section>
-      <section class="ops-col" aria-labelledby="h-ops-aws">
-        <h3 id="h-ops-aws">AWS pipeline <small>read-only: copy a command into a terminal</small>
-          <button id="ops-recheck" class="btn" type="button"><svg class="i" aria-hidden="true"><use href="/static/img/icons.svg#reset"></use></svg>re-check</button></h3>
-        <div id="ops-checklist" hx-get="/fragment/ops-checklist" hx-trigger="load, every 15s, click from:#ops-recheck"></div>
+      <section class="ops-card ops-col" aria-labelledby="h-ops-aws">
+        <h3 id="h-ops-aws">AWS pipeline <small>ENV=aws, credentials from the root .env; the tab and the terminal are interchangeable</small></h3>
+        <div id="ops-checklist" aria-live="polite" hx-get="/fragment/ops-checklist" hx-trigger="ops:open from:body, every 15s [document.body.dataset.tab === 'ops'], sse:ops-status, click from:#ops-recheck"></div>
       </section>
     </div>
-  </details>
+    <section id="ops-teardown" class="ops-card teardown" aria-labelledby="h-teardown" hx-get="/fragment/ops-teardown" hx-trigger="ops:open from:body, sse:ops-status, click from:#ops-recheck"></section>
+  </section>
   <footer>Demo tooling, laptop only. It decides nothing: outcome chips are Tower's reason codes. No phone number is shown.</footer>
 </body>
 </html>
