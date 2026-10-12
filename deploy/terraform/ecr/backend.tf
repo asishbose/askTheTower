@@ -8,11 +8,11 @@
 #
 # Nothing in this state is secret. `terraform validate` in CI runs with `init -backend=false`.
 terraform {
-  backend "s3" {
-    bucket         = "REPLACE-ME-ask-the-tower-tfstate"
-    key            = "ask-the-tower/ecr/terraform.tfstate"
-    region         = "us-east-1"
-    encrypt        = true
-    dynamodb_table = "REPLACE-ME-ask-the-tower-tflock"
+  # Local state for the hackathon sandbox: the account's service control policy denies s3:CreateBucket and
+  # dynamodb:CreateTable, so the S3 backend documented above cannot be bootstrapped there. State lives in
+  # this directory (`*.tfstate` is gitignored); one operator, no locking needed. To move back to S3 on an
+  # unrestricted account: restore the "s3" block from the header comment and run `terraform init -migrate-state`.
+  backend "local" {
+    path = "terraform-ecr.tfstate"
   }
 }

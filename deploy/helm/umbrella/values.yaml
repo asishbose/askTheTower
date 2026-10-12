@@ -13,7 +13,7 @@ global:
   # Store + crypto variables every store-using service gets (tower-mcp, binding-page, alerts, the seed Job).
   storeEnv:
     TOWER_ENV: local
-    AWS_REGION: us-east-1
+    AWS_REGION: us-east-2
     TOWER_TABLE_PREFIX: ""
     DYNAMO_ENDPOINT: ""
     TOWER_KMS_KEY_ID: ""

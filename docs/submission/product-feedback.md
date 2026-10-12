@@ -20,6 +20,14 @@ Status legend: ☐ not started · ◐ used, entry drafted · ☑ final.
 
 ## AWS (Builder mini)
 
+### AWS Projects (hackathon account: project, spend limit, credits) ◐
+
+- **Used for:** the account everything on AWS runs in (us-east-2, $100 project spend limit, credits applied first).
+- **Worked:** credits and spend limit are visible per project; the console signs in as the managed role with no key handling; IAM users can be created and get `AdministratorAccess`.
+- **Needs work:** the project is fenced by an organization SCP that is not shown anywhere in the console. Symptoms, as seen on 2026-10-12: `s3:CreateBucket`, `dynamodb:CreateTable`, `lambda:ListFunctions`, `ecr:CreateRepository`, Bedrock and AgentCore all `AccessDenied` "with an explicit deny in a service control policy" for an admin IAM user **in us-east-1**, while the same calls succeed in **us-east-2**; `AccountFullAccessRole` (the console's role) is denied in us-east-1 too, so this is a region pin, not a principal rule. Route 53 domain registration fails with "We can't finish registering your domain. Contact AWS Support". Nothing in the Projects UI says "us-east-2 only" or lists blocked services. Cost: about an hour of probing with the CLI to map the fence.
+- **Onboarding (zero to first CLI call):** 10 minutes to keys; about 60 minutes to a working region.
+- **Build again?** Yes for a hackathon — the spend limit is exactly right — if the project page showed its allowed regions and services. Workarounds used here: deploy in us-east-2; Terraform state on the local backend (no bucket needed); the mock's domain bought at an outside registrar and delegated to a Route 53 hosted zone.
+
 ### Amazon Bedrock AgentCore Runtime ☐
 - **Used for:** hosting the Tower MCP server container (prompt 13).
 - (prompt 13, 2026-10-06) Not exercised in the autonomous build (no AWS credentials). Written as `aws_bedrockagentcore_agent_runtime` with `protocol_configuration.server_protocol = "MCP"`, a custom JWT authorizer (spike A), `request_header_allowlist = ["Authorization"]` so Tower can re-verify the bearer, and a PUBLIC network mode (VPC only for the cut line). `agent_runtime_name` allows no hyphens (`^[a-zA-Z][a-zA-Z0-9_]{0,47}$`), unlike every other name in the stack.

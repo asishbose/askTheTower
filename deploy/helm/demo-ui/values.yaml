@@ -21,7 +21,7 @@ env:
   BINDING_URL: http://binding-page:8081
   ALERTS_URL: http://alerts:8082
   DYNAMO_ENDPOINT: http://dynamodb-local:8000
-  AWS_REGION: us-east-1
+  AWS_REGION: us-east-2
   TOWER_TABLE_PREFIX: ""
   REF_AGENT: scripted
   DEMO_UI_HOST: 0.0.0.0
