@@ -45,7 +45,9 @@ def gateway_client(outputs: dict[str, Any], profile: str = "proactive") -> Gatew
 async def test_gateway_lists_one_tool_per_operation(aws_outputs: dict[str, Any]) -> None:
     client = gateway_client(aws_outputs)
     assert await client.check_tools() == []
-    assert set(client.tool_names) == {op.key for op in specs.operations()}
+    # number-verification has no Gateway target (3LO is refused behind an IAM authorizer; the binding page
+    # calls it directly), so the Gateway's map covers every API but that one.
+    assert set(client.tool_names) == {op.key for op in specs.operations() if op.api != "number-verification"}
     await client.aclose()
 
 

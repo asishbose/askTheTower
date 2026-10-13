@@ -105,9 +105,9 @@ resource "aws_iam_role_policy" "runtime" {
 }
 
 resource "aws_bedrockagentcore_agent_runtime" "tower" {
-  agent_runtime_name    = local.runtime_name
-  description           = "Ask the Tower MCP server (line_is_ok, is_reachable, watch_line)"
-  role_arn              = aws_iam_role.runtime.arn
+  agent_runtime_name = local.runtime_name
+  description        = "Ask the Tower MCP server (line_is_ok, is_reachable, watch_line)"
+  role_arn           = aws_iam_role.runtime.arn
   # AWS_REGION is not injected into the container by Runtime (first apply 2026-10-13): boto3 and the carrier
   # client would otherwise fall back to their own defaults (us-east-1), which an SCP may deny.
   environment_variables = merge({ AWS_REGION = var.region, AWS_DEFAULT_REGION = var.region }, var.environment)
@@ -186,8 +186,8 @@ data "aws_iam_policy_document" "agent" {
     resources = ["arn:aws:logs:${var.region}:${var.account_id}:log-group:/aws/bedrock-agentcore/runtimes/*"]
   }
   statement {
-    sid       = "Model"
-    actions   = ["bedrock:InvokeModel", "bedrock:InvokeModelWithResponseStream"]
+    sid     = "Model"
+    actions = ["bedrock:InvokeModel", "bedrock:InvokeModelWithResponseStream"]
     # Any region for the foundation model: a cross-region inference profile (us.amazon.…) routes to several.
     resources = ["arn:aws:bedrock:*::foundation-model/*", "arn:aws:bedrock:*:${var.account_id}:inference-profile/*"]
   }

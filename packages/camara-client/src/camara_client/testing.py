@@ -96,12 +96,18 @@ class FakeGateway:
         )
         self.server = fastmcp.FastMCP("fake-agentcore-gateway")
         for op in specs.operations():
+            # Like the real Gateway: the request body's fields, the path and the header parameters in one
+            # flat argument object (verified 2026-10-13).
             props: dict[str, Any] = {name: {"type": "string"} for name in op.path_params}
             required = list(op.path_params)
             if op.request_schema is not None:
-                props["body"] = op.request_schema
-                if op.method in ("POST", "PUT", "PATCH"):
-                    required.append("body")
+                schema = op.request_schema
+                if isinstance(schema, dict) and isinstance(schema.get("properties"), dict):
+                    props.update(schema["properties"])
+                    if op.method in ("POST", "PUT", "PATCH"):
+                        required.extend(str(r) for r in schema.get("required", []) if r not in required)
+                else:
+                    props["body"] = schema
             self.server.add_tool(
                 _ProxyTool(
                     gateway=self,
@@ -131,10 +137,11 @@ class FakeGateway:
         except CarrierError as err:
             return err.status or 502, json.dumps({"status": err.status or 502, "code": "UNAUTHENTICATED"})
         path = op.render_path({k: str(arguments[k]) for k in op.path_params})
+        body = {k: v for k, v in arguments.items() if k not in op.path_params and k != "x-correlator"}
         r = await self._http.request(
             op.method,
             self.base_url + path,
-            json=arguments.get("body"),
+            json=body or None,
             headers={"Authorization": f"Bearer {token}"},
         )
         return r.status_code, r.text

@@ -104,8 +104,9 @@ def test_ecr_is_its_own_root_and_the_main_root_only_reads_it() -> None:
     ecr = TF / "ecr"
     for name in ("main.tf", "providers.tf", "variables.tf", "outputs.tf", "backend.tf"):
         assert (ecr / name).exists(), name
+    # Each root keeps its own state: an S3 key, or a local path (the sandbox account, 2026-10-13).
     keys = {
-        root: re.search(r'key\s*=\s*"([^"]+)"', (root / "backend.tf").read_text()).group(1)  # type: ignore[union-attr]
+        root: re.search(r'(?:key|path)\s*=\s*"([^"]+)"', (root / "backend.tf").read_text()).group(1)  # type: ignore[union-attr]
         for root in (TF, ecr, TF / "eks")
     }
     assert len(set(keys.values())) == 3, keys

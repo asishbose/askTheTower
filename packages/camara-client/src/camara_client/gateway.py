@@ -7,8 +7,10 @@ Gateway's `tools/list`. Without that file the RUN-ALL convention `<api>__<operat
 (e.g. `sim-swap__checkSimSwap`) — verify against the real Gateway in prompt 13.
 
 Assumed tool contract (the fake Gateway in `camara_client.testing` implements it; verify in 13):
-- arguments: `{"body": <request JSON>}` for operations with a request body, plus each path parameter
-  by name (`subscriptionId`);
+- arguments: the request body's fields at the top level (`phoneNumber`, `maxAge`, …) — the real Gateway
+  flattens the OpenAPI request body, path and header parameters into one argument object (verified on the
+  first apply, 2026-10-13: a `{"body": …}` wrapper gets "An internal error occurred"); plus each path
+  parameter by name (`subscriptionId`);
 - success: the carrier's response body as JSON text (empty for 204);
 - failure: `isError` with JSON text `{"status": <http status>, "body": <carrier error body>}`; a bare
   CAMARA envelope (`{"status", "code", "message"}`) is accepted too;
@@ -137,9 +139,13 @@ def load_tool_names(path: str | Path | None) -> dict[str, str]:
 
 
 def tool_arguments(op: specs.Operation, body: Any, path_params: Mapping[str, str] | None) -> dict[str, Any]:
+    """The MCP arguments for one operation, as AgentCore Gateway expects them: the request body's fields and
+    the path parameters side by side in one flat object (a body that is not an object is not a CAMARA case)."""
     args: dict[str, Any] = {}
-    if body is not None:
-        args["body"] = body
+    if isinstance(body, Mapping):
+        args.update(body)
+    elif body is not None:
+        raise TypeError(f"{op.key}: request body must be a JSON object, not {type(body).__name__}")
     for name in op.path_params:
         args[name] = (path_params or {})[name]
     return args

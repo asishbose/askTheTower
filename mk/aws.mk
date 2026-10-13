@@ -42,8 +42,8 @@ down: ## Local: compose down -v. ENV=aws: destroy the main root — ECR reposito
 	  $(TF) init -input=false && $(TF) destroy -input=false -auto-approve $(TF_DOWN_VARS); fi
 	$(COMPOSE) down -v --remove-orphans || true
 down-all: ## After judging: down-eks (if up) + down ENV=aws + destroy the ECR root — the only target that deletes images
-	@$(TFE) init -input=false >/dev/null && if [ -n "$$($(TFE) state list 2>/dev/null)" ]; then \
-	  $(MAKE) --no-print-directory down-eks FORCE=$(FORCE); else echo "eks root: nothing in state"; fi
+	@if $(TFE) init -input=false >/dev/null 2>&1 && [ -n "$$($(TFE) state list 2>/dev/null)" ]; then \
+	  $(MAKE) --no-print-directory down-eks FORCE=$(FORCE); else echo "eks root: not initialised or nothing in state (skipped)"; fi
 	$(MAKE) --no-print-directory down ENV=aws FORCE=$(FORCE)
 	@if [ "$(FORCE)" != "1" ]; then read -p "delete the five ECR repositories and every image in them? [y/N] " a; [ "$$a" = "y" ] || exit 1; fi
 	$(TFR) init -input=false && $(TFR) destroy -input=false -auto-approve $(TFR_VARS)

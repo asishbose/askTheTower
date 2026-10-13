@@ -66,7 +66,7 @@ The web chat agent's runtime role (`<name>-agentcore-agent`, in the stack accoun
 ```bash
 STACK=<stack account id>; ME=$(aws sts get-caller-identity --query Account --output text)
 cat > trust.json <<EOF
-{"Version":"2012-10-17","Statement":[{"Effect":"Allow","Principal":{"AWS":"arn:aws:iam::$STACK:role/att-dev-agentcore-agent"},"Action":"sts:AssumeRole"}]}
+{"Version":"2012-10-17","Statement":[{"Effect":"Allow","Principal":{"AWS":"arn:aws:iam::$STACK:root"},"Action":"sts:AssumeRole","Condition":{"StringEquals":{"aws:PrincipalArn":"arn:aws:iam::$STACK:role/att-dev-agentcore-agent"}}}]}
 EOF
 cat > policy.json <<EOF
 {"Version":"2012-10-17","Statement":[{"Effect":"Allow","Action":["bedrock:InvokeModel","bedrock:InvokeModelWithResponseStream"],"Resource":["arn:aws:bedrock:*::foundation-model/*","arn:aws:bedrock:*:$ME:inference-profile/*"]}]}
@@ -84,7 +84,7 @@ bedrock_assume_role_arn = "arn:aws:iam::<management account id>:role/ask-the-tow
 
 `make deploy` gives the agent role `sts:AssumeRole` on that ARN and sets `BEDROCK_ASSUME_ROLE_ARN` on the agent runtime; `ref_client.agent.bedrock_client` assumes it with botocore's refreshing credentials. The role name `att-dev-agentcore-agent` follows `name_prefix`-`environment` in `aws.tfvars`.
 
-**After every `make down` + `make deploy`:** the stack's agent role is recreated, and IAM pins a trust policy to the deleted role's internal id, so re-put the trust policy in the management account (`aws iam update-assume-role-policy --role-name ask-the-tower-bedrock --policy-document file://trust.json`) once the new deploy is up — otherwise the agent answers 503 and its log shows `AccessDenied` on `sts:AssumeRole`.
+**Why the trust names the account, not the role:** IAM pins a role-ARN principal to that role's internal id, so a `make down` + `make deploy` (which recreates the agent role) would silently break it — the agent would answer 503 with `AccessDenied` on `sts:AssumeRole`. The `:root` principal plus the `aws:PrincipalArn` condition is the same restriction as a string match, and survives any number of rebuilds.
 
 **Proof from your laptop (optional, two minutes):** add your IAM user to the trust policy's `Principal` list for the test, then from WSL `aws sts assume-role --role-arn <the ARN> --role-session-name wsl-test`, export the three credentials it prints, run the Converse line of 4.2, and put the trust policy back to the runtime role only. The deploy is the real test.
 

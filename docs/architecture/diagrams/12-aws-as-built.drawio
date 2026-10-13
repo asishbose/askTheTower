@@ -1,0 +1,272 @@
+<mxfile host="app.diagrams.net" agent="Ask the Tower design generator" type="device">
+  <diagram id="aws-as-built" name="AWS as built (2026-10-13)">
+    <mxGraphModel dx="1422" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1420" pageHeight="980" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="title" value="Ask the Tower on AWS — as deployed, us-east-2, account 4715…3540" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;fontSize=16;fontColor=#0E1726;fontStyle=1;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="20" y="8" width="900" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="subtitle" value="AgentCore path only (the EKS variant is not deployed). Teal = a question; amber = a proactive alert; grey = binding, consent and operations. Dashed = exercised by the smoke test only." style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;fontSize=11;fontColor=#6B7A90;fontStyle=0;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="20" y="40" width="1200" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="z_users" value="People" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#EEF0F5;strokeColor=#9AA7B5;verticalAlign=top;align=left;spacingLeft=10;spacingTop=4;spacing=2;fontStyle=1;fontSize=14;fontColor=#1B2B45;dashed=0;arcSize=12;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="20" y="80" width="200" height="420" as="geometry" />
+        </mxCell>
+        <mxCell id="z_edge" value="Edge" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#EEF0F5;strokeColor=#9AA7B5;verticalAlign=top;align=left;spacingLeft=10;spacingTop=4;spacing=2;fontStyle=1;fontSize=14;fontColor=#1B2B45;dashed=0;arcSize=12;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="260" y="80" width="260" height="420" as="geometry" />
+        </mxCell>
+        <mxCell id="z_agentcore" value="Amazon Bedrock AgentCore" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#EAF7F4;strokeColor=#2BB3A0;verticalAlign=top;align=left;spacingLeft=10;spacingTop=4;spacing=2;fontStyle=1;fontSize=14;fontColor=#1B2B45;dashed=0;arcSize=12;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="560" y="80" width="520" height="420" as="geometry" />
+        </mxCell>
+        <mxCell id="z_mgmt" value="Management account 3498…1437" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FBF3E0;strokeColor=#E8A33D;verticalAlign=top;align=left;spacingLeft=10;spacingTop=4;spacing=2;fontStyle=1;fontSize=14;fontColor=#1B2B45;dashed=0;arcSize=12;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="1120" y="80" width="280" height="200" as="geometry" />
+        </mxCell>
+        <mxCell id="z_data" value="Data" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#EEF0F5;strokeColor=#9AA7B5;verticalAlign=top;align=left;spacingLeft=10;spacingTop=4;spacing=2;fontStyle=1;fontSize=14;fontColor=#1B2B45;dashed=0;arcSize=12;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="1120" y="320" width="280" height="180" as="geometry" />
+        </mxCell>
+        <mxCell id="z_fn" value="Lambda, schedules, SMS" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#EEF0F5;strokeColor=#9AA7B5;verticalAlign=top;align=left;spacingLeft=10;spacingTop=4;spacing=2;fontStyle=1;fontSize=14;fontColor=#1B2B45;dashed=0;arcSize=12;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="20" y="540" width="500" height="320" as="geometry" />
+        </mxCell>
+        <mxCell id="z_vpc" value="VPC" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E4E9F2;strokeColor=#0E1726;verticalAlign=top;align=left;spacingLeft=10;spacingTop=4;spacing=2;fontStyle=1;fontSize=14;fontColor=#1B2B45;dashed=0;arcSize=12;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="560" y="540" width="520" height="320" as="geometry" />
+        </mxCell>
+        <mxCell id="vpc_note" value="10.42.0.0/16 · 2 AZs · the mock carrier lives here" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;fontSize=10;fontColor=#6B7A90;fontStyle=0;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="760" y="544" width="300" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="z_ops" value="Ops: logs, registry, state" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#EEF0F5;strokeColor=#9AA7B5;verticalAlign=top;align=left;spacingLeft=10;spacingTop=4;spacing=2;fontStyle=1;fontSize=14;fontColor=#1B2B45;dashed=0;arcSize=12;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="1120" y="540" width="280" height="320" as="geometry" />
+        </mxCell>
+        <mxCell id="phone" value="&lt;b&gt;Asish's phone&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;bind link, mobile data&lt;br&gt;receives the SMS&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F3F5F8;strokeColor=#6B7583;fontSize=11;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="120" width="160" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="laptop" value="&lt;b&gt;Laptop browser&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;web chat page&lt;br&gt;sign in as asish / mom&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F3F5F8;strokeColor=#6B7583;fontSize=11;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="230" width="160" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="ops" value="&lt;b&gt;Ops tab · terminal&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;make push · plan · deploy&lt;br&gt;Terraform, local state&lt;br&gt;one operator, one laptop&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F3F5F8;strokeColor=#6B7583;fontSize=11;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="340" width="160" height="130" as="geometry" />
+        </mxCell>
+        <mxCell id="cognito" value="&lt;b&gt;Cognito user pool&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;Hosted UI, PKCE client web-chat&lt;br&gt;users: asish, mom (sub = user id)&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F3F5F8;strokeColor=#6B7583;fontSize=11;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="280" y="120" width="220" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="cf_page" value="&lt;b&gt;CloudFront + S3&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;the web chat page (static)&lt;br&gt;config.js from the outputs&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DDF3EF;strokeColor=#2BB3A0;fontSize=11;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="280" y="230" width="220" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="cf_api" value="&lt;b&gt;CloudFront + WAF → HTTP API&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;/bind/* /me/* /grants/* → binding-page&lt;br&gt;/hooks/* /internal/* → alerts&lt;br&gt;/carrier/oauth2/authorize → VPC link&lt;br&gt;(the mock's authorize page)&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F3F5F8;strokeColor=#6B7583;fontSize=11;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="280" y="340" width="220" height="130" as="geometry" />
+        </mxCell>
+        <mxCell id="identity" value="&lt;b&gt;AgentCore Identity&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;OAuth2 credential providers:&lt;br&gt;service (client credentials)&lt;br&gt;binding (auth code; unused: 3LO)&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DDF3EF;strokeColor=#2BB3A0;fontSize=11;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="580" y="120" width="220" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="proxy" value="&lt;b&gt;Lambda URL proxy&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;web-chat-proxy&lt;br&gt;CORS = the page's origin&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DDF3EF;strokeColor=#2BB3A0;fontSize=11;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="580" y="230" width="140" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="agent" value="&lt;b&gt;Runtime · web chat agent&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;ref-client, protocol HTTP, JWT authorizer&lt;br&gt;REF_AGENT=bedrock · AWS_REGION=us-east-2&lt;br&gt;BEDROCK_ASSUME_ROLE_ARN → management account&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DDF3EF;strokeColor=#2BB3A0;fontSize=11;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="760" y="230" width="300" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="gateway" value="&lt;b&gt;AgentCore Gateway&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;5 CAMARA targets&lt;br&gt;OpenAPI → MCP tools&lt;br&gt;IAM authorizer&lt;br&gt;number-verification: none&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DDF3EF;strokeColor=#2BB3A0;fontSize=11;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="580" y="340" width="140" height="130" as="geometry" />
+        </mxCell>
+        <mxCell id="tower" value="&lt;b&gt;Runtime · Tower MCP&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;line_is_ok · is_reachable · watch_line&lt;br&gt;protocol MCP, JWT authorizer (same pool)&lt;br&gt;policy, consent, audit — deterministic&lt;br&gt;AWS_REGION=us-east-2 · tools discovered&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DDF3EF;strokeColor=#2BB3A0;fontSize=11;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="760" y="340" width="300" height="130" as="geometry" />
+        </mxCell>
+        <mxCell id="role" value="&lt;b&gt;IAM role ask-the-tower-bedrock&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;trust: stack account + aws:PrincipalArn&lt;br&gt;allows bedrock:InvokeModel only&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FBEFD9;strokeColor=#E8A33D;fontSize=11;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="1140" y="120" width="240" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="nova" value="&lt;b&gt;Bedrock · Amazon Nova Micro&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;us.amazon.nova-micro-v1:0 (inference profile)&lt;br&gt;stack account's quota is 0 → served here&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FBEFD9;strokeColor=#E8A33D;fontSize=11;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="1140" y="200" width="240" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="ddb" value="&lt;b&gt;DynamoDB × 7&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;Users Lines Grants Watches&lt;br&gt;BindTokens AlertsState Audit&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F3F5F8;strokeColor=#6B7583;fontSize=11;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="1140" y="360" width="240" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="kms" value="&lt;b&gt;KMS × 2&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;main (encrypt) · HMAC (line ids)&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F3F5F8;strokeColor=#6B7583;fontSize=11;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="1140" y="440" width="240" height="44" as="geometry" />
+        </mxCell>
+        <mxCell id="binding" value="&lt;b&gt;Lambda · binding-page&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;in the VPC (private subnets)&lt;br&gt;DirectClient → number-verification&lt;br&gt;auth code exchange itself&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F3F5F8;strokeColor=#6B7583;fontSize=11;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="580" width="220" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="alerts" value="&lt;b&gt;Lambda · alerts&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;SMS via SNS (sandbox number)&lt;br&gt;carrier hooks, escalation&lt;br&gt;Gateway for subscriptions&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FBEFD9;strokeColor=#E8A33D;fontSize=11;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="280" y="580" width="220" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="reconcile" value="&lt;b&gt;Lambda · reconcile&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;audit reconcile, nightly&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F3F5F8;strokeColor=#6B7583;fontSize=11;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="690" width="220" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="sched" value="&lt;b&gt;EventBridge Scheduler&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;6 schedules, America/Toronto&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FBEFD9;strokeColor=#E8A33D;fontSize=11;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="280" y="690" width="220" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="sns" value="&lt;b&gt;SNS&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;topic sms-replies → alerts · SMS sandbox: one verified number (+1 613 …)&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FBEFD9;strokeColor=#E8A33D;fontSize=11;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="770" width="460" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="alb" value="&lt;b&gt;Internal ALB + ACM&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;mock.askthetower.xyz&lt;br&gt;Route 53 zone (domain at Porkbun)&lt;br&gt;HTTPS from inside the VPC only&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F3F5F8;strokeColor=#6B7583;fontSize=11;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="580" y="580" width="220" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="mock" value="&lt;b&gt;Fargate · mock carrier&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;CAMARA APIs, OAuth2 server&lt;br&gt;admin API (bearer; closed)&lt;br&gt;seeded by make seed-aws (ECS exec)&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F3F5F8;strokeColor=#6B7583;fontSize=11;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="840" y="580" width="220" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="nat" value="&lt;b&gt;NAT gateway · public subnets&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;egress for the VPC Lambda&lt;br&gt;endpoints: S3, DynamoDB&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F3F5F8;strokeColor=#6B7583;fontSize=11;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="580" y="700" width="220" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="vpclink" value="&lt;b&gt;API Gateway VPC link&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;/carrier/oauth2/authorize → ALB&lt;br&gt;the phone's one hop into the VPC&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F3F5F8;strokeColor=#6B7583;fontSize=11;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="840" y="700" width="220" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="logs" value="&lt;b&gt;CloudWatch&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;runtime + Lambda log groups&lt;br&gt;dashboard, alarms, metric filters&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F3F5F8;strokeColor=#6B7583;fontSize=11;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="1140" y="580" width="240" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="ecr" value="&lt;b&gt;ECR × 5&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;tag = git sha (+ latest)&lt;br&gt;lifecycle: one image per repo&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F3F5F8;strokeColor=#6B7583;fontSize=11;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="1140" y="670" width="240" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="state" value="&lt;b&gt;Terraform state (local)&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px&quot;&gt;backend &quot;local&quot; — the account's SCP&lt;br&gt;denies the S3 bucket and lock table&lt;br&gt;region pinned to us-east-2 by SCP&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F3F5F8;strokeColor=#6B7583;fontSize=11;fontColor=#1B2B45;align=left;verticalAlign=middle;spacing=4;spacingLeft=6;spacingRight=6;dashed=0;arcSize=10;absoluteArcSize=1;" vertex="1" parent="1">
+          <mxGeometry x="1140" y="760" width="240" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="e_login" value="sign in (PKCE)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#6B7583;strokeWidth=1;fontSize=9;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=1.0000;exitY=0.2500;exitDx=0;exitDy=0;entryX=0.0000;entryY=0.5000;entryDx=0;entryDy=0;" edge="1" parent="1" source="laptop" target="cognito">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="240" y="250" />
+              <mxPoint x="240" y="160" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_page" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2BB3A0;strokeWidth=2;fontSize=9;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=1.0000;exitY=0.6250;exitDx=0;exitDy=0;entryX=0.0000;entryY=0.6250;entryDx=0;entryDy=0;" edge="1" parent="1" source="laptop" target="cf_page">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_ask" value="POST + JWT" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2BB3A0;strokeWidth=2;fontSize=9;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=1.0000;exitY=0.4375;exitDx=0;exitDy=0;entryX=0.0000;entryY=0.4375;entryDx=0;entryDy=0;" edge="1" parent="1" source="cf_page" target="proxy">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="0" y="-10" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_proxy" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2BB3A0;strokeWidth=2;fontSize=9;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=1.0000;exitY=0.5000;exitDx=0;exitDy=0;entryX=0.0000;entryY=0.5000;entryDx=0;entryDy=0;" edge="1" parent="1" source="proxy" target="agent">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_model" value="Converse" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2BB3A0;strokeWidth=2;fontSize=9;fontColor=#3C4858;dashed=1;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=1.0000;exitY=0.5000;exitDx=0;exitDy=0;entryX=0.0000;entryY=0.5000;entryDx=0;entryDy=0;" edge="1" parent="1" source="agent" target="nova">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1100" y="270" />
+              <mxPoint x="1100" y="230" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_assume" value="sts:AssumeRole" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#6B7583;strokeWidth=1;fontSize=9;fontColor=#3C4858;dashed=1;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=1.0000;exitY=0.2500;exitDx=0;exitDy=0;entryX=0.0000;entryY=0.5000;entryDx=0;entryDy=0;" edge="1" parent="1" source="agent" target="role">
+          <mxGeometry relative="1" as="geometry" x="-0.1111">
+            <Array as="points">
+              <mxPoint x="1090" y="250" />
+              <mxPoint x="1090" y="150" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_tower" value="MCP + the same JWT" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2BB3A0;strokeWidth=2;fontSize=9;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=0.5000;exitY=1.0000;exitDx=0;exitDy=0;entryX=0.5000;entryY=0.0000;entryDx=0;entryDy=0;" edge="1" parent="1" source="agent" target="tower">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_gw" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2BB3A0;strokeWidth=2;fontSize=9;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=0.0000;exitY=0.4615;exitDx=0;exitDy=0;entryX=1.0000;entryY=0.4615;entryDx=0;entryDy=0;" edge="1" parent="1" source="tower" target="gateway">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_ident" value="token" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#6B7583;strokeWidth=1;fontSize=9;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=1.0000;exitY=0.1538;exitDx=0;exitDy=0;entryX=0.7273;entryY=1.0000;entryDx=0;entryDy=0;" edge="1" parent="1" source="gateway" target="identity">
+          <mxGeometry relative="1" as="geometry" x="0.1111">
+            <Array as="points">
+              <mxPoint x="740" y="360" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_alb" value="HTTPS, managed VPC resource" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2BB3A0;strokeWidth=2;fontSize=9;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=0.5714;exitY=1.0000;exitDx=0;exitDy=0;entryX=0.3636;entryY=0.0000;entryDx=0;entryDy=0;" edge="1" parent="1" source="gateway" target="alb">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_mock" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2BB3A0;strokeWidth=2;fontSize=9;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=1.0000;exitY=0.5000;exitDx=0;exitDy=0;entryX=0.0000;entryY=0.5000;entryDx=0;entryDy=0;" edge="1" parent="1" source="alb" target="mock">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_ddb" value="consent, audit" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#6B7583;strokeWidth=1;fontSize=9;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=1.0000;exitY=0.3077;exitDx=0;exitDy=0;entryX=0.0000;entryY=0.5000;entryDx=0;entryDy=0;" edge="1" parent="1" source="tower" target="ddb">
+          <mxGeometry relative="1" as="geometry" x="-0.1579">
+            <Array as="points">
+              <mxPoint x="1100" y="380" />
+              <mxPoint x="1100" y="395" />
+            </Array>
+            <mxPoint x="0" y="-15" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_kms" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#6B7583;strokeWidth=1;fontSize=9;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=1.0000;exitY=0.7692;exitDx=0;exitDy=0;entryX=0.0000;entryY=0.5000;entryDx=0;entryDy=0;" edge="1" parent="1" source="tower" target="kms">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1090" y="440" />
+              <mxPoint x="1090" y="462" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_bind" value="bind link" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#6B7583;strokeWidth=1;fontSize=9;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=1.0000;exitY=0.3750;exitDx=0;exitDy=0;entryX=0.0000;entryY=0.5000;entryDx=0;entryDy=0;" edge="1" parent="1" source="phone" target="cf_api">
+          <mxGeometry relative="1" as="geometry" x="0.2537">
+            <Array as="points">
+              <mxPoint x="230" y="150" />
+              <mxPoint x="230" y="405" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_bindfn" value="/bind/*" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#6B7583;strokeWidth=1;fontSize=9;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=0.5000;exitY=1.0000;exitDx=0;exitDy=0;entryX=1.0000;entryY=0.2222;entryDx=0;entryDy=0;" edge="1" parent="1" source="cf_api" target="binding">
+          <mxGeometry relative="1" as="geometry" x="-0.1538">
+            <Array as="points">
+              <mxPoint x="390" y="520" />
+              <mxPoint x="270" y="520" />
+              <mxPoint x="270" y="600" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_authz" value="authorize page via VPC link" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#6B7583;strokeWidth=1;fontSize=9;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=1.0000;exitY=0.8846;exitDx=0;exitDy=0;entryX=0.5000;entryY=1.0000;entryDx=0;entryDy=0;" edge="1" parent="1" source="cf_api" target="vpclink">
+          <mxGeometry relative="1" as="geometry" x="0.3212">
+            <Array as="points">
+              <mxPoint x="540" y="455" />
+              <mxPoint x="540" y="800" />
+              <mxPoint x="950" y="800" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_numver" value="number-verification (direct, auth code)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#6B7583;strokeWidth=1;fontSize=9;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=0.9545;exitY=0.0000;exitDx=0;exitDy=0;entryX=0.2045;entryY=0.0000;entryDx=0;entryDy=0;" edge="1" parent="1" source="binding" target="alb">
+          <mxGeometry relative="1" as="geometry" x="0.1789">
+            <Array as="points">
+              <mxPoint x="250" y="530" />
+              <mxPoint x="625" y="530" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_hooks" value="hooks (SIM swap, forwarding)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#E8A33D;strokeWidth=2;fontSize=9;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=0.5000;exitY=1.0000;exitDx=0;exitDy=0;entryX=1.0000;entryY=0.3333;entryDx=0;entryDy=0;" edge="1" parent="1" source="mock" target="alerts">
+          <mxGeometry relative="1" as="geometry" x="-0.1455">
+            <Array as="points">
+              <mxPoint x="950" y="690" />
+              <mxPoint x="520" y="690" />
+              <mxPoint x="520" y="610" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_sms" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#E8A33D;strokeWidth=2;fontSize=9;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=0.0455;exitY=1.0000;exitDx=0;exitDy=0;entryX=0.5000;entryY=0.0000;entryDx=0;entryDy=0;" edge="1" parent="1" source="alerts" target="sns">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="290" y="680" />
+              <mxPoint x="270" y="680" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_buzz" value="SMS" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#E8A33D;strokeWidth=2;fontSize=9;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=0.0000;exitY=0.5000;exitDx=0;exitDy=0;entryX=0.0000;entryY=0.6250;entryDx=0;entryDy=0;" edge="1" parent="1" source="sns" target="phone">
+          <mxGeometry relative="1" as="geometry" x="0.0216">
+            <Array as="points">
+              <mxPoint x="10" y="805" />
+              <mxPoint x="10" y="170" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_sched" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#E8A33D;strokeWidth=2;fontSize=9;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=0.5000;exitY=0.0000;exitDx=0;exitDy=0;entryX=0.5000;entryY=1.0000;entryDx=0;entryDy=0;" edge="1" parent="1" source="sched" target="alerts">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_recon" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#6B7583;strokeWidth=1;fontSize=9;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=0.0000;exitY=0.5000;exitDx=0;exitDy=0;entryX=1.0000;entryY=0.5000;entryDx=0;entryDy=0;" edge="1" parent="1" source="sched" target="reconcile">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_ops" value="push · plan · deploy" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#6B7583;strokeWidth=1;fontSize=9;fontColor=#3C4858;dashed=0;endArrow=block;endFill=1;labelBackgroundColor=#FFFFFF;jumpStyle=arc;jumpSize=8;exitX=0.5000;exitY=1.0000;exitDx=0;exitDy=0;entryX=0.0000;entryY=0.5000;entryDx=0;entryDy=0;" edge="1" parent="1" source="ops" target="ecr">
+          <mxGeometry relative="1" as="geometry" x="-0.0120">
+            <Array as="points">
+              <mxPoint x="120" y="510" />
+              <mxPoint x="1100" y="510" />
+              <mxPoint x="1100" y="705" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="note" value="First-apply facts baked in: credential providers use client_authentication_method (the old token_endpoint_auth_methods is refused); Gateway with an IAM authorizer refuses 3LO targets, so number-verification is not registered and the binding page does its own auth-code exchange (binding_carrier_client = &quot;direct&quot;, which needs the NAT); AgentCore creates the runtime log groups itself; Runtime does not inject AWS_REGION; on-demand Nova needs the us.* inference profile; a new account's Bedrock daily token quota is 0, hence the cross-account role." style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;fontSize=10;fontColor=#6B7A90;fontStyle=0;spacing=4;" vertex="1" parent="1">
+          <mxGeometry x="20" y="880" width="1380" height="80" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

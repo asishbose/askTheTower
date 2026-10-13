@@ -24,6 +24,7 @@ variable "alb_subnet_ids" {
   type        = list(string)
 }
 
+
 variable "task_subnet_ids" {
   description = "Subnets for the task: public (with a public IP) unless the VPC has a NAT gateway."
   type        = list(string)
