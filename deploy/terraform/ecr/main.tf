@@ -27,11 +27,22 @@ resource "aws_ecr_lifecycle_policy" "service" {
   for_each   = aws_ecr_repository.service
   repository = each.value.name
   policy = jsonencode({
-    rules = [{
-      rulePriority = 1
-      description  = "keep the last 10 images"
-      selection    = { tagStatus = "any", countType = "imageCountMoreThan", countNumber = 10 }
-      action       = { type = "expire" }
-    }]
+    # One image per repository: the current push (tagged <git sha> + latest, one digest). Older digests and
+    # untagged layers expire; ECR evaluates the rules within 24 h of a push, so the previous image is still
+    # there for a same-day rollback. `make push` always rebuilds, so nothing is lost.
+    rules = [
+      {
+        rulePriority = 1
+        description  = "untagged images go at once"
+        selection    = { tagStatus = "untagged", countType = "sinceImagePushed", countUnit = "days", countNumber = 1 }
+        action       = { type = "expire" }
+      },
+      {
+        rulePriority = 2
+        description  = "keep only the newest image"
+        selection    = { tagStatus = "any", countType = "imageCountMoreThan", countNumber = 1 }
+        action       = { type = "expire" }
+      },
+    ]
   })
 }

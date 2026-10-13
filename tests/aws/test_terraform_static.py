@@ -92,7 +92,10 @@ def test_root_files_and_backend_placeholders() -> None:
     ):
         assert (TF / f).exists(), f
     backend = (TF / "backend.tf").read_text()
-    assert 'backend "s3"' in backend and "REPLACE-ME" in backend
+    # Local state on the sandbox account (its SCP denies the S3 bucket and lock table, 2026-10-13); the S3
+    # recipe stays in the header for an unrestricted account. Either way, no bucket name is committed.
+    assert 'backend "local"' in backend or ('backend "s3"' in backend and "REPLACE-ME" in backend)
+    assert "<your-state-bucket>" in backend and "tfstate" in backend
 
 
 @pytest.mark.unit
@@ -370,7 +373,8 @@ def test_agent_runtime_has_its_own_narrow_role_and_tower_url() -> None:
     assert "role_arn           = aws_iam_role.agent[0].arn" in runtime
     assert 'server_protocol = "HTTP"' in runtime and 'request_header_allowlist = ["Authorization"]' in runtime
     assert "TOWER_URL " in runtime and "TOWER_MCP_URL" not in main
-    assert 'REF_AGENT                 = "bedrock"' in runtime
+    assert 'REF_AGENT                 = var.web_chat_agent' in runtime  # bedrock by default; scripted = the quota fallback
+    assert 'default     = "bedrock"' in (TF / "modules" / "agentcore_runtime" / "variables.tf").read_text()
     tower_policy = main.split('data "aws_iam_policy_document" "runtime" {', 1)[1].split('\nresource "', 1)[0]
     assert "bedrock:InvokeModel" not in tower_policy  # Tower's role has no model access (rule 1)
 

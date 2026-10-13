@@ -106,12 +106,29 @@ def converse_tools(tools: list[ToolSpec]) -> list[dict[str, Any]]:
 
 
 def bedrock_client(region: str | None = None) -> Any:
+    """A `bedrock-runtime` client. With `BEDROCK_ASSUME_ROLE_ARN` set, the model is called in *that* role's
+    account (sts:AssumeRole, credentials refreshed by botocore): the escape hatch for an account whose Bedrock
+    daily token quota is 0 (new accounts). Only this one call crosses accounts; Tower never does."""
     import boto3
     from botocore.config import Config
 
-    return boto3.client(
+    region = region or os.environ.get("AWS_REGION") or DEFAULT_REGION
+    session: Any = boto3
+    role_arn = os.environ.get("BEDROCK_ASSUME_ROLE_ARN") or None
+    if role_arn:
+        from botocore.credentials import DeferredRefreshableCredentials, create_assume_role_refresher
+        from botocore.session import Session as BotocoreSession
+
+        bsession = BotocoreSession()
+        refresher = create_assume_role_refresher(
+            bsession.create_client("sts", region_name=region),
+            {"RoleArn": role_arn, "RoleSessionName": "ask-the-tower-web-chat-agent"},
+        )
+        bsession._credentials = DeferredRefreshableCredentials(refresher, "assume-role")  # noqa: SLF001
+        session = boto3.Session(botocore_session=bsession)
+    return session.client(
         "bedrock-runtime",
-        region_name=region or os.environ.get("AWS_REGION") or DEFAULT_REGION,
+        region_name=region,
         endpoint_url=os.environ.get("BEDROCK_ENDPOINT_URL") or None,
         config=Config(connect_timeout=5, read_timeout=30, retries={"max_attempts": 2, "mode": "standard"}),
     )

@@ -108,7 +108,9 @@ resource "aws_bedrockagentcore_agent_runtime" "tower" {
   agent_runtime_name    = local.runtime_name
   description           = "Ask the Tower MCP server (line_is_ok, is_reachable, watch_line)"
   role_arn              = aws_iam_role.runtime.arn
-  environment_variables = var.environment
+  # AWS_REGION is not injected into the container by Runtime (first apply 2026-10-13): boto3 and the carrier
+  # client would otherwise fall back to their own defaults (us-east-1), which an SCP may deny.
+  environment_variables = merge({ AWS_REGION = var.region, AWS_DEFAULT_REGION = var.region }, var.environment)
 
   agent_runtime_artifact {
     container_configuration {
@@ -186,7 +188,18 @@ data "aws_iam_policy_document" "agent" {
   statement {
     sid       = "Model"
     actions   = ["bedrock:InvokeModel", "bedrock:InvokeModelWithResponseStream"]
-    resources = ["arn:aws:bedrock:${var.region}::foundation-model/*", "arn:aws:bedrock:*:${var.account_id}:inference-profile/*"]
+    # Any region for the foundation model: a cross-region inference profile (us.amazon.…) routes to several.
+    resources = ["arn:aws:bedrock:*::foundation-model/*", "arn:aws:bedrock:*:${var.account_id}:inference-profile/*"]
+  }
+
+  # Cross-account Bedrock (bedrock_assume_role_arn): the only statement that reaches outside this account.
+  dynamic "statement" {
+    for_each = var.bedrock_assume_role_arn == "" ? [] : [var.bedrock_assume_role_arn]
+    content {
+      sid       = "AssumeBedrockRole"
+      actions   = ["sts:AssumeRole"]
+      resources = [statement.value]
+    }
   }
 }
 
@@ -203,14 +216,19 @@ resource "aws_bedrockagentcore_agent_runtime" "ref_client" {
   agent_runtime_name = local.agent_name
   description        = "Web chat agent: the reference client's HTTP app (Bedrock Converse) calling Tower over MCP"
   role_arn           = aws_iam_role.agent[0].arn
-  environment_variables = {
-    TOWER_URL                 = local.tower_invoke
-    TOWER_ENV                 = "aws"
-    REF_AGENT                 = "bedrock"
-    BEDROCK_MODEL_ID          = var.bedrock_model_id
-    WEB_CHAT_BINDING_BASE_URL = var.binding_base_url
-    REF_CLIENT_HTTP_PORT      = "8080"
-  }
+  environment_variables = merge(
+    {
+      AWS_REGION                = var.region # the agent's Bedrock region (ref_client.agent DEFAULT_REGION is us-east-1)
+      AWS_DEFAULT_REGION        = var.region
+      TOWER_URL                 = local.tower_invoke
+      TOWER_ENV                 = "aws"
+      REF_AGENT                 = var.web_chat_agent
+      BEDROCK_MODEL_ID          = var.bedrock_model_id
+      WEB_CHAT_BINDING_BASE_URL = var.binding_base_url
+      REF_CLIENT_HTTP_PORT      = "8080"
+    },
+    var.bedrock_assume_role_arn == "" ? {} : { BEDROCK_ASSUME_ROLE_ARN = var.bedrock_assume_role_arn },
+  )
 
   agent_runtime_artifact {
     container_configuration {

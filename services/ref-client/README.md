@@ -86,6 +86,7 @@ the mock's scenario reset, and Tower's stored-state path would answer from it.
 | `BEDROCK_MODEL_ID` | `amazon.nova-micro-v1:0` | any Converse model with tool use |
 | `AWS_REGION` | `us-east-1` | Bedrock (and Polly) region |
 | `BEDROCK_ENDPOINT_URL` | — | override the Bedrock endpoint (tests point it at a closed port) |
+| `BEDROCK_ASSUME_ROLE_ARN` | — | call the model as this role in another account (sts:AssumeRole, refreshed by botocore): for an account whose Bedrock daily token quota is 0. Only the model call crosses accounts |
 | `REF_AGENT` | `auto` | `auto` · `bedrock` · `scripted` |
 | `REF_VOICE` | `0` | `1` = speak with Polly; `say -` listens on the mic |
 | `CORPUS_MIN_PASS` | `0.9` | corpus gate |

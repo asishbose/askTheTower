@@ -258,6 +258,8 @@ module "agentcore_runtime" {
   ref_client_image   = local.images["ref-client"]
   enable_agent       = var.enable_web_chat
   bedrock_model_id   = var.bedrock_model_id
+  web_chat_agent     = var.web_chat_agent
+  bedrock_assume_role_arn = var.bedrock_assume_role_arn
   binding_base_url   = local.public_base_url
   log_retention_days = var.log_retention_days
 

@@ -329,9 +329,30 @@ variable "cognito_domain_prefix" {
 }
 
 variable "bedrock_model_id" {
-  description = "BEDROCK_MODEL_ID for the web chat agent runtime."
+  description = "BEDROCK_MODEL_ID for the web chat agent runtime. On-demand needs the cross-region inference profile (us.…), not the bare model id."
   type        = string
-  default     = "amazon.nova-micro-v1:0"
+  default     = "us.amazon.nova-micro-v1:0"
+}
+
+variable "bedrock_assume_role_arn" {
+  description = <<-EOT
+    Optional: a role in another account the web chat agent assumes for its Bedrock calls (and nothing else),
+    when this account's Bedrock daily token quota is 0 (new accounts). The role trusts this stack's agent role
+    (`<name>-agentcore-agent`) and allows bedrock:InvokeModel / InvokeModelWithResponseStream. Empty = Bedrock here.
+  EOT
+  type        = string
+  default     = ""
+}
+
+variable "web_chat_agent" {
+  description = <<-EOT
+    The web chat agent: bedrock (default; Nova via Converse chooses the tool) or scripted (the demo phrasebook,
+    the same agent `make demo` uses). scripted is the fallback for an account whose Bedrock daily token quota is
+    0 (new accounts: Service Quotas L-D2912E70 and siblings, non-adjustable; a support case lifts it). Say so in
+    the submission when it is used.
+  EOT
+  type        = string
+  default     = "bedrock"
 }
 
 # --- alerts, SMS, schedules ---------------------------------------------------------------------------------------

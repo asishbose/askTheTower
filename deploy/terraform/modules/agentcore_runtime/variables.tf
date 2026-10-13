@@ -29,7 +29,17 @@ variable "enable_agent" {
 
 variable "bedrock_model_id" {
   type    = string
-  default = "amazon.nova-micro-v1:0"
+  default = "us.amazon.nova-micro-v1:0"
+}
+
+variable "web_chat_agent" {
+  description = "REF_AGENT for the web chat agent runtime: bedrock (the model chooses the tool) or scripted (the demo phrasebook; the fallback while the account's Bedrock daily token quota is 0)."
+  type        = string
+  default     = "bedrock"
+  validation {
+    condition     = contains(["bedrock", "scripted"], var.web_chat_agent)
+    error_message = "web_chat_agent must be bedrock or scripted."
+  }
 }
 
 variable "binding_base_url" {
@@ -95,4 +105,10 @@ variable "vpc" {
 variable "log_retention_days" {
   type    = number
   default = 14
+}
+
+variable "bedrock_assume_role_arn" {
+  description = "BEDROCK_ASSUME_ROLE_ARN for the web chat agent: a role in another account that may invoke the model (the project account's Bedrock daily token quota is 0). Empty = call Bedrock in this account."
+  type        = string
+  default     = ""
 }

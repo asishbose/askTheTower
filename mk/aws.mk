@@ -13,10 +13,20 @@ TF_VARS := $(if $(TFVARS_FILE),-var-file=$(TFVARS_FILE)) -var=image_tag=$(IMAGE_
 # destroy ignores image_tag, so `down` does not pass it: it works whatever tag is in state.
 TF_DOWN_VARS := $(if $(TFVARS_FILE),-var-file=$(TFVARS_FILE))
 TFR_VARS := $(if $(TFVARS_FILE),-var-file=../$(TFVARS_FILE)) -compact-warnings
-.PHONY: ecr-up ecr-outputs plan deploy seed-aws outputs latency-aws register-gateway tf-check down-all \
+.PHONY: ecr-up ecr-outputs ecr-prune plan deploy seed-aws outputs latency-aws register-gateway tf-check down-all \
 	cognito-users web-chat-sync web-chat-url admin-open admin-close
 ecr-up: ## Create the five ECR repositories (own state; idempotent; survives `make down`) → artifacts/tf-outputs-ecr.json
 	$(TFR) init -input=false && $(TFR) apply -input=false -auto-approve $(TFR_VARS) && $(MAKE) --no-print-directory ecr-outputs
+ecr-prune: ## Delete every image in the five repositories except the one tagged with artifacts/image-tag (the lifecycle policy does the same within 24 h)
+	@tag=$$(cat artifacts/image-tag) && region=$$(jq -r .region.value artifacts/tf-outputs-ecr.json) && \
+	for r in $$(jq -r '.ecr_repositories.value | keys[]' artifacts/tf-outputs-ecr.json); do \
+	  repo=$$(jq -r ".ecr_repositories.value[\"$$r\"]" artifacts/tf-outputs-ecr.json | sed 's|^[^/]*/||'); \
+	  ids=$$(aws ecr describe-images --region $$region --repository-name $$repo \
+	    --query "imageDetails[?!contains(imageTags || \`[]\`, '$$tag')].imageDigest" --output text); \
+	  [ -z "$$ids" ] && { echo "$$repo: only $$tag"; continue; }; \
+	  args=""; for d in $$ids; do args="$$args imageDigest=$$d"; done; \
+	  aws ecr batch-delete-image --region $$region --repository-name $$repo --image-ids $$args --query 'length(imageIds)' --output text | sed "s|^|$$repo: deleted |"; \
+	done
 ecr-outputs: ## Write the ECR root's outputs (repository URLs, registry, region) to artifacts/tf-outputs-ecr.json
 	@mkdir -p artifacts
 	$(TFR) output -json > artifacts/tf-outputs-ecr.json
