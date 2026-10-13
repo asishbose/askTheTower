@@ -31,8 +31,9 @@ resource "aws_bedrockagentcore_oauth2_credential_provider" "this" {
           issuer                      = var.issuer
           authorization_endpoint      = var.authorize_url
           token_endpoint              = var.token_url
-          response_types              = ["code"]
-          token_endpoint_auth_methods = ["client_secret_basic", "client_secret_post"]
+          response_types = ["code"]
+          # token_endpoint_auth_methods is deprecated by the AgentCore API (2026-10): it rejects the call when both
+          # it and client_authentication_method are sent. The method is declared once, above.
         }
       }
 

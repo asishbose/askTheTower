@@ -51,9 +51,7 @@ At first a SIM swap feels like bad signal. The phone goes quiet, and the network
 
 <!-- Assembled from `make help` (prompt 19's Makefile) and the measured clean-machine run. Re-check after Makefile changes. -->
 
-**Prerequisites:**
-- Docker with Compose v2, `make` and `bash`;
-- [`uv`](https://docs.astral.sh/uv/) for `make test`. Without uv, `make demo` falls back to the reference-client container.
+**Prerequisites:** Docker with Compose v2, `make` and `bash`, and [`uv`](https://docs.astral.sh/uv/) for `make test` (without uv, `make demo` falls back to the reference-client container). The AWS deployment needs more — the AWS CLI with the Session Manager plugin, Terraform, an arm64 Buildx builder, `gitleaks` for the pre-push gate — each with its install line and check in [**PREREQUISITES.md**](PREREQUISITES.md).
 
 On Windows, use WSL2 (verified). Git Bash also works once `make` is installed (`winget install ezwinports.make`; not yet verified). Nothing else is needed: `make up` generates the local secrets into a gitignored `deploy/compose/.env`.
 
@@ -266,7 +264,7 @@ One code base, three environments: local compose, AWS (AgentCore Runtime + Gatew
 | Local compose | Matches golden, 4/4 ([`clean-run.txt`](artifacts/clean-run.txt)). |
 | Kubernetes (kind) | Matches golden, 4/4 ([`helm-kind.txt`](artifacts/helm-kind.txt)). |
 | EKS | Not run yet ([`eks-run.txt`](artifacts/eks-run.txt)). |
-| AWS | Not deployed yet ([`terraform-plan.txt`](artifacts/terraform-plan.txt)). `terraform validate` passes. |
+| AWS | First applied 2026-10-13 (us-east-2): the full stack from the Ops tab; the plan file is generated and gitignored (it carries account and subnet ids). Smoke test, the demo and latency on AWS: in progress. |
 
 | Piece | Local compose | AWS | EKS |
 |---|---|---|---|

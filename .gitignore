@@ -39,7 +39,6 @@ artifacts/**
 # prompt 16: the §6 submission artefacts are committed (the checklist links them)
 !artifacts/conformance-report.html
 !artifacts/clean-run.txt
-!artifacts/terraform-plan.txt
 !artifacts/transcripts/alerts-showcase.log
 !artifacts/sms-screenshot.png
 !artifacts/audit-screenshot.png
@@ -77,3 +76,6 @@ playwright-report/
 # logs — none belong in the repo, except the one showcase transcript the checklist links
 *.log
 !artifacts/transcripts/alerts-showcase.log
+# terraform plans carry the account id, subnet ids and ARNs: never committed (make plan rewrites them)
+artifacts/terraform-plan.txt
+artifacts/tfplan

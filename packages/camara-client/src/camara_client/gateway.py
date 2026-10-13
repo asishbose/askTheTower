@@ -73,11 +73,18 @@ def resolve_tool_names(listed: Iterable[str]) -> dict[str, str]:
     """Map Gateway's listed tool names onto the operations: `<api>___<operationId>` (AgentCore, target named
     after the spec), then `<api>__<operationId>` (the convention), then a unique `…___<operationId>` /
     `…__<operationId>` (a target named differently). Raises `ValueError` naming any operation left unmapped
-    or matched ambiguously."""
+    or matched ambiguously. An API with *no* operation listed at all is not an error: its target was not
+    registered (Terraform `skip_apis`, e.g. number-verification when the binding page runs its own auth-code
+    exchange, since Gateway refuses 3LO targets behind an AWS_IAM authorizer) and calling it later fails as a
+    deploy fault; `unregistered_apis` names them."""
     names = set(listed)
     out: dict[str, str] = {}
     missing: list[str] = []
-    for op in specs.operations():
+    ops = specs.operations()
+    skipped = unregistered_apis(names, ops)
+    for op in ops:
+        if op.api in skipped:
+            continue
         exact = [
             n
             for n in (
@@ -101,6 +108,18 @@ def resolve_tool_names(listed: Iterable[str]) -> dict[str, str]:
     if missing:
         raise ValueError(f"Gateway lists no unique tool for {missing}")
     return out
+
+
+def unregistered_apis(listed: Iterable[str], ops: Iterable[specs.Operation] | None = None) -> set[str]:
+    """APIs none of whose operations appear in Gateway's tool list (their target was not registered)."""
+    names = set(listed)
+    present: set[str] = set()
+    apis: set[str] = set()
+    for op in ops if ops is not None else specs.operations():
+        apis.add(op.api)
+        if any(n.endswith(f"{AGENTCORE_DELIMITER}{op.operation_id}") or n.endswith(f"__{op.operation_id}") for n in names):
+            present.add(op.api)
+    return apis - present
 
 
 def load_tool_names(path: str | Path | None) -> dict[str, str]:
@@ -235,7 +254,9 @@ class GatewayClient(CarrierBase):
                 raise
             except Exception:  # noqa: BLE001 — tools/list failed, or Gateway lacks a tool: a deploy fault
                 raise transport_error() from None
-        name = self.tool_names[op.key]
+        name = self.tool_names.get(op.key)
+        if name is None:  # the API's target is not registered on this Gateway (resolve_tool_names skipped it)
+            raise transport_error()
         meta = None
         if auth_code is not None:
             code, redirect_uri = auth_code

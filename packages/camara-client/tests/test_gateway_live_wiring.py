@@ -21,7 +21,7 @@ from botocore.awsrequest import AWSRequest
 from botocore.credentials import Credentials
 from camara_client import BreakerRegistry, CarrierConfig, GatewayClient, LineRef, make_client, specs
 from camara_client.aws import SigV4Auth, gateway_auth_from_env
-from camara_client.gateway import AGENTCORE_DELIMITER, conventional_tools, resolve_tool_names
+from camara_client.gateway import AGENTCORE_DELIMITER, conventional_tools, resolve_tool_names, unregistered_apis
 from camara_client.testing import FakeGateway, mock_config
 from mock_carrier.testing import ASISH, BASE
 
@@ -61,6 +61,16 @@ def test_missing_or_ambiguous_tools_are_named() -> None:
     dup = [f"a___{op.operation_id}" for op in OPS] + ["b___checkSimSwap"]
     with pytest.raises(ValueError, match="ambiguous"):
         resolve_tool_names(dup)
+
+
+@pytest.mark.unit
+def test_whole_api_absent_is_unregistered_not_missing() -> None:
+    """A target Terraform did not register (skip_apis) leaves its API out of the map without raising."""
+    listed = [agentcore_name(op.api, op.operation_id) for op in OPS if op.api != "number-verification"]
+    names = resolve_tool_names(listed)
+    assert not any(k.startswith("number-verification/") for k in names)
+    assert unregistered_apis(listed) == {"number-verification"}
+    assert unregistered_apis(agentcore_name(op.api, op.operation_id) for op in OPS) == set()
 
 
 # --- discover + persistent session through the in-process Gateway --------------------------------------------

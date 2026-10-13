@@ -16,7 +16,7 @@ output "invoke_url" {
 }
 
 output "log_group_name" {
-  value = aws_cloudwatch_log_group.tower.name
+  value = local.log_group
 }
 
 output "agent_runtime_arn" {

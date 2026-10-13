@@ -36,7 +36,7 @@ async def list_tools(gateway_url: str, region: str) -> list[str]:
 
 
 def main(argv: list[str] | None = None) -> int:
-    from camara_client import resolve_tool_names, tools_manifest
+    from camara_client import resolve_tool_names, tools_manifest, unregistered_apis
 
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--outputs", type=Path, default=None)
@@ -55,6 +55,8 @@ def main(argv: list[str] | None = None) -> int:
     except ValueError as e:
         print(f"registration incomplete: {e}", file=sys.stderr)
         return 1
+    for api in sorted(unregistered_apis(listed)):
+        print(f"  (no target for {api}: not registered on this Gateway — Terraform skip_apis)")
     manifest = tools_manifest(names, gateway=url)
     text = json.dumps(manifest, indent=2, sort_keys=True) + "\n"
     if args.check:

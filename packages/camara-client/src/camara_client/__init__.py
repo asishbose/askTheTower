@@ -16,7 +16,7 @@ from camara_client.breaker import DEFAULT_BREAKERS, BreakerRegistry, CircuitBrea
 from camara_client.config import CarrierConfig, OAuthConfig, resolve_secret_ref
 from camara_client.direct import DirectClient
 from camara_client.errors import ERROR_MAP, CarrierError, map_error
-from camara_client.gateway import GatewayClient, load_tool_names, resolve_tool_names, tools_manifest
+from camara_client.gateway import GatewayClient, load_tool_names, resolve_tool_names, tools_manifest, unregistered_apis
 from camara_client.protocol import (
     CarrierClient,
     CFResult,
@@ -76,5 +76,6 @@ __all__ = [
     "profile_for",
     "resolve_secret_ref",
     "resolve_tool_names",
+    "unregistered_apis",
     "tools_manifest",
 ]

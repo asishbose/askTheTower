@@ -149,11 +149,9 @@ resource "aws_bedrockagentcore_agent_runtime" "tower" {
   depends_on = [aws_iam_role_policy.runtime]
 }
 
-resource "aws_cloudwatch_log_group" "tower" {
-  # Runtime writes here; created up front so retention applies and `make down` removes it.
-  name              = local.log_group
-  retention_in_days = var.log_retention_days
-}
+# AgentCore creates /aws/bedrock-agentcore/runtimes/<id>-DEFAULT itself when the Runtime is created (first apply
+# 2026-10-13: ResourceAlreadyExistsException), so the group is not a Terraform resource; local.log_group names it.
+# Retention is the account default; `make down` leaves the group behind (empty, free).
 
 # --- the web chat agent: a second Runtime (protocol HTTP) with its own role -------------------------------------
 
@@ -245,8 +243,4 @@ resource "aws_bedrockagentcore_agent_runtime" "ref_client" {
   depends_on = [aws_iam_role_policy.agent]
 }
 
-resource "aws_cloudwatch_log_group" "agent" {
-  count             = var.enable_agent ? 1 : 0
-  name              = local.agent_log_group
-  retention_in_days = var.log_retention_days
-}
+# Same for the agent Runtime's group: created by AgentCore, named by local.agent_log_group.

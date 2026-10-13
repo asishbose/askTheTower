@@ -18,7 +18,7 @@ Source of truth for details: [`docs/architecture/deployment-agentcore.md`](../ar
 | 0.5 | Terraform state backend (by hand, once) | Follow the header of `deploy/terraform/backend.tf`: create a private, versioned, KMS-encrypted S3 bucket and a DynamoDB lock table; put their names in `backend.tf` (the `REPLACE-ME` values). | `make plan` / `make ecr-up` need it |
 | 0.6 | `deploy/terraform/envs/aws.tfvars` | `cp envs/aws.tfvars.example envs/aws.tfvars`; set region/profile, `mock_domain_name` + zone id (or cert arn), `sms_sandbox_numbers = ["<your E.164>"]`, leave `mock_assume_mobile_data = true` (simulation, documented), `demo_admin_cidrs = []` for now. Gitignored — never commit it. | — |
 | 0.7 | Root `.env` | `COGNITO_PASSWORD_ASISH`, `COGNITO_PASSWORD_MOM` (any strong value; never written to disk by the scripts). `make config-check` must pass (it is also the Ops tab's gate). For the tab: `DEMO_UI_AWS_OPS=1` here, or start it with `make ops-ui`. | step 6 |
-| 0.8 | Toolchain in WSL | `terraform -version` (≥ 1.6), `docker buildx ls` shows an arm64-capable builder (`docker buildx create --use --platform linux/arm64` if not), `jq`, `aws`. Corporate proxy: the same `SSL_CERT_FILE` export you use for Node applies to Terraform's provider download. | steps 2–3 |
+| 0.8 | Toolchain in WSL | Every tool with its install line and check: [`PREREQUISITES.md`](../../PREREQUISITES.md) §3 — Terraform ≥ 1.9, an arm64 Buildx builder, `jq`, the AWS CLI **and its Session Manager plugin** (`make seed-aws` needs it). Corporate proxy: the same `SSL_CERT_FILE` export you use for Node applies to Terraform's provider download. | steps 2–3, seed |
 
 ## 1. Local proof first (10 min)
 

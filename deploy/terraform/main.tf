@@ -245,6 +245,7 @@ module "agentcore_gateway" {
   private_endpoint     = local.carrier_private_endpoint
   kms_key_arn          = module.kms.key_arn
   identity_secret_arns = module.agentcore_identity.client_secret_arns
+  skip_apis            = var.binding_carrier_client == "direct" ? ["number-verification"] : []
 }
 
 module "agentcore_runtime" {

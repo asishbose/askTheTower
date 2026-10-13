@@ -21,8 +21,11 @@ locals {
   payloads = {
     for api, spec in local.specs : api => jsonencode(merge(spec, {
       servers = [{ url = replace(spec.servers[0].url, "{apiRoot}", trimsuffix(var.carrier_base_url, "/")) }]
-    }))
+    })) if !contains(var.skip_apis, api)
   }
+  # Gateway refuses an AUTHORIZATION_CODE (3LO) target when the authorizer is AWS_IAM ("3LO Auth is not supported
+  # when gateway authorizer type is AWS_IAM", first apply 2026-10-13). number-verification is therefore skipped
+  # when the binding page runs its own DirectClient (binding_carrier_client = "direct").
   auth_code_apis = toset(["number-verification"])
 }
 

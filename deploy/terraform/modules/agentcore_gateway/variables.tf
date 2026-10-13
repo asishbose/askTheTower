@@ -56,3 +56,9 @@ variable "identity_secret_arns" {
   type    = list(string)
   default = []
 }
+
+variable "skip_apis" {
+  description = "API names (specs/camara/*.yaml stems) not registered as targets, e.g. number-verification when the binding page uses DirectClient."
+  type        = set(string)
+  default     = []
+}
