@@ -18,6 +18,8 @@ Runtime want a single-manifest linux/arm64 image. (`make sbom` produces the SBOM
 from __future__ import annotations
 
 import argparse
+import json
+import platform
 import shlex
 import subprocess
 import sys
@@ -83,6 +85,29 @@ def resolve_outputs(env: str, explicit: Path | None) -> dict[str, Any]:
     raise SystemExit(f"no ecr_repositories in {tried}: run `make ecr-up` (or `make ecr-outputs`) first")
 
 
+BINFMT = "tonistiigi/binfmt"
+
+
+def ensure_arm64_emulation(run: Any = subprocess.run) -> None:
+    """On an x86 host, buildx runs the images' arm64 build steps under QEMU. Its binfmt registration is lost when
+    Docker or WSL restarts, and the build then dies at the first RUN with `exec /bin/sh: exec format error`
+    (2026-10-14). Check the registration (`tonistiigi/binfmt` with no arguments prints it) and install it when
+    missing. On an arm64 host nothing is needed."""
+    if platform.machine().lower() in ("aarch64", "arm64"):
+        return
+    status = run(
+        ["docker", "run", "--privileged", "--rm", BINFMT], capture_output=True, text=True, check=False
+    )
+    try:
+        emulators = json.loads(status.stdout).get("emulators") or []
+    except ValueError:
+        emulators = []
+    if any("aarch64" in str(e) for e in emulators):
+        return
+    print("+ arm64 emulation not registered (Docker or WSL restarted): installing it")
+    run(["docker", "run", "--privileged", "--rm", BINFMT, "--install", "arm64"], check=True)
+
+
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--env", choices=["aws", "eks"], required=True)
@@ -98,6 +123,8 @@ def main(argv: list[str] | None = None) -> int:
     region = str(o["region"])
     services = args.only or SERVICES
     build = verify_commands if args.verify else commands
+    if not (args.verify or args.dry_run):
+        ensure_arm64_emulation()
     for cmd in build(repos, region, args.tag, services):
         print("+", " ".join(shlex.quote(c) for c in cmd))
         if not args.dry_run:

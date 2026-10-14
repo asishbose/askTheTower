@@ -162,7 +162,7 @@ TARGETS: tuple[OpsTarget, ...] = (
     _aws("aws-web-chat-url", "web-chat-url", "pipeline", "9 · Web chat URL", ("aws-web-chat-sync",)),
     _aws("aws-seed-bind-asish", "seed-aws", "pipeline", "10 · Bind Asish for the stories", ("aws-seed",)),
     _aws("aws-demo", "demo", "pipeline", "11 · make demo on AWS", ("aws-seed-bind-asish",)),
-    _aws("aws-latency", "latency-aws", "pipeline", "12 · Latency: 200 calls per tool", ("aws-deploy",)),
+    _aws("aws-latency", "latency-aws", "pipeline", "12 · Latency: 50 calls per path", ("aws-deploy",)),
     _aws("aws-test-e2e", "test-e2e", "pipeline", "13 · End to end on AWS", ("aws-seed-bind-asish",)),
     _aws("aws-test-report", "test-report", "pipeline", "14 · Write artifacts/test-report.md", ("aws-test-e2e",)),
     _aws("aws-admin-open", "admin-open", "admin", "Open the admin path to your /32", ("aws-deploy",)),

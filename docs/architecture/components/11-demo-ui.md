@@ -94,7 +94,7 @@ Columns: `runner` is the group of T2 (`local` | `aws`); `group` is the button se
 | `aws-web-chat-url` | `make web-chat-url ENV=aws` | aws | pipeline | 9 · Web chat URL | no | base, docker, uv | dotenv | — | `aws-web-chat-sync` |
 | `aws-seed-bind-asish` | `make seed-aws ENV=aws SEED_ARGS=--bind-asish` | aws | pipeline | 10 · Bind Asish for the stories | no | base, docker, uv | dotenv | — | `aws-seed` |
 | `aws-demo` | `make demo ENV=aws` | aws | pipeline | 11 · make demo on AWS | no | base, docker, uv | dotenv | — | `aws-seed-bind-asish` |
-| `aws-latency` | `make latency-aws ENV=aws` | aws | pipeline | 12 · Latency: 200 calls per tool | no | base, docker, uv | dotenv | — | `aws-deploy` |
+| `aws-latency` | `make latency-aws ENV=aws` | aws | pipeline | 12 · Latency: 50 calls per path | no | base, docker, uv | dotenv | — | `aws-deploy` |
 | `aws-test-e2e` | `make test-e2e ENV=aws` | aws | pipeline | 13 · End to end on AWS | no | base, docker, uv | dotenv | — | `aws-seed-bind-asish` |
 | `aws-test-report` | `make test-report ENV=aws` | aws | pipeline | 14 · Write artifacts/test-report.md | no | base, docker, uv | dotenv | — | `aws-test-e2e` |
 | `aws-admin-open` | `make admin-open ENV=aws ADMIN_CIDR=<cidr>` | aws | admin | Open the admin path to your /32 | no | base, docker, uv | dotenv | — | `aws-deploy` |

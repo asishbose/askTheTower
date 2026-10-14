@@ -11,12 +11,19 @@ from __future__ import annotations
 
 import json
 import os
+import uuid
 from collections.abc import Callable
 from dataclasses import dataclass, field
 from types import TracebackType
 from typing import Any
 
 DEFAULT_TOWER_URL = "http://localhost:8080/mcp"  # mk/vars.mk TOWER_URL for ENV=local
+# AgentCore Runtime routes each request to a microVM by session. Tower is a stateless MCP server, so it
+# issues no `Mcp-Session-Id` and, without one from the client, every request lands in a new session: a cold
+# start (~7 s) per tool call (Tower's log, 2026-10-14). One random id per process keeps the calls on one warm
+# Tower. It names no user; Tower authenticates every request by its bearer, sharing a microVM shares no data.
+AGENTCORE_SESSION_ID = f"tower-{uuid.uuid4()}"
+AGENTCORE_SESSION_HEADERS = ("Mcp-Session-Id", "X-Amzn-Bedrock-AgentCore-Runtime-Session-Id")
 
 
 class TowerError(RuntimeError):
@@ -47,6 +54,8 @@ class TowerConfig:
     # The caller's whole `Authorization` header, forwarded byte for byte (the web chat agent, 09 §6.2 rule 3).
     # Wins over `bearer`.
     authorization: str | None = field(default=None, repr=False)
+    # AgentCore Runtime session (33+ characters); None: this process's `AGENTCORE_SESSION_ID`.
+    session_id: str | None = None
 
     @classmethod
     def from_env(cls, *, user_id: str | None = None) -> TowerConfig:
@@ -59,6 +68,8 @@ class TowerConfig:
 
     def headers(self) -> dict[str, str]:
         h: dict[str, str] = {}
+        if "bedrock-agentcore" in self.url:
+            h.update(dict.fromkeys(AGENTCORE_SESSION_HEADERS, self.session_id or AGENTCORE_SESSION_ID))
         if self.authorization:
             h["Authorization"] = self.authorization
         elif self.bearer:

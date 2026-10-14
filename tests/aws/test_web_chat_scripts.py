@@ -347,3 +347,29 @@ def test_local_compose_seed_keeps_the_local_user_ids() -> None:
     assert ("user-asish", "phone-asish") in seed.PEOPLE and ("user-mom", "phone-mom") in seed.PEOPLE
     assert ("user-mom", "user-asish", "mom") in seed.GRANTS
     assert all(owner.startswith("user-") and grantee.startswith("user-") for owner, grantee, _ in seed.GRANTS)
+
+
+@pytest.mark.integration
+def test_a_line_held_by_a_stale_sub_is_rebound_and_a_real_conflict_is_not(store: Any) -> None:
+    """`make cognito-users` re-created the users after an earlier seed: Mom's line still names the old sub. The
+    re-seed clears that orphan (and its grant) and binds the current sub; a line held by the *other* demo person
+    is a real conflict and stays as it is."""
+    from tower_consent import LocalLineIdHasher, LocalMsisdnCipher, list_grants, list_lines
+
+    hasher, cipher = LocalLineIdHasher(b"k" * 32), LocalMsisdnCipher(b"m" * 32)
+    asish, mom = demo_numbers()
+    now = datetime(2026, 10, 14, tzinfo=UTC)
+    stale = {"asish": ASISH_SUB, "mom": "stale-mom-sub-0000"}
+    aws_seed.seed_people(store, hasher, cipher, stale, asish_e164=asish, mom_e164=mom, now=now)
+    users = {"asish": ASISH_SUB, "mom": MOM_SUB}
+    done = aws_seed.seed_people(store, hasher, cipher, users, asish_e164=asish, mom_e164=mom, now=now, bind_asish=True)
+    assert any(d.startswith("line mom: rebound") for d in done), done
+    (line,) = list_lines(store, MOM_SUB)
+    assert list_lines(store, "stale-mom-sub-0000") == []
+    assert [(g.grantee_user_id, g.alias) for g in list_grants(store, line.line_id)] == [(ASISH_SUB, "mom")]
+    assert "line asish: bound" in done and not any(phone_hits(x) for x in done)
+
+    swapped = aws_seed.seed_people(  # Asish's number under Mom's name: both subs are demo users → untouched
+        store, hasher, cipher, users, asish_e164=mom, mom_e164=asish, now=now, bind_asish=True
+    )
+    assert "line mom: bound to another user — left as is" in swapped

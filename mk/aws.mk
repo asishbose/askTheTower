@@ -59,8 +59,11 @@ web-chat-url: ## Print the web chat page URL (output web_chat_url)
 outputs: ## Print terraform outputs and write deploy/.env.aws
 	@mkdir -p artifacts
 	$(TF) output -json > artifacts/tf-outputs.json && $(PY) scripts/render_env.py --env aws
-latency-aws: ## 200 calls per tool against the AgentCore deployment → artifacts/latency-aws.md
-	ENV=aws $(PY) scripts/latency.py --out artifacts/latency-aws.md
+# 50 calls per path (200 in all): AgentCore recycled Tower's microVM after ~200 calls on one session (2026-10-14),
+# and a longer run measures that restart, not Tower. LATENCY_AWS_N=200 for the full count.
+LATENCY_AWS_N ?= 50
+latency-aws: ## 50 calls per path (200 in all) against the AgentCore deployment → artifacts/latency-aws.md
+	ENV=aws $(PY) scripts/latency.py -n $(LATENCY_AWS_N) --out artifacts/latency-aws.md
 register-gateway: ## Register the vendored CAMARA specs with AgentCore Gateway; write gateway-tools.json
 	$(PY) scripts/register_gateway.py
 tf-check: ## terraform fmt -check + validate of the main and ecr roots (init -backend=false; never touches AWS) + tables.auto.tfvars.json current

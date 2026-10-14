@@ -180,6 +180,7 @@ def seed_people(
 ) -> list[str]:
     """The AWS demo rows under the Cognito subs. Returns what it did, one line per row, without ids or numbers."""
     from tower_consent import bind_line, ensure_user, grant
+    from tower_consent import tables as T
     from tower_consent.errors import AliasCollision, GrantExists, LineOwnedByOtherUser
 
     done: list[str] = []
@@ -188,12 +189,24 @@ def seed_people(
             ensure_user(store, users[name], now=now)
             done.append(f"user {name}")
 
+    demo_subs = set(users.values())
+
     def bind(name: str, e164: str) -> str | None:
         try:
             line = bind_line(store, hasher, cipher, users[name], e164, "auth_code", now=now)
         except LineOwnedByOtherUser:
-            done.append(f"line {name}: bound to another user — left as is")
-            return None
+            line_id = hasher.line_id(e164)
+            owner = (store.get(T.LINES, {"line_id": line_id}) or {}).get("owner_user_id")
+            if owner in demo_subs:  # the other demo person holds it: a real conflict, never overwritten
+                done.append(f"line {name}: bound to another user — left as is")
+                return None
+            # An orphan: the owner is a Cognito sub that no longer belongs to a demo user (the pool or the user
+            # was recreated by `make cognito-users` after an earlier seed). Clear the line and its grants and
+            # watches, then bind it to the current sub — otherwise every re-seed after a user re-create stalls.
+            purged = purge_line(store, line_id, owner)
+            line = bind_line(store, hasher, cipher, users[name], e164, "auth_code", now=now)
+            done.append(f"line {name}: rebound (was held by a stale user; {purged} dependent rows cleared)")
+            return line.line_id
         done.append(f"line {name}: bound")
         return line.line_id
 
@@ -209,6 +222,22 @@ def seed_people(
         except (GrantExists, AliasCollision):  # a re-run: the grant (alias "mom") is already there
             done.append("grant mom → asish watch: exists")
     return done
+
+
+def purge_line(store: Any, line_id: str, owner: str | None) -> int:
+    """Delete one orphaned Lines row (only while `owner` still holds it) and the Grants and Watches rows keyed by
+    its line id. Audit rows stay: they are the history. Returns how many dependent rows went."""
+    from tower_consent import tables as T
+
+    removed = 0
+    for table, rng in ((T.GRANTS, "grantee_grant"), (T.WATCHES, "watcher_user_id")):
+        for item in store.query(table, "line_id = :l", {":l": line_id}):
+            store.delete(table, {"line_id": line_id, rng: item[rng]})
+            removed += 1
+    store.delete(
+        T.LINES, {"line_id": line_id}, condition="owner_user_id = :o", values={":o": owner}
+    )
+    return removed
 
 
 def seed_evidence(

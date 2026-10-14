@@ -58,6 +58,9 @@ ALERTS_INTERNAL_BEARER ?= $(shell sed -n 's/^INTERNAL_BEARER=//p' $(COMPOSE_ENV_
 export ALERTS_INTERNAL_BEARER
 else
 -include deploy/.env.$(ENV)
+# The demo admin path (10 §2.1): host-side tools (make demo, the e2e layer) send DEMO_ADMIN_BEARER to the mock, Alerts
+# and the binding page's admin routes; empty while the path is closed.
+export DEMO_ADMIN_BEARER BINDING_ADMIN_URL
 endif
 export ENV TOWER_URL MOCK_URL BINDING_URL ALERTS_URL DYNAMO_ENDPOINT
 # `require-env`: a prerequisite for targets that talk to a running eks/aws deployment. Locally it is a no-op;

@@ -302,11 +302,12 @@ module "agentcore_runtime" {
       LOG_LEVEL              = "info"
     },
     var.tower_carrier_client == "gateway" ? {
-      CARRIER_CLIENT         = "gateway"
-      CARRIER_GATEWAY_URL    = module.agentcore_gateway.gateway_url
-      CARRIER_GATEWAY_TOOLS  = "discover"
-      CARRIER_GATEWAY_AUTH   = "sigv4"
-      CARRIER_GATEWAY_REGION = var.region
+      CARRIER_CLIENT          = "gateway"
+      CARRIER_GATEWAY_URL     = module.agentcore_gateway.gateway_url
+      CARRIER_GATEWAY_TOOLS   = "discover"
+      CARRIER_GATEWAY_AUTH    = "sigv4"
+      CARRIER_GATEWAY_REGION  = var.region
+      CARRIER_GATEWAY_SESSION = "persistent" # one MCP session per process: a fresh one per call (~460 ms) blows the 300 ms budget
       } : {
       # Cut-line only: Identity is not in use on this path, so the client secret is Runtime config (10 §4).
       CARRIER_CLIENT        = "direct"

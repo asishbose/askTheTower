@@ -83,8 +83,9 @@ Open the page, sign in as `asish` → "Is my line OK?" → `NOT_BOUND` + a `/bin
 
 ```bash
 make seed-aws SEED_ARGS=--bind-asish  # the stories need Asish bound                                                  # tab: 10 · Bind Asish
+make admin-open ENV=aws               # the stories drive the mock's /_admin and the binding page's admin: open the path first  # tab: Open the admin path
 make demo ENV=aws                     # same four stories; transcripts must match local on tool calls + reason codes  # tab: 11 · make demo on AWS
-make latency-aws                      # 200 calls per tool → artifacts/latency-aws.md (p95 is the slide's number)    # tab: 12 · Latency
+make latency-aws                      # 50 calls per path → artifacts/latency-aws.md (p95 is the slide's number)    # tab: 12 · Latency
 make test-e2e ENV=aws                 # the e2e layer against the deployment                                          # tab: 13 · End to end on AWS
 make test-report                      # artifacts/test-report.md with the ENV=aws row                                 # tab: 14 · test report
 ```
@@ -109,6 +110,7 @@ Next morning: `make deploy` again is all it takes (images are still in ECR). Aft
 | Symptom | Likely cause | Where |
 |---|---|---|
 | `make push`: `no match for platform` | buildx builder not arm64 | 0.8 |
+| `make push`: `exec /bin/sh: exec format error` | arm64 emulation (binfmt) lost after a Docker/WSL restart; `push` re-registers it before building | `docker run --privileged --rm tonistiigi/binfmt --install arm64` |
 | `make plan`: certificate / zone error | 0.4 not done | `aws.tfvars` |
 | `make deploy`: `image tag not found` | tree changed since `make push` | re-run `make push ENV=aws` |
 | Web chat: 500 on every question | Nova Micro access not enabled | 0.2 |

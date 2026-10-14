@@ -15,6 +15,10 @@ pytestmark = pytest.mark.e2e
 
 @pytest.fixture(scope="module")
 def logs(stack: Stack) -> dict[str, str]:
+    if stack.env == "aws":
+        pytest.skip(
+            "ENV=aws: `make logs-save` reads the compose logs; the CloudWatch privacy check is not wired yet"
+        )
     r = make("logs-save", timeout=120)
     assert r.returncode == 0, r.stdout + r.stderr
     files = {

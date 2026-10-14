@@ -60,7 +60,9 @@ resource "aws_cognito_user_pool_client" "web_chat" {
   callback_urls                        = local.oauth ? var.callback_urls : null
   logout_urls                          = local.oauth ? var.callback_urls : null
 
-  explicit_auth_flows           = ["ALLOW_USER_SRP_AUTH", "ALLOW_REFRESH_TOKEN_AUTH"]
+  # USER_PASSWORD_AUTH: `make demo ENV=aws` and the e2e layer sign Asish and Mom in from the laptop (ref_client.cognito)
+  # with the passwords in the root .env; the browser keeps SRP + PKCE.
+  explicit_auth_flows           = ["ALLOW_USER_SRP_AUTH", "ALLOW_USER_PASSWORD_AUTH", "ALLOW_REFRESH_TOKEN_AUTH"]
   prevent_user_existence_errors = "ENABLED"
   enable_token_revocation       = true
 

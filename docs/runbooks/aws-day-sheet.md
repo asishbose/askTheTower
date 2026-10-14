@@ -62,8 +62,9 @@ Press the steps **in order**; each turns green with its evidence before the next
 | Press | Takes | Done when |
 |---|---|---|
 | **10 · Bind Asish for the stories** | 30 s | Asish bound (the four stories need it) |
+| *Open the admin path to your /32* (admin section; plan + deploy ≈ 3 min, may ask for `deploy`) | 3–5 min | pill `admin on` — **11 needs it**: the stories fire carrier events through the mock's `/_admin` and save watch settings and grants through the binding page's admin, both reachable only while the path is open (first run, 2026-10-14: 11 fails fast with `…/_admin/watch-settings answered 404` without it). Close it after Part C |
 | **11 · make demo on AWS** | 3 min | `demo ok: 4 stories` — the transcripts in `artifacts/transcripts/` match local on tool calls and reason codes: **that match is the slide's claim** |
-| **12 · Latency: 200 calls per tool** | 5 min | `artifacts/latency-aws.md`; the p95 is the number for the deck |
+| **12 · Latency: 50 calls per path** | 2 min | `artifacts/latency-aws.md`; the p95 is the number for the deck |
 | **14 · Write artifacts/test-report.md** | 1 min | gates met incl. the AWS latency row |
 
 (Step 13, `test-e2e ENV=aws`, is in the allowlist but not on the tab's stepper; run it from the terminal if you want the e2e layer against AWS: `make test-e2e ENV=aws`.)
@@ -105,6 +106,7 @@ Optional, if there's time: `uv run pytest tests/aws/test_admin_gate.py -m nightl
 | AWS buttons greyed | gate | header says which of the three: 127.0.0.1 bind, `DEMO_UI_AWS_OPS=1`, `config-check` |
 | 1 fails `NoSuchBucket` | A3 | run A3; both `backend.tf` files |
 | 2 fails on platform | buildx | A7 |
+| 2 fails with `exec /bin/sh: exec format error` | arm64 emulation lost after a Docker/WSL restart (`push` now re-registers it itself) | `docker run --privileged --rm tonistiigi/binfmt --install arm64`, then 2 again |
 | 2 refuses "tree not clean" | tag = git sha | commit first (your single commit) |
 | 3 fails on certificate / zone | A1/A6 | zone id must be the hosted zone of the registered domain; cert validation needs the zone live |
 | 4 stops mid-apply | first-apply unknowns | read the last lines; press 4 again after the fix |

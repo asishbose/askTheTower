@@ -35,6 +35,10 @@ def _chromium_missing() -> str | None:
 
 
 def test_not_bound_link_answers(stack: Stack, env: Targets) -> None:
+    if env.env == "aws":
+        pytest.skip(
+            "ENV=aws: a never-bound user needs its own Cognito account; the demo pool holds Asish and Mom"
+        )
     user = f"user-e2e-{uuid.uuid4().hex[:8]}"
     r = call(env, user, "line_is_ok", {"line": "self"})
     assert r["reason_codes"] == ["NOT_BOUND"]

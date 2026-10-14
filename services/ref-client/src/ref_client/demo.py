@@ -253,16 +253,27 @@ class BindingAdminSettings:
 
 class BindingAdminGrants:
     """Compose/AWS: `POST {BINDING_URL}/_admin/grants` on the binding page (local admin, `BIND_ADMIN=1`).
-    Body: `{owner_user_id, grantee_user_id, grant, alias, action}`. The endpoint is wired by prompt 12."""
+    Body: `{owner_user_id, grantee_user_id, grant, alias, action}`. The endpoint is wired by prompt 12.
+    On ENV=aws: `BINDING_ADMIN_URL` with `DEMO_ADMIN_BEARER` (bearer mode, 04 §8) and the Cognito subs."""
 
-    def __init__(self, base_url: str, *, transport: httpx.AsyncBaseTransport | None = None) -> None:
+    def __init__(
+        self,
+        base_url: str,
+        *,
+        bearer: str | None = None,
+        owner: str = "user-mom",
+        grantee: str = "user-asish",
+        transport: httpx.AsyncBaseTransport | None = None,
+    ) -> None:
         self.url = base_url.rstrip("/") + "/_admin/grants"
-        self._http = httpx.AsyncClient(transport=transport, timeout=10.0)
+        self.owner, self.grantee = owner, grantee
+        headers = {"Authorization": f"Bearer {bearer}"} if bearer else {}
+        self._http = httpx.AsyncClient(transport=transport, timeout=10.0, headers=headers)
 
     async def set_mom_grant(self, action: Literal["revoke", "grant"]) -> None:
         body = {
-            "owner_user_id": "user-mom",
-            "grantee_user_id": "user-asish",
+            "owner_user_id": self.owner,
+            "grantee_user_id": self.grantee,
             "grant": "watch",
             "alias": "mom",
             "action": action,
@@ -274,6 +285,38 @@ class BindingAdminGrants:
                 "(TOWER_ENV=local, BIND_ADMIN=1)."
             )
         r.raise_for_status()
+
+    async def aclose(self) -> None:
+        await self._http.aclose()
+
+
+class AlertsReset:
+    """ENV=aws's `SettingsControl`: the binding page's watch-settings admin is 404 in bearer mode (the Transplant
+    story stays local, 04 §8), so a re-run starts clean the way the demo UI's AWS Reset does it: Alerts drops the
+    Watches and its bookkeeping for Asish's and Mom's lines (`POST {ALERTS_URL}/internal/reset`, 06 §3.2)."""
+
+    def __init__(
+        self,
+        base_url: str,
+        bearer: str,
+        user_ids: Sequence[str],
+        *,
+        transport: httpx.AsyncBaseTransport | None = None,
+    ) -> None:
+        self.user_ids = list(user_ids)
+        self._http = httpx.AsyncClient(
+            base_url=base_url.rstrip("/"),
+            headers={"Authorization": f"Bearer {bearer}"},
+            transport=transport,
+            timeout=10.0,
+        )
+
+    async def reset(self) -> None:
+        r = await self._http.post("/internal/reset", json={"user_ids": self.user_ids})
+        r.raise_for_status()
+
+    async def save_transplant(self) -> None:
+        raise DemoError("the transplant story stays local (04 §8): run it with ENV=local")
 
     async def aclose(self) -> None:
         await self._http.aclose()
@@ -485,6 +528,39 @@ def http_control(
         mock=mock,
         grants=BindingAdminGrants(binding),
         settings=BindingAdminSettings(binding),
+        alerts_settle_s=alerts_settle_s,
+        sent=sent,
+    )
+
+
+AWS_ADMIN_KEYS = ("MOCK_URL", "BINDING_ADMIN_URL", "ALERTS_URL", "DEMO_ADMIN_BEARER")
+AWS_STORIES = tuple(n for n in STORY_NAMES if n != "transplant")  # the transplant story stays local (04 §8)
+
+
+def aws_control(
+    environ: Mapping[str, str],
+    *,
+    asish: str,
+    mom: str,
+    alerts_settle_s: float = 0.0,
+    sent: SentList | None = None,
+) -> Control:
+    """ENV=aws (decision 1, 2026-10-11): every admin call goes through the demo admin path with the one bearer
+    `DEMO_ADMIN_BEARER` — the mock's `MOCK_URL` (`…/carrier-admin`), the binding page's `BINDING_ADMIN_URL` and
+    Alerts' `ALERTS_URL` — and names the users by their Cognito subs. `MOCK_ADMIN_TOKEN` (the compose token) is
+    not used here. Raises `DemoError` when the path is closed."""
+    missing = [k for k in AWS_ADMIN_KEYS if not environ.get(k)]
+    if missing:
+        raise DemoError(
+            f"ENV=aws needs the demo admin path open: {', '.join(missing)} empty in deploy/.env.aws — "
+            "run make admin-open (Ops: Open the admin path), then make outputs ENV=aws"
+        )
+    bearer = environ["DEMO_ADMIN_BEARER"]
+    mock = httpx.AsyncClient(base_url=environ["MOCK_URL"], timeout=15.0, headers=mock_admin_headers(bearer))
+    return Control(
+        mock=mock,
+        grants=BindingAdminGrants(environ["BINDING_ADMIN_URL"], bearer=bearer, owner=mom, grantee=asish),
+        settings=AlertsReset(environ["ALERTS_URL"], bearer, (asish, mom)),
         alerts_settle_s=alerts_settle_s,
         sent=sent,
     )

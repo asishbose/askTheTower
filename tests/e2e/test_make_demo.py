@@ -24,10 +24,14 @@ def test_make_demo_matches_golden(stack: Stack) -> None:
     r = make("demo", timeout=900)
     out = r.stdout + r.stderr
     assert r.returncode == 0, f"make demo exited {r.returncode}:\n{out[-4000:]}"
-    assert "demo ok: 4 stories" in out, out[-4000:]
+    # ENV=aws runs the three moments; the transplant story stays local (04 §8, ref_client.demo.AWS_STORIES).
+    aws = stack.env == "aws"
+    assert f"demo ok: {3 if aws else 4} stories" in out, out[-4000:]
 
     goldens = sorted(GOLDEN.glob("*.json"))
     assert {g.stem for g in goldens} == {"moment-1", "moment-2", "moment-3", "transplant"}
+    if aws:
+        goldens = [g for g in goldens if g.stem != "transplant"]
     diffs: list[str] = []
     for g in goldens:
         t = TRANSCRIPTS / g.name
@@ -45,4 +49,6 @@ def test_make_demo_is_repeatable(stack: Stack) -> None:
     r = make("demo", timeout=900)
     assert r.returncode == 0, (r.stdout + r.stderr)[-4000:]
     for g in sorted(GOLDEN.glob("*.json")):
+        if stack.env == "aws" and g.stem == "transplant":
+            continue  # local only (04 §8)
         assert not compare(_load(g), _load(TRANSCRIPTS / g.name))

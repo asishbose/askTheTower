@@ -25,6 +25,7 @@ from __future__ import annotations
 
 import argparse
 import asyncio
+import dataclasses
 import os
 import platform
 import shutil
@@ -151,35 +152,102 @@ async def asgi_client(app: Any, headers: dict[str, str]) -> AsyncIterator[RawMcp
         yield RawMcp(http, "/mcp", headers)
 
 
+class SdkMcp:
+    """`ref_client.TowerClient` (one AgentCore session id for the process, `TowerConfig.headers`) with `RawMcp`'s
+    one method, for AgentCore Runtime: bare POSTs without a session id each land on a new microVM (a ~7 s cold
+    start per call, Tower's log 2026-10-14). A failed call closes the client; the next one reconnects. The timing
+    includes the SDK's result parsing — sub-millisecond next to the network hops."""
+
+    def __init__(self, config: Any) -> None:
+        self.config = config
+        self.tower: Any = None
+
+    async def open(self) -> None:
+        from ref_client.mcp_client import TowerClient
+
+        self.tower = await TowerClient(self.config).__aenter__()
+
+    async def close(self) -> None:
+        if self.tower is not None:
+            tower, self.tower = self.tower, None
+            try:
+                await tower.__aexit__(None, None, None)
+            except Exception:  # noqa: BLE001 - a broken session closes as best it can
+                pass
+
+    async def call_tool(self, tool: str, args: dict[str, Any]) -> dict[str, Any]:
+        if self.tower is None:
+            await self.open()
+        try:
+            result: dict[str, Any] = await self.tower.call(tool, args)
+        except Exception:
+            # The next call reconnects, on a fresh AgentCore session: the old id kept answering "cannot connect"
+            # for ~10 s after its microVM went away (2026-10-14 run). One failed call must not end the run.
+            await self.close()
+            self.config = dataclasses.replace(self.config, session_id=f"latency-{uuid.uuid4()}")
+            raise
+        return result
+
+
 @asynccontextmanager
-async def url_client(url: str, headers: dict[str, str]) -> AsyncIterator[RawMcp]:
+async def url_client(url: str, headers: dict[str, str]) -> AsyncIterator[RawMcp | SdkMcp]:
     import httpx
 
+    if "bedrock-agentcore" in url:
+        from ref_client.mcp_client import TowerConfig
+
+        sdk = SdkMcp(TowerConfig(url=url, authorization=headers.get("Authorization"), timeout_s=30.0))
+        try:
+            yield sdk
+        finally:
+            await sdk.close()
+        return
     async with httpx.AsyncClient(timeout=30) as http:
         yield RawMcp(http, url, headers)
 
 
 async def timed(
-    client: RawMcp,
+    client: RawMcp | SdkMcp,
     tool: str,
     args: dict[str, Any],
     n: int,
     warmup: int = 5,
     measuring: Callable[[], None] | None = None,
+    failures: list[str] | None = None,
 ) -> tuple[list[float], list[str]]:
     """`n` sequential calls (after `warmup` uncounted ones); returns ms per call and each result's source.
-    `measuring` runs between the warm-up and the counted calls."""
+    `measuring` runs between the warm-up and the counted calls. With `failures` (a deployment over the network),
+    a failed call is recorded there (its error, never a value) instead of ending the run, and is not a sample;
+    more than a tenth of `n` failing ends it."""
+
+    async def call() -> dict[str, Any] | None:
+        try:
+            return await client.call_tool(tool, args)
+        except Exception as e:
+            if failures is None:
+                raise
+            failures.append(f"{type(e).__name__}: {e}")
+            print(f"  {tool}({args.get('line')}): call failed ({failures[-1]})", file=sys.stderr, flush=True)
+            if len(failures) > max(1, n // 10):
+                raise
+            return None
+
     for _ in range(warmup):
-        await client.call_tool(tool, args)
+        await call()
     if measuring:
         measuring()
     out: list[float] = []
     sources: list[str] = []
-    for _ in range(n):
+    for i in range(n):
         t0 = time.perf_counter()
-        res = await client.call_tool(tool, args)
+        res = await call()
+        if res is None:
+            continue
         out.append((time.perf_counter() - t0) * 1000)
         sources.append(str(res.get("facts", {}).get("source")))
+        if (i + 1) % 50 == 0:
+            line = args.get("line")
+            print(f"  {tool}({line}): {i + 1}/{n}, last {out[-1]:.0f} ms", file=sys.stderr, flush=True)
     return out, sources
 
 
@@ -352,14 +420,20 @@ async def run_against_url(url: str, headers: dict[str, str], n: int) -> list[Row
             ("is_reachable", {"line": "mom"}),
             ("watch_line", {"line": "self"}),
         ):
-            samples, sources = await timed(client, tool, args, n)
+            failures: list[str] = []
+            samples, sources = await timed(client, tool, args, n, failures=failures)
             src = "/".join(sorted(set(sources)))
+            note = ""
+            if failures:
+                kinds = sorted(set(failures))
+                note = f"{len(failures)} call(s) failed and are not in the samples: {'; '.join(kinds)}"
             rows.append(
                 Row(
                     f"{tool}({args['line']}) — source {src}",
                     tool,
                     samples,
                     tool != "watch_line" and "watch" not in src,
+                    note,
                 )
             )
     return rows
@@ -435,6 +509,12 @@ def main(argv: list[str] | None = None) -> int:
     a = ap.parse_args(argv)
     sys.path.insert(0, str(ROOT))
 
+    if a.url and not a.jwt and os.environ.get("ENV") == "aws":
+        # AgentCore's JWT authorizer refuses the local bearer: sign the user in to Cognito (ref_client.cognito;
+        # client id and subs from artifacts/, the password from COGNITO_PASSWORD_<NAME> in the root .env).
+        from ref_client.cognito import CognitoUsers
+
+        a.jwt = CognitoUsers.from_artifacts(ROOT / "artifacts").access_token(a.user.removeprefix("user-"))
     if a.url:
         headers = {"Authorization": f"Bearer {a.jwt or a.bearer}"}
         if not a.jwt:

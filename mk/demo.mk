@@ -15,7 +15,9 @@ ifeq ($(ENV),local)
 	  | tee $(COMPOSE_LOGS)/demo.log; rc=$$?; \
 	$(MAKE) --no-print-directory logs-save; exit $$rc
 else
-	$(UV) run ref-client demo --env $(ENV) $(DEMO_ARGS)
+# Off-local the laptop's own account may have no Bedrock quota (PREREQUISITES §4): the evidence run is scripted (the
+# demo's tool calls, Tower's answers read verbatim) unless DEMO_AGENT=bedrock|auto. The web chat page is the model run.
+	$(UV) run ref-client demo --env $(ENV) --agent $${DEMO_AGENT:-scripted} $(DEMO_ARGS)
 endif
 corpus: ## Tool-selection table from the reference client → artifacts/corpus.md
 	$(UV) run ref-client corpus --env $(ENV)

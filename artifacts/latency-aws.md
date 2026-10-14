@@ -1,29 +1,23 @@
-# Tower latency — AWS (AgentCore Runtime → Gateway → mock on Fargate)
+# Tower latency — measured against https://bedrock-agentcore.us-east-2.amazonaws.com/runtimes/arn%3Aaws%3Abedrock-agentcore%3Aus-east-2%3A471507663540%3Aruntime%2Fatt_dev_tower-Rytnjj93AV/invocations?qualifier=DEFAULT
 
-> **NOT MEASURED.** The autonomous build had no AWS credentials, so nothing was deployed. The only measured
-> numbers so far are in `artifacts/latency.md`, labelled "in-process, not representative" (p95: 249.9 ms for
-> `line_is_ok` live, 173.3 ms for `is_reachable` live). Spike C's question, "does p95 stay under 400 ms with
-> real hops", is still open.
+> **measured against https://bedrock-agentcore.us-east-2.amazonaws.com/runtimes/arn%3Aaws%3Abedrock-agentcore%3Aus-east-2%3A471507663540%3Aruntime%2Fatt_dev_tower-Rytnjj93AV/invocations?qualifier=DEFAULT.** Measured against a running Tower over the network.
 
-TODO(human), after `make deploy ENV=aws`:
+- **date:** 2026-10-14 20:30 UTC
+- **machine:** Linux 6.18.54.1-microsoft-standard-WSL2 x86_64, 24 CPUs, Python 3.12.9
+- **target:** https://bedrock-agentcore.us-east-2.amazonaws.com/runtimes/arn%3Aaws%3Abedrock-agentcore%3Aus-east-2%3A471507663540%3Aruntime%2Fatt_dev_tower-Rytnjj93AV/invocations?qualifier=DEFAULT
+- **store:** as deployed
+- **mock:** mock-carrier 0.1.0 (scenario demo.yaml, clock 2026-10-05T14:00Z)
+- **fastmcp:** 4.0.11
+- **calls:** 200 per path, sequential, after 5 uncounted warm-up calls; client-side wall time per JSON-RPC `tools/call` POST
 
-```bash
-export TOWER_JWT=<a bearer from the issuer configured as tower_jwt_discovery_url>
-make latency-aws                      # = ENV=aws uv run python scripts/latency.py --out artifacts/latency-aws.md
-uv run pytest tests/aws -m nightly    # conformance through Gateway + this latency run
-```
+| Path | n | p50 ms | p95 ms | p99 ms | max ms | Gate (p95 < 400 ms) |
+|---|---:|---:|---:|---:|---:|---|
+| line_is_ok(self) — source carrier | 200 | 429.6 | 528.4 | 567.5 | 617.9 | **FAIL** |
+| line_is_ok(mom) — source carrier | 195 | 404.4 | 492.2 | 557.9 | 9797.9 | **FAIL** |
+| is_reachable(mom) — source carrier | 195 | 310.9 | 385.1 | 453.6 | 10010.3 | pass |
+| watch_line(self) — source None | 200 | 297.5 | 359.6 | 380.7 | 392.1 | reported (not gated) |
 
-`scripts/latency.py --url` overwrites this file with the same table as `latency.md`: 200 calls per path, and
-p50/p95/p99/max per tool. If p95 is over 400 ms, add the per-hop breakdown (prompt 13 acceptance) from the
-CloudWatch dashboard (`<name>-tower`): the Runtime invocation latency, the Gateway tool spans in `aws/spans`,
-and the mock's ALB `TargetResponseTime`. Then update the deck's "measured not assumed" note to the real number.
+- *line_is_ok(mom) — source carrier*: 5 call(s) failed and are not in the samples: TowerError: cannot connect to Tower at https://bedrock-agentcore.us-east-2.amazonaws.com/runtimes/arn%3Aaws%3Abedrock-agentcore%3Aus-east-2%3A471507663540%3Aruntime%2Fatt_dev_tower-Rytnjj93AV/invocations?qualifier=DEFAULT: MCPError; TowerError: line_is_ok: MCPError
+- *is_reachable(mom) — source carrier*: 5 call(s) failed and are not in the samples: TowerError: cannot connect to Tower at https://bedrock-agentcore.us-east-2.amazonaws.com/runtimes/arn%3Aaws%3Abedrock-agentcore%3Aus-east-2%3A471507663540%3Aruntime%2Fatt_dev_tower-Rytnjj93AV/invocations?qualifier=DEFAULT: MCPError; TowerError: is_reachable: MCPError
 
-Hops on this path, for the breakdown:
-
-| Hop | Where it shows |
-|---|---|
-| Alexa+ / client → Runtime (JWT authorizer) | Runtime `Latency` metric minus Tower's span duration |
-| Tower: consent read (DynamoDB) + KMS Decrypt of `msisdn_enc` | Tower tool span |
-| Tower → Gateway (SigV4, MCP `tools/call`, persistent session) | Tower client span for `<api>___<op>` |
-| Gateway → Identity token (cached) → mock ALB (managed VPC resource) | Gateway target span |
-| mock (Fargate, 0.25 vCPU arm64) | ALB `TargetResponseTime` |
+Where the time goes: run Tower with `LOG_LEVEL=debug`; each call logs per-step timings (`resolve`, `load`, `carrier`, `policy`, `audit`) with `line_id` only.

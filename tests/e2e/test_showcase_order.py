@@ -27,6 +27,10 @@ def test_order_is_section_4() -> None:
 
 @pytest.mark.parametrize("number", ORDER)
 def test_showcase_step_exits_0(stack: Stack, number: str) -> None:
+    if stack.env == "aws":
+        pytest.skip(
+            "ENV=aws: `make showcase` is the local camera run; on aws `make demo` (test_make_demo) is the check"
+        )
     r = subprocess.run(  # noqa: S603
         [sys.executable, str(ROOT / "scripts" / "showcase_order.py"), "--fast", "--only", number],
         cwd=ROOT,

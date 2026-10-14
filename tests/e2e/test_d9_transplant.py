@@ -90,6 +90,10 @@ def _load(path: Any) -> dict[str, Any]:
 
 
 def test_c23_make_demo_matches_golden_and_transplant_ends_ok(stack: Stack, env: Targets) -> None:
+    if env.env == "aws":
+        pytest.skip(
+            "ENV=aws: the transplant story stays local (04 §8: watch-settings admin is off in bearer mode)"
+        )
     started = datetime.now(UTC)
     t0 = time.time()
     r = make("demo", timeout=900)

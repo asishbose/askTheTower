@@ -41,17 +41,21 @@ def _read_env_file(path: Path) -> dict[str, str]:
 class Targets:
     env: str
     tower_url: str
-    mock_url: str  # "" on aws: the mock sits behind an internal ALB (reached by Gateway / ECS Exec only)
+    mock_url: str  # aws: the demo admin path (`…/carrier-admin`) while it is open, else "" (internal ALB only)
     binding_url: str
     alerts_url: str
     bearer: str | None
-    mock_admin_token: str | None = None  # G1: compose generates it; kind/AWS leave the mock's admin open
+    mock_admin_token: str | None = None  # G1: compose generates it; aws: DEMO_ADMIN_BEARER (decision 1)
 
     @property
     def tower_health(self) -> str:
         return self.tower_url.rsplit("/mcp", 1)[0] + "/healthz"
 
     def health_urls(self) -> list[str]:
+        if self.env == "aws":
+            # Tower sits behind AgentCore's JWT authorizer (no open health route) and the mock behind the admin
+            # gate: the binding page is the stack's one open health check; Tower answers the first tool call.
+            return [f"{self.binding_url}/healthz"]
         urls = [self.tower_health, f"{self.binding_url}/healthz"]
         if self.mock_url:
             urls.append(f"{self.mock_url}/healthz")
@@ -89,7 +93,7 @@ def resolve(env: str | None = None) -> Targets:
         binding_url=get("BINDING_URL").rstrip("/"),
         alerts_url=get("ALERTS_URL").rstrip("/"),
         bearer=get("TOWER_BEARER") or None,
-        mock_admin_token=get("MOCK_ADMIN_TOKEN") or None,
+        mock_admin_token=(get("DEMO_ADMIN_BEARER") if env == "aws" else get("MOCK_ADMIN_TOKEN")) or None,
     )
 
 

@@ -23,13 +23,17 @@ from typing import Any
 
 from ref_client import voice
 from ref_client.agent import Agent, BedrockAgent, BedrockUnavailable, ScriptedAgent, has_aws_credentials
+from ref_client.cognito import CognitoUnavailable, CognitoUsers
 from ref_client.corpus_runner import run_corpus
 from ref_client.demo import (
+    AWS_STORIES,
     STORY_NAMES,
+    Control,
     DemoError,
     Story,
     alerts_sent_list,
     alerts_settle_s,
+    aws_control,
     http_control,
     run_demo,
 )
@@ -111,14 +115,34 @@ async def _demo(args: argparse.Namespace) -> int:
             "ref-client demo: scripted agent (no Bedrock: tool calls come from the demo script, `summary` is "
             "read verbatim). Set AWS credentials for the model-driven run."
         )
+    # ENV=aws: Tower takes a Cognito access token per user (the JWT authorizer; the static bearer is local only)
+    # and the admin calls go through the demo admin path with DEMO_ADMIN_BEARER and the users' subs.
+    users = CognitoUsers.from_artifacts(ARTIFACTS) if args.env == "aws" else None
     async with AsyncExitStack() as stack:
 
+        def tower_config(user_id: str) -> TowerConfig:
+            if users is None:
+                return TowerConfig.from_env(user_id=user_id)
+            token = users.access_token(user_id.removeprefix("user-"))
+            return TowerConfig(
+                url=os.environ.get("TOWER_URL") or TowerConfig.url,
+                authorization=f"Bearer {token}",
+                timeout_s=float(os.environ.get("TOWER_TIMEOUT_S", "10")),
+            )
+
         async def agent_for(user_id: str) -> Agent:
-            tower = await stack.enter_async_context(TowerClient(TowerConfig.from_env(user_id=user_id)))
+            tower = await stack.enter_async_context(TowerClient(tower_config(user_id)))
             return BedrockAgent(tower) if bedrock else ScriptedAgent(tower)
 
         sent = alerts_sent_list(args.env, os.environ)
-        control = http_control(alerts_settle_s=alerts_settle_s(args.env, os.environ), sent=sent)
+        settle = alerts_settle_s(args.env, os.environ)
+        control: Control
+        if users is not None:
+            control = aws_control(
+                os.environ, asish=users.sub("asish"), mom=users.sub("mom"), alerts_settle_s=settle, sent=sent
+            )
+        else:
+            control = http_control(alerts_settle_s=settle, sent=sent)
         stack.push_async_callback(control.mock.aclose)
         if sent is not None:
             stack.push_async_callback(sent.aclose)
@@ -141,7 +165,7 @@ async def _demo(args: argparse.Namespace) -> int:
             agent_for,
             control,
             env=args.env,
-            stories=tuple(args.story or STORY_NAMES),
+            stories=tuple(args.story or (AWS_STORIES if users is not None else STORY_NAMES)),
             out_dir=None if args.no_write else args.out,
             echo=echo,
             pause=pause if args.pause else None,
@@ -191,7 +215,7 @@ def main(argv: list[str] | None = None) -> int:
     except BedrockUnavailable as e:
         _err(str(e))
         return EXIT_BEDROCK
-    except (TowerError, DemoError) as e:
+    except (TowerError, DemoError, CognitoUnavailable) as e:
         _err(str(e))
         return EXIT_TOWER
     except Exception as e:  # noqa: BLE001 - httpx errors from the demo controls
