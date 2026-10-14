@@ -1,0 +1,3 @@
+{# The hover card of one Ops target: what it does (demo_ui.ops.explain). `tip` = its bullets, `tip_id` = a unique id.
+   Spans only: it sits inside a <p> (the step's head), where a <div> or <ul> would end the paragraph. #}
+{% if tip %}<span class="ck-info" tabindex="0" role="button" aria-label="what this does" aria-describedby="{{ tip_id }}">?</span><span class="ck-tip" role="tooltip" id="{{ tip_id }}"><span class="ck-tip-h">What this does</span>{% for x in tip %}<span class="ck-tip-li">{{ x }}</span>{% endfor %}</span>{% endif %}

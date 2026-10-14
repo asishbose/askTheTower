@@ -1,7 +1,7 @@
 <h3 id="h-teardown"><svg class="i" aria-hidden="true"><use href="/static/img/icons.svg#cross"></use></svg>Teardown <small>type the word, then Run; never in the pipeline's flow</small></h3>
 <p class="td-what" data-stack="{{ t.stack }}">stack: {{ t.stack }} · ECR: {{ t.ecr }}</p>
 {% for r in rows %}<form class="ck-run td-row" hx-post="/ops/run/{{ r.name }}" hx-target="#ops-msg" hx-swap="innerHTML">
-  <span class="ck-label"><b>{{ r.label }}</b></span>
+  <span class="ck-label"><b>{{ r.label }}</b>{% with tip=r.explain, tip_id="tip-" ~ r.name %}{% include "ops_tip.html" %}{% endwith %}</span>
   <input class="confirm" name="confirm" autocomplete="off" spellcheck="false" placeholder="type {{ r.word }}" aria-label="type {{ r.word }} to confirm" data-word="{{ r.word }}"{% if r.why %} disabled{% endif %}>
   <button class="btn run danger" type="submit" data-run="{{ r.name }}" data-word="{{ r.word }}"{% if r.why %} data-why="{{ r.why }}"{% endif %} disabled title="{{ r.why or r.label }}">Run</button>
   {% if r.why %}<span class="why">{{ r.why }}</span>{% endif %}

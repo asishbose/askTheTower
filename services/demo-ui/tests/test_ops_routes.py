@@ -237,6 +237,7 @@ async def test_the_checklist_renders_every_state(app_client: Any, tmp_path: Path
         assert f'data-state="{st}"' in html, st
     assert html.count('class="btn copy"') == 16 and "make ecr-up ENV=aws" in html  # 14 steps + open + close
     assert 'aria-current="step"' in html and "AWS runs are off" in html  # the gate is off here (no flag)
+    assert html.count('class="ck-tip"') == 16 and "What this does" in html  # a hover card per step + open/close
     assert phone_hits(html) == []
     assert stack.requests == []  # no .env.aws: nothing to probe
     assert (await c.get("/fragment/ops-checklist", params={"fresh": "1"})).status_code == 200

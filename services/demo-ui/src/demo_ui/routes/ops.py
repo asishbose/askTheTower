@@ -23,6 +23,7 @@ from demo_ui import views
 from demo_ui.ops import plan
 from demo_ui.ops.allowlist import GROUPS, OpsTarget, by_name
 from demo_ui.ops.aws_status import RESTART, Pipeline, account, run_block
+from demo_ui.ops.explain import explain
 from demo_ui.ops.probes import ProbeSnapshot
 from demo_ui.ops.runner import RunRefused
 
@@ -100,7 +101,13 @@ def ops_router(deps: Deps) -> APIRouter:
             for t in (t for t in ops.targets.values() if t.runner == "local" and t.group == group):
                 why = "a job is running" if is_busy else (WAIT_FOR_STACK if down and t.needs_stack else "")
                 buttons.append(
-                    {"name": t.name, "label": t.label, "why": why, "cta": bool(down) and t.name == "up"}
+                    {
+                        "name": t.name,
+                        "label": t.label,
+                        "why": why,
+                        "cta": bool(down) and t.name == "up",
+                        "explain": explain(t.name),
+                    }
                 )
             groups.append((group, buttons))
         return HTMLResponse(
@@ -168,6 +175,7 @@ def _row(target: OpsTarget, why: str, *, word: bool) -> dict[str, Any]:
         "name": target.name,
         "label": target.label,
         "command": command(target),
+        "explain": explain(target.name),
         "why": why,
         "word": target.confirm if word else None,
     }

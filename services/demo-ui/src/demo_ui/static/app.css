@@ -536,3 +536,23 @@ body[data-tab="ops"] .stage, body[data-tab="ops"] #panes { display: none; }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
 }
+
+/* What each Ops step does: a card shown while the step (or its "?") is hovered or focused. pointer-events: none, so it
+   never blocks the Run button or the inputs under it. */
+.ck, .ck-run { position: relative; }
+.ck-info {
+  display: inline-grid; place-items: center; width: 1.05rem; height: 1.05rem; margin-left: .2rem; border-radius: 50%;
+  border: 1px solid var(--edge-hi); color: var(--ink-2); font: 600 .68rem var(--mono); cursor: help; vertical-align: middle;
+}
+.ck-tip {
+  display: none; position: absolute; z-index: 30; left: 1.6rem; top: calc(100% - .2rem); width: min(34rem, 92vw);
+  padding: .5rem .7rem; border-radius: 10px; border: 1px solid var(--edge-hi); background: var(--navy-1);
+  box-shadow: 0 10px 28px rgb(0 0 0 / 0.45); pointer-events: none; font-size: .78rem; color: var(--ink); text-align: left;
+}
+.ck-tip-h { display: block; margin: 0 0 .25rem; font-weight: 600; color: var(--ink-2); font-size: .72rem; text-transform: uppercase; letter-spacing: .04em; }
+.ck-tip-li { display: block; position: relative; padding-left: .9rem; margin-top: .15rem; font-weight: 400; }
+.ck-tip-li::before { content: "•"; position: absolute; left: .15rem; color: var(--ink-2); }
+.ck:not(.admin-box):hover > .ck-body > .ck-head > .ck-tip,
+.ck-run:hover .ck-tip,
+.ck-info:focus + .ck-tip { display: block; }
+@media (hover: none) { .ck-info:focus + .ck-tip { display: block; } }

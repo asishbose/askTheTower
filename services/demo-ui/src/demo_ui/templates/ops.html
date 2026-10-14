@@ -4,7 +4,7 @@
 {% if stack_down %}<p class="ops-wait" data-down="{{ stack_down | join(' ') }}"><svg class="i" aria-hidden="true"><use href="/static/img/icons.svg#pause"></use></svg>waiting for the stack: run <code>up</code> <span class="muted">(not answering: {{ stack_down | join(", ") }})</span></p>{% endif %}
 <div class="ops-groups">{% for group, buttons in groups %}
   <div class="ops-group" role="group" aria-label="{{ group }} targets"><span class="ops-group-name">{{ group }}</span>
-    {% for b in buttons %}<button class="btn{% if b.cta %} primary{% endif %}" data-target="{{ b.name }}" hx-post="/ops/run/{{ b.name }}" hx-target="#ops-msg" hx-swap="innerHTML" {% if busy or b.why %}disabled title="{{ b.why or 'a job is running' }}"{% else %}title="{{ b.label }}"{% endif %}>{{ b.name }}</button>{% endfor %}
+    {% for b in buttons %}<button class="btn{% if b.cta %} primary{% endif %}" data-target="{{ b.name }}" hx-post="/ops/run/{{ b.name }}" hx-target="#ops-msg" hx-swap="innerHTML" {% if busy or b.why %}disabled title="{{ b.why or 'a job is running' }}"{% else %}title="{{ b.label }}{% for x in b.explain %}&#10;• {{ x }}{% endfor %}"{% endif %}>{{ b.name }}</button>{% endfor %}
   </div>{% endfor %}
 </div>
 {% endif %}
