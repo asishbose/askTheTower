@@ -413,6 +413,9 @@ module "lambdas" {
     CARRIER_GATEWAY_TOOLS  = "discover"
     CARRIER_GATEWAY_AUTH   = "sigv4"
     CARRIER_GATEWAY_REGION = var.region
+    # One MCP session per process, opened at warm-up and reused: a fresh session per call costs three round
+    # trips (~460 ms measured) and blows the 300 ms request budget; a warm call is ~150 ms (first apply 2026-10-13).
+    CARRIER_GATEWAY_SESSION = "persistent"
   }
 
   binding_environment = merge(

@@ -36,6 +36,7 @@ def gateway_client(outputs: dict[str, Any], profile: str = "proactive") -> Gatew
         "CARRIER_GATEWAY_AUTH": "sigv4",
         "CARRIER_GATEWAY_REGION": str(outputs["region"]),
         "CARRIER_PROFILE": profile,  # proactive: 5 s budget — this test checks results, not latency
+        "CARRIER_GATEWAY_SESSION": "persistent",  # as Tower runs on AWS: one session, opened by check_tools()
     }
     client = make_client(CarrierConfig.from_env(env), env=env)
     assert isinstance(client, GatewayClient)

@@ -35,7 +35,12 @@ async def probe(url: str, region: str, tool: str, args: dict, *, schema: bool) -
                 if t.name == tool:
                     print("inputSchema:", json.dumps(getattr(t, "inputSchema", None) or getattr(t, "input_schema", None), indent=2))
         print("arguments sent:", mask(json.dumps(args)))
-        result = await client.call_tool(tool, args, raise_on_error=False)
+        import time
+
+        for n in range(3):  # the first call pays the session's warm-up; the next two are what Tower would see
+            t0 = time.perf_counter()
+            result = await client.call_tool(tool, args, raise_on_error=False)
+            print(f"call {n + 1}: {(time.perf_counter() - t0) * 1000:.0f} ms (same MCP session)")
         print(f"tool: {tool}\nis_error: {result.is_error}")
         for c in result.content:
             text = getattr(c, "text", None)
