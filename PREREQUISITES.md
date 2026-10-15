@@ -99,3 +99,17 @@ Notes that cost time the first day:
 - **Sourcing `.env` with `set -a`** exports empty keys (`AWS_PROFILE=`) and breaks the CLI with `config profile () could not be found`. Run `make` from a shell that has not sourced `.env` (make loads it itself), or `unset AWS_PROFILE AWS_SESSION_TOKEN` first.
 - **AWS Projects / sandbox accounts** may pin a region through an organization SCP and deny S3 or DynamoDB elsewhere; the Terraform state is local (`backend "local"`) for that reason, and the region is set in `.env` and `aws.tfvars`, not assumed. See `docs/submission/product-feedback.md`.
 - `terraform init` on a Windows-mounted tree can fail with "cannot install package … because it is a symlink": `rm -rf deploy/terraform/.terraform` and run it again.
+
+## 5. On a network that inspects TLS
+
+Some networks re-sign HTTPS certificates with their own root. If WSL already trusts that root, everything on the
+laptop works; three things need care.
+
+1. **Image builds (`make push`, step 2).** Each image installs its dependencies in a fresh container with the
+   default roots. If that fails (`invalid peer certificate: UnknownIssuer` from pypi.org), set
+   `EXTRA_CA_FILE` in the root `.env` to a PEM bundle that includes the network's root (usually
+   `/etc/ssl/certs/ca-certificates.crt`). The build then retries the install trusting it; the file is mounted for
+   that step only and never written to an image. Off such a network, leave it empty: nothing changes.
+2. **The admin path (steps 11, 13, Part C)** admits one /32. Traffic routed through a relay leaves from the relay's
+   address, which changes; open the path from a direct connection.
+3. **Latency (step 12)** measured through a relay includes its hop: measure on a direct connection, or say so.

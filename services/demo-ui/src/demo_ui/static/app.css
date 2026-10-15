@@ -553,6 +553,14 @@ body[data-tab="ops"] .stage, body[data-tab="ops"] #panes { display: none; }
 .ck-tip-li { display: block; position: relative; padding-left: .9rem; margin-top: .15rem; font-weight: 400; }
 .ck-tip-li::before { content: "•"; position: absolute; left: .15rem; color: var(--ink-2); }
 .ck:not(.admin-box):hover > .ck-body > .ck-head > .ck-tip,
-.ck-run:hover .ck-tip,
+.ck-info:hover + .ck-tip,
 .ck-info:focus + .ck-tip { display: block; }
+/* Admin and Teardown rows hold the confirm boxes: their card opens only from the "?" (never on row hover, where it
+   covered the next row's box while typing), and Teardown's opens upwards, away from the page's bottom edge. */
+.td-row .ck-tip { top: auto; bottom: calc(100% + .2rem); }
 @media (hover: none) { .ck-info:focus + .ck-tip { display: block; } }
+/* The hover card must not be clipped by its card (`.ops-card` scrolls on x, which clips both axes) nor painted over
+   by the Teardown card below it: the two Ops columns let it overflow and sit above Teardown, and the last steps
+   open their card upwards. */
+.ops-cols .ops-col { overflow: visible; z-index: 2; }
+.aws-steps > .ck:nth-last-child(-n+2) .ck-tip { top: auto; bottom: calc(100% - .2rem); }

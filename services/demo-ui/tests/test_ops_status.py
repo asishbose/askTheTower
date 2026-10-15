@@ -56,7 +56,7 @@ def test_tf_no_stack_in_state_ignores_old_evidence(tmp_path: Path) -> None:
     assert [s.state for s in p.steps[:3]] == ["done"] * 3
     assert all(s.state == "todo" and s.detail == NOT_DEPLOYED for s in p.steps[3:])
     assert p.next_id == 4 and p.teardown.stack == "not in state"
-    assert p.banner is not None and p.banner.text.startswith("ECR only")
+    assert p.banner is None  # ECR alone: no banner
 
 
 def test_tf_in_state_without_the_file(tmp_path: Path) -> None:

@@ -448,9 +448,7 @@ def banner(f: Files, steps: tuple[Step, ...], tf: TfState | None, admin: AdminBo
         if admin.state == "done":
             text += " Admin path open: close it after the demo."
         return Banner(text, "the time is when make outputs last wrote artifacts/tf-outputs.json")
-    if steps[0].state == "done":
-        return Banner("ECR only: images cost cents per month; nothing else runs.")
-    return None
+    return None  # nothing deployed: no banner (ECR alone needs no note)
 
 
 def next_step(steps: tuple[Step, ...]) -> int | None:

@@ -34,6 +34,20 @@ ECR_OUTPUTS = ROOT / "artifacts" / "tf-outputs-ecr.json"  # `make ecr-outputs` (
 SERVICES = ["mock-carrier", "tower-mcp", "binding-page", "alerts", "ref-client"]
 
 
+def extra_ca_secret(environ: Any = None) -> list[str]:
+    """`EXTRA_CA_FILE` (optional, root .env): a PEM CA bundle handed to each build as the `extra_ca` secret. The
+    Dockerfiles install with the image's default roots first and use it only if that fails (a network that inspects
+    TLS); it is mounted for that step only, never written to a layer. Unset: []."""
+    import os
+
+    path = (os.environ if environ is None else environ).get("EXTRA_CA_FILE", "")
+    if not path:
+        return []
+    if not Path(path).is_file():
+        raise SystemExit(f"EXTRA_CA_FILE={path} is not a file: point it at a CA bundle (PEM) or unset it")
+    return ["--secret", f"id=extra_ca,src={path}"]
+
+
 def commands(repos: dict[str, str], region: str, tag: str, services: list[str]) -> list[list[str]]:
     registry = next(iter(repos.values())).split("/", 1)[0]
     cmds: list[list[str]] = [
@@ -52,6 +66,7 @@ def commands(repos: dict[str, str], region: str, tag: str, services: list[str]) 
                 "--provenance=false", "--sbom=false",
                 "-f", f"services/{s}/Dockerfile",
                 "-t", f"{repo}:{tag}", "-t", f"{repo}:latest",
+                *extra_ca_secret(),
                 "--push", ".",
             ]
         )  # fmt: skip

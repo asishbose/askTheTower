@@ -9,12 +9,21 @@ WORKDIR /src
 COPY pyproject.toml uv.lock ./
 COPY packages ./packages
 COPY services ./services
-RUN uv export --frozen --no-dev --no-emit-workspace --no-hashes --package binding-page -o requirements.txt \
- && uv venv /venv \
- && uv pip install --python /venv/bin/python --no-cache -r requirements.txt \
- && uv pip install --python /venv/bin/python --no-cache --no-deps \
-      ./packages/tower-policy ./packages/tower-consent ./packages/tower-audit ./packages/camara-client \
-      ./services/binding-page
+# Dependencies install with the image's default CA roots. Only if that fails and `make push` was given an
+# EXTRA_CA_FILE (optional, root .env) is the install retried trusting that bundle too; the file is mounted for this
+# step only and never written to a layer.
+RUN --mount=type=secret,id=extra_ca,required=false \
+    deps_install() { \
+        rm -rf /venv && \
+        uv export --frozen --no-dev --no-emit-workspace --no-hashes --package binding-page -o requirements.txt && \
+        uv venv /venv && \
+        uv pip install --python /venv/bin/python --no-cache -r requirements.txt && \
+        uv pip install --python /venv/bin/python --no-cache --no-deps ./packages/tower-policy ./packages/tower-consent ./packages/tower-audit ./packages/camara-client ./services/binding-page; \
+    }; \
+    deps_install || { \
+      [ -s /run/secrets/extra_ca ] && echo 'retrying with EXTRA_CA_FILE' && \
+      ( export SSL_CERT_FILE=/run/secrets/extra_ca REQUESTS_CA_BUNDLE=/run/secrets/extra_ca UV_NATIVE_TLS=1; deps_install ); \
+    }
 
 FROM python:3.12-slim@sha256:05cda9777409a9c3ffddd94a4c476b79f0769a0b4857f0c7ed9226b6800b0d6f
 RUN useradd --system --uid 10001 --no-create-home app

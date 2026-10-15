@@ -49,7 +49,7 @@ EXPLAIN: Mapping[str, tuple[str, ...]] = {
         "Checks arm64 emulation (re-registers it after a Docker/WSL restart)",
         "docker buildx: builds mock-carrier, tower-mcp, binding-page, alerts, ref-client for linux/arm64",
         "Pushes each to ECR tagged <git sha> + latest; writes artifacts/image-tag",
-        "Needs Zscaler off (it breaks the TLS of the build)",
+        "Optional EXTRA_CA_FILE (root .env): a CA bundle tried only if the default roots fail",
     ),
     "aws-plan": (
         "terraform plan of the main stack with the pushed image tag",
@@ -109,7 +109,7 @@ EXPLAIN: Mapping[str, tuple[str, ...]] = {
     "aws-admin-open": (
         "Writes your public address /32 into envs/aws.tfvars, then plan + deploy",
         "Opens the mock's, binding page's and Alerts' admin routes to that address, with one bearer",
-        "Needed by 11 and 13 and the Control room on AWS; Zscaler off (it changes your address)",
+        "Needed by 11 and 13 and the Control room on AWS; open it from a direct connection (not a relay)",
     ),
     "aws-admin-close": (
         "Empties the address list in envs/aws.tfvars, then plan + deploy: the admin routes 404 again",
