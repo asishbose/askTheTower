@@ -107,7 +107,8 @@ def test_acceptance_sim_swapped_at_1414z_in_toronto_is_1014_today(make_facts: Fa
     assert "10:14" in text and "today" in text
     assert (
         text
-        == "Your SIM was moved to another device at 10:14 today. If that wasn't you, call your carrier now."
+        == "Your SIM was moved to another device at 10:14 today. If that wasn't you, don't call from your phone — "
+        "I can call your carrier's support line for you from here."
     )
     # `now` defaults to fetched_at, so the same call without `now` says the same thing
     assert phrase(o, f, alias=None, tz="America/Toronto", form="voice") == text

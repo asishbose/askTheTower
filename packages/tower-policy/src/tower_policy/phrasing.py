@@ -23,11 +23,20 @@ TEMPLATES: Final[dict[ReasonCode, dict[Form, str]]] = {
         "sms": "Your line is as it was.",
     },
     ReasonCode.SIM_SWAPPED_RECENT: {
-        "voice": "Your SIM was moved to another device at {time}. If that wasn't you, call your carrier now.",
+        # After a swap the attacker holds the number: a call from the user's own phone reaches nothing (or them).
+        # The surface places the call (next_step.call_carrier: the Echo dials carrier_support_number).
+        "voice": (
+            "Your SIM was moved to another device at {time}. If that wasn't you, don't call from your phone — "
+            "I can call your carrier's support line for you from here."
+        ),
         "sms": "SIM moved to another device at {time}. Not you? Call your carrier now.",
     },
     ReasonCode.CALL_FORWARDING_SET: {
-        "voice": "All your calls have been forwarding since {time}. If you didn't set that, call your carrier.",
+        # The carrier's call-back would be forwarded too: the surface places the call (next_step.call_carrier).
+        "voice": (
+            "All your calls have been forwarding since {time}. If you didn't set that, I can call your carrier's "
+            "support line for you from here."
+        ),
         "sms": "All calls forwarding since {time}. Not you? Call your carrier.",
     },
     ReasonCode.UNREACHABLE: {

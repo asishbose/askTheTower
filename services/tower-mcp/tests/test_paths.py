@@ -72,7 +72,8 @@ async def test_sim_swap_is_reported_with_its_time(stack: Stack) -> None:
     # 14:12Z is 10:12 in Ottawa (EDT) — the summary speaks the swap's own time, "today".
     assert (
         r.summary
-        == "Your SIM was moved to another device at 10:12 today. If that wasn't you, call your carrier now."
+        == "Your SIM was moved to another device at 10:12 today. If that wasn't you, don't call from your phone — "
+        "I can call your carrier's support line for you from here."
     )
     assert r.facts.sim_swapped_recently is True
     assert r.facts.swapped_at == MOCK_START + timedelta(minutes=12)

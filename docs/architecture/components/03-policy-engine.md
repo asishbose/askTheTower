@@ -93,8 +93,8 @@ Thresholds are data (`policy/thresholds.yaml`), not code, but the engine refuses
 | Code | Outcome | Spoken template (Tower `phrasing.py`) |
 |---|---|---|
 | `OK` | ok | "Your line is as it was." |
-| `SIM_SWAPPED_RECENT` | changed | "Your SIM was moved to another device at {time}. If that wasn't you, call your carrier now." |
-| `CALL_FORWARDING_SET` | changed | "All your calls have been forwarding since {time}. If you didn't set that, call your carrier." |
+| `SIM_SWAPPED_RECENT` | changed | "Your SIM was moved to another device at {time}. If that wasn't you, don't call from your phone — I can call your carrier's support line for you from here." |
+| `CALL_FORWARDING_SET` | changed | "All your calls have been forwarding since {time}. If you didn't set that, I can call your carrier's support line for you from here." |
 | `UNREACHABLE` | changed | "{Name}'s phone has been off the network since {time} — that's the network, nothing more." |
 | `NOT_BOUND` | refuse | "I need to connect your line first — I'll send you a link." |
 | `NO_CONSENT` | refuse | "{Name} hasn't shared that with you." |

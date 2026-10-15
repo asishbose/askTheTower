@@ -56,7 +56,7 @@ Tower returns JSON; Alexa+ speaks it. To make that reliable without a second mod
 
 - Every result carries a `summary` string Alexa+ may read verbatim, and `facts` it may reason over. Example:
   ```json
-  {"summary": "Your SIM was moved to another device at 2:14 today. If that wasn't you, call your carrier now.",
+  {"summary": "Your SIM was moved to another device at 2:14 today. If that wasn't you, don't call from your phone — I can call your carrier's support line for you from here.",
    "facts": {"sim_swapped_recently": true, "swapped_at": "2026-10-05T14:14:00Z",
              "call_forwarding": "none", "line": "self"},
    "next_step": {"kind": "call_carrier", "carrier_support_number": "+1 ..."},
