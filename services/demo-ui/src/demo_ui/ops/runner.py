@@ -45,7 +45,10 @@ from demo_ui.redact import mask, mask_secrets
 
 log = logging.getLogger("demo_ui.ops")
 
-JobState = Literal["running", "pass", "fail", "stopped"]
+JobState = Literal["running", "pass", "fail", "stopped", "confirm"]
+# admin-open / admin-close stop at their plan gate (scripts/admin_cidr.py, exit 3 under make) when the plan
+# destroys something: that is a pause for the operator, not a failure. The job ends `confirm`.
+PLAN_GATE = re.compile(r"^admin-(?:open|close): the plan destroys \d+ resource")
 MAX_LINE = 2_000
 MAX_PENDING_BYTES = 65_536  # a line without a newline is flushed at this size
 BACKLOG = 500
@@ -143,6 +146,7 @@ class Job:
     pgid: int | None = None
     plan: PlanSummary | None = None
     transcript: Transcript | None = None
+    gated: bool = False  # the plan gate printed its stop line (PLAN_GATE)
     spawned: asyncio.Event = field(default_factory=asyncio.Event)  # set once the child exists (or failed to)
 
     def view(self) -> dict[str, Any]:
@@ -338,6 +342,9 @@ class OpsRunner:
         job.duration_s = self.monotonic() - job.started
         job.state = "stopped" if job.stopping else ("pass" if code == 0 else "fail")
         job.note = ""
+        if job.state == "fail" and job.gated:
+            job.state = "confirm"
+            job.note = "plan gate: read the plan, then type deploy at 4 · Deploy"
         if job.transcript is not None:
             if job.plan is not None:
                 job.transcript.plan(job.plan)
@@ -394,6 +401,8 @@ class OpsRunner:
         job = self.job
         if job is not None and job.target.runner == "aws":
             job.plan = parse_plan(line) or job.plan
+            if PLAN_GATE.match(line):
+                job.gated = True
 
     async def _flush_every(self) -> None:
         while True:

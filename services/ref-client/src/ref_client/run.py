@@ -110,7 +110,13 @@ async def _say(args: argparse.Namespace) -> int:
 
 async def _demo(args: argparse.Namespace) -> int:
     bedrock = _use_bedrock(args.agent)
-    if not bedrock:
+    if not bedrock and args.agent == "scripted":
+        # Chosen, not a fallback: ENV=aws runs scripted by default (mk/demo.mk; DEMO_AGENT=bedrock for the model).
+        print(
+            "ref-client demo: scripted agent (tool calls come from the demo script, `summary` is read verbatim; "
+            "the model-driven run is the web chat page, or DEMO_AGENT=bedrock)."
+        )
+    elif not bedrock:
         print(
             "ref-client demo: scripted agent (no Bedrock: tool calls come from the demo script, `summary` is "
             "read verbatim). Set AWS credentials for the model-driven run."

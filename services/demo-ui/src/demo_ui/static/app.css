@@ -487,6 +487,7 @@ body[data-tab="ops"] .stage, body[data-tab="ops"] #panes { display: none; }
 .ops-badge.s-pass { color: var(--ok); border-color: var(--ok); }
 .ops-badge.s-fail { color: var(--on-solid); background: var(--alert); border-color: var(--alert); }
 .ops-badge.s-stopped { color: var(--sms); border-color: var(--sms); }
+.ops-badge.s-confirm { color: var(--sms); border-color: var(--sms); } /* plan gate: waiting for `deploy` */
 .ops-log {
   height: 18rem; overflow-y: auto; margin: 0; padding: .45rem .6rem; border-radius: 10px;
   background: var(--navy-0); border: 1px solid var(--edge); font: .76rem/1.4 var(--mono); white-space: pre-wrap; overflow-wrap: anywhere;

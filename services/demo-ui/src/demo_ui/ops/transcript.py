@@ -23,7 +23,7 @@ log = logging.getLogger("demo_ui.ops.transcript")
 DIR_MODE = 0o700
 FILE_MODE = 0o600
 REL = Path("artifacts") / "ops-log"
-END = re.compile(r"^== (?P<at>\S+) end (?P<state>pass|fail|stopped) exit (?P<code>\S+) (?P<secs>[\d.]+) s$")
+END = re.compile(r"^== (?P<at>\S+) end (?P<state>pass|fail|stopped|confirm) exit (?P<code>\S+) (?P<secs>[\d.]+) s$")
 FILE = re.compile(r"^(?P<date>\d{4}-\d{2}-\d{2})-(?P<name>[a-z0-9-]+)\.log$")
 CIDR_ARG = re.compile(r"^ADMIN_CIDR=.*$")
 
