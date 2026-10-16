@@ -63,7 +63,7 @@ docs/submission/build-log.md
 docs/submission/build-log/
 
 # build prompts and test results — kept out of the repo
-prompts/
+/prompts/
 artifacts/junit-*.xml
 artifacts/coverage*.xml
 artifacts/test-report*.md
