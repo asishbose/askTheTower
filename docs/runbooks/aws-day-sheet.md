@@ -73,6 +73,8 @@ Press the steps **in order**; each turns green with its evidence before the next
 
 ## Part C — the three moments on AWS, from the control room (the video footage)
 
+The on-camera run sheet with timings and narration: [`live-demo-3min.md`](live-demo-3min.md).
+
 | Press | Done when |
 |---|---|
 | **Open the admin path to your /32** (admin section) | plan + deploy (~3 min; the mock task restarts, 1–2 min more) → `deploy/.env.aws` gains the admin URLs → the pill reads `ENV=aws · admin on` |

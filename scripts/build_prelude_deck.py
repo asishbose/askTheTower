@@ -49,15 +49,17 @@ from pptx.slide import Slide
 from pptx.util import Inches, Pt
 
 ROOT = Path(__file__).resolve().parents[1]
-DECK_DIR = ROOT / "docs" / "Decks" / "architecture-prelude"
+DEFAULT_DECK = "architecture-prelude"
+DECK_DIR = ROOT / "docs" / "Decks" / DEFAULT_DECK
 SCRIPT_MD = DECK_DIR / "voiceover-script.md"
-DECK = DECK_DIR / "ask-the-tower-architecture-prelude.pptx"
+DECK = DECK_DIR / f"ask-the-tower-{DEFAULT_DECK}.pptx"
 ICON_DIR = DECK_DIR / "icons"
 PREVIEW = DECK_DIR / "preview"
 VOICE_DIR = ROOT / "artifacts" / "voiceover"
 BUILD = VOICE_DIR / "build"
-VIDEO = VOICE_DIR / "architecture-prelude.mp4"
+VIDEO = VOICE_DIR / f"{DEFAULT_DECK}.mp4"
 SUMMARY = VOICE_DIR / "build-summary.md"
+TTS_CACHE = BUILD / "tts-cache.json"
 DIAGRAMS = ROOT / "docs" / "architecture" / "diagrams"
 
 TABLER = "https://raw.githubusercontent.com/tabler/tabler-icons/main"
@@ -70,8 +72,8 @@ ACCENT, WARN, OK, GREY = "4CC9F0", "F4A261", "2EC27E", "8A94A6"
 TONES = {"ours": ACCENT, "aws": GREY, "risk": WARN, "ok": OK}
 W_IN, H_IN = 13.333, 7.5
 
-# Brief limits: <= 5 items, <= 8 words a label (decision fields and captions <= 12), 90-130 spoken words a slide.
-MAX_ITEMS, MAX_LABEL_WORDS, MAX_SENTENCE_WORDS, NARRATION_WORDS = 5, 8, 12, (90, 130)
+# Brief limits: <= 5 items, <= 8 words a label (decision fields and captions <= 12), 40-130 spoken words a slide.
+MAX_ITEMS, MAX_LABEL_WORDS, MAX_SENTENCE_WORDS, NARRATION_WORDS = 5, 8, 12, (40, 130)
 SENTENCE_FIELDS = (
     "subtitle",
     "kicker",
@@ -97,12 +99,14 @@ FORBIDDEN = {
 }
 
 # The as-built diagram labels carry masked account ids, the VPC CIDR, the SMS sandbox number's prefix and the
-# registrar; the deck's copy drops them (and the title/legend/footnote cells), the source diagram is untouched.
+# registrar, and a team member's name; the deck's copy drops them (and the title/legend/footnote cells), the source diagram is untouched.
 DIAGRAM_REDACTIONS = [
     (re.compile(r",?\s*account \d{4}…\d{4}"), ""),
     (re.compile(r"\d{1,3}(?:\.\d{1,3}){3}/\d+ · "), ""),
     (re.compile(r"\s*\(\+\d[^)]*\)"), ""),
     (re.compile(r"\s*\(domain at [^)]*\)"), ""),
+    (re.compile(r"\bAsish's phone"), "User's phone"),
+    (re.compile(r"\basish\b"), "user"),
 ]
 DIAGRAM_RESIDUE = re.compile(r"\d{4}…\d{4}|\+\d|\b\d{1,3}(?:\.\d{1,3}){3}\b|domain at ")
 DIAGRAM_DROP = {"title", "subtitle", "note"}
@@ -538,9 +542,9 @@ def header(slide: Slide, s: SlideSpec, vis: Visuals) -> None:
 
 
 def chrome(slide: Slide, s: SlideSpec, total: int) -> None:
-    """Footer strip (number • Ask the Tower • section) and the progress bar along the bottom edge."""
+    """Footer strip (number • Ask the Tower [• section]) and the progress bar along the bottom edge."""
     line(slide, 0.6, 6.95, W_IN - 0.6, 6.95, LINE, width=0.75)
-    footer = f"{s.number:02d}  •  Ask the Tower  •  {s.fields.get('section', '')}"
+    footer = "  •  ".join(p for p in (f"{s.number:02d}", "Ask the Tower", s.fields.get("section")) if p)
     text(slide, 0.6, 6.98, 9.0, 0.34, [(footer, 11, MUTED, False)], anchor=MSO_ANCHOR.MIDDLE)
     shape(slide, MSO_SHAPE.RECTANGLE, 0, H_IN - 0.07, W_IN, 0.07, fill=PANEL, line=None)
     shape(slide, MSO_SHAPE.RECTANGLE, 0, H_IN - 0.07, W_IN * s.number / total, 0.07, fill=ACCENT, line=None)
@@ -557,7 +561,16 @@ def draw_title(slide: Slide, s: SlideSpec, vis: Visuals) -> None:
     vis.append("dotted link speaker ↔ phone")
     text(slide, 0.8, 3.15, W_IN - 1.6, 1.3, [(s.title, 66, INK, True)], align=PP_ALIGN.CENTER)
     text(slide, 1.2, 4.5, W_IN - 2.4, 0.8, [(s.fields["subtitle"], 26, MUTED, False)], align=PP_ALIGN.CENTER)
-    text(slide, 1.2, 5.35, W_IN - 2.4, 0.5, [(s.fields["kicker"], 20, ACCENT, False)], align=PP_ALIGN.CENTER)
+    if "kicker" in s.fields:
+        text(
+            slide,
+            1.2,
+            5.35,
+            W_IN - 2.4,
+            0.5,
+            [(s.fields["kicker"], 20, ACCENT, False)],
+            align=PP_ALIGN.CENTER,
+        )
     if "badge" in s.fields:
         pill(
             slide, (W_IN - 3.6) / 2, 6.1, 3.6, 0.55, s.fields["badge"], MUTED, vis, "message-circle", size=16
@@ -588,14 +601,26 @@ def draw_flow(slide: Slide, s: SlideSpec, vis: Visuals) -> None:
 def draw_threeup(slide: Slide, s: SlideSpec, vis: Visuals) -> None:
     header(slide, s, vis)
     w, gap = 3.85, 0.29
+    caption = s.fields.get("caption")
     for i, (name, tool, answer) in enumerate(s.items):
         x = 0.6 + i * (w + gap)
-        card(slide, x, 1.45, w, 3.85, edge=ACCENT)
+        card(slide, x, 1.45, w, 3.3 if caption else 3.85, edge=ACCENT)
         shape(slide, MSO_SHAPE.OVAL, x + (w - 1.35) / 2, 1.7, 1.35, 1.35, fill=BG, line=ACCENT, width=1.5)
         icon(slide, name, x + (w - 0.85) / 2, 1.95, 0.85, ACCENT, vis)
         text(slide, x + 0.2, 3.2, w - 0.4, 0.6, [(tool, 26, ACCENT, True)], align=PP_ALIGN.CENTER, font=MONO)
-        text(slide, x + 0.25, 3.9, w - 0.5, 1.3, [(answer, 20, INK, False)], align=PP_ALIGN.CENTER)
+        text(
+            slide,
+            x + 0.25,
+            3.9,
+            w - 0.5,
+            0.8 if caption else 1.3,
+            [(answer, 20, INK, False)],
+            align=PP_ALIGN.CENTER,
+        )
     vis.append("three-up tool columns")
+    if caption:
+        text(slide, 0.6, 4.85, W_IN - 1.2, 0.7, [(caption, 18, MUTED, False)], align=PP_ALIGN.CENTER)
+        vis.append("caption line")
     pill(slide, 0.6, 5.65, W_IN - 1.2, 0.75, s.fields["badge"], ACCENT, vis, "lock", size=20)
     vis.append("consent-first lock badge")
 
@@ -634,23 +659,26 @@ def draw_picture(slide: Slide, s: SlideSpec, vis: Visuals) -> None:
 
 
 def draw_decision(slide: Slide, s: SlideSpec, vis: Visuals) -> None:
-    """Left: the decision and why. Right: the rejected alternative with ✗. Middle: the picture. Bottom: trade-off."""
+    """Left: the decision and why. Right: the rejected alternative with ✗ (optional; without it the decision card
+    takes the full width). Middle: the picture. Bottom: trade-off."""
     header(slide, s, vis)
     f = s.fields
-    card(slide, 0.6, 1.3, 7.75, 1.6, edge=ACCENT)
+    rejected = f.get("rejected")
+    card(slide, 0.6, 1.3, 7.75 if rejected else W_IN - 1.2, 1.6, edge=ACCENT)
     text(
         slide,
         0.85,
         1.38,
-        7.3,
+        7.3 if rejected else W_IN - 1.7,
         1.45,
         [("DECISION", 13, ACCENT, True), (f["decision"], 22, INK, True), (f["why"], 18, MUTED, False)],
         space=3,
     )
-    card(slide, 8.55, 1.3, 4.18, 1.6, edge=WARN)
-    icon(slide, "circle-x", 8.75, 1.45, 0.42, WARN, vis)
-    text(slide, 9.25, 1.42, 3.4, 0.4, [("REJECTED", 13, WARN, True)], anchor=MSO_ANCHOR.MIDDLE)
-    text(slide, 8.8, 1.9, 3.8, 0.95, [(f["rejected"], 18, INK, False)])
+    if rejected:
+        card(slide, 8.55, 1.3, 4.18, 1.6, edge=WARN)
+        icon(slide, "circle-x", 8.75, 1.45, 0.42, WARN, vis)
+        text(slide, 9.25, 1.42, 3.4, 0.4, [("REJECTED", 13, WARN, True)], anchor=MSO_ANCHOR.MIDDLE)
+        text(slide, 8.8, 1.9, 3.8, 0.95, [(rejected, 18, INK, False)])
     VISUAL[f["visual"]](slide, s, vis)
     shape(slide, MSO_SHAPE.ROUNDED_RECTANGLE, 0.6, 6.12, W_IN - 1.2, 0.62, fill=PANEL, line=None, radius=0.3)
     text(
@@ -662,7 +690,7 @@ def draw_decision(slide: Slide, s: SlideSpec, vis: Visuals) -> None:
         [(f"TRADE-OFF   {f['tradeoff']}", 18, INK, False)],
         anchor=MSO_ANCHOR.MIDDLE,
     )
-    vis.append("decision card: decision/why · rejected ✗ · trade-off strip")
+    vis.append("decision card: decision/why" + (" · rejected ✗" if rejected else "") + " · trade-off strip")
 
 
 BAND_Y, BAND_H = 3.1, 2.85
@@ -696,7 +724,7 @@ def visual_beforeafter(slide: Slide, s: SlideSpec, vis: Visuals) -> None:
     card(slide, 9.1, BAND_Y + 0.15, 3.63, 2.5, edge=GREY)
     icon(slide, extra_icon, 10.47, BAND_Y + 0.4, 0.9, GREY, vis)
     text(slide, 9.3, BAND_Y + 1.45, 3.25, 1.1, [(extra, 20, INK, False)], align=PP_ALIGN.CENTER)
-    vis.append("before/after pair + CAMARA targets card")
+    vis.append("before/after pair + side card")
 
 
 def visual_datapath(slide: Slide, s: SlideSpec, vis: Visuals) -> None:
@@ -713,14 +741,15 @@ def visual_datapath(slide: Slide, s: SlideSpec, vis: Visuals) -> None:
             arrow(slide, x + step - 0.37, BAND_Y + 0.36, 0.34, 0.28, MUTED)
     vis.append("data path: number → HMAC → KMS → never logged")
     top = BAND_Y + 1.3
-    for x, who in ((0.75, "Mom"), (5.35, "Asish")):
+    people = [p.strip() for p in s.fields.get("people", "Mom | Asish").split("|")]
+    for x, who in zip((0.75, 5.35), people, strict=True):
         icon(slide, "user", x + 0.2, top + 0.2, 0.6, INK, vis)
         text(slide, x - 0.1, top + 0.85, 1.2, 0.45, [(who, 18, INK, True)], align=PP_ALIGN.CENTER)
     arrow(slide, 1.95, top + 0.32, 3.2, 0.26, OK)
     text(slide, 1.95, top - 0.08, 3.2, 0.38, [("grants per tool", 16, OK, False)], align=PP_ALIGN.CENTER)
     shape(slide, MSO_SHAPE.LEFT_ARROW, 1.95, top + 0.78, 3.2, 0.26, fill=WARN, line=None, radius=None)
     text(slide, 1.95, top + 1.06, 3.2, 0.38, [("revokes any time", 16, WARN, False)], align=PP_ALIGN.CENTER)
-    vis.append("grant/revoke arrows Mom ↔ Asish")
+    vis.append(f"grant/revoke arrows {people[0]} ↔ {people[1]}")
     x0 = 7.3
     text(slide, x0, top - 0.08, 5.4, 0.38, [("AUDIT, BEFORE EVERY ANSWER", 13, ACCENT, True)])
     for i in range(4):
@@ -928,7 +957,15 @@ def draw_handover(slide: Slide, s: SlideSpec, vis: Visuals) -> None:
     )
     shape(slide, MSO_SHAPE.OVAL, 1.0, 1.75, 2.4, 0.63, fill=None, line=ACCENT, width=4.5)
     icon(slide, "device-speaker", 1.75, 3.2, 0.9, MUTED, vis)
-    text(slide, 0.6, 5.35, 3.2, 0.5, [("Echo, on home Wi-Fi", 18, MUTED, False)], align=PP_ALIGN.CENTER)
+    text(
+        slide,
+        0.6,
+        5.35,
+        3.2,
+        0.5,
+        [(s.fields.get("device", "Echo, on home Wi-Fi"), 18, MUTED, False)],
+        align=PP_ALIGN.CENTER,
+    )
     vis.append("stylised Echo with light ring")
     for i, (question, answer) in enumerate(s.items):
         y = 1.4 + i * 1.42
@@ -1071,9 +1108,6 @@ def pick_voice(probe_dir: Path, voice: str) -> tuple[str, object]:
         except Exception as e:  # noqa: BLE001 — each engine fails differently; the next one is tried
             print(f"prelude: voice unavailable ({type(e).__name__}); trying the next one")
     sys.exit("prelude: no text-to-speech engine worked (Polly, edge-tts, pyttsx3)")
-
-
-TTS_CACHE = BUILD / "tts-cache.json"
 
 
 def cached_voices() -> dict[str, dict[str, str]]:
@@ -1321,7 +1355,7 @@ def write_summary(
     previews = sorted(PREVIEW.glob("*.png")) if PREVIEW.exists() else []
     paths = [DECK, *previews, *(a for a, _ in audio.values()), VIDEO if VIDEO.exists() else None]
     lines = [
-        "# Architecture prelude — build summary",
+        f"# {DECK.stem} — build summary",
         "",
         f"Generated by `scripts/build_prelude_deck.py` from `{SCRIPT_MD.relative_to(ROOT)}`.",
         "",
@@ -1353,6 +1387,22 @@ def write_summary(
     return out
 
 
+def use_deck(name: str) -> None:
+    """Point every path at docs/Decks/<name>/; decks other than the default keep their audio in
+    artifacts/voiceover/<name>/ so one deck's build never overwrites another's."""
+    global DECK_DIR, SCRIPT_MD, DECK, ICON_DIR, PREVIEW, VOICE_DIR, BUILD, VIDEO, SUMMARY, TTS_CACHE  # noqa: PLW0603
+    DECK_DIR = ROOT / "docs" / "Decks" / name
+    SCRIPT_MD = DECK_DIR / "voiceover-script.md"
+    DECK = DECK_DIR / f"ask-the-tower-{name}.pptx"
+    ICON_DIR = DECK_DIR / "icons"
+    PREVIEW = DECK_DIR / "preview"
+    VOICE_DIR = ROOT / "artifacts" / "voiceover" / ("" if name == DEFAULT_DECK else name)
+    BUILD = VOICE_DIR / "build"
+    VIDEO = VOICE_DIR / f"{name}.mp4"
+    SUMMARY = VOICE_DIR / "build-summary.md"
+    TTS_CACHE = BUILD / "tts-cache.json"
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("--skip-tts", action="store_true", help="use the MP3s already in artifacts/voiceover/")
@@ -1364,7 +1414,9 @@ def main() -> int:
         help="build the deck and the previews only",
     )
     ap.add_argument("--voice", default="Matthew", help="Polly voice id (default Matthew)")
+    ap.add_argument("--deck", default=DEFAULT_DECK, help=f"folder under docs/Decks/ (default {DEFAULT_DECK})")
     args = ap.parse_args()
+    use_deck(args.deck)
 
     slides = parse(SCRIPT_MD.read_text(encoding="utf-8"))
     problems = check(slides)

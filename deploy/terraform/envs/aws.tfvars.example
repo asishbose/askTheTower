@@ -13,6 +13,10 @@ image_tag   = "latest" # `make push` tags with the git sha; pass -var image_tag=
 # --- carrier: the mock on Fargate (demo default) ------------------------------------------------------------------
 carrier_backend      = "mock"
 tower_carrier_client = "gateway" # "direct" = the cut-line configuration (also set enable_nat_gateway = true)
+# Number Verification needs a three-legged OAuth flow, which AgentCore Gateway refuses behind its IAM authorizer
+# ("3LO Auth is not supported when gateway authorizer type is AWS_IAM"): the binding page calls that one API itself.
+# "direct" needs enable_nat_gateway = true (below). Found on the first apply, 2026-10-13.
+binding_carrier_client = "direct"
 
 # The mock's internal ALB needs a hostname with a certificate (Gateway and Identity call it over HTTPS).
 mock_domain_name     = "mock.carrier.example.org"
@@ -57,4 +61,4 @@ demo_admin_cidrs = [] # e.g. ["203.0.113.7/32"]
 
 # --- optional --------------------------------------------------------------------------------------------------------
 enable_cloudfront_waf = true
-enable_nat_gateway    = false
+enable_nat_gateway    = true # required by binding_carrier_client = "direct": the binding page runs in the VPC
