@@ -17,7 +17,7 @@ from demo_ui.ops.probes import ProbeResult
 
 G1 = "AWS runs never run in the container: use make ops-ui on the host"
 G2 = "AWS runs need the UI on 127.0.0.1 (this one listens on {host})"
-G3 = "AWS runs are off: start the UI with make ops-ui (or DEMO_UI_AWS_OPS=1 in .env)"
+G3 = "AWS runs are off: start the UI with make showcase-ui ENV=aws or make ops-ui (or DEMO_UI_AWS_OPS=1 in .env)"
 G4_MAKE = "make not found"
 G4_CHECKOUT = "checkout not found"
 G5 = "root .env not found: cp .env.example .env, then make config-check"

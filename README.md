@@ -115,8 +115,8 @@ Demo and showcase
   showcase-alerts      Proactive path: watch, fire, buzz, revoke, suppressed, escalation
   showcase-audit       Audit: Mom's view, chain verified, tamper detection
   showcase-ref         Reference client: three moments from the terminal, then the corpus
-  showcase-ui          Demo control room on the host at 127.0.0.1:8091 (needs make up): Bedrock when credentials resolve, else scripted
-  ops-ui               The demo UI on the host at 127.0.0.1:8091/#ops with the Ops tab's aws runner on (DEMO_UI_AWS_OPS=1; the gate of doc 11 §2); the stack need not be up
+  showcase-ui          The demo UI on the host at 127.0.0.1:8091 — Control room + Ops tab. ENV=aws: the one command for the AWS day (the Ops tab's aws runner is on); local: needs make up
+  ops-ui               The same page for a first deploy (no deploy/.env.aws yet): Ops tab's aws runner on, the stack need not be up
   showcase-alexa       Alexa+ simulator script and Tower log tail
   showcase-infra       Clean-machine timing; terraform plan; teardown
   showcase             testing-and-showcase.md §4 steps 1–9 in order against the running stack, pausing (SHOWCASE_PAUSE=0: no pauses)

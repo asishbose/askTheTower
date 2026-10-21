@@ -2,7 +2,7 @@
 
 A human runbook. Every step here spends money or touches the account, so none of it is automated; the agent only wrote the code. Run everything from the repo root in WSL with `AWS_PROFILE=att` (or the keys in the root `.env`). Expect a half day the first time, 20 minutes after that.
 
-**Tab or terminal (prompt 23).** Every `make` line below is also a button in the demo UI's Ops tab: `make ops-ui`, open `http://127.0.0.1:8091/#ops`. The tab runs the same command (`make <target> ENV=aws`) with the credentials from the root `.env`, streams the log, turns the step green from its evidence, highlights the next step, and appends a redacted transcript to `artifacts/ops-log/<date>-<name>.log` (paste that to the agent when an apply fails). The two are interchangeable: a step done in the terminal shows green in the tab. Its AWS buttons are enabled only when the UI runs on the host on `127.0.0.1` with `DEMO_UI_AWS_OPS=1` (what `make ops-ui` sets) and `make config-check` passes; `down`, `down-all`, closing the admin path and a deploy whose plan destroys anything need a typed word. The button for each line is in its `# tab:` comment.
+**Tab or terminal (prompt 23).** Every `make` line below is also a button in the demo UI's Ops tab: `make showcase-ui ENV=aws` (`make ops-ui` the very first time, before `deploy/.env.aws` exists), open `http://127.0.0.1:8091/#ops`. The tab runs the same command (`make <target> ENV=aws`) with the credentials from the root `.env`, streams the log, turns the step green from its evidence, highlights the next step, and appends a redacted transcript to `artifacts/ops-log/<date>-<name>.log` (paste that to the agent when an apply fails). The two are interchangeable: a step done in the terminal shows green in the tab. Its AWS buttons are enabled only when the UI runs on the host on `127.0.0.1` with `DEMO_UI_AWS_OPS=1` (what `make ops-ui` sets) and `make config-check` passes; `down`, `down-all`, closing the admin path and a deploy whose plan destroys anything need a typed word. The button for each line is in its `# tab:` comment.
 
 Source of truth for details: [`docs/architecture/deployment-agentcore.md`](../architecture/deployment-agentcore.md) (steps 1–13) and the prompt-20 build log (outside the repo).
 
@@ -118,6 +118,6 @@ Next morning: `make deploy` again is all it takes (images are still in ECR). Aft
 | Bind page refuses the phone | `mock_assume_mobile_data` false, or phone on Wi-Fi | `aws.tfvars`, phone |
 | No SMS arrives | number not verified in the SNS sandbox | 0.3 |
 | `make demo ENV=aws`: Asish `NOT_BOUND` | seed without `--bind-asish` | 5.3 |
-| Ops tab: AWS buttons disabled | the gate: not `make ops-ui` (or not on `127.0.0.1`, or in the container), or `make config-check` fails; the reason is on every button | 0.7, `make ops-ui` |
+| Ops tab: AWS buttons disabled | the gate: not `make showcase-ui ENV=aws` / `make ops-ui` (or not on `127.0.0.1`, or in the container), or `make config-check` fails; the reason is on every button | 0.7, `make ops-ui` |
 | Ops tab: "account unknown" | `aws` CLI missing, or no credentials in the root `.env` | 0.1, 0.8 |
 | `make admin-open` exits 3 | its plan destroys something (bearer rotation, mock task roll): expected | read the plan, then `make deploy` (tab: type `deploy`) |

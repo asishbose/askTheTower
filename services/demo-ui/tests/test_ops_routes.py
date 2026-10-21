@@ -302,7 +302,7 @@ async def test_header_and_teardown_with_the_gate_off_and_on(
         header = (await c.get("/fragment/ops-header")).text
         assert (
             'data-gate="off"' in header
-            and "AWS runs: off: AWS runs are off: start the UI with make ops-ui" in header
+            and "AWS runs: off: AWS runs are off: start the UI with make showcase-ui ENV=aws or make ops-ui" in header
         )
         teardown = (await c.get("/fragment/ops-teardown")).text
         assert "stack: unknown · ECR: unknown" in teardown and teardown.count("disabled") >= 4

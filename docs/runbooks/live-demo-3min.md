@@ -18,12 +18,12 @@ corporate proxy: the admin path registers your address, and the video must not s
 
 | # | Do | Done when |
 |---|---|---|
-| 1 | `make ops-ui` → http://127.0.0.1:8091/#ops | header shows the account and `config-check ok` |
+| 1 | `make showcase-ui ENV=aws` (capital ENV) → http://127.0.0.1:8091/#ops | pill reads `bedrock · ENV=aws`; header shows the account and `config-check ok` |
 | 2 | If the stack is down: **4 · Deploy** (10–20 min), then **5 → 9** | 9 prints the web chat URL |
 | 3 | **Admin path → Open** (the box after step 9; it plans and deploys in one go) | admin box reads **open** |
 | 4 | **10 · Bind Asish for the stories** | `bound: asish, mom` |
 | 5 | **11 · make demo on AWS** (dry run of the exact path the demo takes) | `demo ok: 3 stories` |
-| 6 | Ctrl-C the Ops UI; `make showcase-ui ENV=aws` (capital ENV) → http://127.0.0.1:8091 | pill reads `bedrock · ENV=aws · admin on` |
+| 6 | Switch to the **Control room** tab (same UI; it reloaded itself after admin-open) | pill reads `bedrock · ENV=aws · admin on` |
 | 7 | Control room: **Reset (make seed)** | mock clock at wall time; Mom's cards show no swap; grants pane shows Mom's `watch` grant to Asish |
 | 8 | Warm-up: persona **Asish**, Say **Is my line OK?** → `OK` | the first answer after a cold start can fail once (`CARRIER_ERROR`); ask again until `OK` |
 | 9 | Phone: unlocked, on the desk, SMS notifications on, Do Not Disturb off | — |

@@ -290,7 +290,7 @@ async def test_gate_off_runs_nothing_and_a_local_job_writes_no_transcript(
     async with httpx.AsyncClient(transport=httpx.ASGITransport(app=app), base_url="http://ui.test") as c:
         rig = Rig(c, deps, root)
         r = await rig.run("aws-ecr-up")
-        assert r.status_code == 403 and "AWS runs are off: start the UI with make ops-ui" in r.text
+        assert r.status_code == 403 and "AWS runs are off: start the UI with make showcase-ui ENV=aws or make ops-ui" in r.text
         assert rig.ran() == []
         header = (await c.get("/fragment/ops-header")).text
         assert "AWS runs: off: AWS runs are off" in header and "account" not in header

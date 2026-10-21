@@ -33,10 +33,10 @@ Local proof before touching AWS (5 min): `make demo` → `demo ok: 4 stories`.
 ## Part B — the pipeline, from the Ops tab (an afternoon the first time)
 
 ```bash
-make ops-ui
+make showcase-ui ENV=aws      # first deploy on this machine (no deploy/.env.aws yet): make ops-ui
 ```
 
-Open **http://127.0.0.1:8091/#ops**. The header must show `us-east-1 · <ACCT>` and the AWS buttons enabled. If they're greyed, the reason is printed next to them (not on 127.0.0.1, `DEMO_UI_AWS_OPS` unset, or `config-check` failing).
+Open **http://127.0.0.1:8091/#ops**. The header must show `us-east-1 · <ACCT>` and the AWS buttons enabled. If they're greyed, the reason is printed next to them (not on 127.0.0.1, lowercase `env=aws`, or `config-check` failing).
 
 Press the steps **in order**; each turns green with its evidence before the next enables. The log streams in the pane; every job's transcript is also saved under `artifacts/ops-log/`.
 

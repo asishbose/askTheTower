@@ -42,13 +42,15 @@ showcase-ref: require-env ## Reference client: three moments from the terminal, 
 # deploy/.env.aws itself (11 §6): its admin URLs and bearers win over the shell, and nothing is blanked but DynamoDB's
 # local endpoint.
 SHOWCASE_UI_PORT ?= 8091
-showcase-ui: require-env ## Demo control room on the host at 127.0.0.1:8091 (needs make up): Bedrock when credentials resolve, else scripted
+showcase-ui: require-env ## The demo UI on the host at 127.0.0.1:8091 — Control room + Ops tab. ENV=aws: the one command for the AWS day (the Ops tab's aws runner is on); local: needs make up
 	@if (exec 3<>/dev/tcp/127.0.0.1/$(SHOWCASE_UI_PORT)) 2>/dev/null; then \
 	  echo "showcase-ui: 127.0.0.1:$(SHOWCASE_UI_PORT) is already in use — stop that process or pass SHOWCASE_UI_PORT=<free port>"; exit 2; fi
 	@echo "showcase-ui: http://127.0.0.1:$(SHOWCASE_UI_PORT) — the pill shows the agent mode and ENV=$(ENV); Ctrl-C to stop"
 	@ALERTS_INTERNAL_BEARER="$$(sed -n 's/^INTERNAL_BEARER=//p' $(COMPOSE_ENV_FILE) 2>/dev/null)" \
 	  REF_AGENT="$${REF_AGENT:-auto}" DEMO_UI_HOST=127.0.0.1 DEMO_UI_PORT=$(SHOWCASE_UI_PORT) \
-	  $(if $(filter local,$(ENV)),,DYNAMO_ENDPOINT= DEMO_UI_AWS_ENV_FILE=deploy/.env.$(ENV)) $(UV) run demo-ui
+	  $(if $(filter local,$(ENV)),,DYNAMO_ENDPOINT= DEMO_UI_AWS_ENV_FILE=deploy/.env.$(ENV) DEMO_UI_AWS_OPS=1) $(UV) run demo-ui
+# ops-ui: the same page with the aws runner on and no require-env — for a machine where deploy/.env.aws does not
+# exist yet (first deploy); afterwards `make showcase-ui ENV=aws` is the one command.
 # The Ops tab with its aws runner asked for (doc 11 §2, T4): the same host run as showcase-ui on the same port, plus
 # DEMO_UI_AWS_OPS=1. No require-env: the tab is how you bring the stack (and the AWS deployment) up. The aws runner is
 # on only when the whole gate holds (127.0.0.1, this flag, make and the checkout, the root .env, make config-check).
