@@ -1,11 +1,11 @@
 {% set off_macros = off_macros or {} %}
 <div class="macros{% if not carrier %} off{% endif %}">
-  {% for name, label in macros %}
+  {% for name, label in macros %}{% if name not in off_macros %}
   <button class="tile" data-macro="{{ name }}" {% if not carrier %}disabled title="{{ off_reason }}"{% elif name in off_macros %}disabled title="{{ off_macros[name] }}"{% endif %} hx-post="/macro/{{ name }}" hx-target="#run-status" hx-swap="innerHTML"><svg class="tile-art" aria-hidden="true"><use href="/static/img/icons.svg#m-{{ name }}"></use></svg><span class="tile-name">{{ label }}</span><span class="tile-state" aria-hidden="true"></span></button>
-  {% endfor %}
+  {% endif %}{% endfor %}
 </div>
 {% if not carrier %}<div class="off-panel" data-off><svg class="i" aria-hidden="true"><use href="/static/img/icons.svg#pause"></use></svg><p class="off">{{ off_reason }}</p></div>{% endif %}
-{% for name, label in macros %}{% if captions[name] %}<p class="caption"><b>{{ label }}:</b> {{ captions[name] }}</p>{% endif %}{% endfor %}
+{% for name, label in macros %}{% if captions[name] and name not in off_macros %}<p class="caption"><b>{{ label }}:</b> {{ captions[name] }}</p>{% endif %}{% endfor %}
 <form class="say" hx-post="/say" hx-target="#run-status" hx-swap="innerHTML">
   <select name="who" aria-label="who speaks" {% if personas | length == 1 %}disabled{% endif %}>
     {% for p in personas %}<option value="{{ p }}">{{ p | capitalize }}</option>{% endfor %}

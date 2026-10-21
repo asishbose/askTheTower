@@ -9,6 +9,7 @@ import importlib.util
 import logging
 import os
 import shutil
+import sys
 import time
 import uuid
 from collections.abc import AsyncIterator, Awaitable, Callable, Mapping
@@ -29,7 +30,8 @@ from tower_consent import Store
 
 from demo_ui.aws_reset import AwsReset
 from demo_ui.clients import AlertsSent, AlertsSentControl, BindingAdmin, MockAdmin, Unavailable, bearer
-from demo_ui.config import Settings
+from demo_ui import views
+from demo_ui.config import AWS_FILE_KEYS, Settings, read_env_file
 from demo_ui.feed import AuditSource, CarrierSource, Feed, GrantsSource, SmsSource, Source
 from demo_ui.ops import plan
 from demo_ui.ops.aws_status import COGNITO_NEEDED, AwsStatus, Files
@@ -146,32 +148,35 @@ class Deps:
         async with AsyncExitStack() as stack:
 
             async def agent_for(user_id: str) -> Agent:
-                tower = await stack.enter_async_context(
-                    TowerClient(self._tower_config(user_id), httpx_client_factory=self.tower_factory)
-                )
-                return self.make_agent(tower)
+                return self.make_agent(await self._open_tower(stack, user_id))
 
             yield agent_for
 
-    async def say(self, who: str, text: str) -> Turn:
-        """One free-text utterance through Bedrock (the scripted agent has no tool choice to make). Retried once
-        when Tower refuses the token (401: it expired — sign in again) or the connect fails (the idle AgentCore
-        session was retired — a fresh session id)."""
+    async def _open_tower(self, stack: AsyncExitStack, user_id: str) -> TowerClient:
+        """Connect to Tower for `user_id`, retrying once when Tower refuses the token (401: it expired — sign in
+        again) or the connect fails (the idle AgentCore session was retired — a fresh session id)."""
         for attempt in (1, 2):
             try:
-                async with TowerClient(self.tower_config(who), httpx_client_factory=self.tower_factory) as tower:
-                    return await self.make_agent(tower).ask(text)
+                return await stack.enter_async_context(
+                    TowerClient(self._tower_config(user_id), httpx_client_factory=self.tower_factory)
+                )
             except TowerUnauthorized:
                 if attempt == 2 or self.cognito is None:
                     raise
-                log.warning("tower: 401 for %s; signing in again", who)
-                self.cognito.forget(user_id_for(who).removeprefix("user-"))
+                log.warning("tower: 401 for %s; signing in again", user_id)
+                self.cognito.forget(user_id.removeprefix("user-"))
             except TowerError as e:
                 if attempt == 2 or "cannot connect" not in str(e):
                     raise
                 log.warning("tower: connect failed on session %s; retrying on a new one", self.session_id[:16])
                 self.new_session()
         raise AssertionError("unreachable")
+
+    async def say(self, who: str, text: str) -> Turn:
+        """One free-text utterance through Bedrock (the scripted agent has no tool choice to make)."""
+        async with AsyncExitStack() as stack:
+            tower = await self._open_tower(stack, user_id_for(who))
+            return await self.make_agent(tower).ask(text)
 
     async def aclose(self) -> None:
         for close in self.closers:
@@ -243,9 +248,8 @@ def build_deps(
     root = checkout or Path.cwd()
     parent = os.environ if environ is None else environ
     compose_secrets = FileSecrets(checkout / COMPOSE_ENV if checkout else None)
-    aws_secrets = FileSecrets(
-        settings.aws_env_file or (checkout / "deploy" / ".env.aws" if checkout else None)
-    )
+    aws_env_path = settings.aws_env_file or (checkout / "deploy" / ".env.aws" if checkout else None)
+    aws_secrets = FileSecrets(aws_env_path)
     probes = Probes(checkout, parent)
     quiet = QuietProbes(probes, monotonic=time.monotonic)
     gate = Gate(
@@ -283,6 +287,7 @@ def build_deps(
         gate=gate.reason,
         aws_context=aws_context,
         transcripts=transcripts,
+        on_end=settings_reloader(settings, aws_env_path, publish=feed.publish),
     )
     closers.append(ops.aclose)
     stack_urls = (
@@ -315,6 +320,52 @@ def build_deps(
         cognito=cognito_users(settings),
     )
     return deps
+
+
+def aws_file_values(path: Path | None) -> dict[str, str]:
+    """The AWS_FILE_KEYS of deploy/.env.aws as the UI would load them ({} when absent or unreadable)."""
+    if path is None:
+        return {}
+    try:
+        return {k: v for k, v in read_env_file(path).items() if k in AWS_FILE_KEYS}
+    except (OSError, UnicodeDecodeError):
+        return {}
+
+
+def settings_reloader(
+    settings: Settings,
+    path: Path | None,
+    *,
+    publish: Callable[[str, str], None],
+    reexec: Callable[[], None] | None = None,
+    delay_s: float = 2.0,
+) -> Callable[[Any], None]:
+    """ENV=aws: after an aws job, if deploy/.env.aws no longer says what this process loaded at start (a deploy,
+    outputs or admin-open rewrote the addresses or the bearer), say so in the Ops log and re-exec the UI with the
+    same command line, so the page comes back on the new stack without a restart by hand (the page reconnects)."""
+    loaded = aws_file_values(path) if settings.env == "aws" else {}
+
+    def _reexec() -> None:
+        os.execv(sys.executable, [sys.executable, *sys.argv])
+
+    def on_end(job: Any) -> None:
+        if settings.env != "aws" or getattr(job.target, "runner", None) != "aws":
+            return
+        now = aws_file_values(path)
+        if now == loaded:
+            return
+        changed = sorted(k for k in set(loaded) | set(now) if loaded.get(k) != now.get(k))
+        log.info("deploy/.env.aws changed (%s): reloading the UI", ", ".join(changed))
+        publish(
+            "ops",
+            views.render(
+                "ops_log.html",
+                lines=[f"deploy/.env.aws changed ({', '.join(changed)}): the UI reloads itself in {delay_s:g} s; the page reconnects"],
+            ),
+        )
+        asyncio.get_running_loop().call_later(delay_s, reexec or _reexec)
+
+    return on_end
 
 
 def cognito_users(settings: Settings) -> CognitoUsers | None:

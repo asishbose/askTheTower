@@ -130,6 +130,59 @@ async def test_persistent_session_is_opened_once(mock_transport: Any, breakers: 
     await fake.aclose()
 
 
+class _StaleOnce:
+    """A client whose first call_tool fails like a dropped Gateway session; connected until then."""
+
+    def __init__(self, real: Any) -> None:
+        self.real, self.failed = real, False
+
+    async def __aenter__(self) -> "_StaleOnce":
+        await self.real.__aenter__()
+        return self
+
+    async def __aexit__(self, *a: Any) -> None:
+        await self.real.__aexit__(*a)
+
+    def is_connected(self) -> bool:
+        return self.real.is_connected()
+
+    async def list_tools(self) -> Any:
+        return await self.real.list_tools()
+
+    async def call_tool(self, *a: Any, **kw: Any) -> Any:
+        if not self.failed:
+            self.failed = True
+            raise RuntimeError("400 Bad Request")
+        return await self.real.call_tool(*a, **kw)
+
+
+@pytest.mark.integration
+async def test_a_stale_persistent_session_is_reopened_and_the_call_retried(
+    mock_transport: Any, breakers: BreakerRegistry
+) -> None:
+    fake = FakeGateway(base_url=BASE, transport=mock_transport)
+    factory = CountingFactory(fake)
+    stale: list[_StaleOnce] = []
+
+    def make() -> Any:
+        c = _StaleOnce(factory())
+        if not stale:
+            stale.append(c)  # only the warm-up session is stale
+            return c
+        return c.real
+
+    config = mock_config(BASE, client="gateway").model_copy(update={"gateway_session": "persistent"})
+    client = GatewayClient(config, client_factory=make, breakers=breakers)
+    assert await client.check_tools() == []
+    line = LineRef("l", ASISH)
+    assert (await client.sim_swap_check(line, 72)).swapped is False  # the stale session's failure is absorbed
+    assert factory.made == 2 and stale[0].failed
+    assert (await client.sim_swap_check(line, 72)).swapped is False
+    assert factory.made == 2  # the reopened session is reused
+    await client.aclose()
+    await fake.aclose()
+
+
 @pytest.mark.integration
 async def test_per_call_sessions_by_default(mock_transport: Any, breakers: BreakerRegistry) -> None:
     fake = FakeGateway(base_url=BASE, transport=mock_transport)

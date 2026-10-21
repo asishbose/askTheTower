@@ -125,7 +125,8 @@ async def test_the_page_on_aws_with_the_admin_path_open(store: Store, lines: dic
         pill = (await c.get("/fragment/pill")).text
         assert "scripted · ENV=aws · admin on" in pill
         controls = (await c.get("/fragment/conversation-controls")).text
-        assert controls.count("disabled title=") == 1 and "Transplant runs locally" in controls
+        assert "disabled title=" not in controls and "transplant" not in controls  # hidden on ENV=aws
+        assert controls.count('data-macro="') == 3
         assert 'value="mom"' not in controls  # Asish only (decision 3)
         r = await c.post("/macro/transplant", headers=HX)
         assert "Transplant runs locally" in r.text and deps.runner.task is None

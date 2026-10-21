@@ -9,7 +9,9 @@ This module knows nothing about policy, consent or carriers. It holds no carrier
 
 from __future__ import annotations
 
+import dataclasses
 import json
+import logging
 import os
 import uuid
 from collections.abc import Callable
@@ -24,6 +26,9 @@ DEFAULT_TOWER_URL = "http://localhost:8080/mcp"  # mk/vars.mk TOWER_URL for ENV=
 # Tower. It names no user; Tower authenticates every request by its bearer, sharing a microVM shares no data.
 AGENTCORE_SESSION_ID = f"tower-{uuid.uuid4()}"
 AGENTCORE_SESSION_HEADERS = ("Mcp-Session-Id", "X-Amzn-Bedrock-AgentCore-Runtime-Session-Id")
+
+
+log = logging.getLogger("ref_client.tower")
 
 
 class TowerError(RuntimeError):
@@ -149,6 +154,18 @@ class TowerClient:
             await self._client.__aexit__(et, e, tb)
             self._client = None
 
+    def _on_agentcore(self) -> bool:
+        return "bedrock-agentcore" in self.config.url
+
+    async def _reconnect(self) -> None:
+        """Close the session and open a new one under a fresh AgentCore session id (tools stay cached)."""
+        try:
+            await self.__aexit__(None, None, None)
+        except Exception:  # noqa: BLE001 — the old session is gone anyway
+            self._client = None
+        self.config = dataclasses.replace(self.config, session_id=f"tower-{uuid.uuid4()}")
+        await self.__aenter__()
+
     async def tools(self) -> list[ToolSpec]:
         """Discovered at connect, cached for the session. Nothing is hard-coded here."""
         if self._tools is None:
@@ -163,12 +180,20 @@ class TowerClient:
         """Call one tool; returns the `ToolResult` wire dict (summary, facts, reason_codes, next_step, ...)."""
         from fastmcp.exceptions import ToolError
 
-        try:
-            res = await self._client.call_tool(name, arguments)
-        except ToolError as e:
-            raise (TowerUnauthorized if self._refused else TowerError)(f"{name}: {e}") from None
-        except Exception as e:  # noqa: BLE001
-            raise self._error(name, e) from None
+        for attempt in (1, 2):
+            try:
+                res = await self._client.call_tool(name, arguments)
+                break
+            except ToolError as e:
+                raise (TowerUnauthorized if self._refused else TowerError)(f"{name}: {e}") from None
+            except Exception as e:  # noqa: BLE001
+                # On AgentCore the runtime session can be retired under an open client (idle, or the microVM
+                # recycled): the call fails with an MCP/transport error, not a tool error. Every Tower tool is
+                # safe to repeat, so reconnect on a fresh session and try once more.
+                if attempt == 2 or self._refused or not self._on_agentcore():
+                    raise self._error(name, e) from None
+                log.warning("tower: %s failed (%s); reconnecting on a new session", name, type(e).__name__)
+                await self._reconnect()
         data = res.structured_content
         if not isinstance(data, dict):
             text = res.content[0].text if res.content else "{}"

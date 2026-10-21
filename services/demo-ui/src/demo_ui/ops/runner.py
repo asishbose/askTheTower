@@ -191,12 +191,14 @@ class OpsRunner:
         gate: Callable[[], Awaitable[str | None]] = _gate_off,
         aws_context: Callable[[], Awaitable[AwsContext]] = _nothing_done,
         transcripts: Transcripts | None = None,
+        on_end: Callable[[Job], None] | None = None,
         batch_s: float = 0.2,
         term_after_s: float = 1.5,
         kill_after_s: float = 2.0,
         monotonic: Callable[[], float] = time.monotonic,
     ) -> None:
         self.publish = publish
+        self.on_end = on_end  # after a job's end is published (deps: reload the UI when deploy/.env.aws changed)
         self.cwd = cwd
         self.off = off
         self.parent_env = parent_env
@@ -356,6 +358,8 @@ class OpsRunner:
             job.transcript.end(job.state, code, job.duration_s)
         self._status()
         log.info("ops end target=%s state=%s code=%s", job.target.name, job.state, code)
+        if self.on_end is not None:
+            self.on_end(job)
         return job
 
     async def _exec(self, job: Job) -> int | None:

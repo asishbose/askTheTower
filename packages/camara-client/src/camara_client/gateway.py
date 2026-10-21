@@ -31,6 +31,7 @@ Live wiring (prompt 13):
 from __future__ import annotations
 
 import asyncio
+import contextlib
 import json
 from collections.abc import AsyncIterator, Callable, Iterable, Mapping
 from contextlib import AsyncExitStack, asynccontextmanager
@@ -209,6 +210,13 @@ class GatewayClient(CarrierBase):
         if stack is not None:
             await stack.aclose()
 
+    async def _reopen(self) -> None:
+        """Replace the persistent session (after a transport failure on it)."""
+        with contextlib.suppress(Exception):
+            await self.aclose()
+        with contextlib.suppress(Exception):  # opening fails → the retry uses a per-call session
+            await self.open()
+
     @asynccontextmanager
     async def _session(self) -> AsyncIterator[McpClient[Any]]:
         shared = self._shared
@@ -273,15 +281,26 @@ class GatewayClient(CarrierBase):
                     "redirect_uri": redirect_uri,
                 }
             }
+        args = tool_arguments(op, json, path_params)
         try:
             async with self._session() as client:
-                result = await client.call_tool(
-                    name, tool_arguments(op, json, path_params), raise_on_error=False, meta=meta
-                )
+                result = await client.call_tool(name, args, raise_on_error=False, meta=meta)
         except (TimeoutError, KeyError, ValueError):
             raise
         except Exception:  # noqa: BLE001 — MCP/transport failure; its text may echo arguments
-            raise transport_error() from None
+            # The persistent session can go stale between warm-up and the first call (Gateway answers 400 and
+            # drops it; seen on every cold start, 2026-10-21) and after an idle stretch. Reopen it and try once
+            # more; a second failure is the carrier's.
+            if not self._persistent:
+                raise transport_error() from None
+            await self._reopen()
+            try:
+                async with self._session() as client:
+                    result = await client.call_tool(name, args, raise_on_error=False, meta=meta)
+            except (TimeoutError, KeyError, ValueError):
+                raise
+            except Exception:  # noqa: BLE001
+                raise transport_error() from None
         text = "".join(c.text for c in result.content if isinstance(c, TextContent))
         payload = _loads(text)
         if result.is_error:

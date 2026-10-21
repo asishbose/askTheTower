@@ -42,7 +42,8 @@ def captions(*, local: bool) -> dict[str, str]:
 
 
 def off_macros(*, local: bool) -> dict[str, str]:
-    """Macros that are off even when the others run, with the reason (Transplant on ENV=aws)."""
+    """Macros that are off even when the others run, with the reason (Transplant on ENV=aws). The page hides
+    them (tile and caption); `POST /macro/<name>` still answers with the reason."""
     return {} if local else {"transplant": AWS_TRANSPLANT}
 
 
