@@ -47,8 +47,14 @@ log = logging.getLogger("demo_ui.ops")
 
 JobState = Literal["running", "pass", "fail", "stopped", "confirm"]
 # admin-open / admin-close stop at their plan gate (scripts/admin_cidr.py, exit 3 under make) when the plan
-# destroys something: that is a pause for the operator, not a failure. The job ends `confirm`.
+# destroys something: that is a pause for the operator, not a failure. The job ends `confirm` (green, no note).
 PLAN_GATE = re.compile(r"^admin-(?:open|close): the plan destroys \d+ resource")
+# The gate's own chatter stays out of the log: the stop line is the state (green `confirm`), not a message.
+GATE_NOISE = (
+    PLAN_GATE,
+    re.compile(r"^uv run python scripts/admin_cidr\.py plan-gate\b"),
+    re.compile(r"^make: \*\*\* \[mk/aws\.mk:\d+: admin-(?:open|close)\] Error 3$"),
+)
 MAX_LINE = 2_000
 MAX_PENDING_BYTES = 65_536  # a line without a newline is flushed at this size
 BACKLOG = 500
@@ -343,8 +349,7 @@ class OpsRunner:
         job.state = "stopped" if job.stopping else ("pass" if code == 0 else "fail")
         job.note = ""
         if job.state == "fail" and job.gated:
-            job.state = "confirm"
-            job.note = "plan gate: read the plan, then type deploy at 4 · Deploy"
+            job.state = "confirm"  # shown green like a pass; the plan chips say what `deploy` will do
         if job.transcript is not None:
             if job.plan is not None:
                 job.transcript.plan(job.plan)
@@ -396,13 +401,15 @@ class OpsRunner:
 
     def _line(self, raw: bytes) -> None:
         line = clean_line(raw, self.secrets())
-        self.backlog.append(line)
-        self._pending.append(line)
         job = self.job
         if job is not None and job.target.runner == "aws":
             job.plan = parse_plan(line) or job.plan
             if PLAN_GATE.match(line):
                 job.gated = True
+            if any(p.match(line) for p in GATE_NOISE):
+                return  # neither shown nor written to the transcript
+        self.backlog.append(line)
+        self._pending.append(line)
 
     async def _flush_every(self) -> None:
         while True:

@@ -21,6 +21,7 @@ from typing import Annotated, Any, Literal
 from fastapi import FastAPI, Form, HTTPException, Request, Response
 from fastapi.responses import HTMLResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
+from ref_client.agent import BedrockUnavailable
 from ref_client.mcp_client import TowerError
 
 from demo_ui import views
@@ -179,7 +180,7 @@ def create_app(deps: Deps) -> FastAPI:
             return status("a macro is running; wait for it to finish", "fail")
         try:
             turn = await deps.say(who, text)
-        except TowerError as e:
+        except (TowerError, BedrockUnavailable) as e:
             return status(str(e), "fail")
         feed.publish("turn", views.say_fragment(who, turn, agent=deps.mode))
         url = ((turn.result or {}).get("next_step") or {}).get("url")

@@ -20,15 +20,15 @@
         }
       ],
       "result": {
-        "summary": "Your SIM was moved to another device at 1:38 today. If that wasn't you, call your carrier now. All your calls have been forwarding since 1:27 today. If you didn't set that, call your carrier.",
+        "summary": "Your SIM was moved to another device at 8:50 today. If that wasn't you, don't call from your phone — I can call your carrier's support line for you from here. All your calls have been forwarding since 8:39 today. If you didn't set that, I can call your carrier's support line for you from here.",
         "facts": {
           "line": "self",
           "sim_swapped_recently": true,
-          "swapped_at": "2026-10-15T17:38:49.177000Z",
+          "swapped_at": "2026-10-21T00:50:42.865000Z",
           "call_forwarding": "unconditional",
           "source": "carrier",
           "stale": false,
-          "as_of": "2026-10-15T17:27:54.264364Z"
+          "as_of": "2026-10-21T00:39:18.572088Z"
         },
         "reason_codes": [
           "SIM_SWAPPED_RECENT",
@@ -39,13 +39,13 @@
           "url": null,
           "carrier_support_number": null
         },
-        "checked_at": "2026-10-15T17:27:54.264364Z"
+        "checked_at": "2026-10-21T00:39:18.572088Z"
       },
       "reason_codes": [
         "SIM_SWAPPED_RECENT",
         "CALL_FORWARDING_SET"
       ],
-      "spoken": "Your SIM was moved to another device at 1:38 today. If that wasn't you, call your carrier now. All your calls have been forwarding since 1:27 today. If you didn't set that, call your carrier."
+      "spoken": "Your SIM was moved to another device at 8:50 today. If that wasn't you, don't call from your phone — I can call your carrier's support line for you from here. All your calls have been forwarding since 8:39 today. If you didn't set that, I can call your carrier's support line for you from here."
     }
   ]
 }

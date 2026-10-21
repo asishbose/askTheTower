@@ -15,6 +15,7 @@ from __future__ import annotations
 
 import json
 import os
+import time
 from collections.abc import Callable, Mapping
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -52,7 +53,11 @@ class CognitoUsers:
     subs: dict[str, str]
     environ: Mapping[str, str] = field(default_factory=lambda: os.environ, repr=False)
     client_factory: Callable[[str], Any] | None = field(default=None, repr=False)
-    _tokens: dict[str, str] = field(default_factory=dict, repr=False)
+    # name → (access token, expiry as time.time()); a token is reused until a minute before it expires
+    # (Cognito's default lifetime is an hour) and re-fetched after that, so a long Control room session keeps going.
+    _tokens: dict[str, tuple[str, float]] = field(default_factory=dict, repr=False)
+    clock: Callable[[], float] = field(default=time.time, repr=False)
+    REFRESH_MARGIN_S = 60.0
 
     @classmethod
     def from_artifacts(cls, artifacts: Path, environ: Mapping[str, str] | None = None) -> CognitoUsers:
@@ -77,9 +82,14 @@ class CognitoUsers:
         except KeyError:
             raise CognitoUnavailable(f"no Cognito user {name} in cognito-users.json") from None
 
+    def forget(self, name: str) -> None:
+        """Drop a cached token (after Tower answered 401 with it): the next access_token signs in again."""
+        self._tokens.pop(name, None)
+
     def access_token(self, name: str) -> str:
-        if name in self._tokens:
-            return self._tokens[name]
+        cached = self._tokens.get(name)
+        if cached is not None and self.clock() < cached[1] - self.REFRESH_MARGIN_S:
+            return cached[0]
         password = self.environ.get(f"COGNITO_PASSWORD_{name.upper().replace('-', '_')}", "")
         if not password:
             raise CognitoUnavailable(f"COGNITO_PASSWORD_{name.upper()} is not set in the root .env")
@@ -102,8 +112,9 @@ class CognitoUsers:
         if not token:
             challenge = r.get("ChallengeName")
             raise CognitoUnavailable(f"Cognito sign-in for {name}: no access token (challenge {challenge})")
-        self._tokens[name] = str(token)
-        return self._tokens[name]
+        expires_in = float((r.get("AuthenticationResult") or {}).get("ExpiresIn") or 3600)
+        self._tokens[name] = (str(token), self.clock() + expires_in)
+        return str(token)
 
 
 def _client(region: str) -> Any:

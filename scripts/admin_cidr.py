@@ -11,7 +11,10 @@ Doc 11 §2 "admin-open / admin-close", doc 10 §5:
 - open takes `--cidr` (`ADMIN_CIDR`), or, when empty, the body of `curl -fsS --max-time 5
   https://checkip.amazonaws.com` with `/32`; it must be a public IPv4 `/32` (`is_global`), else exit 2.
 - `plan-gate` reads the summary line of `artifacts/terraform-plan.txt` (the regex of the demo UI's `ops/plan.py`):
-  a plan that destroys anything, or whose summary cannot be read, stops with exit 3 unless `--force`.
+  a plan that destroys anything, or whose summary cannot be read, stops with exit 3 unless `--force`. The one
+  expected roll is let through: when every destroyed or replaced address is one of `ROLL` (the bearer password, the
+  mock task definition and its secret version, which changing `demo_admin_cidrs` always replaces), the gate prints
+  "rolls the demo admin bearer and the mock task" and goes on to `make deploy`.
 
 The address is never printed: only "demo_admin_cidrs: 1 address" / "demo_admin_cidrs: []".
 
@@ -40,6 +43,16 @@ LINE = re.compile(r"^\s*demo_admin_cidrs\s*=")
 SUMMARY = re.compile(
     r"^(?:Plan: (?:(\d+) to import, )?(\d+) to add, (\d+) to change, (\d+) to destroy\.|No changes\.)", re.M
 )
+# What changing demo_admin_cidrs always replaces (doc 10 §2.1): the gate lets a plan through whose destroys are
+# exactly these, so `make admin-open` deploys in one go. Anything else destroyed still stops it.
+ROLL = frozenset(
+    {
+        "random_password.demo_admin_bearer[0]",
+        "module.mock_carrier[0].aws_ecs_task_definition.this",
+        "module.mock_carrier[0].aws_secretsmanager_secret_version.registry",
+    }
+)
+ACTION = re.compile(r"^\s*# (?P<addr>\S+) (?:must be replaced|will be destroyed)$", re.M)
 CHECKIP = ("curl", "-fsS", "--max-time", "5", "https://checkip.amazonaws.com")
 MISSING = "deploy/terraform/envs/aws.tfvars not found: copy envs/aws.tfvars.example first"
 BY_HAND = "edit demo_admin_cidrs by hand to one line"
@@ -126,13 +139,23 @@ def plan_destroys(text: str) -> int | None:
     return 0 if last.group(0) == "No changes." else int(last[4])
 
 
+def plan_rolls_only(text: str, destroys: int) -> bool:
+    """True when the plan's destroyed/replaced addresses are all in ROLL and account for every destroy."""
+    addrs = [m["addr"] for m in ACTION.finditer(text)]
+    return len(addrs) == destroys and bool(addrs) and all(a in ROLL for a in addrs)
+
+
 def plan_gate(plan: Path, name: str, force: bool) -> str | None:
     """None to go on to `make deploy`; else the exit-3 message."""
     try:
-        destroys = plan_destroys(plan.read_text(encoding="utf-8", errors="replace"))
+        text = plan.read_text(encoding="utf-8", errors="replace")
+        destroys = plan_destroys(text)
     except OSError:
-        destroys = None
+        text, destroys = "", None
     if destroys == 0 or force:
+        return None
+    if destroys and plan_rolls_only(text, destroys):
+        print(f"{name}: the plan rolls the demo admin bearer and the mock task ({destroys} replaced); deploying")
         return None
     count = "an unknown number of" if destroys is None else str(destroys)
     return (

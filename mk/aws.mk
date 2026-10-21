@@ -73,10 +73,11 @@ tf-check: ## terraform fmt -check + validate of the main and ecr roots (init -ba
 	$(TFR) init -backend=false -input=false >/dev/null && $(TFR) validate
 # The demo admin path (10 §2.1; doc 11 §2 "admin-open / admin-close"): scripts/admin_cidr.py edits the one
 # demo_admin_cidrs line of envs/aws.tfvars (refuses a missing file or a multi-line list), then plan, then deploy.
-# Changing the list replaces DEMO_ADMIN_BEARER and rolls the mock task, so the plan usually destroys something: then
-# the plan gate stops with exit 3 unless FORCE=1 (read the plan, then `make deploy`). The address is never printed.
+# Changing the list replaces DEMO_ADMIN_BEARER and rolls the mock task: the plan gate lets exactly that roll through
+# and stops with exit 3 (read the plan, then `make deploy`) only when anything else would be destroyed, unless
+# FORCE=1. The address is never printed.
 ADMIN_CIDR ?=
-admin-open: ## Open the demo admin path to your /32 (ADMIN_CIDR, else checkip.amazonaws.com): tfvars, plan, deploy (exit 3 if the plan destroys, unless FORCE=1)
+admin-open: ## Open the demo admin path to your /32 (ADMIN_CIDR, else checkip.amazonaws.com): tfvars, plan, deploy (exit 3 if the plan destroys more than the bearer/mock roll, unless FORCE=1)
 	$(PY) scripts/admin_cidr.py open --cidr "$(ADMIN_CIDR)"
 	$(MAKE) --no-print-directory plan ENV=aws
 	$(PY) scripts/admin_cidr.py plan-gate --name admin-open $(if $(filter 1,$(FORCE)),--force)

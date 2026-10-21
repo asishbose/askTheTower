@@ -12,10 +12,11 @@ from demo_ui.redact import mask
 
 class JsonFormatter(logging.Formatter):
     def format(self, record: logging.LogRecord) -> str:
-        return json.dumps(
-            {"level": record.levelname, "logger": record.name, "msg": mask(record.getMessage())},
-            ensure_ascii=False,
-        )
+        line = {"level": record.levelname, "logger": record.name, "msg": mask(record.getMessage())}
+        if record.exc_info and record.exc_info[1] is not None:  # the cause, one line, masked; no traceback
+            exc = record.exc_info[1]
+            line["error"] = mask(f"{type(exc).__name__}: {exc}")
+        return json.dumps(line, ensure_ascii=False)
 
 
 def configure_logging() -> None:

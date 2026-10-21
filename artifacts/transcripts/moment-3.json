@@ -25,7 +25,7 @@
           "call_forwarding": "none",
           "source": "carrier",
           "stale": false,
-          "as_of": "2026-10-15T17:27:55.662732Z"
+          "as_of": "2026-10-21T00:39:20.124746Z"
         },
         "reason_codes": [
           "OK"
@@ -35,7 +35,7 @@
           "url": null,
           "carrier_support_number": null
         },
-        "checked_at": "2026-10-15T17:27:55.662732Z"
+        "checked_at": "2026-10-21T00:39:20.124746Z"
       },
       "reason_codes": [
         "OK"
@@ -72,7 +72,7 @@
           "url": null,
           "carrier_support_number": null
         },
-        "checked_at": "2026-10-15T17:27:56.496143Z"
+        "checked_at": "2026-10-21T00:39:20.905274Z"
       },
       "reason_codes": [
         "OK"
@@ -123,7 +123,7 @@
           "url": null,
           "carrier_support_number": null
         },
-        "checked_at": "2026-10-15T17:28:01.328012Z"
+        "checked_at": "2026-10-21T00:39:25.473057Z"
       },
       "reason_codes": [
         "NO_CONSENT"

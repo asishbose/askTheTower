@@ -10,6 +10,7 @@ import logging
 import os
 import shutil
 import time
+import uuid
 from collections.abc import AsyncIterator, Awaitable, Callable, Mapping
 from contextlib import AsyncExitStack, asynccontextmanager
 from dataclasses import dataclass, field
@@ -21,7 +22,8 @@ from typing import Any, Literal
 import httpx
 from ref_client.agent import Agent, BedrockAgent, ScriptedAgent, has_aws_credentials
 from ref_client.demo import BindingAdminGrants, BindingAdminSettings, Control, DemoError
-from ref_client.mcp_client import TowerClient, TowerConfig, user_id_for
+from ref_client.cognito import CognitoUnavailable, CognitoUsers
+from ref_client.mcp_client import TowerClient, TowerConfig, TowerError, TowerUnauthorized, user_id_for
 from ref_client.transcript import Turn
 from tower_consent import Store
 
@@ -109,10 +111,32 @@ class Deps:
     binding: BindingAdmin | None = None
     tower_factory: Callable[..., Any] | None = None  # httpx client factory for TowerClient (test seam)
     closers: list[Callable[[], Awaitable[None]]] = field(default_factory=list)
+    # ENV=aws: Tower sits behind AgentCore's JWT authorizer, so each user signs in to Cognito and the access token
+    # is the bearer (the same as `ref-client demo --env aws`); the static TOWER_BEARER is local only.
+    cognito: CognitoUsers | None = field(default=None, repr=False)
+    # The AgentCore Runtime session the Tower calls ride on. AgentCore retires an idle session after a few
+    # minutes and refuses the next request on it (MCPError at connect): `say` then rotates to a fresh id and
+    # retries once (what scripts/latency.py does).
+    session_id: str = field(default_factory=lambda: f"control-{uuid.uuid4()}")
 
     def tower_config(self, who: str) -> TowerConfig:
+        return self._tower_config(user_id_for(who))
+
+    def new_session(self) -> str:
+        self.session_id = f"control-{uuid.uuid4()}"
+        return self.session_id
+
+    def _tower_config(self, user_id: str) -> TowerConfig:
         s = self.settings
-        return TowerConfig(url=s.tower_url, bearer=s.tower_bearer, user_id=user_id_for(who))
+        if s.env != "aws":
+            return TowerConfig(url=s.tower_url, bearer=s.tower_bearer, user_id=user_id, session_id=self.session_id)
+        if self.cognito is None:
+            raise TowerError("ENV=aws: Tower needs a Cognito sign-in: run make outputs and make cognito-users ENV=aws")
+        try:
+            token = self.cognito.access_token(user_id.removeprefix("user-"))
+        except CognitoUnavailable as e:
+            raise TowerError(str(e)) from None
+        return TowerConfig(url=s.tower_url, authorization=f"Bearer {token}", session_id=self.session_id)
 
     def make_agent(self, tower: TowerClient) -> Agent:
         return BedrockAgent(tower) if self.mode == "bedrock" else ScriptedAgent(tower)
@@ -122,20 +146,32 @@ class Deps:
         async with AsyncExitStack() as stack:
 
             async def agent_for(user_id: str) -> Agent:
-                cfg = TowerConfig(
-                    url=self.settings.tower_url, bearer=self.settings.tower_bearer, user_id=user_id
-                )
                 tower = await stack.enter_async_context(
-                    TowerClient(cfg, httpx_client_factory=self.tower_factory)
+                    TowerClient(self._tower_config(user_id), httpx_client_factory=self.tower_factory)
                 )
                 return self.make_agent(tower)
 
             yield agent_for
 
     async def say(self, who: str, text: str) -> Turn:
-        """One free-text utterance through Bedrock (the scripted agent has no tool choice to make)."""
-        async with TowerClient(self.tower_config(who), httpx_client_factory=self.tower_factory) as tower:
-            return await self.make_agent(tower).ask(text)
+        """One free-text utterance through Bedrock (the scripted agent has no tool choice to make). Retried once
+        when Tower refuses the token (401: it expired — sign in again) or the connect fails (the idle AgentCore
+        session was retired — a fresh session id)."""
+        for attempt in (1, 2):
+            try:
+                async with TowerClient(self.tower_config(who), httpx_client_factory=self.tower_factory) as tower:
+                    return await self.make_agent(tower).ask(text)
+            except TowerUnauthorized:
+                if attempt == 2 or self.cognito is None:
+                    raise
+                log.warning("tower: 401 for %s; signing in again", who)
+                self.cognito.forget(user_id_for(who).removeprefix("user-"))
+            except TowerError as e:
+                if attempt == 2 or "cannot connect" not in str(e):
+                    raise
+                log.warning("tower: connect failed on session %s; retrying on a new one", self.session_id[:16])
+                self.new_session()
+        raise AssertionError("unreachable")
 
     async def aclose(self) -> None:
         for close in self.closers:
@@ -276,8 +312,21 @@ def build_deps(
         binding=binding,
         tower_factory=tower_factory,
         closers=closers,
+        cognito=cognito_users(settings),
     )
     return deps
+
+
+def cognito_users(settings: Settings) -> CognitoUsers | None:
+    """ENV=aws: the demo users' subs and sign-in (artifacts/tf-outputs.json + cognito-users.json); None locally
+    or when the artifacts are missing (then every Tower call says what to run)."""
+    if settings.env != "aws":
+        return None
+    try:
+        return CognitoUsers.from_artifacts((settings.checkout or Path.cwd()) / "artifacts")
+    except CognitoUnavailable as e:
+        log.warning("cognito: %s", e)
+        return None
 
 
 def build_control(

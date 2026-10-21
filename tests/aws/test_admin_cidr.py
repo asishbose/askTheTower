@@ -152,6 +152,16 @@ def test_only_a_public_ipv4_slash32(tfvars: Path, bad: str, capsys: pytest.Captu
         ("Plan: 0 to add, 0 to change, 1 to destroy.\nlater\nPlan: 1 to import, 2 to add, 0 to change, 0 to destroy.\n",
          False, 0),  # the last summary counts
         ("NOT RUN\n", False, 3),  # unreadable counts as destroying
+        ("  # random_password.demo_admin_bearer[0] must be replaced\n"
+         "  # module.mock_carrier[0].aws_ecs_task_definition.this must be replaced\n"
+         "  # module.mock_carrier[0].aws_secretsmanager_secret_version.registry must be replaced\n"
+         "Plan: 3 to add, 5 to change, 3 to destroy.\n", False, 0),  # the expected roll goes through
+        ("  # random_password.demo_admin_bearer[0] must be replaced\n"
+         "  # module.mock_carrier[0].aws_ecs_task_definition.this must be replaced\n"
+         "  # module.network.aws_nat_gateway.this[0] will be destroyed\n"
+         "Plan: 3 to add, 5 to change, 3 to destroy.\n", False, 3),  # anything else destroyed still stops
+        ("  # random_password.demo_admin_bearer[0] must be replaced\n"
+         "Plan: 1 to add, 0 to change, 3 to destroy.\n", False, 3),  # two destroys unaccounted for
         (None, False, 3),
     ],
 )  # fmt: skip
@@ -163,9 +173,11 @@ def test_plan_gate(
         p.write_text(plan)
     args = ["plan-gate", "--name", "admin-open", "--plan", str(p), *(["--force"] if force else [])]
     assert ac.main(args) == code
+    out = capsys.readouterr()
     if code == 3:
-        err = capsys.readouterr().err
-        assert err.startswith("admin-open: the plan destroys ") and "replaces DEMO_ADMIN_BEARER" in err
+        assert out.err.startswith("admin-open: the plan destroys ") and "replaces DEMO_ADMIN_BEARER" in out.err
+    elif plan and "must be replaced" in plan:
+        assert "rolls the demo admin bearer and the mock task (3 replaced); deploying" in out.out
 
 
 # --- the recipes, in a temp copy of the Makefile -------------------------------------------------------------------
