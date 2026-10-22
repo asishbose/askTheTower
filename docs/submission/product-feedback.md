@@ -6,6 +6,8 @@ Rules for an entry: one tool per section; every claim dated and reproducible (wh
 
 Status legend: ☐ not started · ◐ used, entry drafted · ☑ final.
 
+The AWS-specific friction log (task, steps, expected vs actual, severity, workaround, suggestion) and the feature requests are in [`aws-friction-log.md`](aws-friction-log.md).
+
 ---
 
 ## Track tool

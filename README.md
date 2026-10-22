@@ -347,7 +347,7 @@ The AWS pieces are written as Terraform and Helm. They pass `terraform validate`
 - **Alexa+ (primary).** A self-hosted MCP server over Streamable HTTP for the Alexa+ MCP Toolkit, hosted on AgentCore Runtime ([`registration.md`](docs/architecture/alexa/registration.md)).
 - **AWS Builder.** The services in [Built with](#built-with), as Terraform ([`deploy/terraform/`](deploy/terraform/README.md)). Bedrock sits in one place, the Strands reference client, off the request path; alert and consent texts are templates.
 - **Open Source.** The consent-and-line-binding kit [`packages/tower-consent`](packages/tower-consent/README.md#reuse-with-your-own-camara-client), with install steps and a 20-line example for any CAMARA client. The phone-side flow is in [`services/binding-page`](services/binding-page/README.md#reuse-with-your-own-camara-client).
-- **Product feedback.** [`docs/submission/product-feedback.md`](docs/submission/product-feedback.md) and the Alexa+ [friction log](docs/architecture/alexa/friction-log.md).
+- **Product feedback.** [`docs/submission/product-feedback.md`](docs/submission/product-feedback.md), the AWS [friction log and feature requests](docs/submission/aws-friction-log.md), and the Alexa+ [friction log](docs/architecture/alexa/friction-log.md).
 
 ## Prior art
 
