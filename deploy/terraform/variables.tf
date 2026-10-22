@@ -38,7 +38,7 @@ variable "tags" {
 }
 
 variable "image_tag" {
-  description = "Image tag pushed by `make push` (the git sha). All five services use the same tag."
+  description = "Image tag pushed by `make push` (the git sha, with -MMDDhhmm appended for a dirty tree). All five services use the same tag."
   type        = string
   default     = "latest"
 }

@@ -31,7 +31,7 @@ State = Literal["todo", "done", "warn", "fail", "off"]
 Get = int | Literal["timeout", "unreachable", "skipped"]
 
 ECR_SERVICES = frozenset({"mock-carrier", "tower-mcp", "binding-page", "alerts", "ref-client"})  # mk/vars.mk
-IMAGE_TAG = re.compile(r"[0-9a-f]{7,40}")
+IMAGE_TAG = re.compile(r"[0-9a-f]{7,40}(?:-\d{8})?")  # <git sha>, or <git sha>-MMDDhhmm for a push of a dirty tree
 NAME = re.compile(r"[a-z]{1,32}")
 GRANT = re.compile(r"[a-z]{1,32}>[a-z]{1,32}:[a-z_]{1,32}")
 MEASURED_ROW = re.compile(r"^\|[^|]+\|\s*\d+\s*\|\s*[\d.]+\s*\|\s*[\d.]+\s*\|", re.M)

@@ -25,7 +25,7 @@
           "call_forwarding": "none",
           "source": "carrier",
           "stale": false,
-          "as_of": "2026-10-21T14:27:53.749752Z"
+          "as_of": "2026-10-21T18:36:44.956656Z"
         },
         "reason_codes": [
           "OK"
@@ -35,7 +35,7 @@
           "url": null,
           "carrier_support_number": null
         },
-        "checked_at": "2026-10-21T14:27:53.749752Z"
+        "checked_at": "2026-10-21T18:36:44.956656Z"
       },
       "reason_codes": [
         "OK"
@@ -56,15 +56,15 @@
         }
       ],
       "result": {
-        "summary": "Your SIM was moved to another device at 10:39 today. If that wasn't you, don't call from your phone — I can call your carrier's support line for you from here.",
+        "summary": "Your SIM was moved to another device at 2:48 today. If that wasn't you, don't call from your phone — I can call your carrier's support line for you from here.",
         "facts": {
           "line": "self",
           "sim_swapped_recently": true,
-          "swapped_at": "2026-10-21T14:39:13.908000Z",
+          "swapped_at": "2026-10-21T18:48:00.870000Z",
           "call_forwarding": "none",
           "source": "carrier",
           "stale": false,
-          "as_of": "2026-10-21T14:27:56.022263Z"
+          "as_of": "2026-10-21T18:36:47.499153Z"
         },
         "reason_codes": [
           "SIM_SWAPPED_RECENT"
@@ -74,12 +74,12 @@
           "url": null,
           "carrier_support_number": null
         },
-        "checked_at": "2026-10-21T14:27:56.022263Z"
+        "checked_at": "2026-10-21T18:36:47.499153Z"
       },
       "reason_codes": [
         "SIM_SWAPPED_RECENT"
       ],
-      "spoken": "Your SIM was moved to another device at 10:39 today. If that wasn't you, don't call from your phone — I can call your carrier's support line for you from here."
+      "spoken": "Your SIM was moved to another device at 2:48 today. If that wasn't you, don't call from your phone — I can call your carrier's support line for you from here."
     }
   ]
 }

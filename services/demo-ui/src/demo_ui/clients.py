@@ -17,7 +17,7 @@ HOLDERS = {
     "phone-partner": "partner",
     "phone-neighbour": "neighbour",
 }
-LINE_EVENTS = ("sim_swap", "cf_set", "cf_clear", "unreachable", "reachable")
+LINE_EVENTS = ("sim_swap", "sim_clear", "cf_set", "cf_clear", "unreachable", "reachable")
 FAULT_KINDS = ("timeout", "500", "429")
 
 
@@ -72,7 +72,7 @@ class MockAdmin:
         return [str(f.get("event", "")) for f in body.get("fired", [])]
 
     async def fire(
-        self, who: str, event: Literal["sim_swap", "cf_set", "cf_clear", "unreachable", "reachable"]
+        self, who: str, event: Literal["sim_swap", "sim_clear", "cf_set", "cf_clear", "unreachable", "reachable"]
     ) -> None:
         ref = await self.ref_of(who)
         await _call(self.http, "POST", f"/_admin/lines/{ref}/events", "mock", json={"event": event})

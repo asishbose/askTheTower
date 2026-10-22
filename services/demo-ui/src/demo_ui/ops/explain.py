@@ -48,7 +48,7 @@ EXPLAIN: Mapping[str, tuple[str, ...]] = {
     "aws-push": (
         "Checks arm64 emulation (re-registers it after a Docker/WSL restart)",
         "docker buildx: builds mock-carrier, tower-mcp, binding-page, alerts, ref-client for linux/arm64",
-        "Pushes each to ECR tagged <git sha> + latest; writes artifacts/image-tag",
+        "Pushes each to ECR tagged <git sha> + latest (<git sha>-MMDDhhmm when the tree has uncommitted changes, so deploy rolls them); writes artifacts/image-tag",
         "Optional EXTRA_CA_FILE (root .env): a CA bundle tried only if the default roots fail",
     ),
     "aws-plan": (

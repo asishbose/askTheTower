@@ -41,6 +41,10 @@
     <path d="M7 2.5 H15.5 L19 6 V20 A1.5 1.5 0 0 1 17.5 21.5 H7 A1.5 1.5 0 0 1 5.5 20 V4 A1.5 1.5 0 0 1 7 2.5 Z"/>
     <rect x="8.5" y="10" width="7" height="8" rx="1"/><path d="M8.5 14 H15.5 M12 10 V18"/>
   </symbol>
+  <symbol id="sim-ok" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M7 2.5 H15.5 L19 6 V20 A1.5 1.5 0 0 1 17.5 21.5 H7 A1.5 1.5 0 0 1 5.5 20 V4 A1.5 1.5 0 0 1 7 2.5 Z"/>
+    <path d="M8.5 14.5 L11 17 L16 11.5"/>
+  </symbol>
   <symbol id="forward" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
     <path d="M4 19 C4 11 9 7 18 7"/><path d="M15 3.5 L19 7 L15 10.5"/>
   </symbol>

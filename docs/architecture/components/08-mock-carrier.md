@@ -73,7 +73,7 @@ The whole `/_admin` surface is mounted only when `MOCK_ADMIN=1`.
 | Endpoint | Purpose | Token (G1) |
 |---|---|---|
 | `POST /_admin/scenarios/load {name}` | reset state to a scenario | yes |
-| `POST /_admin/lines/{line}/events {event}` | `sim_swap`, `cf_set`, `cf_clear`, `reachable`, `unreachable` — fires subscriptions. `{line}` is the E.164 or the line's opaque `ref` (`line:<16 hex>`); a `ref` request gets a reply without `msisdn` | yes |
+| `POST /_admin/lines/{line}/events {event}` | `sim_swap`, `sim_clear` (the demo's undo: the last SIM change moves 120 days back, past the API's maxAge maximum, so `checkSimSwap` is false again; no subscription fires), `cf_set`, `cf_clear`, `reachable`, `unreachable` — fires subscriptions. `{line}` is the E.164 or the line's opaque `ref` (`line:<16 hex>`); a `ref` request gets a reply without `msisdn` | yes |
 | `POST /_admin/clock` · `GET /_admin/clock` | set or advance · read (Tower's `TOWER_CLOCK_URL`, Alerts' mock clock) | POST yes · GET no |
 | `GET /_admin/state` · `GET /_admin/state?view=refs` | full dump (tests) · the same without a number: lines keyed by `ref` with no `msisdn`, subscriptions without `sink`, no deliveries, no sink inbox (the demo tools read this one) | no |
 | `POST /_admin/faults {kind, n}` · `DELETE /_admin/faults` | inject `timeout`, `500`, `429` for the next *n* calls — for the error-mapping and circuit-breaker tests · clear them | yes |

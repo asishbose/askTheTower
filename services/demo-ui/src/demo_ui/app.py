@@ -13,6 +13,7 @@ import asyncio
 import contextlib
 import hmac
 import logging
+import time
 from collections.abc import AsyncIterator, Awaitable, Callable
 from contextlib import asynccontextmanager
 from importlib import resources
@@ -60,6 +61,9 @@ async def sse_frames(feed: Feed, keepalive_s: float = KEEPALIVE_S) -> AsyncItera
             yield frame.sse()
     finally:
         feed.unsubscribe(q)
+
+
+ASSET_VERSION = str(int(time.time()))  # one per process: a restart busts the browser's cache of /static
 
 
 def create_app(deps: Deps) -> FastAPI:
@@ -129,7 +133,10 @@ def create_app(deps: Deps) -> FastAPI:
 
     @app.get("/", response_class=HTMLResponse)
     async def index() -> HTMLResponse:
-        return HTMLResponse((static / "index.html").read_text(encoding="utf-8"))
+        # `?v=<start time>` on the page's own scripts and stylesheet: the browser caches module scripts hard,
+        # so without it a restarted UI keeps running the previous stage.js until a hard reload.
+        page = (static / "index.html").read_text(encoding="utf-8")
+        return HTMLResponse(page.replace('.js"', f'.js?v={ASSET_VERSION}"').replace('.css"', f'.css?v={ASSET_VERSION}"'))
 
     @app.get("/events")
     async def events() -> StreamingResponse:
@@ -242,7 +249,7 @@ def create_app(deps: Deps) -> FastAPI:
     @app.post("/carrier/fire", response_class=HTMLResponse)
     async def fire(
         who: Annotated[Literal["asish", "mom"], Form()],
-        event: Annotated[Literal["sim_swap", "cf_set", "cf_clear", "unreachable", "reachable"], Form()],
+        event: Annotated[Literal["sim_swap", "sim_clear", "cf_set", "cf_clear", "unreachable", "reachable"], Form()],
     ) -> HTMLResponse:
         return await carrier_call(f"{event} on {who}'s line", lambda: mock().fire(who, event))
 

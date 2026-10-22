@@ -279,7 +279,7 @@ async def test_env_aws_switches_off_reset_and_macros_everywhere(store: Store, li
         assert "local-only" in (await c.post("/carrier/reset", headers=HX)).text
         r = await c.post("/binding/grant", data={"action": "revoke"}, headers=HX)
         assert "on the resident&#39;s own phone at /me" in r.text
-        for event in ("sim_swap", "cf_set", "cf_clear", "unreachable", "reachable"):
+        for event in ("sim_swap", "sim_clear", "cf_set", "cf_clear", "unreachable", "reachable"):
             r = await c.post("/carrier/fire", data={"who": "asish", "event": event}, headers=HX)
             assert "local-only" in r.text
         deps.feed.subscribe()

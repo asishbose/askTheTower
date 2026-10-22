@@ -14,7 +14,7 @@ Format (see `scenarios/demo.yaml`, which is `docs/architecture/components/08` §
     timeline:                                  # optional, fires as the clock advances
       - at: "+00:12:00"                        # relative to `clock`, or an absolute RFC 3339 time
         line: "+16135550101"
-        event: sim_swap                        # sim_swap | cf_set | cf_clear | reachable | unreachable
+        event: sim_swap                        # sim_swap | sim_clear | cf_set | cf_clear | reachable | unreachable
         connectivity: [DATA]                   # optional, for `reachable`
     variants:                                  # optional named timeline replacements
       recovered:

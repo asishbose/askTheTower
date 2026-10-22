@@ -42,6 +42,9 @@ class AdminError(ValueError):
     """Bad admin request (unknown line, event, fault kind, scenario)."""
 
 
+SIM_CLEAR_AGE = timedelta(days=120)  # sim_clear: older than the SIM Swap API's maxAge maximum (2400 h = 100 days)
+
+
 @dataclass
 class FiredEvent:
     at: datetime
@@ -163,6 +166,11 @@ class Runtime:
         if event == "sim_swap":
             line.sim_change_at = at
             await self._fan_out(SIM_SWAP_SUBS, msisdn, T_SWAPPED)
+        elif event == "sim_clear":
+            # The demo's undo: the last SIM change moves back outside any maxAge a client may ask for (the SIM
+            # Swap API's maximum is 2400 h), so `checkSimSwap` answers false again. Nothing to notify: no
+            # subscription type exists for "not swapped".
+            line.sim_change_at = at - SIM_CLEAR_AGE
         elif event == "cf_set":
             line.call_forwarding = "unconditional"
         elif event == "cf_clear":

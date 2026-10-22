@@ -39,6 +39,11 @@ SERVICES := mock-carrier tower-mcp binding-page alerts ref-client
 # Built locally, never pushed (doc 11 §8.7): `push` and ECR stay at SERVICES; build/sbom/scan cover IMAGES.
 IMAGES := $(SERVICES) demo-ui
 GIT_SHA := $(shell git rev-parse --short HEAD 2>/dev/null || echo dev)
+# The image tag `make push` writes. A dirty tree gets `<sha>-<MMDDhhmm>`: pushing uncommitted work under the bare
+# sha overwrote the tag in ECR while Terraform saw no change and rolled nothing (2026-10-22). A fresh tag per push
+# of a dirty tree makes `deploy` roll the runtime, the Lambdas and the ECS task every time the code changed.
+GIT_DIRTY := $(shell git status --porcelain --untracked-files=no 2>/dev/null | head -c 1)
+IMAGE_SHA := $(GIT_SHA)$(if $(GIT_DIRTY),-$(shell date -u +%m%d%H%M))
 # endpoints per ENV (local defaults; eks/aws are rendered from outputs by scripts/render_env.py)
 ifeq ($(ENV),local)
 TOWER_URL ?= http://localhost:8080/mcp

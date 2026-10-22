@@ -277,3 +277,10 @@ def test_garbage_everywhere_never_raises(tmp_path: Path) -> None:
     (tmp_path / "deploy" / "terraform" / "envs" / "aws.tfvars").write_bytes(b"\xff\xfe")
     p = pipeline_for(tmp_path, Wire())
     assert len(p.steps) == 14 and {s.state for s in p.steps} <= {"todo", "done", "warn", "fail"}
+
+
+def test_a_dirty_tree_tag_is_still_one_tag(tmp_path) -> None:  # type: ignore[no-untyped-def]
+    from demo_ui.ops.aws_status import IMAGE_TAG
+
+    assert IMAGE_TAG.fullmatch("cb5695d-10221305") and IMAGE_TAG.fullmatch("cb5695d")
+    assert not IMAGE_TAG.fullmatch("cb5695d-dirty") and not IMAGE_TAG.fullmatch("latest")

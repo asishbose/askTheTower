@@ -276,6 +276,40 @@ function onRunStatus(target) {
   }
 }
 
+// ---------- clear view (recording aid) ----------
+// "clear" on a pane hides what is on screen now and nothing else: the audit chain, the sent list and the
+// transcript are untouched, and rows that arrive later still show. Keys are the rows' own data-key / data-n.
+const hiddenFeed = { audit: new Set(), sms: new Set() };
+
+function feedRowKey(li) {
+  return li.dataset.key || li.dataset.n || "";
+}
+
+function applyFeedClear(target) {
+  const hidden = hiddenFeed[target.id];
+  if (!hidden || hidden.size === 0) return;
+  for (const li of target.querySelectorAll("li.ev")) li.hidden = hidden.has(feedRowKey(li));
+}
+
+function clearFeedView() {
+  for (const id of ["audit", "sms"]) {
+    const pane = document.getElementById(id);
+    if (!pane) continue;
+    for (const li of pane.querySelectorAll("li.ev")) hiddenFeed[id].add(feedRowKey(li));
+    applyFeedClear(pane);
+  }
+}
+
+function clearLogView() {
+  const log = document.getElementById("log");
+  const stepper = document.getElementById("stepper");
+  if (log) log.replaceChildren();
+  if (stepper) stepper.replaceChildren();
+}
+
+document.getElementById("clear-feed")?.addEventListener("click", clearFeedView);
+document.getElementById("clear-log")?.addEventListener("click", clearLogView);
+
 // ---------- wiring ----------
 
 const SSE_HANDLERS = { carrier: onCarrier, sms: onSms, audit: onAudit, grants: onGrants };
@@ -288,6 +322,7 @@ document.body.addEventListener("htmx:sseMessage", (e) => {
   else if (SSE_HANDLERS[target.id]) {
     feedHealth(target);
     SSE_HANDLERS[target.id](target);
+    applyFeedClear(target);
     primed.add(target.id);
   }
   applyState();

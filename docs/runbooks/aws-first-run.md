@@ -35,7 +35,7 @@ Push only from a tree that passes this — the pushed `ref-client` image must be
 ```bash
 git status --short | head             # clean tree: `make push` tags images with `git rev-parse --short HEAD`
 make ecr-up                           # ECR root, own state; idempotent; writes artifacts/tf-outputs-ecr.json      # tab: 1 · ECR repositories
-make push ENV=aws                     # five images, linux/arm64, provenance off; tags <sha> + latest; writes artifacts/image-tag   # tab: 2 · Push
+make push ENV=aws                     # five images, linux/arm64, provenance off; tags <sha> (+ -MMDDhhmm if uncommitted) + latest; writes artifacts/image-tag   # tab: 2 · Push
 aws ecr describe-images --repository-name att-dev/tower-mcp --region us-east-1 --query 'imageDetails[].imageTags' | head
 ```
 

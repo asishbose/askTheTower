@@ -43,7 +43,7 @@
 
   <main class="grid" id="panes">
     <section class="pane" id="pane-conversation" aria-labelledby="h-conversation">
-      <h2 id="h-conversation"><svg class="i" aria-hidden="true"><use href="/static/img/icons.svg#chat"></use></svg>Conversation <small>the reference client plays Alexa+'s part</small></h2>
+      <h2 id="h-conversation"><svg class="i" aria-hidden="true"><use href="/static/img/icons.svg#chat"></use></svg>Conversation <small>the reference client plays Alexa+'s part</small> <button type="button" class="btn tiny clear-view" id="clear-log" title="Empty this pane on screen (nothing is deleted)">clear</button></h2>
       <div class="waiting"><img src="/static/img/empty-state.svg" alt="" width="240" height="120"><p>Waiting for the stack: run <code>make up</code></p></div>
       <div hx-get="/fragment/conversation-controls" hx-trigger="load"></div>
       <ol id="stepper" class="stepper" aria-live="polite" aria-label="macro steps"></ol>
@@ -58,7 +58,7 @@
     </section>
 
     <section class="pane" id="pane-feed" aria-labelledby="h-feed">
-      <h2 id="h-feed"><svg class="i" aria-hidden="true"><use href="/static/img/icons.svg#pulse"></use></svg>Live feed <small>newest first</small></h2>
+      <h2 id="h-feed"><svg class="i" aria-hidden="true"><use href="/static/img/icons.svg#pulse"></use></svg>Live feed <small>newest first</small> <button type="button" class="btn tiny clear-view" id="clear-feed" title="Hide what is on screen now; new rows still appear (the audit chain and the sent list are untouched)">clear</button></h2>
       <div class="waiting"><img src="/static/img/empty-state.svg" alt="" width="240" height="120"><p>Waiting for the stack: run <code>make up</code></p></div>
       <input class="sr-only" type="radio" name="lane" id="lane-all" checked>
       <input class="sr-only" type="radio" name="lane" id="lane-sms">

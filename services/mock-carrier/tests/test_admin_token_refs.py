@@ -76,3 +76,16 @@ async def test_event_by_number_still_works(client: httpx.AsyncClient) -> None:
 async def test_unknown_ref_is_404(client: httpx.AsyncClient) -> None:
     r = await client.post("/_admin/lines/line:0000000000000000/events", json={"event": "cf_set"})
     assert r.status_code == 404
+
+
+async def test_sim_clear_moves_the_last_sim_change_out_of_any_max_age(client: httpx.AsyncClient) -> None:
+    """The demo's undo for sim_swap: afterwards checkSimSwap is false even at the API's maximum maxAge."""
+    r = await client.post(f"/_admin/lines/{line_ref(MOM)}/events", json={"event": "sim_swap"})
+    assert r.status_code == 200 and r.json()["event"] == "sim_swap"
+    swapped_at = r.json()["line"]["sim_change_at"]
+    r = await client.post(f"/_admin/lines/{line_ref(MOM)}/events", json={"event": "sim_clear"})
+    assert r.status_code == 200 and r.json()["event"] == "sim_clear"
+    cleared_at = r.json()["line"]["sim_change_at"]
+    assert cleared_at is not None and cleared_at < swapped_at[:7]  # months before, never None
+    r = await client.post("/sim-swap/v2/check", json={"phoneNumber": MOM, "maxAge": 2400})
+    assert r.status_code in (200, 401, 403) and (r.status_code != 200 or r.json()["swapped"] is False)

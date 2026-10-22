@@ -34,6 +34,7 @@ from typing import Any, Protocol
 import httpx
 from camara_client import CarrierClient, CarrierConfig, DirectClient, GatewayClient, make_client
 from camara_client import specs as carrier_specs
+from camara_client.protocol import LineRef
 from tower_audit import AuditRecord
 from tower_consent import MsisdnCipher, Store, crypto_from_env
 from tower_consent.models import Profile
@@ -222,8 +223,19 @@ class Deps:
                     await self.carrier.oauth.token(scope)
             elif isinstance(self.carrier, GatewayClient):
                 await self.carrier.check_tools()
+                await self._prime_gateway()
         except Exception as e:  # noqa: BLE001 - warm-up is best effort
             logger.warning("carrier warm-up failed: %s", type(e).__name__)
+
+    async def _prime_gateway(self) -> None:
+        """One throwaway tool call through the Gateway at startup. On AgentCore the first `tools/call` of a
+        fresh Tower process comes back 400 from the Gateway (its outbound credential is fetched on first use;
+        seen on every cold start, 2026-10-21) and would be the user's first answer: `CARRIER_ERROR`. Paying it
+        here, on a number that matches no line, keeps it out of any request. The answer is discarded."""
+        try:
+            await self.carrier.sim_swap_check(LineRef("warm-up", PRIME_E164), 72)
+        except Exception as e:  # noqa: BLE001 - the point is the round trip, not the answer
+            logger.info("carrier warm-up call: %s (expected on a cold start)", type(e).__name__)
 
     async def aclose(self) -> None:
         for thing in (self.carrier, self.clock, self.alerts):
@@ -231,6 +243,8 @@ class Deps:
             if close is not None:
                 await close()
 
+
+PRIME_E164 = "+15005550000"  # a reserved (fictional) number: no carrier has a line for it
 
 WARM_OPERATIONS = (
     ("sim-swap", "checkSimSwap"),

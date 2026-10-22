@@ -11,8 +11,8 @@ from typing import Any, Literal
 from mock_carrier.clock import iso
 
 CallForwarding = Literal["none", "unconditional", "conditional"]
-EventName = Literal["sim_swap", "cf_set", "cf_clear", "reachable", "unreachable"]
-EVENT_NAMES: tuple[str, ...] = ("sim_swap", "cf_set", "cf_clear", "reachable", "unreachable")
+EventName = Literal["sim_swap", "sim_clear", "cf_set", "cf_clear", "reachable", "unreachable"]
+EVENT_NAMES: tuple[str, ...] = ("sim_swap", "sim_clear", "cf_set", "cf_clear", "reachable", "unreachable")
 FAULT_KINDS: tuple[str, ...] = ("timeout", "500", "429")
 
 

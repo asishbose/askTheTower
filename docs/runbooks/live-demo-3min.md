@@ -75,6 +75,7 @@ else is typed.
 | Do | Why |
 |---|---|
 | Binding pane **Mom grants it again**, then Control room **Reset** | puts the grant and the clock back for a second take |
+| Between rehearsals without a full Reset: **sim_clear** / **cf_clear** on the row you fired | undoes one event; Tower answers `OK` again |
 | **Close the admin path** (type `close`) | never leave it open |
 | **Destroy the stack, keep ECR** (type `down`) when done for the day | ~$5–10/day while up |
 

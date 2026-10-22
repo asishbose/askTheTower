@@ -14,10 +14,11 @@ HAVE_IMAGE = docker image inspect ask-the-tower/$$s:latest >/dev/null 2>&1 || { 
 build: $(addprefix build-,$(IMAGES)) ## Build all six images: the five services + demo-ui (tagged with git sha and latest; demo-ui is never pushed)
 build-%: ## Build one image, e.g. make build-tower-mcp
 	docker build -f services/$*/Dockerfile -t ask-the-tower/$*:$(GIT_SHA) -t ask-the-tower/$*:latest .
-push: ## Build linux/arm64 (buildx) and push to ECR, tags <git sha> + latest (ENV=eks|aws; `make ecr-up` once first)
+push: ## Build linux/arm64 (buildx) and push to ECR, tags <git sha> (+ -MMDDhhmm when the tree is dirty) + latest (ENV=eks|aws; `make ecr-up` once first)
 	@[ "$(ENV)" != "local" ] || (echo "push needs ENV=eks|aws" && exit 1)
 	@mkdir -p artifacts
-	$(PY) scripts/push_images.py --env $(ENV) --tag $(GIT_SHA) && echo $(GIT_SHA) > artifacts/image-tag
+	@[ -z "$(GIT_DIRTY)" ] || echo "push: uncommitted changes — tagging $(IMAGE_SHA) so deploy rolls the new images"
+	$(PY) scripts/push_images.py --env $(ENV) --tag $(IMAGE_SHA) && echo $(IMAGE_SHA) > artifacts/image-tag
 sbom: ## SBOM per image → artifacts/sbom/*.json (syft, CycloneDX)
 	@mkdir -p artifacts/sbom
 	@for s in $(IMAGES); do $(HAVE_IMAGE); \

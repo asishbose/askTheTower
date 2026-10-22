@@ -1,4 +1,4 @@
-{% set icons = {"sim_swap": "sim", "cf_set": "forward", "cf_clear": "unforward", "unreachable": "offline", "reachable": "online"} %}
+{% set icons = {"sim_swap": "sim", "sim_clear": "sim-ok", "cf_set": "forward", "cf_clear": "unforward", "unreachable": "offline", "reachable": "online"} %}
 {% if not enabled %}
 <div class="off-panel" data-off><svg class="i" aria-hidden="true"><use href="/static/img/icons.svg#pause"></use></svg><p class="off">{{ reason }}</p></div>
 {% else %}

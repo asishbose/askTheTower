@@ -20,15 +20,15 @@
         }
       ],
       "result": {
-        "summary": "Your SIM was moved to another device at 10:39 today. If that wasn't you, don't call from your phone — I can call your carrier's support line for you from here. All your calls have been forwarding since 10:27 today. If you didn't set that, I can call your carrier's support line for you from here.",
+        "summary": "Your SIM was moved to another device at 2:48 today. If that wasn't you, don't call from your phone — I can call your carrier's support line for you from here. All your calls have been forwarding since 2:36 today. If you didn't set that, I can call your carrier's support line for you from here.",
         "facts": {
           "line": "self",
           "sim_swapped_recently": true,
-          "swapped_at": "2026-10-21T14:39:13.908000Z",
+          "swapped_at": "2026-10-21T18:48:00.870000Z",
           "call_forwarding": "unconditional",
           "source": "carrier",
           "stale": false,
-          "as_of": "2026-10-21T14:27:57.130164Z"
+          "as_of": "2026-10-21T18:36:48.765866Z"
         },
         "reason_codes": [
           "SIM_SWAPPED_RECENT",
@@ -39,13 +39,13 @@
           "url": null,
           "carrier_support_number": null
         },
-        "checked_at": "2026-10-21T14:27:57.130164Z"
+        "checked_at": "2026-10-21T18:36:48.765866Z"
       },
       "reason_codes": [
         "SIM_SWAPPED_RECENT",
         "CALL_FORWARDING_SET"
       ],
-      "spoken": "Your SIM was moved to another device at 10:39 today. If that wasn't you, don't call from your phone — I can call your carrier's support line for you from here. All your calls have been forwarding since 10:27 today. If you didn't set that, I can call your carrier's support line for you from here."
+      "spoken": "Your SIM was moved to another device at 2:48 today. If that wasn't you, don't call from your phone — I can call your carrier's support line for you from here. All your calls have been forwarding since 2:36 today. If you didn't set that, I can call your carrier's support line for you from here."
     }
   ]
 }

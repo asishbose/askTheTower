@@ -1,6 +1,7 @@
 """Macros (doc 11 §5): the four buttons run `ref_client.demo.STORIES` through `run_demo(reset=False, on_step=…)`,
 the same code and steps as `make demo`. One timeline: a button runs Reset (the `make seed` code), replays the
-earlier stories (marked `replay`), then its own story. One run at a time.
+earlier stories (marked `replay`; run but not shown — the pane holds only the Moment that was clicked), then its
+own story. One run at a time.
 """
 
 from __future__ import annotations
@@ -95,6 +96,9 @@ class Runner:
         def on_step(r: StepReport) -> None:
             result.steps += 1
             result.failed += r.ok is False
+            if r.replay:  # the earlier stories rebuild the timeline off-screen; only this Moment's rows show
+                self._status(f"{name}: replaying {r.step_id.split('#')[0]}…")
+                return
             self.publish("turn", views.step_fragment(r, agent=self.agent_label))
             url = ((r.turn.result or {}).get("next_step") or {}).get("url") if r.turn else None
             if url:  # NOT_BOUND: the bind link as a QR code in pane 4 (D1: nothing texts it)

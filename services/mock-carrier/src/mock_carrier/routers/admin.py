@@ -17,7 +17,7 @@ from pydantic import AliasChoices, BaseModel, Field
 from mock_carrier.clock import iso, parse_iso
 from mock_carrier.runtime import AdminError
 from mock_carrier.scenarios import ScenarioError, list_scenarios
-from mock_carrier.state import Line
+from mock_carrier.state import EventName, Line
 
 if TYPE_CHECKING:
     from mock_carrier.runtime import Runtime
@@ -36,7 +36,7 @@ class ClockChange(BaseModel):
 
 
 class LineEvent(BaseModel):
-    event: Literal["sim_swap", "cf_set", "cf_clear", "reachable", "unreachable"] = Field(
+    event: EventName = Field(
         validation_alias=AliasChoices("event", "type"), description="`type` is accepted as an alias (06 §8)"
     )
     connectivity: list[Literal["DATA", "SMS"]] | None = None
