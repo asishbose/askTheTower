@@ -10,6 +10,8 @@ Tower is an MCP server for the **Alexa+ MCP Toolkit**. It asks a carrier three t
 
 ## The problem, in three moments
 
+Where the idea came from, with the court cases and figures behind it: [`docs/idea-spark.md`](docs/idea-spark.md).
+
 > **You:** "My phone just lost signal. Alexa, is my line OK?"
 > **Alexa:** "Your SIM was moved to another device at 2:14. If that wasn't you, call your carrier now."
 
